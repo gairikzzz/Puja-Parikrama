@@ -1,4 +1,10 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
+import {
+  submitPhotoToN8n,
+  fetchApprovedSubmissions,
+  type SubmissionPayload,
+  type SupabaseSubmissionRow
+} from './lib/supabase'
 
 /* ─────────────────────────────────────────────────────────────────────────
    Types
@@ -34,12 +40,13 @@ export interface SnapPost {
   likes?: number
   views?: number
   emoji?: string
+  locationSource?: string
 }
 
 declare global {
   interface Window {
     google: any
-    initMap: () => void
+    initMap?: () => void
     exifr?: any
   }
 }
@@ -112,9 +119,12 @@ const DARK_MAP_STYLE: any[] = [
 /* ─────────────────────────────────────────────────────────────────────────
    Helpers
    ───────────────────────────────────────────────────────────────────────── */
-function timeAgo(date: Date): string {
-  const diff = Math.floor((Date.now() - date.getTime()) / 1000)
-  if (diff < 60) return `${diff}s ago`
+function timeAgo(date?: any): string {
+  if (!date) return 'Just now'
+  const d = date instanceof Date ? date : new Date(date)
+  if (isNaN(d.getTime())) return 'Just now'
+  const diff = Math.floor((Date.now() - d.getTime()) / 1000)
+  if (diff < 60) return `${Math.max(0, diff)}s ago`
   if (diff < 3600) return `${Math.floor(diff / 60)}m ago`
   if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`
   return `${Math.floor(diff / 86400)}d ago`
@@ -173,7 +183,7 @@ function StoryModal({ post, onClose }: { post: SnapPost | null; onClose: () => v
   useEffect(() => {
     if (!post) return
     setLiked(false)
-    setLikes(post.likes)
+    setLikes(post.likes ?? post.likesCount ?? 0)
     // Auto-progress bar
     setTimeout(() => {
       if (progressRef.current) progressRef.current.classList.add('playing')
@@ -247,7 +257,7 @@ function StoryModal({ post, onClose }: { post: SnapPost | null; onClose: () => v
             <div className="flex items-center gap-3 mt-4">
               <div className="flex items-center gap-2 px-4 py-2 rounded-full" style={{ background: 'rgba(255,255,255,0.12)', backdropFilter: 'blur(10px)' }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="white" opacity="0.7"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" /></svg>
-                <span className="text-white text-sm font-medium">{post.views.toLocaleString()}</span>
+                <span className="text-white text-sm font-medium">{(post.views ?? post.viewsCount ?? 0).toLocaleString()}</span>
               </div>
 
               <button
@@ -287,12 +297,15 @@ interface UploadModalProps {
   currentUser: AuthUser | null
   onRequireAuth: () => void
   onClose: () => void
-  onSubmit: (post: Omit<SnapPost, 'id' | 'likes' | 'views' | 'timestamp'>) => void
+  onSubmit: (payload: SubmissionPayload) => Promise<boolean>
 }
+
 function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }: UploadModalProps) {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [mediaSource, setMediaSource] = useState<'camera' | 'gallery'>('gallery')
   const [preview, setPreview] = useState<string | null>(null)
-  const [mediaType, setMediaType] = useState<'image' | 'video'>('image')
   const [pandalName, setPandalName] = useState('')
+  const [neighborhood, setNeighborhood] = useState('')
   const [coords, setCoords] = useState<{ lat: number; lng: number }>(AGARTALA_CENTER)
   const [locationSource, setLocationSource] = useState<'exif' | 'live_gps' | 'city_center' | 'custom'>('live_gps')
   const [sourceBadge, setSourceBadge] = useState({ text: '📡 Live Device GPS', cls: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' })
@@ -302,26 +315,41 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
   const [submitting, setSubmitting] = useState(false)
 
   const reset = () => {
-    setPreview(null); setPandalName('')
-    setCoords(AGARTALA_CENTER); setStep('capture'); setSubmitting(false)
-    setShowDropdown(false); setSearchFilter('')
+    setSelectedFile(null)
+    setPreview(null)
+    setPandalName('')
+    setNeighborhood('')
+    setCoords(AGARTALA_CENTER)
+    setStep('capture')
+    setSubmitting(false)
+    setShowDropdown(false)
+    setSearchFilter('')
   }
 
   const handleClose = () => { reset(); onClose() }
 
-  // Strategy 4 Waterfall: EXIF -> Live GPS -> City Center
-  const processFileWaterfall = async (file: File) => {
-    const isVid = file.type.startsWith('video')
-    setMediaType(isVid ? 'video' : 'image')
-    const url = URL.createObjectURL(file)
-    setPreview(url)
+  // Strategy 4 Waterfall: EXIF -> Live GPS -> City Center (Images only)
+  const processFileWaterfall = async (file: File, source: 'camera' | 'gallery') => {
+    if (file.type && !file.type.startsWith('image/')) {
+      alert('⚠️ Only photos can be submitted for Durga Puja pandal moderation. Videos are not accepted by our AI review pipeline.')
+      return
+    }
+
+    setSelectedFile(file)
+    setMediaSource(source)
+
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      setPreview(e.target?.result as string)
+    }
+    reader.readAsDataURL(file)
     setStep('details')
 
     let detectedCoords: { lat: number; lng: number } | null = null
     let detectedSource: 'exif' | 'live_gps' | 'city_center' = 'live_gps'
 
     // Step 1: EXIF Metadata (for photos)
-    if (!isVid && window.exifr) {
+    if (window.exifr) {
       try {
         const gps = await window.exifr.gps(file)
         if (gps && typeof gps.latitude === 'number' && typeof gps.longitude === 'number' && gps.latitude !== 0) {
@@ -370,12 +398,8 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
 
     if (sorted[0] && sorted[0].distance <= 500 && !pandalName.trim()) {
       setPandalName(sorted[0].name)
+      setNeighborhood(sorted[0].neighborhood)
     }
-  }
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) processFileWaterfall(file)
   }
 
   // Calculate distances to all master pandals relative to current pin
@@ -392,35 +416,29 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
     return pandalsWithProximity.filter(p => p.name.toLowerCase().includes(q) || p.neighborhood.toLowerCase().includes(q))
   }, [pandalsWithProximity, pandalName, searchFilter])
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!currentUser) {
       onRequireAuth()
       return
     }
-    if (!preview || !pandalName.trim()) return
+    if (!selectedFile || !pandalName.trim()) return
     setSubmitting(true)
-    setTimeout(() => {
-      onSubmit({
-        userId: currentUser.uid,
-        userName: currentUser.displayName,
-        userAvatar: currentUser.photoURL,
-        mediaUrl: preview,
-        mediaType: mediaType,
-        pandalName: pandalName.trim(),
-        pandal: pandalName.trim(),
-        uploader: currentUser.displayName,
-        avatar: currentUser.photoURL,
-        imageUrl: preview,
-        lat: coords.lat,
-        lng: coords.lng,
-        viewsCount: 0,
-        likesCount: 0,
-        createdAt: new Date(),
-        emoji: '🪔',
-      })
+    const success = await onSubmit({
+      selectedFile,
+      pandalName: pandalName.trim(),
+      neighborhood: neighborhood.trim() || 'Agartala',
+      coords,
+      locationSource,
+      source: mediaSource,
+      userName: currentUser.displayName,
+      userId: currentUser.uid,
+      userAvatar: currentUser.photoURL,
+    })
+    setSubmitting(false)
+    if (success) {
       reset()
       onClose()
-    }, 600)
+    }
   }
 
   return (
@@ -435,7 +453,7 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
           <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" /></svg>
         </button>
         <h2 className="text-white font-bold text-base sm:text-lg">
-          {step === 'capture' ? 'Snap & Tag Pandal' : 'Strategy 4: Hybrid Tagging'}
+          {step === 'capture' ? 'Snap & Tag Pandal' : 'Pandal Photo Verification'}
         </h2>
         <div className="w-6" />
       </div>
@@ -448,9 +466,9 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
             <span className="text-5xl">🪔</span>
           </div>
           <div className="text-center">
-            <h3 className="text-white font-bold text-xl mb-1">Capture or Upload Snap</h3>
+            <h3 className="text-white font-bold text-xl mb-1">Submit Pandal Photo</h3>
             <p className="text-white/50 text-xs leading-relaxed max-w-xs">
-              EXIF GPS will be automatically extracted, with background GPS & pandal auto-matching.
+              Take or select a photo of the Durga Puja pandal or idol. Automatic EXIF GPS and AI moderation will screen the submission.
             </p>
           </div>
           <div className="flex flex-col gap-3 w-full max-w-xs">
@@ -465,10 +483,13 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
             <input
               id="snap-camera"
               type="file"
-              accept="image/*,video/*"
+              accept="image/*"
               capture="environment"
               style={{ display: 'none' }}
-              onChange={handleFileChange}
+              onChange={e => {
+                const file = e.target.files?.[0]
+                if (file) processFileWaterfall(file, 'camera')
+              }}
             />
             <label
               htmlFor="snap-gallery"
@@ -480,24 +501,25 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
             <input
               id="snap-gallery"
               type="file"
-              accept="image/*,video/*"
+              accept="image/*"
               style={{ display: 'none' }}
-              onChange={handleFileChange}
+              onChange={e => {
+                const file = e.target.files?.[0]
+                if (file) processFileWaterfall(file, 'gallery')
+              }}
             />
           </div>
         </div>
       ) : (
-        /* Strategy 4 Confirmation Details */
+        /* Details & Pandal Tagging Confirmation */
         <div className="flex-1 overflow-y-auto no-scrollbar px-5 py-4 space-y-4">
           {/* Media Preview Box */}
           <div className="relative w-full h-44 rounded-2xl overflow-hidden border border-white/15 bg-black/40">
-            {mediaType === 'video' ? (
-              <video src={preview!} className="w-full h-full object-cover" autoPlay loop muted playsInline />
-            ) : (
-              <img src={preview!} alt="preview" className="w-full h-full object-cover" />
+            {preview && (
+              <img src={preview} alt="preview" className="w-full h-full object-cover" />
             )}
             <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] text-white/90 border border-white/20">
-              Media Selected
+              📸 Photo Attached
             </div>
           </div>
 
@@ -506,7 +528,7 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
             <div className="flex items-center justify-between">
               <span className="text-white text-xs font-bold">{sourceBadge.text}</span>
               <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${sourceBadge.cls}`}>
-                Waterfall Stage
+                Location Source
               </span>
             </div>
             <div className="flex items-center justify-between text-[11px] text-white/50">
@@ -547,6 +569,7 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
                     key={p.name}
                     onClick={() => {
                       setPandalName(p.name)
+                      setNeighborhood(p.neighborhood)
                       setCoords({ lat: p.lat, lng: p.lng })
                       setLocationSource('custom')
                       setSourceBadge({ text: '🏛️ Pandal Coordinates', cls: 'bg-amber-500/20 text-amber-300 border-amber-500/30' })
@@ -568,6 +591,21 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
                 ))}
               </div>
             )}
+          </div>
+
+          {/* Neighborhood / Locality */}
+          <div>
+            <label className="text-white/50 text-xs font-semibold uppercase tracking-widest mb-1.5 block">
+              Neighborhood / Area *
+            </label>
+            <input
+              id="neighborhood-input"
+              type="text"
+              value={neighborhood}
+              onChange={e => setNeighborhood(e.target.value)}
+              placeholder="e.g. Usha Bazar, Banamalipur..."
+              className="w-full py-3 px-3.5 rounded-xl text-white text-sm outline-none bg-white/5 border border-white/15 focus:border-amber-400"
+            />
           </div>
 
           {/* Interactive Mini-Map Preview Card (Confirmation) */}
@@ -613,25 +651,28 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
                 </div>
               </div>
               <span className="text-[9px] font-semibold text-emerald-300 bg-emerald-500/20 border border-emerald-500/30 px-2 py-0.5 rounded-full">
-                Verified Devotee
+                Devotee
               </span>
             </div>
           )}
 
-          {/* Submit button */}
-          <div className="pt-2 pb-6">
+          {/* Submit button & Moderation info */}
+          <div className="pt-2 pb-6 space-y-2">
             <button
               id="submit-snap-btn"
               onClick={handleSubmit}
-              disabled={!pandalName.trim() || !preview || submitting}
+              disabled={!pandalName.trim() || !selectedFile || submitting}
               className="w-full py-3.5 rounded-2xl text-white font-extrabold text-sm transition-all active:scale-95 disabled:opacity-40"
               style={{
-                background: (!pandalName.trim() || !preview || submitting) ? 'rgba(255,107,0,0.3)' : 'linear-gradient(135deg, #FF6B00, #C0392B)',
-                boxShadow: (!pandalName.trim() || !preview || submitting) ? 'none' : '0 8px 32px rgba(255,107,0,0.4)',
+                background: (!pandalName.trim() || !selectedFile || submitting) ? 'rgba(255,107,0,0.3)' : 'linear-gradient(135deg, #FF6B00, #C0392B)',
+                boxShadow: (!pandalName.trim() || !selectedFile || submitting) ? 'none' : '0 8px 32px rgba(255,107,0,0.4)',
               }}
             >
-              {submitting ? 'Publishing...' : '🪔 Publish Snap to Live Map'}
+              {submitting ? 'Submitting to AI Moderation...' : '🪔 Submit Snap for Moderation'}
             </button>
+            <p className="text-white/40 text-[11px] text-center leading-relaxed">
+              🛡️ Submissions are screened by Gemini AI &amp; verified before publishing live to the public map.
+            </p>
           </div>
         </div>
       )}
@@ -685,6 +726,42 @@ function FeedCard({ post, onClick }: { post: SnapPost; onClick: () => void }) {
       </svg>
     </button>
   )
+}
+
+function mapSupabaseRowToSnapPost(row: SupabaseSubmissionRow): SnapPost {
+  const meta = row.metadata || {}
+  const pandalName = row.pandal_name || meta.pandalName || meta.pandal || 'Durga Pandal'
+  const neighborhood = row.neighborhood_col || meta.neighborhood || 'Agartala'
+  const lat = typeof row.lat === 'number' ? row.lat : Number(meta.lat ?? AGARTALA_CENTER.lat)
+  const lng = typeof row.lng === 'number' ? row.lng : Number(meta.lng ?? AGARTALA_CENTER.lng)
+  const mediaUrl = row.image_url || row.image_path || meta.mediaUrl || meta.imageUrl || '/logo.png'
+  const userName = row.user_name || meta.userName || meta.uploader || 'Devotee'
+  const userAvatar = meta.userAvatar || meta.avatar || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(userName)}&backgroundColor=ffdfbf`
+
+  return {
+    id: String(row.id),
+    userId: meta.userId || 'devotee',
+    userName,
+    uploader: userName,
+    userAvatar,
+    avatar: userAvatar,
+    mediaUrl,
+    imageUrl: mediaUrl,
+    mediaType: 'image',
+    pandalName,
+    pandal: pandalName,
+    neighborhood,
+    lat,
+    lng,
+    viewsCount: Number(meta.viewsCount || 0),
+    likesCount: Number(meta.likesCount || 0),
+    views: Number(meta.viewsCount || 0),
+    likes: Number(meta.likesCount || 0),
+    createdAt: row.published_at || row.created_at || new Date(),
+    timestamp: row.published_at ? new Date(row.published_at) : new Date(),
+    emoji: meta.emoji || '🪔',
+    locationSource: meta.locationSource || 'auto',
+  }
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
@@ -881,33 +958,48 @@ export default function App() {
     })
   }, [posts, mapReady])
 
-  // ── Handle new post submission ──
-  const handleNewPost = useCallback((data: Omit<SnapPost, 'id' | 'likes' | 'views' | 'timestamp'>) => {
-    const newPost: SnapPost = {
-      ...data,
-      id: uid(),
-      pandalName: data.pandalName || data.pandal || 'Durga Pandal',
-      pandal: data.pandalName || data.pandal || 'Durga Pandal',
-      mediaUrl: data.mediaUrl || data.imageUrl || '/logo.png',
-      imageUrl: data.mediaUrl || data.imageUrl || '/logo.png',
-      userName: data.userName || data.uploader || 'Devotee',
-      uploader: data.userName || data.uploader || 'Devotee',
-      userAvatar: data.userAvatar || data.avatar || '/logo.png',
-      avatar: data.userAvatar || data.avatar || '/logo.png',
-      mediaType: data.mediaType || 'image',
-      viewsCount: 0,
-      likesCount: 0,
-      createdAt: new Date(),
-      likes: 0,
-      views: 1,
-      timestamp: new Date(),
+  // ── Fetch approved submissions from Supabase ──
+  useEffect(() => {
+    let mounted = true
+    const loadApprovedSnaps = async () => {
+      try {
+        const rows = await fetchApprovedSubmissions()
+        if (mounted && rows && rows.length > 0) {
+          const mapped = rows.map(mapSupabaseRowToSnapPost)
+          setPosts(mapped)
+          console.log(`🗺️ Updated live map with ${mapped.length} approved pandal posts from Supabase.`)
+        }
+      } catch (err) {
+        console.warn('Could not load approved submissions from Supabase:', err)
+      }
     }
-    setPosts(prev => [newPost, ...prev])
-    showToast('🪔 Your Snap is live on the map!')
-    setTimeout(() => {
-      googleMapRef.current?.panTo({ lat: newPost.lat, lng: newPost.lng })
-      googleMapRef.current?.setZoom(16)
-    }, 500)
+
+    loadApprovedSnaps()
+    const interval = setInterval(loadApprovedSnaps, 25000)
+    return () => {
+      mounted = false
+      clearInterval(interval)
+    }
+  }, [])
+
+  // ── Handle photo submission for Gemini AI & Gmail HITL moderation ──
+  const handlePhotoSubmission = useCallback(async (payload: SubmissionPayload): Promise<boolean> => {
+    showToast('📤 Submitting photo to moderation pipeline...')
+    try {
+      console.log('📡 Submitting photo for moderation:', payload.pandalName)
+      const res = await submitPhotoToN8n(payload)
+      if (res.ok) {
+        showToast('⏳ Photo submitted! Under review and will appear on the map once approved.')
+        return true
+      } else {
+        showToast(`⚠️ Upload queued (status ${res.status}). Pending moderation approval.`)
+        return true
+      }
+    } catch (err) {
+      console.error('Submission failed:', err)
+      showToast('❌ Submission failed. Please check network connection.')
+      return false
+    }
   }, [showToast])
 
   const handleLocateMe = () => {
@@ -1028,6 +1120,10 @@ export default function App() {
               <div className="flex items-center gap-1.5 truncate">
                 <span className="text-white font-bold text-sm sm:text-base tracking-tight truncate">
                   Puja <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-orange-400 font-extrabold">Parikrama</span>
+                </span>
+                <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  {liveCount} live
                 </span>
               </div>
             </div>
@@ -1268,7 +1364,7 @@ export default function App() {
                             <p className="text-white/60 text-xs truncate mb-1">{p.neighborhood}</p>
                             <div className="flex items-center gap-2 flex-wrap">
                               <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                                {rank === 1 ? '🔥 #1 Trending' : rank === 2 ? '⭐ #2 Popular' : rank === 3 ? '✨ #3 Top Rated' : `👁️ ${p.views.toLocaleString()} views`}
+                                {rank === 1 ? '🔥 #1 Trending' : rank === 2 ? '⭐ #2 Popular' : rank === 3 ? '✨ #3 Top Rated' : `👁️ ${(p.views ?? p.viewsCount ?? 0).toLocaleString()} views`}
                               </span>
                               <span className="text-white/40 text-[11px]">❤️ {p.likes}</span>
                             </div>
@@ -1372,7 +1468,7 @@ export default function App() {
         currentUser={user}
         onRequireAuth={() => setAuthModalVisible(true)}
         onClose={() => setUploadVisible(false)}
-        onSubmit={handleNewPost}
+        onSubmit={handlePhotoSubmission}
       />
 
       {/* ── TOAST ── */}

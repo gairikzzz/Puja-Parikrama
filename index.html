@@ -691,9 +691,9 @@
 
       <!-- Main Scrollable Content -->
       <div class="space-y-4">
-        <!-- Hidden file inputs (Images and Videos) -->
-        <input type="file" id="camera-input" accept="image/*,video/*" capture="environment" class="hidden">
-        <input type="file" id="gallery-input" accept="image/*,video/*" class="hidden">
+        <!-- Hidden file inputs (Images only for moderation) -->
+        <input type="file" id="camera-input" accept="image/*" capture="environment" class="hidden">
+        <input type="file" id="gallery-input" accept="image/*" class="hidden">
 
         <!-- 1. Media Preview Area -->
         <div id="preview-box" class="w-full h-44 sm:h-48 rounded-2xl border-2 border-dashed border-white/20 bg-white/5 flex flex-col items-center justify-center relative overflow-hidden group">
@@ -785,6 +785,21 @@
           </div>
         </div>
 
+        <!-- Neighborhood / Locality Input -->
+        <div>
+          <label class="block text-xs font-semibold text-white/60 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+            <span>Neighborhood / Locality *</span>
+            <span class="text-[10px] text-amber-300/80 font-normal">e.g. Usha Bazar, Banamalipur</span>
+          </label>
+          <input 
+            id="input-neighborhood" 
+            type="text" 
+            placeholder="e.g. Usha Bazar, Banamalipur, Dhaleswar..." 
+            autocomplete="off"
+            class="w-full bg-white/5 border border-white/15 rounded-xl px-3.5 py-3 text-white text-xs sm:text-sm focus:outline-none focus:border-amber-400 transition"
+          >
+        </div>
+
         <!-- 4. Interactive Mini-Map Pin Picker (Confirmation) -->
         <div class="space-y-1.5">
           <div class="flex items-center justify-between">
@@ -829,13 +844,18 @@
         </div>
 
         <!-- 6. Submit Button -->
-        <button 
-          id="btn-submit-snap" 
-          disabled 
-          class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-saffron to-puja-crimson text-white font-extrabold text-sm sm:text-base flex items-center justify-center gap-2 shadow-xl shadow-saffron/25 disabled:opacity-40 disabled:cursor-not-allowed active:scale-98 transition flex-shrink-0"
-        >
-          <span>🪔</span> Publish Snap to Live Map
-        </button>
+        <div class="space-y-2">
+          <button 
+            id="btn-submit-snap" 
+            disabled 
+            class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-saffron to-puja-crimson text-white font-extrabold text-sm sm:text-base flex items-center justify-center gap-2 shadow-xl shadow-saffron/25 disabled:opacity-40 disabled:cursor-not-allowed active:scale-98 transition flex-shrink-0"
+          >
+            <span>🪔</span> Submit Snap for Moderation
+          </button>
+          <p class="text-white/40 text-[11px] text-center leading-relaxed">
+            🛡️ Submissions are screened by Gemini AI &amp; verified before publishing live to the public map.
+          </p>
+        </div>
       </div>
     </div>
   </div>
@@ -1837,6 +1857,97 @@
       return capturedMediaData || 'logo.png';
     }
 
+    /* ── N8N PARIKRAMA WEBHOOK INTEGRATION (MULTIPART/FORM-DATA) ── */
+    const PARIKRAMA_WEBHOOK_URL = 'https://gairikz8.app.n8n.cloud/webhook/parikrama-upload';
+
+    async function sendSnapToWebhook(snapData) {
+      try {
+        console.log('📡 Dispatching multipart/form-data to Parikrama n8n webhook:', PARIKRAMA_WEBHOOK_URL);
+        const formData = new FormData();
+        if (selectedMediaBlobFile) {
+          formData.append('photo', selectedMediaBlobFile, selectedMediaBlobFile.name || 'pandal-snap.jpg');
+        }
+        formData.append('pandalName', snapData.pandalName);
+        formData.append('neighborhood', snapData.neighborhood || 'Agartala');
+        formData.append('userName', snapData.userName || 'Devotee');
+        formData.append('userId', snapData.userId || 'anon-user');
+        formData.append('userAvatar', snapData.userAvatar || '');
+        formData.append('lat', String(snapData.lat));
+        formData.append('lng', String(snapData.lng));
+        formData.append('source', typeof currentMediaSource !== 'undefined' ? currentMediaSource : 'gallery');
+        formData.append('locationSource', snapData.locationSource || 'auto');
+
+        const res = await fetch(PARIKRAMA_WEBHOOK_URL, {
+          method: 'POST',
+          body: formData
+        });
+
+        if (res.ok) {
+          console.log('✅ n8n webhook received submission successfully!');
+          showToast('⏳ Photo submitted! Under review and will appear once approved.');
+          return true;
+        } else {
+          console.warn('⚠️ Webhook returned status:', res.status, res.statusText);
+          showToast(`⚠️ Upload queued (status ${res.status}). Pending moderation approval.`);
+          return true;
+        }
+      } catch (err) {
+        console.warn('⚠️ Could not connect to webhook:', err);
+        showToast('❌ Submission failed. Please check network connection.');
+      }
+      return false;
+    }
+
+    /* ── SUPABASE APPROVED POSTS INTEGRATION ── */
+    const SUPABASE_URL = 'https://whtbepsvagdvvauhrlji.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_DT8Uh9fYZPfWhNsP6xZRgA_Tr9i2vmy';
+
+    async function fetchSupabaseApprovedSnaps() {
+      if (!SUPABASE_URL || SUPABASE_URL.includes('your-project') || !SUPABASE_ANON_KEY || SUPABASE_ANON_KEY.includes('your-anon-key')) {
+        return [];
+      }
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/submissions?status=eq.approved&select=*&order=published_at.desc`, {
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+          }
+        });
+        if (res.ok) {
+          const rows = await res.json();
+          return rows.map(r => {
+            const meta = r.metadata || {};
+            const pandal = r.pandal_name || meta.pandalName || meta.pandal || 'Durga Pandal';
+            const neighborhood = meta.neighborhood || 'Agartala';
+            const lat = Number(r.lat ?? meta.lat ?? 23.8315);
+            const lng = Number(r.lng ?? meta.lng ?? 91.2868);
+            const imageUrl = r.image_url || r.image_path || meta.mediaUrl || meta.imageUrl || 'logo.png';
+            const uploader = r.user_name || meta.userName || meta.uploader || 'Devotee';
+            return {
+              id: String(r.id),
+              pandal,
+              pandalName: pandal,
+              neighborhood,
+              lat,
+              lng,
+              imageUrl,
+              mediaUrl: imageUrl,
+              uploader,
+              userName: uploader,
+              avatar: meta.userAvatar || meta.avatar || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(uploader)}&backgroundColor=ffdfbf`,
+              time: 'Recently Approved',
+              views: String(meta.viewsCount || 0),
+              likes: Number(meta.likesCount || 0),
+              emoji: meta.emoji || '🪔',
+            };
+          });
+        }
+      } catch (err) {
+        console.warn('Supabase fetch notice in index.html:', err);
+      }
+      return [];
+    }
+
     /* ── FIREBASE FIRESTORE REAL-TIME SCHEMA & SYNC ── */
     async function pushSnapToFirestore(snapData) {
       if (firestoreDb && isRealFirebaseConfig) {
@@ -1860,22 +1971,10 @@
           console.warn('Firestore push notice:', err);
         }
       }
-      // Offline / local storage persistence fallback
-      saveLocalPersistedSnap(snapData);
       return snapData.id;
     }
 
-    function saveLocalPersistedSnap(newSnap) {
-      try {
-        const existing = JSON.parse(localStorage.getItem('puja_parikrama_snaps') || '[]');
-        existing.unshift(newSnap);
-        localStorage.setItem('puja_parikrama_snaps', JSON.stringify(existing.slice(0, 50)));
-      } catch (e) {
-        console.warn('Local storage write notice:', e);
-      }
-    }
-
-    function loadLocalPersistedSnaps() {
+    async function loadLocalPersistedSnaps() {
       try {
         const saved = localStorage.getItem('puja_parikrama_snaps');
         if (saved) {
@@ -1886,8 +1985,17 @@
         renderAllMapMarkers();
         renderRecentSnapsList();
         updateNearbyList();
+
+        // Check Supabase for newly approved photos
+        const approved = await fetchSupabaseApprovedSnaps();
+        if (approved && approved.length > 0) {
+          snapsData = approved;
+          renderAllMapMarkers();
+          renderRecentSnapsList();
+          updateNearbyList();
+        }
       } catch (e) {
-        console.warn('Local storage read notice:', e);
+        console.warn('Local storage / Supabase read notice:', e);
         snapsData = [];
       }
     }
@@ -2097,6 +2205,8 @@
       if (!matchResult || !matchResult.nearest) return;
       if (matchResult.isClose && autoFillInputs && !inputPandalName.value.trim()) {
         inputPandalName.value = matchResult.nearest.name;
+        const nbInput = document.getElementById('input-neighborhood');
+        if (nbInput && !nbInput.value.trim()) nbInput.value = matchResult.nearest.neighborhood;
         validateUploadForm();
       }
     }
@@ -2123,6 +2233,8 @@
 
         item.addEventListener('click', () => {
           inputPandalName.value = p.name;
+          const nbInput = document.getElementById('input-neighborhood');
+          if (nbInput) nbInput.value = p.neighborhood;
           validateUploadForm();
 
           // Reposition pin to this verified pandal
@@ -2532,29 +2644,24 @@
         createdAt: serverTimestamp()
       };
 
-      // 3. Push to Firestore collection 'snaps'
-      const docId = await pushSnapToFirestore(snapDocData);
+      const inputNeighborhood = document.getElementById('input-neighborhood');
+      const neighborhoodVal = (inputNeighborhood ? inputNeighborhood.value.trim() : '') || 'Agartala';
 
-      // 4. If offline / demo mode, update local UI state immediately
-      if (!isRealFirebaseConfig) {
-        const localSnap = {
-          ...snapDocData,
-          id: docId || ('snap-' + Date.now()),
-          pandal: pandalName,
-          uploader: snapDocData.userName,
-          avatar: snapDocData.userAvatar,
-          imageUrl: finalMediaUrl,
-          time: 'Just now',
-          views: '0',
-          likes: 0,
-          emoji: '🪔'
-        };
-        addDynamicPinAndSync(localSnap);
-      }
+      // 3. Dispatch multipart/form-data to n8n Webhook for Gemini AI & Gmail HITL moderation
+      await sendSnapToWebhook({
+        ...snapDocData,
+        pandal: pandalName,
+        neighborhood: neighborhoodVal,
+        uploader: snapDocData.userName,
+        avatar: snapDocData.userAvatar,
+        locationSource: (typeof currentStrategyBadgeText !== 'undefined' ? currentStrategyBadgeText : 'auto'),
+        timestamp: new Date().toISOString()
+      });
 
-      // 5. Reset form & close modal
+      // 4. Reset form & close modal (Publishing gated until moderation approval)
       uploadModal.classList.remove('active');
       inputPandalName.value = '';
+      if (inputNeighborhood) inputNeighborhood.value = '';
       capturedMediaData = null;
       selectedMediaBlobFile = null;
       capturedMediaType = 'image';
@@ -2567,9 +2674,7 @@
       placeholderContent.classList.remove('hidden');
       document.getElementById('media-change-badge')?.classList.add('hidden');
       btnSubmitSnap.disabled = true;
-      btnSubmitSnap.innerHTML = `<span>🪔</span> Publish Snap to Live Map`;
-
-      showToast(`🎉 "${pandalName}" published live to the map!`);
+      btnSubmitSnap.innerHTML = `<span>🪔</span> Submit Snap for Moderation`;
     });
 
     /* ── Recenter Map Button (Pans to Live User Location) ── */
