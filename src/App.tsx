@@ -1467,13 +1467,13 @@ export default function App() {
         </header>
       )}
 
-      {/* ── 1. SPOTIFY MUSIC PLAYER (Positioned on the Left, Header Themed, Plus Button Removed) ── */}
+      {/* ── 1. SPOTIFY MUSIC PLAYER (Elongated Length, Compact Height, Smaller Non-Overlapping Buttons) ── */}
       {mapReady && (
         <div
           id="spotify-music-player-bar"
-          className="fixed left-3 sm:left-6 bottom-4 sm:bottom-5 z-30 w-auto max-w-[calc(50%-34px)] sm:max-w-[360px] md:max-w-[400px] pointer-events-auto select-none overflow-hidden backdrop-blur-[3px] bg-gradient-to-r from-[#210c32]/50 via-[#2d1142]/45 to-[#1c082b]/50 border-[1.5px] border-[#d4af37]/60 rounded-full px-2.5 sm:px-3.5 py-1.5 h-12 sm:h-14 flex items-center justify-between gap-1.5 sm:gap-3 shadow-[0_4px_20px_rgba(0,0,0,0.35),0_0_12px_rgba(212,175,55,0.18)] transition-all"
+          className="fixed left-3 sm:left-6 bottom-4 sm:bottom-5 z-30 w-[calc(100vw-84px)] sm:w-[440px] md:w-[480px] max-w-[480px] pointer-events-auto select-none overflow-hidden backdrop-blur-[3px] bg-gradient-to-r from-[#210c32]/50 via-[#2d1142]/45 to-[#1c082b]/50 border-[1.5px] border-[#d4af37]/70 rounded-full px-3 sm:px-4 py-1.5 h-13 sm:h-14 flex items-center justify-between gap-2.5 sm:gap-4 shadow-[0_4px_20px_rgba(0,0,0,0.35),0_0_12px_rgba(212,175,55,0.2)] transition-all"
         >
-          {/* Left: Album Cover, Title, Artist */}
+          {/* Left: Album Cover + Title + Artist */}
           <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-shrink">
             <a
               href={currentTrack.spotifyUrl}
@@ -1485,122 +1485,94 @@ export default function App() {
               <img
                 src={currentTrack.cover}
                 alt={currentTrack.title}
-                className="w-8 h-8 sm:w-9 sm:h-9 rounded-[4px] object-cover border border-white/10 shadow group-hover:scale-105 transition-transform"
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-[7px] object-cover border border-white/10 shadow group-hover:scale-105 transition-transform"
               />
             </a>
 
-            <div className="flex flex-col min-w-0 pr-0.5">
+            <div className="flex flex-col min-w-0 pr-1">
               <a
                 href={currentTrack.spotifyUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs sm:text-sm font-semibold text-white hover:text-amber-200 truncate leading-tight transition"
+                className="text-xs sm:text-sm font-bold text-white hover:text-amber-200 truncate leading-tight transition"
               >
                 {currentTrack.title}
               </a>
-              <span className="text-[10px] sm:text-[11px] text-white/50 truncate leading-tight">
+              <span className="text-[10px] sm:text-[11px] text-white/50 truncate leading-tight mt-0.5">
                 {currentTrack.artist}
               </span>
             </div>
           </div>
 
-          {/* Controls: Compact Play/Pause on mobile, Full Controls + Scrubber on sm+ */}
-          <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
-            {/* Desktop Scrubber & Prev/Next */}
-            <div className="hidden sm:flex flex-col items-center justify-center gap-0.5 px-1 min-w-[130px] md:min-w-[160px]">
-              <div className="flex items-center gap-2.5">
-                <button
-                  type="button"
-                  onClick={handlePrevTrack}
-                  title="Previous"
-                  className="text-white/70 hover:text-white transition"
-                >
-                  <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 16 16">
-                    <path d="M3.3 1a.7.7 0 0 1 .7.7v5.15l9.95-5.744a.7.7 0 0 1 1.05.606v12.576a.7.7 0 0 1-1.05.607L4 9.149V14.3a.7.7 0 0 1-.7.7H1.7a.7.7 0 0 1-.7-.7V1.7a.7.7 0 0 1 .7-.7h1.6z"/>
+          {/* Right: Smaller Controls & Thin Scrubber (Ample padding, No Boundary Overlap) */}
+          <div className="flex flex-col items-center justify-center gap-0.5 min-w-[130px] sm:min-w-[170px] md:min-w-[190px] flex-shrink-0 pr-1">
+            {/* Small Playback Controls Row */}
+            <div className="flex items-center gap-2 sm:gap-3">
+              <button
+                type="button"
+                onClick={handlePrevTrack}
+                title="Previous"
+                className="text-white/70 hover:text-white transition p-0.5"
+              >
+                <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-current" viewBox="0 0 16 16">
+                  <path d="M3.3 1a.7.7 0 0 1 .7.7v5.15l9.95-5.744a.7.7 0 0 1 1.05.606v12.576a.7.7 0 0 1-1.05.607L4 9.149V14.3a.7.7 0 0 1-.7.7H1.7a.7.7 0 0 1-.7-.7V1.7a.7.7 0 0 1 .7-.7h1.6z"/>
+                </svg>
+              </button>
+
+              <button
+                type="button"
+                onClick={togglePlayPause}
+                title={isPlaying ? "Pause" : "Play"}
+                className="w-6 h-6 sm:w-6.5 sm:h-6.5 rounded-full bg-white text-black hover:scale-105 active:scale-95 flex items-center justify-center transition shadow-md flex-shrink-0"
+              >
+                {isPlaying ? (
+                  <svg className="w-2.5 h-2.5 fill-black" viewBox="0 0 16 16">
+                    <path d="M2.7 1a.7.7 0 0 0-.7.7v12.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7H2.7zm8 0a.7.7 0 0 0-.7.7v12.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7h-2.6z"/>
                   </svg>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={togglePlayPause}
-                  title={isPlaying ? "Pause" : "Play"}
-                  className="w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-full bg-white text-black hover:scale-105 active:scale-95 flex items-center justify-center transition shadow-lg flex-shrink-0"
-                >
-                  {isPlaying ? (
-                    <svg className="w-3 h-3 fill-black" viewBox="0 0 16 16">
-                      <path d="M2.7 1a.7.7 0 0 0-.7.7v12.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7H2.7zm8 0a.7.7 0 0 0-.7.7v12.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7h-2.6z"/>
-                    </svg>
-                  ) : (
-                    <svg className="w-3 h-3 ml-0.5 fill-black" viewBox="0 0 16 16">
-                      <path d="M3 1.713a.7.7 0 0 1 1.05-.607l10.89 6.288a.7.7 0 0 1 0 1.212L4.05 14.894A.7.7 0 0 1 3 14.288V1.713z"/>
-                    </svg>
-                  )}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleNextTrack}
-                  title="Next"
-                  className="text-white/70 hover:text-white transition"
-                >
-                  <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 16 16">
-                    <path d="M12.7 1a.7.7 0 0 0-.7.7v5.15L2.05.106A.7.7 0 0 0 1 .712v12.576a.7.7 0 0 0 1.05.607L12 8.149V14.3a.7.7 0 0 0 .7.7h1.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7h-1.6z"/>
+                ) : (
+                  <svg className="w-2.5 h-2.5 ml-0.5 fill-black" viewBox="0 0 16 16">
+                    <path d="M3 1.713a.7.7 0 0 1 1.05-.607l10.89 6.288a.7.7 0 0 1 0 1.212L4.05 14.894A.7.7 0 0 1 3 14.288V1.713z"/>
                   </svg>
-                </button>
-              </div>
+                )}
+              </button>
 
-              {/* Progress Scrubber Bar */}
-              <div className="flex items-center gap-1.5 w-full text-[9px] sm:text-[10px] font-mono text-white/50">
-                <span className="w-5 text-right">{formatSongTime(currentTimeSec)}</span>
-                <div
-                  onClick={handleScrubberClick}
-                  className="relative flex-1 h-1 bg-white/20 hover:h-1.5 rounded-full overflow-hidden cursor-pointer group transition-all"
-                >
-                  <div
-                    className="h-full bg-white group-hover:bg-[#1db954] transition-all"
-                    style={{ width: `${Math.min(100, (currentTimeSec / currentTrack.durationSec) * 100)}%` }}
-                  />
-                </div>
-                <span className="w-5 text-left">{formatSongTime(currentTrack.durationSec)}</span>
-              </div>
+              <button
+                type="button"
+                onClick={handleNextTrack}
+                title="Next"
+                className="text-white/70 hover:text-white transition p-0.5"
+              >
+                <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-current" viewBox="0 0 16 16">
+                  <path d="M12.7 1a.7.7 0 0 0-.7.7v5.15L2.05.106A.7.7 0 0 0 1 .712v12.576a.7.7 0 0 0 1.05.607L12 8.149V14.3a.7.7 0 0 0 .7.7h1.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7h-1.6z"/>
+                </svg>
+              </button>
             </div>
 
-            {/* Mobile Play/Pause circular button */}
-            <button
-              type="button"
-              onClick={togglePlayPause}
-              title={isPlaying ? "Pause" : "Play"}
-              className="sm:hidden w-7 h-7 rounded-full bg-white text-black hover:scale-105 active:scale-95 flex items-center justify-center transition shadow-lg flex-shrink-0"
-            >
-              {isPlaying ? (
-                <svg className="w-3 h-3 fill-black" viewBox="0 0 16 16">
-                  <path d="M2.7 1a.7.7 0 0 0-.7.7v12.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7H2.7zm8 0a.7.7 0 0 0-.7.7v12.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7h-2.6z"/>
-                </svg>
-              ) : (
-                <svg className="w-3 h-3 ml-0.5 fill-black" viewBox="0 0 16 16">
-                  <path d="M3 1.713a.7.7 0 0 1 1.05-.607l10.89 6.288a.7.7 0 0 1 0 1.212L4.05 14.894A.7.7 0 0 1 3 14.288V1.713z"/>
-                </svg>
-              )}
-            </button>
-          </div>
-
-          {/* Mobile Bottom Mini Progress Bar */}
-          <div className="sm:hidden absolute left-3 right-3 bottom-0 h-[2px] bg-white/10 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-amber-400 transition-all"
-              style={{ width: `${Math.min(100, (currentTimeSec / currentTrack.durationSec) * 100)}%` }}
-            />
+            {/* Scrubber Bar Row */}
+            <div className="flex items-center gap-1.5 w-full text-[9px] sm:text-[10px] font-mono text-white/50">
+              <span className="w-5 text-right">{formatSongTime(currentTimeSec)}</span>
+              <div
+                onClick={handleScrubberClick}
+                className="relative flex-1 h-[2px] sm:h-[2.5px] bg-white/20 hover:h-1 rounded-full overflow-hidden cursor-pointer group transition-all"
+              >
+                <div
+                  className="h-full bg-white/80 group-hover:bg-[#1db954] transition-all"
+                  style={{ width: `${Math.min(100, (currentTimeSec / currentTrack.durationSec) * 100)}%` }}
+                />
+              </div>
+              <span className="w-5 text-left">{formatSongTime(currentTrack.durationSec)}</span>
+            </div>
           </div>
         </div>
       )}
 
-      {/* ── 2. SNAP PANDAL CTA IN THE MIDDLE OF THE SCREEN ── */}
+      {/* ── 2. SNAP PANDAL CTA (Matching Height, Positioned on Right) ── */}
       {mapReady && (
         <button
           id="camera-btn"
           onClick={() => setUploadVisible(true)}
           title="Snap Pandal"
-          className="fixed bottom-4 sm:bottom-5 left-1/2 -translate-x-1/2 z-30 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-amber-500 via-amber-300 to-amber-100 flex items-center justify-center border-2 sm:border-[3px] border-[#180924] shadow-[0_0_30px_rgba(251,191,36,0.65),0_0_12px_rgba(212,175,55,0.45)] hover:shadow-[0_0_40px_rgba(251,191,36,0.85)] active:scale-95 transition-all pointer-events-auto flex-shrink-0"
+          className="fixed bottom-4 sm:bottom-5 right-3 sm:right-6 z-30 w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-amber-500 via-amber-300 to-amber-100 flex items-center justify-center border-2 sm:border-[3px] border-[#180924] shadow-[0_0_30px_rgba(251,191,36,0.7),0_0_12px_rgba(212,175,55,0.45)] hover:shadow-[0_0_40px_rgba(251,191,36,0.9)] active:scale-95 transition-all pointer-events-auto flex-shrink-0"
         >
           <svg className="w-5 h-5 sm:w-6 sm:h-6 text-[#1c0a2b]" viewBox="0 0 24 24" fill="currentColor">
             <path d="M9 3L7.17 5H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2h-3.17L15 3H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z" />
@@ -1609,15 +1581,15 @@ export default function App() {
         </button>
       )}
 
-      {/* ── 3. RECENTER / LOCATE ME BUTTON ON THE RIGHT ── */}
+      {/* ── 3. RECENTER / LOCATE ME BUTTON (Floating above the CTA) ── */}
       {mapReady && (
         <button
           id="btn-recenter"
           onClick={handleLocateMe}
           title="Locate My Position"
-          className="fixed right-3 sm:right-6 bottom-4 sm:bottom-5 z-30 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#1e0f2b]/85 hover:bg-[#2e1742] border border-amber-400/40 text-amber-300 flex items-center justify-center shadow-xl backdrop-blur-md transition active:scale-90 pointer-events-auto flex-shrink-0"
+          className="fixed right-4 sm:right-7 bottom-20 sm:bottom-22 z-30 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-[#1e0f2b]/85 hover:bg-[#2e1742] border border-amber-400/40 text-amber-300 flex items-center justify-center shadow-xl backdrop-blur-md transition active:scale-90 pointer-events-auto flex-shrink-0"
         >
-          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+          <svg className="w-4.5 h-4.5" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
           </svg>
         </button>
