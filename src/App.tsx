@@ -982,6 +982,7 @@ export default function App() {
   const [leaderboardModalVisible, setLeaderboardModalVisible] = useState(false)
   const [topSearchQuery, setTopSearchQuery] = useState('')
   const searchInputRef = useRef<HTMLInputElement>(null)
+  const [activeFilter, setActiveFilter] = useState<'recent' | 'trending' | 'nearby' | null>('recent')
 
   // Spotify Style Player State (matching user's screenshot & header aesthetic)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -1345,6 +1346,26 @@ export default function App() {
     }
   }
 
+  const handleToggleFilter = (filter: 'recent' | 'trending' | 'nearby') => {
+    setActiveFilter(prev => {
+      const next = prev === filter ? null : filter
+      if (next === 'recent') {
+        if (posts.length > 0) {
+          const sorted = [...posts].sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime())
+          if (sorted[0]) googleMapRef.current?.panTo({ lat: sorted[0].lat, lng: sorted[0].lng })
+        }
+      } else if (next === 'trending') {
+        if (posts.length > 0) {
+          const sorted = [...posts].sort((a, b) => ((b.likesCount || 0) * 4 + (b.viewsCount || 0)) - ((a.likesCount || 0) * 4 + (a.viewsCount || 0)))
+          if (sorted[0]) googleMapRef.current?.panTo({ lat: sorted[0].lat, lng: sorted[0].lng })
+        }
+      } else if (next === 'nearby') {
+        handleLocateMe()
+      }
+      return next
+    })
+  }
+
   return (
     <div className="relative w-full overflow-hidden font-inter" style={{ height: '100dvh', background: '#0a0a0f' }}>
 
@@ -1700,7 +1721,72 @@ export default function App() {
         </button>
       )}
 
-      {/* ── 3. RECENTER / LOCATE ME BUTTON (Parallel on Right) ── */}
+      {/* ── 3. PANDAL FILTERS (Right Hand Side of CTA: Recent / Trending / Nearby, Matching Music Player Length) ── */}
+      {mapReady && (
+        <div
+          id="pandal-filter-group"
+          className="fixed left-[calc(75%+14px)] -translate-x-1/2 bottom-4 sm:bottom-5 z-30 w-[calc(50%-24px)] max-w-[560px] min-w-[320px] pointer-events-auto select-none flex items-center justify-between gap-1.5 sm:gap-2.5 h-13 sm:h-14"
+        >
+          {/* Recent Filter */}
+          <button
+            type="button"
+            id="filter-btn-recent"
+            onClick={() => handleToggleFilter('recent')}
+            title="Filter by Recent Pandals"
+            className={`flex-1 h-full rounded-2xl flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all cursor-pointer active:scale-95 ${
+              activeFilter === 'recent'
+                ? 'bg-gradient-to-b from-[#2e1245] via-[#240e34] to-[#1c0a2b] border-[1.5px] border-amber-400 text-amber-300 shadow-[0_0_14px_rgba(251,191,36,0.45)]'
+                : 'bg-[#1c0a2b]/90 hover:bg-[#250d38] border border-amber-400/50 hover:border-amber-300 text-amber-200/80 hover:text-white shadow-[0_0_8px_rgba(251,191,36,0.2)] hover:shadow-[0_0_14px_rgba(251,191,36,0.35)]'
+            }`}
+          >
+            <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors ${activeFilter === 'recent' ? 'text-amber-300' : 'text-amber-300/80'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+            <span className={`text-[10px] sm:text-xs leading-tight tracking-wide ${activeFilter === 'recent' ? 'text-amber-300 font-bold' : 'text-amber-200 font-semibold'}`}>Recent</span>
+          </button>
+
+          {/* Trending Filter */}
+          <button
+            type="button"
+            id="filter-btn-trending"
+            onClick={() => handleToggleFilter('trending')}
+            title="Filter by Trending Pandals"
+            className={`flex-1 h-full rounded-2xl flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all cursor-pointer active:scale-95 ${
+              activeFilter === 'trending'
+                ? 'bg-gradient-to-b from-[#2e1245] via-[#240e34] to-[#1c0a2b] border-[1.5px] border-amber-400 text-amber-300 shadow-[0_0_14px_rgba(251,191,36,0.45)]'
+                : 'bg-[#1c0a2b]/90 hover:bg-[#250d38] border border-amber-400/50 hover:border-amber-300 text-amber-200/80 hover:text-white shadow-[0_0_8px_rgba(251,191,36,0.2)] hover:shadow-[0_0_14px_rgba(251,191,36,0.35)]'
+            }`}
+          >
+            <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors ${activeFilter === 'trending' ? 'text-amber-300' : 'text-amber-300/80'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+              <polyline points="17 6 23 6 23 12" />
+            </svg>
+            <span className={`text-[10px] sm:text-xs leading-tight tracking-wide ${activeFilter === 'trending' ? 'text-amber-300 font-bold' : 'text-amber-200 font-semibold'}`}>Trending</span>
+          </button>
+
+          {/* Nearby Filter */}
+          <button
+            type="button"
+            id="filter-btn-nearby"
+            onClick={() => handleToggleFilter('nearby')}
+            title="Filter by Nearby Pandals"
+            className={`flex-1 h-full rounded-2xl flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all cursor-pointer active:scale-95 ${
+              activeFilter === 'nearby'
+                ? 'bg-gradient-to-b from-[#2e1245] via-[#240e34] to-[#1c0a2b] border-[1.5px] border-amber-400 text-amber-300 shadow-[0_0_14px_rgba(251,191,36,0.45)]'
+                : 'bg-[#1c0a2b]/90 hover:bg-[#250d38] border border-amber-400/50 hover:border-amber-300 text-amber-200/80 hover:text-white shadow-[0_0_8px_rgba(251,191,36,0.2)] hover:shadow-[0_0_14px_rgba(251,191,36,0.35)]'
+            }`}
+          >
+            <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors ${activeFilter === 'nearby' ? 'text-amber-300' : 'text-amber-300/80'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+              <circle cx="12" cy="13" r="4" />
+            </svg>
+            <span className={`text-[10px] sm:text-xs leading-tight tracking-wide ${activeFilter === 'nearby' ? 'text-amber-300 font-bold' : 'text-amber-200 font-semibold'}`}>Nearby</span>
+          </button>
+        </div>
+      )}
+
+      {/* ── 4. RECENTER / LOCATE ME BUTTON (Parallel on Right) ── */}
       {mapReady && (
         <button
           id="btn-recenter"
