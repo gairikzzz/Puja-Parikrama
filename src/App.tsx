@@ -1506,7 +1506,7 @@ export default function App() {
       {mapReady && (
         <header className="fixed top-3 left-0 right-0 z-50 px-3 sm:px-6 pointer-events-none flex flex-col items-center w-full">
           {/* Main Pill Bar */}
-          <div className="relative overflow-visible backdrop-blur-md bg-[#211329]/70 border border-[#E9B83E]/40 rounded-full px-3 sm:px-4 py-1 h-10 sm:h-11 flex items-center justify-between w-full pointer-events-auto shadow-[0_4px_20px_rgba(13,12,27,0.5),0_0_8px_rgba(233,184,62,0.18)] transition-all">
+          <div className="relative overflow-visible backdrop-blur-lg bg-[#211329]/50 border border-[#E9B83E]/40 rounded-full px-3 sm:px-4 py-1 h-10 sm:h-11 flex items-center justify-between w-full pointer-events-auto shadow-[0_4px_24px_rgba(13,12,27,0.45),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.18)] transition-all">
 
             {/* Left Section: Transparent Glowing Durga Emblem & Bengali Typography */}
             <div className="relative flex items-center gap-1 sm:gap-1.5 min-w-0 z-10 flex-shrink-0 pr-1 sm:pr-2">
@@ -1549,7 +1549,7 @@ export default function App() {
 
               {/* Search Autocomplete Dropdown */}
               {topSearchResults.length > 0 && (
-                <div className="absolute top-full mt-2 left-0 right-0 bg-[#211329]/95 border border-[#E9B83E]/30 rounded-2xl p-2 shadow-2xl backdrop-blur-xl z-50 max-h-60 overflow-y-auto space-y-1">
+                <div className="absolute top-full mt-2 left-0 right-0 bg-[#211329]/75 border border-[#E9B83E]/30 rounded-2xl p-2 shadow-[0_12px_32px_rgba(13,12,27,0.65),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-xl z-50 max-h-60 overflow-y-auto space-y-1">
                   {topSearchResults.map(pandal => (
                     <div
                       key={pandal.name}
@@ -1586,7 +1586,7 @@ export default function App() {
                   id="btn-year-selector"
                   onClick={() => setYearDropdownOpen(o => !o)}
                   title="Select Puja Year"
-                  className="h-7 sm:h-7.5 px-2.5 sm:px-3 rounded-xl bg-[#211329]/90 hover:bg-[#2b1935] border border-[#E9B83E]/40 hover:border-[#E9B83E] flex items-center gap-1.5 text-[#F5E5B7] font-semibold text-[11px] sm:text-xs shadow-[0_0_8px_rgba(233,184,62,0.22)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] hover:scale-[1.02] active:scale-95 transition-all cursor-pointer"
+                  className="h-7 sm:h-7.5 px-2.5 sm:px-3 rounded-xl backdrop-blur-md bg-[#211329]/70 hover:bg-[#211329]/85 border border-[#E9B83E]/40 hover:border-[#E9B83E] flex items-center gap-1.5 text-[#F5E5B7] font-semibold text-[11px] sm:text-xs shadow-[0_0_8px_rgba(233,184,62,0.22),inset_0_1px_1px_rgba(255,255,255,0.10)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] hover:scale-[1.02] active:scale-95 transition-all cursor-pointer"
                 >
                   <span className="text-[#F5E5B7] text-[10px] sm:text-[11px] font-bold tracking-wide mr-2.5 sm:mr-3">Year</span>
                   <span className="text-[#E9B83E] font-bold">{selectedYear}</span>
@@ -1596,7 +1596,7 @@ export default function App() {
                 </button>
 
                 {yearDropdownOpen && (
-                  <div className="absolute top-full mt-2 right-0 bg-[#211329]/95 border border-[#E9B83E]/30 rounded-2xl p-2 shadow-2xl backdrop-blur-xl z-50 flex flex-col min-w-[120px] space-y-1 animate-in fade-in zoom-in-95 duration-150">
+                  <div className="absolute top-full mt-2 right-0 bg-[#211329]/75 border border-[#E9B83E]/30 rounded-2xl p-2 shadow-[0_12px_32px_rgba(13,12,27,0.65),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-xl z-50 flex flex-col min-w-[120px] space-y-1 animate-in fade-in zoom-in-95 duration-150">
                     {[2026, 2025].map(year => (
                       <button
                         key={year}
@@ -1641,7 +1641,7 @@ export default function App() {
                 type="button"
                 onClick={() => setAuthModalVisible(true)}
                 title="Guest Devotee Profile"
-                className="h-7 sm:h-7.5 px-2.5 sm:px-3 rounded-xl bg-[#211329]/90 border border-[#E9B83E]/40 hover:border-[#E9B83E] flex items-center gap-1.5 text-[#F5E5B7] font-semibold text-[11px] sm:text-xs shadow-[0_0_8px_rgba(233,184,62,0.22)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] hover:scale-[1.02] active:scale-95 transition-all flex-shrink-0 cursor-pointer"
+                className="h-7 sm:h-7.5 px-2.5 sm:px-3 rounded-xl backdrop-blur-md bg-[#211329]/70 hover:bg-[#211329]/85 border border-[#E9B83E]/40 hover:border-[#E9B83E] flex items-center gap-1.5 text-[#F5E5B7] font-semibold text-[11px] sm:text-xs shadow-[0_0_8px_rgba(233,184,62,0.22),inset_0_1px_1px_rgba(255,255,255,0.10)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] hover:scale-[1.02] active:scale-95 transition-all flex-shrink-0 cursor-pointer"
               >
                 <span>Profile</span>
                 <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#E9B83E] flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
@@ -1658,7 +1658,7 @@ export default function App() {
         <div className="fixed left-[calc(25%-14px)] -translate-x-1/2 bottom-4 sm:bottom-5 z-30 w-[calc(50%-24px)] max-w-[560px] min-w-[320px] pointer-events-auto select-none flex flex-col gap-2">
           {/* Spotify Official Interactive Playlist Embed Popup */}
           {spotifyEmbedVisible && (
-            <div className="w-full bg-[#211329]/95 border border-[#E9B83E]/40 rounded-2xl p-2.5 shadow-2xl backdrop-blur-xl animate-in fade-in slide-in-from-bottom-2 duration-200">
+            <div className="w-full bg-[#211329]/75 border border-[#E9B83E]/40 rounded-2xl p-2.5 shadow-[0_12px_32px_rgba(13,12,27,0.65),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-xl animate-in fade-in slide-in-from-bottom-2 duration-200">
               <div className="flex items-center justify-between pb-1.5 px-1 border-b border-[#E9B83E]/20 mb-2">
                 <div className="flex items-center gap-1.5">
                   <svg className="w-4 h-4 text-[#1db954] fill-current" viewBox="0 0 24 24">
@@ -1701,7 +1701,7 @@ export default function App() {
           {/* Main Custom Styled Music Player Pill Bar - SINGLE ROW LAYOUT MATCHING SNAP CTA DIAMETER */}
           <div
             id="spotify-music-player-bar"
-            className="w-full h-13 sm:h-14 overflow-hidden backdrop-blur-md bg-[#211329]/75 border border-[#E9B83E]/40 rounded-full px-2.5 sm:px-3.5 flex items-center justify-between gap-2 sm:gap-3 shadow-[0_4px_20px_rgba(13,12,27,0.5),0_0_10px_rgba(233,184,62,0.20)] transition-all"
+            className="w-full h-13 sm:h-14 overflow-hidden backdrop-blur-lg bg-[#211329]/55 border border-[#E9B83E]/40 rounded-full px-2.5 sm:px-3.5 flex items-center justify-between gap-2 sm:gap-3 shadow-[0_4px_24px_rgba(13,12,27,0.45),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_10px_rgba(233,184,62,0.20)] transition-all"
           >
             {/* Left: Album Cover + Title + Artist (Clean cover without badge, full un-truncated title) */}
             <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-shrink-0">
@@ -1840,10 +1840,10 @@ export default function App() {
             id="filter-btn-latest"
             onClick={() => handleToggleFilter('latest')}
             title="Filter by Latest Pandals"
-            className={`flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all cursor-pointer hover:scale-110 active:scale-95 backdrop-blur-md ${
+            className={`flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all cursor-pointer hover:scale-[1.02] active:scale-95 backdrop-blur-lg ${
               activeFilter === 'latest'
-                ? 'bg-[#211329]/90 border border-[#E9B83E] text-[#E9B83E] shadow-[0_0_10px_rgba(233,184,62,0.28),0_2px_12px_rgba(13,12,27,0.45)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]'
-                : 'bg-[#211329]/65 border border-[#E9B83E]/30 hover:border-[#E9B83E] text-[#F5E5B7]/80 hover:text-[#F5E5B7] shadow-[0_2px_10px_rgba(13,12,27,0.35)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]'
+                ? 'bg-[#211329]/70 border border-[#E9B83E] text-[#E9B83E] shadow-[0_0_12px_rgba(233,184,62,0.30),0_2px_12px_rgba(13,12,27,0.45),inset_0_1px_1px_rgba(255,255,255,0.15)] hover:shadow-[0_0_14px_rgba(233,184,62,0.45)]'
+                : 'bg-[#211329]/45 border border-[#E9B83E]/30 hover:border-[#E9B83E] text-[#F5E5B7]/80 hover:text-[#F5E5B7] shadow-[0_2px_10px_rgba(13,12,27,0.35),inset_0_1px_1px_rgba(255,255,255,0.08)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]'
             }`}
           >
             <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors ${activeFilter === 'latest' ? 'text-[#E9B83E]' : 'text-[#E9B83E]/80'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1859,10 +1859,10 @@ export default function App() {
             id="filter-btn-trending"
             onClick={() => handleToggleFilter('trending')}
             title="Filter by Trending Pandals"
-            className={`flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all cursor-pointer hover:scale-110 active:scale-95 backdrop-blur-md ${
+            className={`flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all cursor-pointer hover:scale-[1.02] active:scale-95 backdrop-blur-lg ${
               activeFilter === 'trending'
-                ? 'bg-[#211329]/90 border border-[#E9B83E] text-[#E9B83E] shadow-[0_0_10px_rgba(233,184,62,0.28),0_2px_12px_rgba(13,12,27,0.45)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]'
-                : 'bg-[#211329]/65 border border-[#E9B83E]/30 hover:border-[#E9B83E] text-[#F5E5B7]/80 hover:text-[#F5E5B7] shadow-[0_2px_10px_rgba(13,12,27,0.35)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]'
+                ? 'bg-[#211329]/70 border border-[#E9B83E] text-[#E9B83E] shadow-[0_0_12px_rgba(233,184,62,0.30),0_2px_12px_rgba(13,12,27,0.45),inset_0_1px_1px_rgba(255,255,255,0.15)] hover:shadow-[0_0_14px_rgba(233,184,62,0.45)]'
+                : 'bg-[#211329]/45 border border-[#E9B83E]/30 hover:border-[#E9B83E] text-[#F5E5B7]/80 hover:text-[#F5E5B7] shadow-[0_2px_10px_rgba(13,12,27,0.35),inset_0_1px_1px_rgba(255,255,255,0.08)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]'
             }`}
           >
             <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors ${activeFilter === 'trending' ? 'text-[#E9B83E]' : 'text-[#E9B83E]/80'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1878,10 +1878,10 @@ export default function App() {
             id="filter-btn-nearby"
             onClick={() => handleToggleFilter('nearby')}
             title="Filter by Nearby Pandals"
-            className={`flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all cursor-pointer hover:scale-110 active:scale-95 backdrop-blur-md ${
+            className={`flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all cursor-pointer hover:scale-[1.02] active:scale-95 backdrop-blur-lg ${
               activeFilter === 'nearby'
-                ? 'bg-[#211329]/90 border border-[#E9B83E] text-[#E9B83E] shadow-[0_0_10px_rgba(233,184,62,0.28),0_2px_12px_rgba(13,12,27,0.45)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]'
-                : 'bg-[#211329]/65 border border-[#E9B83E]/30 hover:border-[#E9B83E] text-[#F5E5B7]/80 hover:text-[#F5E5B7] shadow-[0_2px_10px_rgba(13,12,27,0.35)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]'
+                ? 'bg-[#211329]/70 border border-[#E9B83E] text-[#E9B83E] shadow-[0_0_12px_rgba(233,184,62,0.30),0_2px_12px_rgba(13,12,27,0.45),inset_0_1px_1px_rgba(255,255,255,0.15)] hover:shadow-[0_0_14px_rgba(233,184,62,0.45)]'
+                : 'bg-[#211329]/45 border border-[#E9B83E]/30 hover:border-[#E9B83E] text-[#F5E5B7]/80 hover:text-[#F5E5B7] shadow-[0_2px_10px_rgba(13,12,27,0.35),inset_0_1px_1px_rgba(255,255,255,0.08)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]'
             }`}
           >
             <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors ${activeFilter === 'nearby' ? 'text-[#E9B83E]' : 'text-[#E9B83E]/80'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1899,7 +1899,7 @@ export default function App() {
           id="btn-recenter"
           onClick={handleLocateMe}
           title="Locate My Position"
-          className="fixed right-3 sm:right-6 bottom-[74px] sm:bottom-[82px] z-30 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#211329]/90 hover:bg-[#2b1935] border border-[#E9B83E]/40 hover:border-[#E9B83E] text-[#F5E5B7] hover:text-[#E9B83E] flex items-center justify-center shadow-[0_4px_16px_rgba(13,12,27,0.5),0_0_8px_rgba(233,184,62,0.22)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] backdrop-blur-md transition-all active:scale-90 hover:scale-105 pointer-events-auto flex-shrink-0 cursor-pointer"
+          className="fixed right-3 sm:right-6 bottom-[74px] sm:bottom-[82px] z-30 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#211329]/70 hover:bg-[#211329]/85 border border-[#E9B83E]/40 hover:border-[#E9B83E] text-[#F5E5B7] hover:text-[#E9B83E] flex items-center justify-center shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.22)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] backdrop-blur-md transition-all active:scale-90 hover:scale-[1.02] pointer-events-auto flex-shrink-0 cursor-pointer"
         >
           <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
