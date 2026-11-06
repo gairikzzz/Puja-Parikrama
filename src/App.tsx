@@ -1057,51 +1057,38 @@ export default function App() {
         </div>
       )}
 
-      {/* ── 0. INTRO SPLASH SCREEN ANIMATION ("PARIKRAMA") ── */}
+      {/* ── 0. INTRO SPLASH SCREEN ("PUJA PARIKRAMA") ── */}
       {showSplash && (
         <div
           id="splash-screen"
-          className={`fixed inset-0 z-[9999] flex flex-col items-center justify-between py-12 px-6 bg-[#0F172A] select-none pointer-events-auto overflow-hidden transition-all duration-700 ease-in-out ${
+          className={`fixed inset-0 z-[9999] flex flex-col items-center justify-end pb-8 sm:pb-12 px-6 bg-[#0a0a14] select-none pointer-events-auto overflow-hidden transition-all duration-700 ease-in-out ${
             splashExiting ? 'scale-[1.08] opacity-0 pointer-events-none' : 'scale-100 opacity-100'
           }`}
         >
-          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle at 50% 45%, rgba(240, 180, 41, 0.16) 0%, rgba(255, 107, 0, 0.08) 35%, rgba(15, 23, 42, 0) 70%)' }} />
-          <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-24 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full bg-orange-600/10 blur-3xl pointer-events-none" />
+          {/* Responsive Platform Splash Background: Mobile vs Laptop/Desktop */}
+          <picture className="absolute inset-0 w-full h-full pointer-events-none select-none">
+            {/* Desktop / Laptop platforms (wide screens or landscape) */}
+            <source media="(min-width: 1024px)" srcSet="/splash-desktop.jpg" />
+            <source media="(min-width: 768px) and (orientation: landscape)" srcSet="/splash-desktop.jpg" />
+            {/* Mobile / Portrait platforms */}
+            <img
+              src="/splash-mobile.jpg"
+              alt="Puja Parikrama"
+              className="w-full h-full object-cover object-center"
+            />
+          </picture>
 
-          {/* Festive Top Emblem / Year Tag */}
-          <div className="relative z-10">
-            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-amber-400/20 backdrop-blur-md shadow-sm">
-              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-              <span className="text-[11px] font-semibold tracking-widest text-amber-200/90 uppercase">Durga Puja 2026</span>
-            </div>
-          </div>
-
-          {/* Centered Brand Identity: Official Logo & "PARIKRAMA" Typography */}
-          <div className="relative z-10 flex flex-col items-center text-center my-auto">
-            <div className="relative mb-6">
-              <div className="absolute -inset-4 rounded-full bg-gradient-to-tr from-amber-500/35 via-orange-500/25 to-puja-crimson/35 blur-xl animate-pulse" />
-              <div className="relative w-28 h-28 sm:w-36 sm:h-36 rounded-full p-1 bg-gradient-to-b from-[#FCE588] via-[#F0B429] to-[#C0392B] shadow-[0_12px_40px_rgba(240,180,41,0.4)] flex items-center justify-center overflow-hidden">
-                <img src="/logo.png" alt="Parikrama Official Logo" className="w-full h-full rounded-full object-cover" />
-              </div>
-            </div>
-
-            <h1 className="text-4xl sm:text-5xl font-black tracking-[0.25em] uppercase text-transparent bg-clip-text bg-gradient-to-r from-[#FFF7D6] via-[#F0B429] to-[#FF8833] drop-shadow-[0_4px_18px_rgba(240,180,41,0.45)] pl-[0.25em]">
-              PARIKRAMA
-            </h1>
-            <p className="text-xs sm:text-sm tracking-[0.35em] uppercase text-amber-200/80 font-semibold mt-3 pl-[0.35em]">
-              Agartala Puja Parikrama
-            </p>
-          </div>
+          {/* Subtle bottom vignette to ensure perfect loader contrast */}
+          <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-black/85 via-black/35 to-transparent pointer-events-none" />
 
           {/* Bottom pulse loader */}
-          <div className="relative z-10 flex flex-col items-center gap-2.5 mb-4">
+          <div className="relative z-10 flex flex-col items-center gap-2.5 mb-2 sm:mb-4">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
               <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
               <span className="w-2 h-2 rounded-full bg-amber-400" />
             </div>
-            <span className="text-xs font-medium tracking-widest text-amber-100/75 uppercase">
+            <span className="text-xs font-medium tracking-widest text-amber-100/90 uppercase drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]">
               Initializing Map &amp; GPS...
             </span>
           </div>
