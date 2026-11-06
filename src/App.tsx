@@ -1691,7 +1691,7 @@ export default function App() {
           id="camera-btn"
           onClick={() => setUploadVisible(true)}
           title="Snap Pandal"
-          className="fixed bottom-4 sm:bottom-5 left-1/2 -translate-x-1/2 z-30 w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-amber-500 via-amber-300 to-amber-100 flex items-center justify-center border-2 sm:border-[3px] border-[#180924] shadow-[0_0_30px_rgba(251,191,36,0.7),0_0_12px_rgba(212,175,55,0.45)] hover:shadow-[0_0_40px_rgba(251,191,36,0.9)] active:scale-95 transition-all pointer-events-auto flex-shrink-0"
+          className="fixed bottom-4 sm:bottom-5 left-1/2 -translate-x-1/2 z-30 w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-amber-500 via-amber-300 to-amber-100 flex items-center justify-center border-2 sm:border-[3px] border-[#180924] shadow-[0_0_22px_rgba(251,191,36,0.52),0_0_9px_rgba(212,175,55,0.34)] hover:shadow-[0_0_30px_rgba(251,191,36,0.68)] active:scale-95 transition-all pointer-events-auto flex-shrink-0"
         >
           <svg className="w-5 h-5 sm:w-6 sm:h-6 text-[#1c0a2b]" viewBox="0 0 24 24" fill="currentColor">
             <path d="M9 3L7.17 5H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2h-3.17L15 3H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z" />
