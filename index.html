@@ -90,6 +90,7 @@
     }
 
     @media (min-width: 768px) {
+      #splash-screen #splash-bg-wrapper,
       #splash-screen picture {
         top: -10px !important;
         height: calc(100% + 20px) !important;
@@ -385,23 +386,33 @@
   <!-- ── 0. INTRO SPLASH SCREEN ("PUJA PARIKRAMA") ── -->
   <div id="splash-screen" class="fixed inset-0 z-[9999] bg-[#0a0a14] select-none cursor-pointer pointer-events-auto overflow-hidden" title="Click to enter">
     <!-- Responsive Platform Splash Background: Mobile vs Laptop/Desktop (shifted 10px up on laptop) -->
-    <picture class="absolute inset-0 w-full h-full pointer-events-none select-none md:-top-[10px] md:h-[calc(100%+20px)]">
-      <!-- Desktop / Laptop platforms (wide screens or landscape) -->
-      <source media="(min-width: 1024px)" srcset="splash-desktop.jpg">
-      <source media="(min-width: 768px) and (orientation: landscape)" srcset="splash-desktop.jpg">
-      <!-- Mobile / Portrait platforms -->
-      <img src="splash-mobile.jpg" alt="Puja Parikrama" class="w-full h-full object-cover object-center md:object-top">
-    </picture>
+    <div id="splash-bg-wrapper" class="absolute inset-0 w-full h-full pointer-events-none select-none md:-top-[10px] md:h-[calc(100%+20px)]">
+      <picture class="w-full h-full">
+        <!-- Desktop / Laptop platforms (wide screens or landscape) -->
+        <source media="(min-width: 1024px)" srcset="splash-desktop.jpg">
+        <source media="(min-width: 768px) and (orientation: landscape)" srcset="splash-desktop.jpg">
+        <!-- Mobile / Portrait platforms -->
+        <img src="splash-mobile.jpg" alt="Puja Parikrama" class="w-full h-full object-cover object-center md:object-top">
+      </picture>
 
-    <!-- Camera / Divine Light Flash Burst Overlay on Click -->
-    <div id="splash-flash-overlay" class="absolute inset-0 pointer-events-none bg-white opacity-0 transition-opacity duration-200 z-50"></div>
+      <!-- Man's Camera Lens Flash Strobe & Flare (ignites at the phone: 71.7%/75.5% on mobile, 66.7%/81.4% on desktop) -->
+      <div id="camera-lens-flash" class="hidden absolute left-[71.7%] top-[75.5%] md:left-[66.7%] md:top-[81.4%] -translate-x-1/2 -translate-y-1/2 pointer-events-none z-40">
+        <div class="w-8 h-8 rounded-full bg-white shadow-[0_0_60px_35px_rgba(255,255,255,1),0_0_140px_70px_rgba(255,245,200,0.95)] animate-ping"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[600px] h-[3px] bg-gradient-to-r from-transparent via-white to-transparent blur-[1px]"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[180px] sm:h-[300px] w-[2px] bg-gradient-to-b from-transparent via-white to-transparent blur-[1px]"></div>
+      </div>
+    </div>
+
+    <!-- Full Screen Whiteout Flash: turns the entire page blinding white -->
+    <div id="splash-whiteout-flash" class="fixed inset-0 pointer-events-none bg-white opacity-0 transition-opacity duration-300 z-50"></div>
   </div>
 
   <script>
-    // Immediate Splash Screen Execution Controller with Flash & Click-to-Enter
+    // Immediate Splash Screen Execution Controller with Camera Flash & 3s Landing Transition
     (function() {
       const splashEl = document.getElementById('splash-screen');
-      const flashEl = document.getElementById('splash-flash-overlay');
+      const lensFlashEl = document.getElementById('camera-lens-flash');
+      const whiteoutEl = document.getElementById('splash-whiteout-flash');
       if (!splashEl) return;
       if (sessionStorage.getItem('visited') === 'true') {
         splashEl.style.display = 'none';
@@ -412,20 +423,27 @@
       sessionStorage.setItem('visited', 'true');
 
       let exiting = false;
-      function triggerFlashAndExit() {
+      function triggerCameraFlashAndEnter() {
         if (exiting) return;
         exiting = true;
 
-        // 1. Camera / Divine flash burst
-        if (flashEl) {
-          flashEl.style.transition = 'opacity 0.12s ease-in';
-          flashEl.style.opacity = '0.92';
+        // 1. Ignite the man's camera lens flash at the phone
+        if (lensFlashEl) {
+          lensFlashEl.classList.remove('hidden');
         }
         if (navigator.vibrate) {
-          try { navigator.vibrate(35); } catch(e) {}
+          try { navigator.vibrate([35, 25, 45]); } catch(e) {}
         }
 
-        // 2. Zoom & fade splash into live map landing page
+        // 2. The flash burst turns the entire page blinding white (after 100ms)
+        setTimeout(() => {
+          if (whiteoutEl) {
+            whiteoutEl.style.transition = 'opacity 0.16s ease-out';
+            whiteoutEl.style.opacity = '1';
+          }
+        }, 100);
+
+        // 3. While the screen is pure white, exit splash and pan map
         setTimeout(() => {
           if (splashEl) {
             splashEl.classList.add('splash-exit');
@@ -437,27 +455,34 @@
               map.setZoom(15);
             }
           }
-        }, 140);
+          // Smoothly fade out the white flash to reveal the live landing map
+          if (whiteoutEl) {
+            whiteoutEl.style.transition = 'opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
+            whiteoutEl.style.opacity = '0';
+          }
+        }, 280);
 
-        // 3. Remove splash screen from DOM
+        // 4. Remove splash elements from DOM
         setTimeout(() => {
           if (splashEl) {
             splashEl.style.pointerEvents = 'none';
             splashEl.remove();
           }
-        }, 650);
+        }, 750);
       }
 
-      // Click or tap anywhere to trigger flash and land to app
-      splashEl.addEventListener('click', triggerFlashAndExit);
-      splashEl.addEventListener('touchstart', triggerFlashAndExit, { passive: true });
+      // Auto-trigger camera flash after 3 seconds
+      const autoTimer = setTimeout(triggerCameraFlashAndEnter, 3000);
 
-      // Fallback auto-transition after 4.5s if not clicked
-      setTimeout(() => {
-        if (!exiting) {
-          triggerFlashAndExit();
-        }
-      }, 4500);
+      // Or click/tap anywhere to trigger immediately
+      splashEl.addEventListener('click', () => {
+        clearTimeout(autoTimer);
+        triggerCameraFlashAndEnter();
+      });
+      splashEl.addEventListener('touchstart', () => {
+        clearTimeout(autoTimer);
+        triggerCameraFlashAndEnter();
+      }, { passive: true });
     })();
   </script>
 
