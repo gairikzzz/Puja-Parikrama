@@ -1840,17 +1840,17 @@ export default function App() {
             id="filter-btn-latest"
             onClick={() => handleToggleFilter('latest')}
             title="Filter by Latest Pandals"
-            className={`flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all cursor-pointer hover:scale-[1.02] active:scale-95 backdrop-blur-lg ${
+            className={`flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-95 backdrop-blur-lg ${
               activeFilter === 'latest'
-                ? 'bg-[#211329]/70 border border-[#E9B83E] text-[#E9B83E] shadow-[0_0_12px_rgba(233,184,62,0.30),0_2px_12px_rgba(13,12,27,0.45),inset_0_1px_1px_rgba(255,255,255,0.15)] hover:shadow-[0_0_14px_rgba(233,184,62,0.45)]'
-                : 'bg-[#211329]/45 border border-[#E9B83E]/30 hover:border-[#E9B83E] text-[#F5E5B7]/80 hover:text-[#F5E5B7] shadow-[0_2px_10px_rgba(13,12,27,0.35),inset_0_1px_1px_rgba(255,255,255,0.08)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]'
+                ? 'bg-[#211329]/70 hover:bg-[#211329]/85 border border-[#E9B83E] shadow-[0_0_12px_rgba(233,184,62,0.30),0_2px_12px_rgba(13,12,27,0.45),inset_0_1px_1px_rgba(255,255,255,0.15)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]'
+                : 'bg-[#211329]/45 hover:bg-[#211329]/85 border border-[#E9B83E]/30 hover:border-[#E9B83E] shadow-[0_2px_10px_rgba(13,12,27,0.35),inset_0_1px_1px_rgba(255,255,255,0.08)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]'
             }`}
           >
             <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors ${activeFilter === 'latest' ? 'text-[#E9B83E]' : 'text-[#E9B83E]/80'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="10" />
               <polyline points="12 6 12 12 16 14" />
             </svg>
-            <span className={`text-[10px] sm:text-xs leading-tight tracking-wide ${activeFilter === 'latest' ? 'text-[#E9B83E] font-bold' : 'text-[#F5E5B7]/85 font-semibold'}`}>Latest</span>
+            <span className={`text-[10px] sm:text-xs leading-tight tracking-wide text-[#F5E5B7] ${activeFilter === 'latest' ? 'font-bold' : 'font-semibold'}`}>Latest</span>
           </button>
 
           {/* Trending Filter */}
@@ -1859,17 +1859,17 @@ export default function App() {
             id="filter-btn-trending"
             onClick={() => handleToggleFilter('trending')}
             title="Filter by Trending Pandals"
-            className={`flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all cursor-pointer hover:scale-[1.02] active:scale-95 backdrop-blur-lg ${
+            className={`flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-95 backdrop-blur-lg ${
               activeFilter === 'trending'
-                ? 'bg-[#211329]/70 border border-[#E9B83E] text-[#E9B83E] shadow-[0_0_12px_rgba(233,184,62,0.30),0_2px_12px_rgba(13,12,27,0.45),inset_0_1px_1px_rgba(255,255,255,0.15)] hover:shadow-[0_0_14px_rgba(233,184,62,0.45)]'
-                : 'bg-[#211329]/45 border border-[#E9B83E]/30 hover:border-[#E9B83E] text-[#F5E5B7]/80 hover:text-[#F5E5B7] shadow-[0_2px_10px_rgba(13,12,27,0.35),inset_0_1px_1px_rgba(255,255,255,0.08)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]'
+                ? 'bg-[#211329]/70 hover:bg-[#211329]/85 border border-[#E9B83E] shadow-[0_0_12px_rgba(233,184,62,0.30),0_2px_12px_rgba(13,12,27,0.45),inset_0_1px_1px_rgba(255,255,255,0.15)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]'
+                : 'bg-[#211329]/45 hover:bg-[#211329]/85 border border-[#E9B83E]/30 hover:border-[#E9B83E] shadow-[0_2px_10px_rgba(13,12,27,0.35),inset_0_1px_1px_rgba(255,255,255,0.08)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]'
             }`}
           >
             <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors ${activeFilter === 'trending' ? 'text-[#E9B83E]' : 'text-[#E9B83E]/80'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
               <polyline points="17 6 23 6 23 12" />
             </svg>
-            <span className={`text-[10px] sm:text-xs leading-tight tracking-wide ${activeFilter === 'trending' ? 'text-[#E9B83E] font-bold' : 'text-[#F5E5B7]/85 font-semibold'}`}>Trending</span>
+            <span className={`text-[10px] sm:text-xs leading-tight tracking-wide text-[#F5E5B7] ${activeFilter === 'trending' ? 'font-bold' : 'font-semibold'}`}>Trending</span>
           </button>
 
           {/* Nearby Filter */}
@@ -1878,17 +1878,17 @@ export default function App() {
             id="filter-btn-nearby"
             onClick={() => handleToggleFilter('nearby')}
             title="Filter by Nearby Pandals"
-            className={`flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all cursor-pointer hover:scale-[1.02] active:scale-95 backdrop-blur-lg ${
+            className={`flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-95 backdrop-blur-lg ${
               activeFilter === 'nearby'
-                ? 'bg-[#211329]/70 border border-[#E9B83E] text-[#E9B83E] shadow-[0_0_12px_rgba(233,184,62,0.30),0_2px_12px_rgba(13,12,27,0.45),inset_0_1px_1px_rgba(255,255,255,0.15)] hover:shadow-[0_0_14px_rgba(233,184,62,0.45)]'
-                : 'bg-[#211329]/45 border border-[#E9B83E]/30 hover:border-[#E9B83E] text-[#F5E5B7]/80 hover:text-[#F5E5B7] shadow-[0_2px_10px_rgba(13,12,27,0.35),inset_0_1px_1px_rgba(255,255,255,0.08)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]'
+                ? 'bg-[#211329]/70 hover:bg-[#211329]/85 border border-[#E9B83E] shadow-[0_0_12px_rgba(233,184,62,0.30),0_2px_12px_rgba(13,12,27,0.45),inset_0_1px_1px_rgba(255,255,255,0.15)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]'
+                : 'bg-[#211329]/45 hover:bg-[#211329]/85 border border-[#E9B83E]/30 hover:border-[#E9B83E] shadow-[0_2px_10px_rgba(13,12,27,0.35),inset_0_1px_1px_rgba(255,255,255,0.08)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]'
             }`}
           >
             <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors ${activeFilter === 'nearby' ? 'text-[#E9B83E]' : 'text-[#E9B83E]/80'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
               <circle cx="12" cy="13" r="4" />
             </svg>
-            <span className={`text-[10px] sm:text-xs leading-tight tracking-wide ${activeFilter === 'nearby' ? 'text-[#E9B83E] font-bold' : 'text-[#F5E5B7]/85 font-semibold'}`}>Nearby</span>
+            <span className={`text-[10px] sm:text-xs leading-tight tracking-wide text-[#F5E5B7] ${activeFilter === 'nearby' ? 'font-bold' : 'font-semibold'}`}>Nearby</span>
           </button>
         </div>
       )}
