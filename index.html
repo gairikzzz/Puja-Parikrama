@@ -89,6 +89,12 @@
       pointer-events: none !important;
     }
 
+    @media (min-width: 768px) {
+      #splash-screen picture img {
+        object-position: center top !important;
+      }
+    }
+
     @keyframes splashFadeInUp {
       0% {
         opacity: 0;
@@ -380,8 +386,11 @@
       <source media="(min-width: 1024px)" srcset="splash-desktop.jpg">
       <source media="(min-width: 768px) and (orientation: landscape)" srcset="splash-desktop.jpg">
       <!-- Mobile / Portrait platforms -->
-      <img src="splash-mobile.jpg" alt="Puja Parikrama" class="w-full h-full object-cover object-center">
+      <img src="splash-mobile.jpg" alt="Puja Parikrama" class="w-full h-full object-cover object-center md:object-top">
     </picture>
+
+    <!-- Subtle top vignette on laptop screens to ensure flawless sky blending -->
+    <div class="hidden md:block absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#140d1c] via-[#140d1c]/60 to-transparent pointer-events-none"></div>
 
     <!-- Subtle bottom vignette to ensure perfect loader contrast -->
     <div class="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-black/85 via-black/35 to-transparent pointer-events-none"></div>

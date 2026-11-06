@@ -1074,9 +1074,12 @@ export default function App() {
             <img
               src="/splash-mobile.jpg"
               alt="Puja Parikrama"
-              className="w-full h-full object-cover object-center"
+              className="w-full h-full object-cover object-center md:object-top"
             />
           </picture>
+
+          {/* Subtle top vignette on laptop screens to ensure flawless sky blending */}
+          <div className="hidden md:block absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#140d1c] via-[#140d1c]/60 to-transparent pointer-events-none" />
 
           {/* Subtle bottom vignette to ensure perfect loader contrast */}
           <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-black/85 via-black/35 to-transparent pointer-events-none" />
