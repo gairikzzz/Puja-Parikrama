@@ -1424,12 +1424,17 @@ export default function App() {
           {/* Main Pill Bar */}
           <div className="relative overflow-visible backdrop-blur-[3px] bg-gradient-to-r from-[#210c32]/35 via-[#2d1142]/30 to-[#1c082b]/35 border-[1.5px] border-[#d4af37]/60 rounded-full px-3 sm:px-4 py-1 h-10 sm:h-11 flex items-center justify-between w-full pointer-events-auto shadow-[0_4px_20px_rgba(0,0,0,0.3),0_0_12px_rgba(212,175,55,0.15)] transition-all">
 
-            {/* Left Section: Transparent Glowing Durga Emblem & Bengali Typography Only */}
-            <div className="relative flex items-center min-w-0 z-10 flex-shrink-0 pr-1.5 sm:pr-3">
+            {/* Left Section: Transparent Glowing Durga Emblem & Bengali Typography */}
+            <div className="relative flex items-center gap-1.5 sm:gap-2 min-w-0 z-10 flex-shrink-0 pr-1 sm:pr-2">
               <img
-                src="/logo-transparent.png"
-                alt="পূজা পরিক্রমা"
+                src="/durga-emblem.png"
+                alt="Maa Durga"
                 className="h-6 sm:h-7 w-auto object-contain flex-shrink-0 drop-shadow-[0_0_4px_rgba(251,191,36,0.5)]"
+              />
+              <img
+                src="/puja-text.png"
+                alt="পূজা পরিক্রমা"
+                className="h-6 sm:h-[29px] w-auto object-contain flex-shrink-0 drop-shadow-[0_0_6px_rgba(251,191,36,0.65)]"
               />
             </div>
 
