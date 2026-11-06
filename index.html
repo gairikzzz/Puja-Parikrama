@@ -873,7 +873,7 @@
   <button
     id="floating-camera"
     title="Snap Pandal"
-    class="fixed bottom-4 sm:bottom-5 left-1/2 -translate-x-1/2 z-30 w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-amber-500 via-amber-300 to-amber-100 flex items-center justify-center border-2 sm:border-[3px] border-[#180924] shadow-[0_0_22px_rgba(251,191,36,0.52),0_0_9px_rgba(212,175,55,0.34)] hover:shadow-[0_0_30px_rgba(251,191,36,0.68)] active:scale-95 transition-all pointer-events-auto flex-shrink-0"
+    class="fixed bottom-4 sm:bottom-5 left-1/2 -translate-x-1/2 z-30 w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-amber-500 via-amber-300 to-amber-100 flex items-center justify-center border-2 sm:border-[3px] border-[#180924] shadow-[0_0_14px_rgba(251,191,36,0.32),0_4px_16px_rgba(0,0,0,0.4)] hover:shadow-[0_0_20px_rgba(251,191,36,0.48),0_4px_18px_rgba(0,0,0,0.45)] active:scale-95 transition-all pointer-events-auto flex-shrink-0"
   >
     <svg class="w-5 h-5 sm:w-6 sm:h-6 text-[#1c0a2b]" viewBox="0 0 24 24" fill="currentColor">
       <path d="M9 3L7.17 5H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2h-3.17L15 3H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
@@ -1296,32 +1296,34 @@
     /* ── Dark Mode Map Styling Array for Snapchat aesthetic ── */
     const DARK_MAP_STYLE = [
       { elementType: 'geometry', stylers: [{ color: '#0d0d1a' }] },
-      { elementType: 'labels.text.stroke', stylers: [{ color: '#0d0d1a' }] },
-      { elementType: 'labels.text.fill', stylers: [{ color: '#3d3d52' }] },
-      { featureType: 'administrative', elementType: 'labels.text.fill', stylers: [{ color: '#35354a' }] },
-      { featureType: 'administrative', elementType: 'labels.text.stroke', stylers: [{ color: '#0d0d1a' }] },
-      { featureType: 'administrative.locality', elementType: 'labels.text.fill', stylers: [{ color: '#44445c' }] },
-      { featureType: 'administrative.neighborhood', elementType: 'labels.text.fill', stylers: [{ color: '#2e2e42' }] },
-      { featureType: 'administrative.land_parcel', elementType: 'labels.text.fill', stylers: [{ color: '#262638' }] },
+      { elementType: 'labels.text.stroke', stylers: [{ color: '#0b0b16' }] },
+      { elementType: 'labels.text.fill', stylers: [{ color: '#525268' }] },
+      { featureType: 'administrative', elementType: 'labels.text.fill', stylers: [{ color: '#4a4a62' }] },
+      { featureType: 'administrative', elementType: 'labels.text.stroke', stylers: [{ color: '#0b0b16' }] },
+      { featureType: 'administrative.locality', elementType: 'labels.text.fill', stylers: [{ color: '#7c7c9a' }] },
+      { featureType: 'administrative.neighborhood', elementType: 'labels.text.fill', stylers: [{ color: '#686884' }] },
+      { featureType: 'administrative.land_parcel', elementType: 'labels.text.fill', stylers: [{ color: '#38384e' }] },
       { featureType: 'poi', elementType: 'geometry', stylers: [{ color: '#0d0d1a' }] },
-      { featureType: 'poi', elementType: 'labels.text.fill', stylers: [{ color: '#2e2e42' }] },
-      { featureType: 'poi', elementType: 'labels.text.stroke', stylers: [{ color: '#0d0d1a' }] },
+      { featureType: 'poi', elementType: 'labels.text.fill', stylers: [{ color: '#44445c' }] },
+      { featureType: 'poi', elementType: 'labels.text.stroke', stylers: [{ color: '#0b0b16' }] },
       { featureType: 'poi', elementType: 'labels.icon', stylers: [{ visibility: 'off' }] },
       { featureType: 'poi.park', elementType: 'geometry', stylers: [{ color: '#0f1f18', visibility: 'on' }] },
-      { featureType: 'poi.park', elementType: 'labels.text.fill', stylers: [{ color: '#243b2d' }] },
+      { featureType: 'poi.park', elementType: 'labels.text.fill', stylers: [{ color: '#2e4a39' }] },
       { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#1a1a2e' }] },
       { featureType: 'road', elementType: 'geometry.stroke', stylers: [{ color: '#212140' }] },
-      { featureType: 'road', elementType: 'labels.text.fill', stylers: [{ color: '#404058' }] },
+      { featureType: 'road', elementType: 'labels.text.fill', stylers: [{ color: '#62627c' }] },
+      { featureType: 'road', elementType: 'labels.text.stroke', stylers: [{ color: '#0b0b16' }] },
       { featureType: 'road', elementType: 'labels.icon', stylers: [{ visibility: 'off' }] },
+      { featureType: 'road.arterial', elementType: 'labels.text.fill', stylers: [{ color: '#70708c' }] },
       { featureType: 'road.highway', elementType: 'geometry', stylers: [{ color: '#1e1e40' }] },
       { featureType: 'road.highway', elementType: 'geometry.stroke', stylers: [{ color: '#2a2a55' }] },
-      { featureType: 'road.highway', elementType: 'labels.text.fill', stylers: [{ color: '#4a4a62' }] },
+      { featureType: 'road.highway', elementType: 'labels.text.fill', stylers: [{ color: '#8080a2' }] },
       { featureType: 'road.highway', elementType: 'labels.icon', stylers: [{ visibility: 'off' }] },
       { featureType: 'transit', elementType: 'geometry', stylers: [{ color: '#12122a' }] },
       { featureType: 'transit', elementType: 'labels.icon', stylers: [{ visibility: 'off' }] },
-      { featureType: 'transit.station', elementType: 'labels.text.fill', stylers: [{ color: '#38384e' }] },
+      { featureType: 'transit.station', elementType: 'labels.text.fill', stylers: [{ color: '#565672' }] },
       { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#060614' }] },
-      { featureType: 'water', elementType: 'labels.text.fill', stylers: [{ color: '#242636' }] },
+      { featureType: 'water', elementType: 'labels.text.fill', stylers: [{ color: '#32364c' }] },
       { featureType: 'water', elementType: 'labels.text.stroke', stylers: [{ color: '#060614' }] }
     ];
 
