@@ -1065,8 +1065,8 @@ export default function App() {
             splashExiting ? 'scale-[1.08] opacity-0 pointer-events-none' : 'scale-100 opacity-100'
           }`}
         >
-          {/* Responsive Platform Splash Background: Mobile vs Laptop/Desktop */}
-          <picture className="absolute inset-0 w-full h-full pointer-events-none select-none">
+          {/* Responsive Platform Splash Background: Mobile vs Laptop/Desktop (shifted 10px up on laptop) */}
+          <picture className="absolute inset-0 w-full h-full pointer-events-none select-none md:-top-[10px] md:h-[calc(100%+20px)]">
             {/* Desktop / Laptop platforms (wide screens or landscape) */}
             <source media="(min-width: 1024px)" srcSet="/splash-desktop.jpg" />
             <source media="(min-width: 768px) and (orientation: landscape)" srcSet="/splash-desktop.jpg" />

@@ -90,6 +90,10 @@
     }
 
     @media (min-width: 768px) {
+      #splash-screen picture {
+        top: -10px !important;
+        height: calc(100% + 20px) !important;
+      }
       #splash-screen picture img {
         object-position: center top !important;
       }
@@ -380,8 +384,8 @@
 
   <!-- ── 0. INTRO SPLASH SCREEN ("PUJA PARIKRAMA") ── -->
   <div id="splash-screen" class="fixed inset-0 z-[9999] flex flex-col items-center justify-end pb-8 sm:pb-12 px-6 bg-[#0a0a14] select-none pointer-events-auto overflow-hidden">
-    <!-- Responsive Platform Splash Background: Mobile vs Laptop/Desktop -->
-    <picture class="absolute inset-0 w-full h-full pointer-events-none select-none">
+    <!-- Responsive Platform Splash Background: Mobile vs Laptop/Desktop (shifted 10px up on laptop) -->
+    <picture class="absolute inset-0 w-full h-full pointer-events-none select-none md:-top-[10px] md:h-[calc(100%+20px)]">
       <!-- Desktop / Laptop platforms (wide screens or landscape) -->
       <source media="(min-width: 1024px)" srcset="splash-desktop.jpg">
       <source media="(min-width: 768px) and (orientation: landscape)" srcset="splash-desktop.jpg">
