@@ -223,16 +223,30 @@ class DhakAudioEngine {
   private timer: any = null
   private active = false
   private step = 0
+  private masterGain: GainNode | null = null
+  private muted = false
 
   private initCtx() {
     if (!this.ctx && typeof window !== 'undefined') {
       const AudioCtx = window.AudioContext || (window as any).webkitAudioContext
-      if (AudioCtx) this.ctx = new AudioCtx()
+      if (AudioCtx) {
+        this.ctx = new AudioCtx()
+        this.masterGain = this.ctx.createGain()
+        this.masterGain.gain.setValueAtTime(this.muted ? 0 : 1, this.ctx.currentTime)
+        this.masterGain.connect(this.ctx.destination)
+      }
     }
     if (this.ctx && this.ctx.state === 'suspended') {
       this.ctx.resume()
     }
     return this.ctx
+  }
+
+  setMuted(muted: boolean) {
+    this.muted = muted
+    if (this.masterGain && this.ctx) {
+      this.masterGain.gain.setValueAtTime(muted ? 0 : 1, this.ctx.currentTime)
+    }
   }
 
   play() {
@@ -252,6 +266,7 @@ class DhakAudioEngine {
       if (!this.active) return
       const stroke = pattern[this.step % pattern.length]
       const t = ctx.currentTime
+      const dest = this.masterGain || ctx.destination
 
       if (stroke === 'dhang') {
         const osc = ctx.createOscillator()
@@ -262,7 +277,7 @@ class DhakAudioEngine {
         gain.gain.setValueAtTime(0.35, t)
         gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2)
         osc.connect(gain)
-        gain.connect(ctx.destination)
+        gain.connect(dest)
         osc.start(t)
         osc.stop(t + 0.2)
       } else if (stroke === 'kash') {
@@ -274,7 +289,7 @@ class DhakAudioEngine {
         gain.gain.setValueAtTime(0.18, t)
         gain.gain.exponentialRampToValueAtTime(0.001, t + 0.08)
         osc.connect(gain)
-        gain.connect(ctx.destination)
+        gain.connect(dest)
         osc.start(t)
         osc.stop(t + 0.08)
       } else if (stroke === 'ghanta') {
@@ -285,7 +300,7 @@ class DhakAudioEngine {
         gain.gain.setValueAtTime(0.1, t)
         gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3)
         osc.connect(gain)
-        gain.connect(ctx.destination)
+        gain.connect(dest)
         osc.start(t)
         osc.stop(t + 0.3)
       }
@@ -970,8 +985,9 @@ export default function App() {
 
   // Spotify Style Player State (matching user's screenshot & header aesthetic)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [isMuted, setIsMuted] = useState(false)
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0)
-  const [currentTimeSec, setCurrentTimeSec] = useState(163) // 2:43 as in screenshot!
+  const [currentTimeSec, setCurrentTimeSec] = useState(45) // 0:45 as in reference photo!
   const [isShuffle, setIsShuffle] = useState(false)
   const [isRepeat, setIsRepeat] = useState(false)
   const dhakEngineRef = useRef<DhakAudioEngine | null>(null)
@@ -984,6 +1000,14 @@ export default function App() {
     return () => {
       dhakEngineRef.current?.stop()
     }
+  }, [])
+
+  const toggleMute = useCallback(() => {
+    setIsMuted(m => {
+      const next = !m
+      dhakEngineRef.current?.setMuted(next)
+      return next
+    })
   }, [])
 
   // Playback timer ticker
@@ -1492,51 +1516,51 @@ export default function App() {
         </header>
       )}
 
-      {/* ── 1. SPOTIFY MUSIC PLAYER (Centered in space between leftmost screen & Snap CTA) ── */}
+      {/* ── 1. SPOTIFY MUSIC PLAYER (Reference Layout: Top Info/Controls, Full Bottom Scrubber) ── */}
       {mapReady && (
         <div
           id="spotify-music-player-bar"
-          className="fixed left-[calc(25%-17px)] -translate-x-1/2 bottom-4 sm:bottom-5 z-30 w-[calc(50%-44px)] max-w-[420px] min-w-[240px] pointer-events-auto select-none overflow-hidden backdrop-blur-[3px] bg-gradient-to-r from-[#210c32]/50 via-[#2d1142]/45 to-[#1c082b]/50 border-[1.5px] border-[#d4af37]/70 rounded-full px-3 sm:px-4 py-1.5 h-13 sm:h-14 flex items-center justify-between gap-2 sm:gap-3 shadow-[0_4px_20px_rgba(0,0,0,0.35),0_0_12px_rgba(212,175,55,0.2)] transition-all"
+          className="fixed left-[calc(25%-17px)] -translate-x-1/2 bottom-4 sm:bottom-5 z-30 w-[calc(50%-44px)] max-w-[440px] min-w-[260px] pointer-events-auto select-none overflow-hidden backdrop-blur-[3px] bg-gradient-to-r from-[#210c32]/50 via-[#2d1142]/45 to-[#1c082b]/50 border-[1.5px] border-[#d4af37]/70 rounded-[22px] px-3.5 sm:px-4 py-2 sm:py-2.5 flex flex-col justify-between gap-1.5 shadow-[0_4px_20px_rgba(0,0,0,0.35),0_0_12px_rgba(212,175,55,0.2)] transition-all"
         >
-          {/* Left: Album Cover + Title + Artist */}
-          <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-shrink">
-            <a
-              href={currentTrack.spotifyUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              title="Open in Spotify"
-              className="relative group flex-shrink-0"
-            >
-              <img
-                src={currentTrack.cover}
-                alt={currentTrack.title}
-                className="w-8 h-8 sm:w-9 sm:h-9 rounded-[7px] object-cover border border-white/10 shadow group-hover:scale-105 transition-transform"
-              />
-            </a>
-
-            <div className="flex flex-col min-w-0 pr-1">
+          {/* Top Row: Left (Cover + Title + Artist) & Right (Controls: Prev, Play, Next, Mute) */}
+          <div className="flex items-center justify-between w-full gap-2 min-w-0">
+            {/* Left: Album Cover + Title + Artist */}
+            <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-shrink">
               <a
                 href={currentTrack.spotifyUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs sm:text-sm font-bold text-white hover:text-amber-200 truncate leading-tight transition"
+                title="Open in Spotify"
+                className="relative group flex-shrink-0"
               >
-                {currentTrack.title}
+                <img
+                  src={currentTrack.cover}
+                  alt={currentTrack.title}
+                  className="w-8 h-8 sm:w-9 sm:h-9 rounded-[8px] object-cover border border-white/10 shadow group-hover:scale-105 transition-transform"
+                />
               </a>
-              <span className="text-[10px] sm:text-[11px] text-white/50 truncate leading-tight mt-0.5">
-                {currentTrack.artist}
-              </span>
-            </div>
-          </div>
 
-          {/* Right: Smaller Controls & Thin Scrubber (Decreased gap, Centrally Aligned to Dialog Box) */}
-          <div className="flex flex-col items-center justify-center gap-0.5 min-w-[110px] sm:min-w-[150px] md:min-w-[170px] flex-shrink-0 pr-1 my-auto">
-            {/* Small Playback Controls Row */}
-            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="flex flex-col min-w-0 pr-1">
+                <a
+                  href={currentTrack.spotifyUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs sm:text-[13px] font-bold text-white hover:text-amber-200 truncate leading-tight transition"
+                >
+                  {currentTrack.title}
+                </a>
+                <span className="text-[10px] sm:text-[11px] text-white/50 truncate leading-tight mt-0.5">
+                  {currentTrack.artist}
+                </span>
+              </div>
+            </div>
+
+            {/* Right: Playback Controls Row + Mute Button */}
+            <div className="flex items-center gap-2 sm:gap-2.5 flex-shrink-0">
               <button
                 type="button"
                 onClick={handlePrevTrack}
-                title="Previous"
+                title="Previous Track"
                 className="text-white/70 hover:text-white transition p-0.5"
               >
                 <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-current" viewBox="0 0 16 16">
@@ -1564,29 +1588,49 @@ export default function App() {
               <button
                 type="button"
                 onClick={handleNextTrack}
-                title="Next"
+                title="Next Track"
                 className="text-white/70 hover:text-white transition p-0.5"
               >
                 <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-current" viewBox="0 0 16 16">
                   <path d="M12.7 1a.7.7 0 0 0-.7.7v5.15L2.05.106A.7.7 0 0 0 1 .712v12.576a.7.7 0 0 0 1.05.607L12 8.149V14.3a.7.7 0 0 0 .7.7h1.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7h-1.6z"/>
                 </svg>
               </button>
-            </div>
 
-            {/* Scrubber Bar Row */}
-            <div className="flex items-center gap-1.5 w-full text-[9px] sm:text-[10px] font-mono text-white/50">
-              <span className="w-5 text-right">{formatSongTime(currentTimeSec)}</span>
-              <div
-                onClick={handleScrubberClick}
-                className="relative flex-1 h-[2px] sm:h-[2.5px] bg-white/20 hover:h-1 rounded-full overflow-hidden cursor-pointer group transition-all"
+              {/* Mute / Unmute Button */}
+              <button
+                type="button"
+                onClick={toggleMute}
+                title={isMuted ? "Unmute" : "Mute"}
+                className={`transition p-0.5 ${isMuted ? 'text-amber-400/50 hover:text-amber-300' : 'text-amber-400 hover:text-amber-300'}`}
               >
-                <div
-                  className="h-full bg-white/80 group-hover:bg-[#1db954] transition-all"
-                  style={{ width: `${Math.min(100, (currentTimeSec / currentTrack.durationSec) * 100)}%` }}
-                />
-              </div>
-              <span className="w-5 text-left">{formatSongTime(currentTrack.durationSec)}</span>
+                {isMuted ? (
+                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor"/>
+                    <line x1="23" y1="9" x2="17" y2="15"/>
+                    <line x1="17" y1="9" x2="23" y2="15"/>
+                  </svg>
+                ) : (
+                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current" viewBox="0 0 24 24">
+                    <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                  </svg>
+                )}
+              </button>
             </div>
+          </div>
+
+          {/* Bottom Row: Full Width Scrubber Bar with Left & Right Timestamps */}
+          <div className="flex items-center gap-2 w-full text-[9px] sm:text-[10px] font-mono text-white/50 pt-0.5">
+            <span className="text-left flex-shrink-0">{formatSongTime(currentTimeSec)}</span>
+            <div
+              onClick={handleScrubberClick}
+              className="relative flex-1 h-[2.5px] bg-white/20 hover:h-1 rounded-full overflow-hidden cursor-pointer group transition-all"
+            >
+              <div
+                className="h-full bg-gradient-to-r from-amber-400 to-amber-300 transition-all"
+                style={{ width: `${Math.min(100, (currentTimeSec / currentTrack.durationSec) * 100)}%` }}
+              />
+            </div>
+            <span className="text-right flex-shrink-0">{formatSongTime(currentTrack.durationSec)}</span>
           </div>
         </div>
       )}
