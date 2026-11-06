@@ -1588,8 +1588,8 @@ export default function App() {
                   title="Select Puja Year"
                   className="h-7 sm:h-7.5 px-2.5 sm:px-3 rounded-xl bg-[#211329]/90 hover:bg-[#2b1935] border border-[#E9B83E]/40 hover:border-[#E9B83E] flex items-center gap-1.5 text-[#F5E5B7] font-semibold text-[11px] sm:text-xs shadow-[0_0_8px_rgba(233,184,62,0.22)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] hover:scale-110 active:scale-95 transition-all cursor-pointer"
                 >
-                  <span className="text-[#E9B83E] text-[10px] sm:text-[11px] font-bold tracking-wide">Year</span>
-                  <span className="text-[#F5E5B7] font-bold">{selectedYear}</span>
+                  <span className="text-[#F5E5B7] text-[10px] sm:text-[11px] font-bold tracking-wide">Year</span>
+                  <span className="text-[#E9B83E] font-bold">{selectedYear}</span>
                   <svg className={`w-3 h-3 text-[#E9B83E] transition-transform duration-200 ${yearDropdownOpen ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                   </svg>
@@ -1840,10 +1840,10 @@ export default function App() {
             id="filter-btn-latest"
             onClick={() => handleToggleFilter('latest')}
             title="Filter by Latest Pandals"
-            className={`flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all cursor-pointer active:scale-95 backdrop-blur-md ${
+            className={`flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all cursor-pointer hover:scale-110 active:scale-95 backdrop-blur-md ${
               activeFilter === 'latest'
-                ? 'bg-[#211329]/90 border border-[#E9B83E] text-[#E9B83E] shadow-[0_0_10px_rgba(233,184,62,0.28),0_2px_12px_rgba(13,12,27,0.45)]'
-                : 'bg-[#211329]/65 border border-[#E9B83E]/30 hover:border-[#E9B83E]/60 text-[#F5E5B7]/80 hover:text-[#F5E5B7] shadow-[0_2px_10px_rgba(13,12,27,0.35)]'
+                ? 'bg-[#211329]/90 border border-[#E9B83E] text-[#E9B83E] shadow-[0_0_10px_rgba(233,184,62,0.28),0_2px_12px_rgba(13,12,27,0.45)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]'
+                : 'bg-[#211329]/65 border border-[#E9B83E]/30 hover:border-[#E9B83E] text-[#F5E5B7]/80 hover:text-[#F5E5B7] shadow-[0_2px_10px_rgba(13,12,27,0.35)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]'
             }`}
           >
             <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors ${activeFilter === 'latest' ? 'text-[#E9B83E]' : 'text-[#E9B83E]/80'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1859,10 +1859,10 @@ export default function App() {
             id="filter-btn-trending"
             onClick={() => handleToggleFilter('trending')}
             title="Filter by Trending Pandals"
-            className={`flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all cursor-pointer active:scale-95 backdrop-blur-md ${
+            className={`flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all cursor-pointer hover:scale-110 active:scale-95 backdrop-blur-md ${
               activeFilter === 'trending'
-                ? 'bg-[#211329]/90 border border-[#E9B83E] text-[#E9B83E] shadow-[0_0_10px_rgba(233,184,62,0.28),0_2px_12px_rgba(13,12,27,0.45)]'
-                : 'bg-[#211329]/65 border border-[#E9B83E]/30 hover:border-[#E9B83E]/60 text-[#F5E5B7]/80 hover:text-[#F5E5B7] shadow-[0_2px_10px_rgba(13,12,27,0.35)]'
+                ? 'bg-[#211329]/90 border border-[#E9B83E] text-[#E9B83E] shadow-[0_0_10px_rgba(233,184,62,0.28),0_2px_12px_rgba(13,12,27,0.45)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]'
+                : 'bg-[#211329]/65 border border-[#E9B83E]/30 hover:border-[#E9B83E] text-[#F5E5B7]/80 hover:text-[#F5E5B7] shadow-[0_2px_10px_rgba(13,12,27,0.35)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]'
             }`}
           >
             <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors ${activeFilter === 'trending' ? 'text-[#E9B83E]' : 'text-[#E9B83E]/80'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1878,10 +1878,10 @@ export default function App() {
             id="filter-btn-nearby"
             onClick={() => handleToggleFilter('nearby')}
             title="Filter by Nearby Pandals"
-            className={`flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all cursor-pointer active:scale-95 backdrop-blur-md ${
+            className={`flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all cursor-pointer hover:scale-110 active:scale-95 backdrop-blur-md ${
               activeFilter === 'nearby'
-                ? 'bg-[#211329]/90 border border-[#E9B83E] text-[#E9B83E] shadow-[0_0_10px_rgba(233,184,62,0.28),0_2px_12px_rgba(13,12,27,0.45)]'
-                : 'bg-[#211329]/65 border border-[#E9B83E]/30 hover:border-[#E9B83E]/60 text-[#F5E5B7]/80 hover:text-[#F5E5B7] shadow-[0_2px_10px_rgba(13,12,27,0.35)]'
+                ? 'bg-[#211329]/90 border border-[#E9B83E] text-[#E9B83E] shadow-[0_0_10px_rgba(233,184,62,0.28),0_2px_12px_rgba(13,12,27,0.45)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]'
+                : 'bg-[#211329]/65 border border-[#E9B83E]/30 hover:border-[#E9B83E] text-[#F5E5B7]/80 hover:text-[#F5E5B7] shadow-[0_2px_10px_rgba(13,12,27,0.35)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]'
             }`}
           >
             <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors ${activeFilter === 'nearby' ? 'text-[#E9B83E]' : 'text-[#E9B83E]/80'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
