@@ -984,7 +984,7 @@ export default function App() {
   const [topSearchQuery, setTopSearchQuery] = useState('')
   const [isSearchFocused, setIsSearchFocused] = useState(false)
   const searchInputRef = useRef<HTMLInputElement>(null)
-  const [activeFilter, setActiveFilter] = useState<'recent' | 'trending' | 'nearby' | null>('recent')
+  const [activeFilter, setActiveFilter] = useState<'latest' | 'trending' | 'nearby' | null>('latest')
   const [selectedYear, setSelectedYear] = useState<number>(2026)
   const [yearDropdownOpen, setYearDropdownOpen] = useState(false)
   const yearDropdownRef = useRef<HTMLDivElement>(null)
@@ -1408,10 +1408,10 @@ export default function App() {
     }
   }
 
-  const handleToggleFilter = (filter: 'recent' | 'trending' | 'nearby') => {
+  const handleToggleFilter = (filter: 'latest' | 'trending' | 'nearby') => {
     setActiveFilter(prev => {
       const next = prev === filter ? null : filter
-      if (next === 'recent') {
+      if (next === 'latest') {
         if (posts.length > 0) {
           const sorted = [...posts].sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime())
           if (sorted[0]) googleMapRef.current?.panTo({ lat: sorted[0].lat, lng: sorted[0].lng })
@@ -1827,29 +1827,29 @@ export default function App() {
         </button>
       )}
 
-      {/* ── 3. PANDAL FILTERS (Right Hand Side of CTA: Recent / Trending / Nearby, Matching Music Player Style & Length) ── */}
+      {/* ── 3. PANDAL FILTERS (Right Hand Side of CTA: Latest / Trending / Nearby, Sleek & Compact) ── */}
       {mapReady && (
         <div
           id="pandal-filter-group"
-          className="fixed left-[calc(75%+14px)] -translate-x-1/2 bottom-4 sm:bottom-5 z-30 w-[calc(50%-24px)] max-w-[560px] min-w-[320px] pointer-events-auto select-none flex items-center justify-between gap-1.5 sm:gap-2.5 h-13 sm:h-14"
+          className="fixed left-[calc(75%+10px)] -translate-x-1/2 bottom-4 sm:bottom-5 z-30 w-[calc(43%-20px)] max-w-[475px] min-w-[270px] pointer-events-auto select-none flex items-center justify-between gap-1.5 sm:gap-2 h-[52px] sm:h-[58px]"
         >
-          {/* Recent Filter */}
+          {/* Latest Filter */}
           <button
             type="button"
-            id="filter-btn-recent"
-            onClick={() => handleToggleFilter('recent')}
-            title="Filter by Recent Pandals"
+            id="filter-btn-latest"
+            onClick={() => handleToggleFilter('latest')}
+            title="Filter by Latest Pandals"
             className={`flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all cursor-pointer active:scale-95 backdrop-blur-[3px] ${
-              activeFilter === 'recent'
-                ? 'bg-gradient-to-r from-[#2e1245]/70 via-[#3a1452]/65 to-[#210c32]/70 border-[1.5px] border-amber-400 text-amber-300 shadow-[0_0_18px_rgba(251,191,36,0.5),0_4px_20px_rgba(0,0,0,0.35),0_0_12px_rgba(212,175,55,0.2)]'
-                : 'bg-gradient-to-r from-[#210c32]/50 via-[#2d1142]/45 to-[#1c082b]/50 border-[1.5px] border-[#d4af37]/70 hover:border-amber-300 text-white/70 hover:text-white shadow-[0_4px_20px_rgba(0,0,0,0.35),0_0_12px_rgba(212,175,55,0.2)]'
+              activeFilter === 'latest'
+                ? 'bg-gradient-to-r from-[#2e1245]/70 via-[#3a1452]/65 to-[#210c32]/70 border-[1.5px] border-amber-400/80 text-amber-300 shadow-[0_0_10px_rgba(251,191,36,0.28),0_2px_12px_rgba(0,0,0,0.35)]'
+                : 'bg-gradient-to-r from-[#210c32]/50 via-[#2d1142]/45 to-[#1c082b]/50 border-[1.5px] border-[#d4af37]/50 hover:border-amber-400/60 text-white/70 hover:text-white shadow-[0_2px_10px_rgba(0,0,0,0.25)]'
             }`}
           >
-            <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors ${activeFilter === 'recent' ? 'text-amber-300' : 'text-amber-300/80'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors ${activeFilter === 'latest' ? 'text-amber-300' : 'text-amber-300/80'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="10" />
               <polyline points="12 6 12 12 16 14" />
             </svg>
-            <span className={`text-[10px] sm:text-xs leading-tight tracking-wide ${activeFilter === 'recent' ? 'text-amber-300 font-bold' : 'text-amber-200/90 font-semibold'}`}>Recent</span>
+            <span className={`text-[10px] sm:text-xs leading-tight tracking-wide ${activeFilter === 'latest' ? 'text-amber-300 font-bold' : 'text-amber-200/90 font-semibold'}`}>Latest</span>
           </button>
 
           {/* Trending Filter */}
@@ -1860,8 +1860,8 @@ export default function App() {
             title="Filter by Trending Pandals"
             className={`flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all cursor-pointer active:scale-95 backdrop-blur-[3px] ${
               activeFilter === 'trending'
-                ? 'bg-gradient-to-r from-[#2e1245]/70 via-[#3a1452]/65 to-[#210c32]/70 border-[1.5px] border-amber-400 text-amber-300 shadow-[0_0_18px_rgba(251,191,36,0.5),0_4px_20px_rgba(0,0,0,0.35),0_0_12px_rgba(212,175,55,0.2)]'
-                : 'bg-gradient-to-r from-[#210c32]/50 via-[#2d1142]/45 to-[#1c082b]/50 border-[1.5px] border-[#d4af37]/70 hover:border-amber-300 text-white/70 hover:text-white shadow-[0_4px_20px_rgba(0,0,0,0.35),0_0_12px_rgba(212,175,55,0.2)]'
+                ? 'bg-gradient-to-r from-[#2e1245]/70 via-[#3a1452]/65 to-[#210c32]/70 border-[1.5px] border-amber-400/80 text-amber-300 shadow-[0_0_10px_rgba(251,191,36,0.28),0_2px_12px_rgba(0,0,0,0.35)]'
+                : 'bg-gradient-to-r from-[#210c32]/50 via-[#2d1142]/45 to-[#1c082b]/50 border-[1.5px] border-[#d4af37]/50 hover:border-amber-400/60 text-white/70 hover:text-white shadow-[0_2px_10px_rgba(0,0,0,0.25)]'
             }`}
           >
             <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors ${activeFilter === 'trending' ? 'text-amber-300' : 'text-amber-300/80'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1879,8 +1879,8 @@ export default function App() {
             title="Filter by Nearby Pandals"
             className={`flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all cursor-pointer active:scale-95 backdrop-blur-[3px] ${
               activeFilter === 'nearby'
-                ? 'bg-gradient-to-r from-[#2e1245]/70 via-[#3a1452]/65 to-[#210c32]/70 border-[1.5px] border-amber-400 text-amber-300 shadow-[0_0_18px_rgba(251,191,36,0.5),0_4px_20px_rgba(0,0,0,0.35),0_0_12px_rgba(212,175,55,0.2)]'
-                : 'bg-gradient-to-r from-[#210c32]/50 via-[#2d1142]/45 to-[#1c082b]/50 border-[1.5px] border-[#d4af37]/70 hover:border-amber-300 text-white/70 hover:text-white shadow-[0_4px_20px_rgba(0,0,0,0.35),0_0_12px_rgba(212,175,55,0.2)]'
+                ? 'bg-gradient-to-r from-[#2e1245]/70 via-[#3a1452]/65 to-[#210c32]/70 border-[1.5px] border-amber-400/80 text-amber-300 shadow-[0_0_10px_rgba(251,191,36,0.28),0_2px_12px_rgba(0,0,0,0.35)]'
+                : 'bg-gradient-to-r from-[#210c32]/50 via-[#2d1142]/45 to-[#1c082b]/50 border-[1.5px] border-[#d4af37]/50 hover:border-amber-400/60 text-white/70 hover:text-white shadow-[0_2px_10px_rgba(0,0,0,0.25)]'
             }`}
           >
             <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors ${activeFilter === 'nearby' ? 'text-amber-300' : 'text-amber-300/80'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
