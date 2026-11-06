@@ -1468,192 +1468,182 @@ export default function App() {
         </header>
       )}
 
-      {/* ── SPOTIFY STYLE MUSIC PLAYER (Matching User Screenshot & Header Aesthetic) ── */}
+      {/* ── UNIFIED BOTTOM ACTION DOCK (Playlist Taking Entire Space in Parallel + Logo-Yellow Camera CTA + Recenter) ── */}
       {mapReady && (
-        <div className="fixed left-3 sm:left-4 bottom-20 sm:bottom-6 z-30 pointer-events-auto select-none">
-          <div
-            id="spotify-music-player-bar"
-            className="relative overflow-hidden backdrop-blur-[3px] bg-gradient-to-r from-[#210c32]/45 via-[#2d1142]/40 to-[#1c082b]/45 border-[1.5px] border-[#d4af37]/60 rounded-full px-3 sm:px-4 py-1.5 sm:py-2 h-14 sm:h-15 flex items-center justify-between gap-3 sm:gap-6 shadow-[0_4px_20px_rgba(0,0,0,0.35),0_0_12px_rgba(212,175,55,0.18)] transition-all max-w-[calc(100vw-24px)] w-auto"
-          >
-            {/* Left Section: Album Cover, Title, Artist, Plus button */}
-            <div className="flex items-center gap-2.5 min-w-0 flex-shrink-0">
-              <a
-                href={currentTrack.spotifyUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Open in Spotify"
-                className="relative group flex-shrink-0"
-              >
-                <img
-                  src={currentTrack.cover}
-                  alt={currentTrack.title}
-                  className="w-10 h-10 sm:w-11 sm:h-11 rounded-[4px] object-cover border border-white/10 shadow group-hover:scale-105 transition-transform"
-                />
-              </a>
-
-              <div className="flex flex-col min-w-0 pr-0.5">
+        <div className="fixed left-3 sm:left-6 right-3 sm:right-6 bottom-4 sm:bottom-5 z-30 pointer-events-none flex items-center gap-2.5 sm:gap-4">
+          {/* 1. PLAYLIST PLAYER TAKING THE ENTIRE PLACE IN PARALLEL */}
+          <div className="flex-1 min-w-0 pointer-events-auto">
+            <div
+              id="spotify-music-player-bar"
+              className="relative overflow-hidden backdrop-blur-[3px] bg-gradient-to-r from-[#210c32]/45 via-[#2d1142]/40 to-[#1c082b]/45 border-[1.5px] border-[#d4af37]/60 rounded-full px-3 sm:px-4 py-1.5 h-12 sm:h-14 flex items-center justify-between gap-2 sm:gap-4 shadow-[0_4px_20px_rgba(0,0,0,0.35),0_0_12px_rgba(212,175,55,0.18)] transition-all w-full select-none"
+            >
+              {/* Left Section: Album Cover, Title, Artist, Plus button */}
+              <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-shrink-0">
                 <a
                   href={currentTrack.spotifyUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs sm:text-sm font-semibold text-white hover:text-amber-200 truncate leading-tight transition"
+                  title="Open in Spotify"
+                  className="relative group flex-shrink-0"
                 >
-                  {currentTrack.title}
+                  <img
+                    src={currentTrack.cover}
+                    alt={currentTrack.title}
+                    className="w-8 h-8 sm:w-10 sm:h-10 rounded-[4px] object-cover border border-white/10 shadow group-hover:scale-105 transition-transform"
+                  />
                 </a>
-                <span className="text-[10px] sm:text-[11px] text-white/50 truncate leading-tight">
-                  {currentTrack.artist}
-                </span>
-              </div>
 
-              {/* Plus / Liked Button */}
-              <button
-                type="button"
-                onClick={() => setIsLiked(prev => !prev)}
-                title={isLiked ? "Saved to your library" : "Save to your library"}
-                className={`w-5 h-5 flex items-center justify-center transition flex-shrink-0 ${
-                  isLiked ? "text-[#1db954]" : "text-white/60 hover:text-white"
-                }`}
-              >
-                {isLiked ? (
-                  <svg className="w-4 h-4" viewBox="0 0 16 16" fill="currentColor">
-                    <circle cx="8" cy="8" r="7" fill="currentColor" />
-                    <path d="M4.5 8l2.5 2.5 4.5-5" stroke="#000" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                ) : (
-                  <svg className="w-4 h-4" viewBox="0 0 16 16" fill="currentColor">
-                    <path d="M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8z" />
-                    <path d="M8 4.75a.75.75 0 0 1 .75.75v1.75h1.75a.75.75 0 0 1 0 1.5h-1.75v1.75a.75.75 0 0 1-1.5 0v-1.75H5.5a.75.75 0 0 1 0-1.5h1.75V5.5A.75.75 0 0 1 8 4.75z" />
-                  </svg>
-                )}
-              </button>
-            </div>
+                <div className="flex flex-col min-w-0 pr-0.5 max-w-[105px] sm:max-w-[150px] md:max-w-none">
+                  <a
+                    href={currentTrack.spotifyUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs sm:text-sm font-semibold text-white hover:text-amber-200 truncate leading-tight transition"
+                  >
+                    {currentTrack.title}
+                  </a>
+                  <span className="text-[10px] sm:text-[11px] text-white/50 truncate leading-tight">
+                    {currentTrack.artist}
+                  </span>
+                </div>
 
-            {/* Center / Right Section: Controls & Scrubber */}
-            <div className="flex flex-col items-center justify-center gap-1 min-w-[170px] sm:min-w-[230px]">
-              {/* Playback Controls Row */}
-              <div className="flex items-center gap-3.5 sm:gap-4">
-                {/* Shuffle */}
+                {/* Plus / Liked Button */}
                 <button
                   type="button"
-                  onClick={() => setIsShuffle(prev => !prev)}
-                  title={isShuffle ? "Disable shuffle" : "Enable shuffle"}
-                  className={`transition ${isShuffle ? "text-[#1db954]" : "text-white/60 hover:text-white"}`}
+                  onClick={() => setIsLiked(prev => !prev)}
+                  title={isLiked ? "Saved to your library" : "Save to your library"}
+                  className={`w-5 h-5 flex items-center justify-center transition flex-shrink-0 ${
+                    isLiked ? "text-[#1db954]" : "text-white/60 hover:text-white"
+                  }`}
                 >
-                  <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor">
-                    <path d="M13.151.922a.75.75 0 1 0-1.06 1.06L13.109 3H11.16a3.75 3.75 0 0 0-2.873 1.34l-6.173 7.356A2.25 2.25 0 0 1 .39 12.5H0V14h.391a3.75 3.75 0 0 0 2.873-1.34l6.173-7.356a2.25 2.25 0 0 1 1.724-.804h1.947l-1.017 1.018a.75.75 0 0 0 1.06 1.06L15.98 3.75 13.15.922zM.391 3.5H0V2h.391c1.109 0 2.16.49 2.873 1.34L4.89 5.277l-.979 1.167-1.796-2.14A2.25 2.25 0 0 0 .39 3.5z"/>
-                    <path d="m7.5 10.723.98-1.167 1.795 2.14a2.25 2.25 0 0 0 1.725.804h1.947l-1.017-1.018a.75.75 0 1 1 1.06-1.06l2.829 2.828-2.829 2.828a.75.75 0 1 1-1.06-1.06L13.109 14H11.16a3.75 3.75 0 0 1-2.873-1.34l-1.787-2.137z"/>
-                  </svg>
-                </button>
-
-                {/* Previous */}
-                <button
-                  type="button"
-                  onClick={handlePrevTrack}
-                  title="Previous"
-                  className="text-white/70 hover:text-white transition"
-                >
-                  <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 16 16">
-                    <path d="M3.3 1a.7.7 0 0 1 .7.7v5.15l9.95-5.744a.7.7 0 0 1 1.05.606v12.576a.7.7 0 0 1-1.05.607L4 9.149V14.3a.7.7 0 0 1-.7.7H1.7a.7.7 0 0 1-.7-.7V1.7a.7.7 0 0 1 .7-.7h1.6z"/>
-                  </svg>
-                </button>
-
-                {/* Play / Pause Circular Button */}
-                <button
-                  type="button"
-                  onClick={togglePlayPause}
-                  title={isPlaying ? "Pause" : "Play"}
-                  className="w-7.5 h-7.5 sm:w-8 sm:h-8 rounded-full bg-white text-black hover:scale-105 active:scale-95 flex items-center justify-center transition shadow-lg flex-shrink-0"
-                >
-                  {isPlaying ? (
-                    <svg className="w-3.5 h-3.5 fill-black" viewBox="0 0 16 16">
-                      <path d="M2.7 1a.7.7 0 0 0-.7.7v12.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7H2.7zm8 0a.7.7 0 0 0-.7.7v12.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7h-2.6z"/>
+                  {isLiked ? (
+                    <svg className="w-4 h-4" viewBox="0 0 16 16" fill="currentColor">
+                      <circle cx="8" cy="8" r="7" fill="currentColor" />
+                      <path d="M4.5 8l2.5 2.5 4.5-5" stroke="#000" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   ) : (
-                    <svg className="w-3.5 h-3.5 ml-0.5 fill-black" viewBox="0 0 16 16">
-                      <path d="M3 1.713a.7.7 0 0 1 1.05-.607l10.89 6.288a.7.7 0 0 1 0 1.212L4.05 14.894A.7.7 0 0 1 3 14.288V1.713z"/>
+                    <svg className="w-4 h-4" viewBox="0 0 16 16" fill="currentColor">
+                      <path d="M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8z" />
+                      <path d="M8 4.75a.75.75 0 0 1 .75.75v1.75h1.75a.75.75 0 0 1 0 1.5h-1.75v1.75a.75.75 0 0 1-1.5 0v-1.75H5.5a.75.75 0 0 1 0-1.5h1.75V5.5A.75.75 0 0 1 8 4.75z" />
                     </svg>
                   )}
                 </button>
-
-                {/* Next */}
-                <button
-                  type="button"
-                  onClick={handleNextTrack}
-                  title="Next"
-                  className="text-white/70 hover:text-white transition"
-                >
-                  <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 16 16">
-                    <path d="M12.7 1a.7.7 0 0 0-.7.7v5.15L2.05.106A.7.7 0 0 0 1 .712v12.576a.7.7 0 0 0 1.05.607L12 8.149V14.3a.7.7 0 0 0 .7.7h1.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7h-1.6z"/>
-                  </svg>
-                </button>
-
-                {/* Repeat */}
-                <button
-                  type="button"
-                  onClick={() => setIsRepeat(prev => !prev)}
-                  title={isRepeat ? "Disable repeat" : "Enable repeat"}
-                  className={`transition ${isRepeat ? "text-[#1db954]" : "text-white/60 hover:text-white"}`}
-                >
-                  <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor">
-                    <path d="M0 4.75A3.75 3.75 0 0 1 3.75 1h8.5A3.75 3.75 0 0 1 16 4.75v5a3.75 3.75 0 0 1-3.75 3.75H9.81l1.018 1.018a.75.75 0 1 1-1.06 1.06L6.939 12.75l2.829-2.828a.75.75 0 1 1 1.06 1.06L9.811 12h2.439a2.25 2.25 0 0 0 2.25-2.25v-5a2.25 2.25 0 0 0-2.25-2.25h-8.5A2.25 2.25 0 0 0 1.5 4.75v5A2.25 2.25 0 0 0 3.75 12H5v1.5H3.75A3.75 3.75 0 0 1 0 9.75v-5z"/>
-                  </svg>
-                </button>
               </div>
 
-              {/* Progress Scrubber Bar Row */}
-              <div className="flex items-center gap-2 w-full text-[10px] sm:text-[11px] font-mono text-white/50">
-                <span className="w-7 text-right">{formatSongTime(currentTimeSec)}</span>
-                <div
-                  onClick={handleScrubberClick}
-                  className="relative flex-1 h-1 bg-white/20 hover:h-1.5 rounded-full overflow-hidden cursor-pointer group transition-all"
-                >
-                  <div
-                    className="h-full bg-white group-hover:bg-[#1db954] transition-all"
-                    style={{ width: `${Math.min(100, (currentTimeSec / currentTrack.durationSec) * 100)}%` }}
-                  />
+              {/* Center / Right Section: Controls & Scrubber */}
+              <div className="flex flex-col items-center justify-center gap-0.5 sm:gap-1 flex-1 max-w-xs sm:max-w-sm px-1 sm:px-3">
+                {/* Playback Controls Row */}
+                <div className="flex items-center gap-3 sm:gap-4">
+                  {/* Shuffle */}
+                  <button
+                    type="button"
+                    onClick={() => setIsShuffle(prev => !prev)}
+                    title={isShuffle ? "Disable shuffle" : "Enable shuffle"}
+                    className={`transition hidden xs:block ${isShuffle ? "text-[#1db954]" : "text-white/60 hover:text-white"}`}
+                  >
+                    <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor">
+                      <path d="M13.151.922a.75.75 0 1 0-1.06 1.06L13.109 3H11.16a3.75 3.75 0 0 0-2.873 1.34l-6.173 7.356A2.25 2.25 0 0 1 .39 12.5H0V14h.391a3.75 3.75 0 0 0 2.873-1.34l6.173-7.356a2.25 2.25 0 0 1 1.724-.804h1.947l-1.017 1.018a.75.75 0 0 0 1.06 1.06L15.98 3.75 13.15.922zM.391 3.5H0V2h.391c1.109 0 2.16.49 2.873 1.34L4.89 5.277l-.979 1.167-1.796-2.14A2.25 2.25 0 0 0 .39 3.5z"/>
+                      <path d="m7.5 10.723.98-1.167 1.795 2.14a2.25 2.25 0 0 0 1.725.804h1.947l-1.017-1.018a.75.75 0 1 1 1.06-1.06l2.829 2.828-2.829 2.828a.75.75 0 1 1-1.06-1.06L13.109 14H11.16a3.75 3.75 0 0 1-2.873-1.34l-1.787-2.137z"/>
+                    </svg>
+                  </button>
+
+                  {/* Previous */}
+                  <button
+                    type="button"
+                    onClick={handlePrevTrack}
+                    title="Previous"
+                    className="text-white/70 hover:text-white transition"
+                  >
+                    <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 16 16">
+                      <path d="M3.3 1a.7.7 0 0 1 .7.7v5.15l9.95-5.744a.7.7 0 0 1 1.05.606v12.576a.7.7 0 0 1-1.05.607L4 9.149V14.3a.7.7 0 0 1-.7.7H1.7a.7.7 0 0 1-.7-.7V1.7a.7.7 0 0 1 .7-.7h1.6z"/>
+                    </svg>
+                  </button>
+
+                  {/* Play / Pause Circular Button */}
+                  <button
+                    type="button"
+                    onClick={togglePlayPause}
+                    title={isPlaying ? "Pause" : "Play"}
+                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white text-black hover:scale-105 active:scale-95 flex items-center justify-center transition shadow-lg flex-shrink-0"
+                  >
+                    {isPlaying ? (
+                      <svg className="w-3.5 h-3.5 fill-black" viewBox="0 0 16 16">
+                        <path d="M2.7 1a.7.7 0 0 0-.7.7v12.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7H2.7zm8 0a.7.7 0 0 0-.7.7v12.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7h-2.6z"/>
+                      </svg>
+                    ) : (
+                      <svg className="w-3.5 h-3.5 ml-0.5 fill-black" viewBox="0 0 16 16">
+                        <path d="M3 1.713a.7.7 0 0 1 1.05-.607l10.89 6.288a.7.7 0 0 1 0 1.212L4.05 14.894A.7.7 0 0 1 3 14.288V1.713z"/>
+                      </svg>
+                    )}
+                  </button>
+
+                  {/* Next */}
+                  <button
+                    type="button"
+                    onClick={handleNextTrack}
+                    title="Next"
+                    className="text-white/70 hover:text-white transition"
+                  >
+                    <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 16 16">
+                      <path d="M12.7 1a.7.7 0 0 0-.7.7v5.15L2.05.106A.7.7 0 0 0 1 .712v12.576a.7.7 0 0 0 1.05.607L12 8.149V14.3a.7.7 0 0 0 .7.7h1.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7h-1.6z"/>
+                    </svg>
+                  </button>
+
+                  {/* Repeat */}
+                  <button
+                    type="button"
+                    onClick={() => setIsRepeat(prev => !prev)}
+                    title={isRepeat ? "Disable repeat" : "Enable repeat"}
+                    className={`transition hidden xs:block ${isRepeat ? "text-[#1db954]" : "text-white/60 hover:text-white"}`}
+                  >
+                    <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor">
+                      <path d="M0 4.75A3.75 3.75 0 0 1 3.75 1h8.5A3.75 3.75 0 0 1 16 4.75v5a3.75 3.75 0 0 1-3.75 3.75H9.81l1.018 1.018a.75.75 0 1 1-1.06 1.06L6.939 12.75l2.829-2.828a.75.75 0 1 1 1.06 1.06L9.811 12h2.439a2.25 2.25 0 0 0 2.25-2.25v-5a2.25 2.25 0 0 0-2.25-2.25h-8.5A2.25 2.25 0 0 0 1.5 4.75v5A2.25 2.25 0 0 0 3.75 12H5v1.5H3.75A3.75 3.75 0 0 1 0 9.75v-5z"/>
+                    </svg>
+                  </button>
                 </div>
-                <span className="w-7 text-left">{formatSongTime(currentTrack.durationSec)}</span>
+
+                {/* Progress Scrubber Bar Row */}
+                <div className="flex items-center gap-2 w-full text-[10px] sm:text-[11px] font-mono text-white/50">
+                  <span className="w-6 sm:w-7 text-right">{formatSongTime(currentTimeSec)}</span>
+                  <div
+                    onClick={handleScrubberClick}
+                    className="relative flex-1 h-1 bg-white/20 hover:h-1.5 rounded-full overflow-hidden cursor-pointer group transition-all"
+                  >
+                    <div
+                      className="h-full bg-white group-hover:bg-[#1db954] transition-all"
+                      style={{ width: `${Math.min(100, (currentTimeSec / currentTrack.durationSec) * 100)}%` }}
+                    />
+                  </div>
+                  <span className="w-6 sm:w-7 text-left">{formatSongTime(currentTrack.durationSec)}</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
 
-      {/* ── FLOATING RECENTER / LOCATE ME BUTTON (Bottom Right) ── */}
-      {mapReady && (
-        <button
-          id="btn-recenter"
-          onClick={handleLocateMe}
-          title="Locate My Position"
-          className="fixed right-4 bottom-5 sm:bottom-6 z-30 w-11 h-11 rounded-full bg-[#1e0f2b]/85 hover:bg-[#2e1742] border border-amber-400/40 text-amber-300 flex items-center justify-center shadow-xl backdrop-blur-md transition active:scale-90"
-        >
-          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
-          </svg>
-        </button>
-      )}
-
-      {/* ── FLOATING CAMERA BUTTON (Bottom Center) ── */}
-      {mapReady && (
-        <div className="fixed bottom-5 sm:bottom-6 z-30 flex flex-col items-center gap-1.5"
-          style={{ left: '50%', transform: 'translateX(-50%)' }}>
+          {/* 2. SNAP PANDAL CTA (Only CTA, No Text, Logo Yellow with Radiant Glow Effect) */}
           <button
             id="camera-btn"
             onClick={() => setUploadVisible(true)}
-            className="w-16 h-16 rounded-full flex items-center justify-center shadow-2xl active:scale-95 transition-all"
-            style={{
-              background: 'linear-gradient(135deg, #FF6B00, #C0392B)',
-              boxShadow: '0 6px 40px rgba(255,107,0,0.55), 0 0 0 4px rgba(255,107,0,0.15)',
-            }}
+            title="Snap Pandal"
+            className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-amber-500 via-amber-300 to-amber-100 flex items-center justify-center border-2 sm:border-[3px] border-[#180924] shadow-[0_0_30px_rgba(251,191,36,0.65),0_0_12px_rgba(212,175,55,0.45)] hover:shadow-[0_0_40px_rgba(251,191,36,0.85)] active:scale-95 transition-all pointer-events-auto flex-shrink-0"
           >
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
+            <svg className="w-5 h-5 sm:w-6 sm:h-6 text-[#1c0a2b]" viewBox="0 0 24 24" fill="currentColor">
               <path d="M9 3L7.17 5H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2h-3.17L15 3H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z" />
-              <circle cx="12" cy="13" r="3" fill="white" />
+              <circle cx="12" cy="13" r="3" fill="currentColor" />
             </svg>
           </button>
-          <span className="text-[11px] font-semibold tracking-wide text-white/80 bg-black/50 px-2.5 py-0.5 rounded-full backdrop-blur-md shadow">
-            Snap Pandal
-          </span>
+
+          {/* 3. RECENTER / LOCATE ME BUTTON */}
+          <button
+            id="btn-recenter"
+            onClick={handleLocateMe}
+            title="Locate My Position"
+            className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#1e0f2b]/85 hover:bg-[#2e1742] border border-amber-400/40 text-amber-300 flex items-center justify-center shadow-xl backdrop-blur-md transition active:scale-90 pointer-events-auto flex-shrink-0"
+          >
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
+            </svg>
+          </button>
         </div>
       )}
 
