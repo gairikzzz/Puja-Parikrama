@@ -1563,114 +1563,49 @@ export default function App() {
             </div>
           )}
 
-          {/* Main Custom Styled Music Player Pill Bar */}
+          {/* Main Custom Styled Music Player Pill Bar - SINGLE ROW LAYOUT MATCHING SNAP CTA DIAMETER */}
           <div
             id="spotify-music-player-bar"
-            className="w-full overflow-hidden backdrop-blur-[3px] bg-gradient-to-r from-[#210c32]/50 via-[#2d1142]/45 to-[#1c082b]/50 border-[1.5px] border-[#d4af37]/70 rounded-[22px] px-3.5 sm:px-4 py-2 sm:py-2.5 flex flex-col justify-between gap-1.5 shadow-[0_4px_20px_rgba(0,0,0,0.35),0_0_12px_rgba(212,175,55,0.2)] transition-all"
+            className="w-full h-13 sm:h-14 overflow-hidden backdrop-blur-[3px] bg-gradient-to-r from-[#210c32]/50 via-[#2d1142]/45 to-[#1c082b]/50 border-[1.5px] border-[#d4af37]/70 rounded-full px-2.5 sm:px-3.5 flex items-center justify-between gap-2 sm:gap-3 shadow-[0_4px_20px_rgba(0,0,0,0.35),0_0_12px_rgba(212,175,55,0.2)] transition-all"
           >
-            {/* Top Row: Left (Cover + Title + Artist) & Right (Controls: Prev, Play, Next, Mute) */}
-            <div className="flex items-center justify-between w-full gap-2 min-w-0">
-              {/* Left: Album Cover + Title + Artist */}
-              <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-shrink">
+            {/* Left: Album Cover + Title + Artist */}
+            <div className="flex items-center gap-2 min-w-0 flex-shrink-0 max-w-[110px] sm:max-w-[150px]">
+              <button
+                type="button"
+                onClick={() => setSpotifyEmbedVisible(v => !v)}
+                title={spotifyEmbedVisible ? "Hide Spotify Playlist" : "Open Spotify Playlist Embed"}
+                className="relative group flex-shrink-0 cursor-pointer"
+              >
+                <img
+                  src={currentTrack.cover}
+                  alt={currentTrack.title}
+                  className="w-8 h-8 sm:w-9 sm:h-9 rounded-[8px] object-cover border border-white/10 shadow group-hover:scale-105 transition-transform"
+                />
+                {/* Spotify indicator badge */}
+                <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-[#121212] rounded-full flex items-center justify-center border border-white/20 shadow">
+                  <svg className="w-2.5 h-2.5 text-[#1db954] fill-current" viewBox="0 0 24 24">
+                    <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+                  </svg>
+                </div>
+              </button>
+
+              <div className="flex flex-col min-w-0 pr-0.5">
                 <button
                   type="button"
                   onClick={() => setSpotifyEmbedVisible(v => !v)}
-                  title={spotifyEmbedVisible ? "Hide Spotify Playlist" : "Open Spotify Playlist Embed"}
-                  className="relative group flex-shrink-0 cursor-pointer"
+                  title="Toggle Spotify Playlist Embed"
+                  className="text-left text-xs sm:text-[13px] font-bold text-white hover:text-amber-200 truncate leading-tight transition cursor-pointer"
                 >
-                  <img
-                    src={currentTrack.cover}
-                    alt={currentTrack.title}
-                    className="w-8 h-8 sm:w-9 sm:h-9 rounded-[8px] object-cover border border-white/10 shadow group-hover:scale-105 transition-transform"
-                  />
-                  {/* Spotify indicator badge */}
-                  <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-[#121212] rounded-full flex items-center justify-center border border-white/20 shadow">
-                    <svg className="w-2.5 h-2.5 text-[#1db954] fill-current" viewBox="0 0 24 24">
-                      <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
-                    </svg>
-                  </div>
+                  {currentTrack.title}
                 </button>
-
-                <div className="flex flex-col min-w-0 pr-1">
-                  <button
-                    type="button"
-                    onClick={() => setSpotifyEmbedVisible(v => !v)}
-                    title="Toggle Spotify Playlist Embed"
-                    className="text-left text-xs sm:text-[13px] font-bold text-white hover:text-amber-200 truncate leading-tight transition cursor-pointer"
-                  >
-                    {currentTrack.title}
-                  </button>
-                  <span className="text-[10px] sm:text-[11px] text-white/50 truncate leading-tight mt-0.5">
-                    {currentTrack.artist}
-                  </span>
-                </div>
-              </div>
-
-              {/* Right: Playback Controls Row (Prev, Play, Next, Mute - EXACT REFERENCE MATCH) */}
-              <div className="flex items-center gap-2 sm:gap-2.5 flex-shrink-0">
-                <button
-                  type="button"
-                  onClick={handlePrevTrack}
-                  title="Previous Track"
-                  className="text-white/70 hover:text-white transition p-0.5"
-                >
-                  <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-current" viewBox="0 0 16 16">
-                    <path d="M3.3 1a.7.7 0 0 1 .7.7v5.15l9.95-5.744a.7.7 0 0 1 1.05.606v12.576a.7.7 0 0 1-1.05.607L4 9.149V14.3a.7.7 0 0 1-.7.7H1.7a.7.7 0 0 1-.7-.7V1.7a.7.7 0 0 1 .7-.7h1.6z"/>
-                  </svg>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={togglePlayPause}
-                  title={isPlaying ? "Pause" : "Play"}
-                  className="w-6 h-6 sm:w-6.5 sm:h-6.5 rounded-full bg-white text-black hover:scale-105 active:scale-95 flex items-center justify-center transition shadow-md flex-shrink-0"
-                >
-                  {isPlaying ? (
-                    <svg className="w-2.5 h-2.5 fill-black" viewBox="0 0 16 16">
-                      <path d="M2.7 1a.7.7 0 0 0-.7.7v12.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7H2.7zm8 0a.7.7 0 0 0-.7.7v12.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7h-2.6z"/>
-                    </svg>
-                  ) : (
-                    <svg className="w-2.5 h-2.5 ml-0.5 fill-black" viewBox="0 0 16 16">
-                      <path d="M3 1.713a.7.7 0 0 1 1.05-.607l10.89 6.288a.7.7 0 0 1 0 1.212L4.05 14.894A.7.7 0 0 1 3 14.288V1.713z"/>
-                    </svg>
-                  )}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleNextTrack}
-                  title="Next Track"
-                  className="text-white/70 hover:text-white transition p-0.5"
-                >
-                  <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-current" viewBox="0 0 16 16">
-                    <path d="M12.7 1a.7.7 0 0 0-.7.7v5.15L2.05.106A.7.7 0 0 0 1 .712v12.576a.7.7 0 0 0 1.05.607L12 8.149V14.3a.7.7 0 0 0 .7.7h1.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7h-1.6z"/>
-                  </svg>
-                </button>
-
-                {/* Mute / Unmute Button (LAST BUTTON IN CONTROLS) */}
-                <button
-                  type="button"
-                  onClick={toggleMute}
-                  title={isMuted ? "Unmute" : "Mute"}
-                  className={`transition p-0.5 ${isMuted ? 'text-amber-400/50 hover:text-amber-300' : 'text-amber-400 hover:text-amber-300'}`}
-                >
-                  {isMuted ? (
-                    <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor"/>
-                      <line x1="23" y1="9" x2="17" y2="15"/>
-                      <line x1="17" y1="9" x2="23" y2="15"/>
-                    </svg>
-                  ) : (
-                    <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current" viewBox="0 0 24 24">
-                      <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
-                    </svg>
-                  )}
-                </button>
+                <span className="text-[10px] sm:text-[11px] text-white/50 truncate leading-tight mt-0.5">
+                  {currentTrack.artist}
+                </span>
               </div>
             </div>
 
-            {/* Bottom Row: Full Width Scrubber Bar with Left & Right Timestamps */}
-            <div className="flex items-center gap-2 w-full text-[9px] sm:text-[10px] font-mono text-white/50 pt-0.5">
+            {/* Middle: Scrubber Track with Left & Right Timestamps */}
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-[50px] text-[9px] sm:text-[10px] font-mono text-white/50">
               <span className="text-left flex-shrink-0">{formatSongTime(currentTimeSec)}</span>
               <div
                 onClick={handleScrubberClick}
@@ -1682,6 +1617,68 @@ export default function App() {
                 />
               </div>
               <span className="text-right flex-shrink-0">{formatSongTime(currentTrack.durationSec)}</span>
+            </div>
+
+            {/* Right: Playback Controls Row (Prev, Play, Next, Mute in White / Crossed) */}
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+              <button
+                type="button"
+                onClick={handlePrevTrack}
+                title="Previous Track"
+                className="text-white/70 hover:text-white transition p-0.5"
+              >
+                <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-current" viewBox="0 0 16 16">
+                  <path d="M3.3 1a.7.7 0 0 1 .7.7v5.15l9.95-5.744a.7.7 0 0 1 1.05.606v12.576a.7.7 0 0 1-1.05.607L4 9.149V14.3a.7.7 0 0 1-.7.7H1.7a.7.7 0 0 1-.7-.7V1.7a.7.7 0 0 1 .7-.7h1.6z"/>
+                </svg>
+              </button>
+
+              <button
+                type="button"
+                onClick={togglePlayPause}
+                title={isPlaying ? "Pause" : "Play"}
+                className="w-6 h-6 sm:w-6.5 sm:h-6.5 rounded-full bg-white text-black hover:scale-105 active:scale-95 flex items-center justify-center transition shadow-md flex-shrink-0"
+              >
+                {isPlaying ? (
+                  <svg className="w-2.5 h-2.5 fill-black" viewBox="0 0 16 16">
+                    <path d="M2.7 1a.7.7 0 0 0-.7.7v12.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7H2.7zm8 0a.7.7 0 0 0-.7.7v12.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7h-2.6z"/>
+                  </svg>
+                ) : (
+                  <svg className="w-2.5 h-2.5 ml-0.5 fill-black" viewBox="0 0 16 16">
+                    <path d="M3 1.713a.7.7 0 0 1 1.05-.607l10.89 6.288a.7.7 0 0 1 0 1.212L4.05 14.894A.7.7 0 0 1 3 14.288V1.713z"/>
+                  </svg>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={handleNextTrack}
+                title="Next Track"
+                className="text-white/70 hover:text-white transition p-0.5"
+              >
+                <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-current" viewBox="0 0 16 16">
+                  <path d="M12.7 1a.7.7 0 0 0-.7.7v5.15L2.05.106A.7.7 0 0 0 1 .712v12.576a.7.7 0 0 0 1.05.607L12 8.149V14.3a.7.7 0 0 0 .7.7h1.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7h-1.6z"/>
+                </svg>
+              </button>
+
+              {/* Mute / Unmute Button: Pure WHITE (not yellow) when active, CROSSED when muted */}
+              <button
+                type="button"
+                onClick={toggleMute}
+                title={isMuted ? "Unmute" : "Mute"}
+                className={`transition p-0.5 ${isMuted ? 'text-white/45 hover:text-white/70' : 'text-white hover:text-white/80'}`}
+              >
+                {isMuted ? (
+                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor"/>
+                    <line x1="23" y1="9" x2="17" y2="15"/>
+                    <line x1="17" y1="9" x2="23" y2="15"/>
+                  </svg>
+                ) : (
+                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current" viewBox="0 0 24 24">
+                    <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                  </svg>
+                )}
+              </button>
             </div>
           </div>
         </div>
