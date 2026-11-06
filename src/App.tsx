@@ -1082,18 +1082,20 @@ export default function App() {
           <div className="hidden md:block absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#140d1c] via-[#140d1c]/60 to-transparent pointer-events-none" />
 
           {/* Subtle bottom vignette to ensure perfect loader contrast */}
-          <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-black/85 via-black/35 to-transparent pointer-events-none" />
+          <div className="absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-[#0a0a14] via-[#0a0a14]/80 to-transparent pointer-events-none" />
 
-          {/* Bottom pulse loader */}
-          <div className="relative z-10 flex flex-col items-center gap-2.5 mb-2 sm:mb-4">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
-              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-              <span className="w-2 h-2 rounded-full bg-amber-400" />
+          {/* High-Contrast Bottom Pulse Loader with Semi-Transparent Dark Overlay */}
+          <div className="relative z-10 flex flex-col items-center mb-4 sm:mb-6">
+            <div className="flex items-center gap-3 px-5 py-2.5 rounded-full bg-black/75 backdrop-blur-md border border-amber-400/30 shadow-[0_8px_32px_rgba(0,0,0,0.9)]">
+              <div className="flex items-center gap-1.5 flex-shrink-0">
+                <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+                <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-amber-400" />
+              </div>
+              <span className="text-[11px] sm:text-xs font-bold tracking-[0.18em] text-amber-100 uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,1)]">
+                Initializing Map &amp; GPS...
+              </span>
             </div>
-            <span className="text-xs font-medium tracking-widest text-amber-100/90 uppercase drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]">
-              Initializing Map &amp; GPS...
-            </span>
           </div>
         </div>
       )}

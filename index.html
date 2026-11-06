@@ -393,18 +393,20 @@
     <div class="hidden md:block absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#140d1c] via-[#140d1c]/60 to-transparent pointer-events-none"></div>
 
     <!-- Subtle bottom vignette to ensure perfect loader contrast -->
-    <div class="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-black/85 via-black/35 to-transparent pointer-events-none"></div>
+    <div class="absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-[#0a0a14] via-[#0a0a14]/80 to-transparent pointer-events-none"></div>
 
-    <!-- Subtle Animated Pulse Loader at Bottom (kept same) -->
-    <div class="relative z-10 flex flex-col items-center gap-2.5 mb-2 sm:mb-4 splash-fade-in-delayed">
-      <div class="flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
-        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-        <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+    <!-- High-Contrast Bottom Pulse Loader with Semi-Transparent Dark Overlay -->
+    <div class="relative z-10 flex flex-col items-center mb-4 sm:mb-6 splash-fade-in-delayed">
+      <div class="flex items-center gap-3 px-5 py-2.5 rounded-full bg-black/75 backdrop-blur-md border border-amber-400/30 shadow-[0_8px_32px_rgba(0,0,0,0.9)]">
+        <div class="flex items-center gap-1.5 flex-shrink-0">
+          <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+          <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+          <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+        </div>
+        <span class="text-[11px] sm:text-xs font-bold tracking-[0.18em] text-amber-100 uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,1)]">
+          Initializing Map &amp; GPS...
+        </span>
       </div>
-      <span class="text-xs font-medium tracking-widest text-amber-100/90 uppercase drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]">
-        Initializing Map &amp; GPS...
-      </span>
     </div>
   </div>
 
