@@ -1518,9 +1518,9 @@ export default function App() {
         </header>
       )}
 
-      {/* ── 1. SPOTIFY MUSIC PLAYER (Reference Layout: Top Info/Controls, Full Bottom Scrubber) ── */}
+      {/* ── 1. SPOTIFY MUSIC PLAYER (Elongated Single Row Layout matching Snap CTA diameter) ── */}
       {mapReady && (
-        <div className="fixed left-[calc(25%-17px)] -translate-x-1/2 bottom-4 sm:bottom-5 z-30 w-[calc(50%-44px)] max-w-[440px] min-w-[260px] pointer-events-auto select-none flex flex-col gap-2">
+        <div className="fixed left-[calc(25%-14px)] -translate-x-1/2 bottom-4 sm:bottom-5 z-30 w-[calc(50%-24px)] max-w-[560px] min-w-[320px] pointer-events-auto select-none flex flex-col gap-2">
           {/* Spotify Official Interactive Playlist Embed Popup */}
           {spotifyEmbedVisible && (
             <div className="w-full bg-[#12071f]/95 border-[1.5px] border-[#d4af37]/70 rounded-2xl p-2.5 shadow-2xl backdrop-blur-xl animate-in fade-in slide-in-from-bottom-2 duration-200">
@@ -1568,8 +1568,8 @@ export default function App() {
             id="spotify-music-player-bar"
             className="w-full h-13 sm:h-14 overflow-hidden backdrop-blur-[3px] bg-gradient-to-r from-[#210c32]/50 via-[#2d1142]/45 to-[#1c082b]/50 border-[1.5px] border-[#d4af37]/70 rounded-full px-2.5 sm:px-3.5 flex items-center justify-between gap-2 sm:gap-3 shadow-[0_4px_20px_rgba(0,0,0,0.35),0_0_12px_rgba(212,175,55,0.2)] transition-all"
           >
-            {/* Left: Album Cover + Title + Artist */}
-            <div className="flex items-center gap-2 min-w-0 flex-shrink-0 max-w-[110px] sm:max-w-[150px]">
+            {/* Left: Album Cover + Title + Artist (Clean cover without badge, full un-truncated title) */}
+            <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-shrink-0">
               <button
                 type="button"
                 onClick={() => setSpotifyEmbedVisible(v => !v)}
@@ -1581,12 +1581,6 @@ export default function App() {
                   alt={currentTrack.title}
                   className="w-8 h-8 sm:w-9 sm:h-9 rounded-[8px] object-cover border border-white/10 shadow group-hover:scale-105 transition-transform"
                 />
-                {/* Spotify indicator badge */}
-                <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-[#121212] rounded-full flex items-center justify-center border border-white/20 shadow">
-                  <svg className="w-2.5 h-2.5 text-[#1db954] fill-current" viewBox="0 0 24 24">
-                    <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
-                  </svg>
-                </div>
               </button>
 
               <div className="flex flex-col min-w-0 pr-0.5">
@@ -1594,11 +1588,11 @@ export default function App() {
                   type="button"
                   onClick={() => setSpotifyEmbedVisible(v => !v)}
                   title="Toggle Spotify Playlist Embed"
-                  className="text-left text-xs sm:text-[13px] font-bold text-white hover:text-amber-200 truncate leading-tight transition cursor-pointer"
+                  className="text-left text-xs sm:text-[13px] font-bold text-white hover:text-amber-200 whitespace-nowrap leading-tight transition cursor-pointer"
                 >
                   {currentTrack.title}
                 </button>
-                <span className="text-[10px] sm:text-[11px] text-white/50 truncate leading-tight mt-0.5">
+                <span className="text-[10px] sm:text-[11px] text-white/50 whitespace-nowrap leading-tight mt-0.5">
                   {currentTrack.artist}
                 </span>
               </div>
