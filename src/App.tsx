@@ -1504,8 +1504,8 @@ export default function App() {
             </div>
           </div>
 
-          {/* Right: Smaller Controls & Thin Scrubber (Ample padding, No Boundary Overlap) */}
-          <div className="flex flex-col items-center justify-center gap-0.5 min-w-[115px] sm:min-w-[160px] md:min-w-[180px] flex-shrink-0 pr-1">
+          {/* Right: Smaller Controls & Thin Scrubber (Centrally Aligned to the Dialog Box) */}
+          <div className="flex flex-col items-center justify-center gap-1 min-w-[115px] sm:min-w-[160px] md:min-w-[180px] flex-shrink-0 pr-1 my-auto pt-0.5">
             {/* Small Playback Controls Row */}
             <div className="flex items-center gap-2 sm:gap-3">
               <button
