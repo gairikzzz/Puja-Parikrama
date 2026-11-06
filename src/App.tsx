@@ -595,19 +595,28 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
   return (
     <div
       id="upload-modal"
-      className={`fixed inset-0 z-[120] flex flex-col ${visible ? 'visible' : 'hidden'}`}
-      style={{ background: 'rgba(0,0,0,0.95)' }}
+      className={`snap-modal-backdrop fixed inset-0 z-[120] flex flex-col justify-end sm:justify-center p-0 sm:p-4 bg-black/85 backdrop-blur-xl ${
+        visible ? 'active visible' : 'hidden'
+      }`}
     >
-      {/* Header */}
-      <div className="flex items-center justify-between px-5 pt-14 pb-4 border-b border-white/10">
-        <button id="upload-back-btn" onClick={handleClose} className="text-white/70 hover:text-white transition-colors">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" /></svg>
-        </button>
-        <h2 className="text-white font-bold text-base sm:text-lg">
-          {step === 'capture' ? 'Snap & Tag Pandal' : 'Pandal Photo Verification'}
-        </h2>
-        <div className="w-6" />
-      </div>
+      <div className="snap-modal-content w-full sm:max-w-lg mx-auto bg-[#121224] rounded-t-[32px] sm:rounded-[28px] border border-white/10 p-5 sm:p-6 flex flex-col max-h-[92vh] overflow-y-auto hide-scrollbar shadow-2xl">
+        {/* Header */}
+        <div className="flex items-center justify-between pb-3.5 border-b border-white/10 mb-4 flex-shrink-0">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-full p-0.5 bg-gradient-to-tr from-amber-400 to-puja-crimson flex items-center justify-center overflow-hidden flex-shrink-0">
+              <span className="text-base">🪔</span>
+            </div>
+            <div>
+              <h2 className="text-white font-bold text-base leading-tight">
+                {step === 'capture' ? 'Snap & Tag Pandal' : 'Pandal Photo Verification'}
+              </h2>
+              <p className="text-white/40 text-[11px]">Strategy 4: Hybrid EXIF + Live GPS + Map Confirmation</p>
+            </div>
+          </div>
+          <button id="upload-back-btn" onClick={handleClose} className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:text-white transition active:scale-95">
+            ✕
+          </button>
+        </div>
 
       {step === 'capture' ? (
         /* Capture step */
@@ -835,6 +844,7 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
           </div>
         </div>
       )}
+      </div>
     </div>
   )
 }
