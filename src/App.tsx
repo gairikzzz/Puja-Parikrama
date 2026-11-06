@@ -1137,19 +1137,19 @@ export default function App() {
       {mapReady && (
         <header className="fixed top-3 left-0 right-0 z-50 px-3 sm:px-6 pointer-events-none flex flex-col items-center w-full">
           {/* Main Pill Bar */}
-          <div className="relative overflow-visible backdrop-blur-[3px] bg-gradient-to-r from-[#210c32]/35 via-[#2d1142]/30 to-[#1c082b]/35 border-[1.5px] border-[#d4af37]/60 rounded-full px-3.5 sm:px-6 py-2 flex items-center justify-between w-full pointer-events-auto shadow-[0_4px_20px_rgba(0,0,0,0.3),0_0_12px_rgba(212,175,55,0.15)] transition-all">
+          <div className="relative overflow-visible backdrop-blur-[3px] bg-gradient-to-r from-[#210c32]/35 via-[#2d1142]/30 to-[#1c082b]/35 border-[1.5px] border-[#d4af37]/60 rounded-full px-3 sm:px-4 py-1 h-10 sm:h-11 flex items-center justify-between w-full pointer-events-auto shadow-[0_4px_20px_rgba(0,0,0,0.3),0_0_12px_rgba(212,175,55,0.15)] transition-all">
 
             {/* Left Section: Transparent Glowing Durga Emblem & Bengali Typography Only */}
-            <div className="relative flex items-center min-w-0 z-10 flex-shrink-0 pr-1 sm:pr-3">
+            <div className="relative flex items-center min-w-0 z-10 flex-shrink-0 pr-1.5 sm:pr-3">
               <img
                 src="/logo-transparent.png"
                 alt="পূজা পরিক্রমা"
-                className="h-8 xs:h-9 sm:h-10 md:h-11 w-auto object-contain flex-shrink-0 drop-shadow-[0_0_6px_rgba(251,191,36,0.55)]"
+                className="h-6 sm:h-7 w-auto object-contain flex-shrink-0 drop-shadow-[0_0_4px_rgba(251,191,36,0.5)]"
               />
             </div>
 
             {/* Middle Section: Integrated Search Bar in the Header */}
-            <div className="relative flex-1 max-w-xs sm:max-w-sm md:max-w-md mx-2 sm:mx-4 z-10">
+            <div className="relative flex-1 max-w-xs sm:max-w-sm md:max-w-md mx-2 sm:mx-3 z-10">
               <div className="relative flex items-center">
                 <input
                   ref={searchInputRef}
@@ -1157,14 +1157,14 @@ export default function App() {
                   value={topSearchQuery}
                   onChange={e => setTopSearchQuery(e.target.value)}
                   placeholder="Search Pandals or Events..."
-                  className="w-full bg-[#1b1328]/75 hover:bg-[#1b1328]/90 focus:bg-[#1b1328]/95 border border-amber-400/35 hover:border-amber-400/60 focus:border-amber-400 rounded-full pl-3.5 sm:pl-4 pr-9 sm:pr-10 py-1.5 text-xs text-white placeholder-amber-200/50 backdrop-blur-md shadow-inner outline-none transition"
+                  className="w-full bg-[#1b1328]/75 hover:bg-[#1b1328]/90 focus:bg-[#1b1328]/95 border border-amber-400/35 hover:border-amber-400/60 focus:border-amber-400 rounded-full pl-3 sm:pl-3.5 pr-8 py-1 h-7 sm:h-7.5 text-[11px] sm:text-xs text-white placeholder-amber-200/50 backdrop-blur-md shadow-inner outline-none transition"
                 />
                 <button
                   type="button"
                   onClick={() => searchInputRef.current?.focus()}
-                  className="absolute right-3 text-amber-300 hover:text-amber-200"
+                  className="absolute right-2.5 text-amber-300 hover:text-amber-200"
                 >
-                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="11" cy="11" r="8" />
                     <line x1="21" y1="21" x2="16.65" y2="16.65" />
                   </svg>
@@ -1206,10 +1206,10 @@ export default function App() {
               {user ? (
                 <div
                   onClick={() => showToast(`👤 Signed in as ${user.displayName}`)}
-                  className="flex items-center gap-1.5 bg-black/40 hover:bg-black/60 border border-amber-400/40 pl-1 pr-2.5 py-1 rounded-full cursor-pointer transition active:scale-95 shadow-sm"
+                  className="flex items-center gap-1.5 bg-black/40 hover:bg-black/60 border border-amber-400/40 pl-1 pr-2.5 py-0.5 h-7 sm:h-7.5 rounded-full cursor-pointer transition active:scale-95 shadow-sm"
                 >
-                  <img src={user.photoURL} alt={user.displayName} className="w-6 h-6 rounded-full border border-amber-400 object-cover" />
-                  <span className="text-xs font-semibold text-amber-200 max-w-[70px] truncate hidden sm:inline">{user.displayName.split(' ')[0]}</span>
+                  <img src={user.photoURL} alt={user.displayName} className="w-5 h-5 rounded-full border border-amber-400 object-cover" />
+                  <span className="text-[11px] font-semibold text-amber-200 max-w-[70px] truncate hidden sm:inline">{user.displayName.split(' ')[0]}</span>
                   <button onClick={(e) => { e.stopPropagation(); handleSignOut() }} title="Sign Out" className="text-white/40 hover:text-red-400 text-xs ml-1 transition">✕</button>
                 </div>
               ) : (
@@ -1217,7 +1217,7 @@ export default function App() {
                   id="btn-google-signin"
                   onClick={handleGoogleSignIn}
                   title="Sign in with Google"
-                  className="flex items-center gap-1.5 bg-[#251037]/90 hover:bg-[#34164c] border-[1.5px] border-[#d4af37]/80 hover:border-amber-300 px-3 py-1.5 sm:px-3.5 sm:py-1.5 rounded-full text-xs font-semibold text-amber-200 transition active:scale-95 shadow-[0_0_12px_rgba(212,175,55,0.3)]"
+                  className="flex items-center gap-1.5 bg-[#251037]/90 hover:bg-[#34164c] border-[1.5px] border-[#d4af37]/80 hover:border-amber-300 px-2.5 py-1 sm:px-3 sm:py-1 h-7 sm:h-7.5 rounded-full text-[11px] sm:text-xs font-semibold text-amber-200 transition active:scale-95 shadow-[0_0_12px_rgba(212,175,55,0.3)]"
                 >
                   <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
