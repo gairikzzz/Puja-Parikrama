@@ -932,15 +932,27 @@ export default function App() {
         (pos) => {
           const coords = { lat: pos.coords.latitude, lng: pos.coords.longitude }
           setCurrentUserCoords(coords)
+          try {
+            localStorage.setItem('parikrama_user_location', JSON.stringify(coords))
+          } catch {}
           map.setCenter(coords)
-          map.setZoom(15)
-          showToast('📍 Located you! Zoomed to your position')
+          map.setZoom(16)
         },
         () => {
+          try {
+            const saved = localStorage.getItem('parikrama_user_location')
+            if (saved) {
+              const coords = JSON.parse(saved)
+              setCurrentUserCoords(coords)
+              map.setCenter(coords)
+              map.setZoom(16)
+              return
+            }
+          } catch {}
           map.setCenter(AGARTALA_CENTER)
           map.setZoom(14)
         },
-        { enableHighAccuracy: true, timeout: 8000 }
+        { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 }
       )
     }
   }
@@ -1045,17 +1057,40 @@ export default function App() {
   }, [showToast])
 
   const handleLocateMe = () => {
-    navigator.geolocation.getCurrentPosition(
-      pos => {
-        googleMapRef.current?.panTo({ lat: pos.coords.latitude, lng: pos.coords.longitude })
-        googleMapRef.current?.setZoom(16)
-      },
-      () => {
-        googleMapRef.current?.panTo(AGARTALA_CENTER)
-        googleMapRef.current?.setZoom(14)
-        showToast('📍 Centered on Agartala')
-      }
-    )
+    // Determine the user's location immediately
+    let target = currentUserCoords
+    if (!target || target.lat === AGARTALA_CENTER.lat) {
+      try {
+        const saved = localStorage.getItem('parikrama_user_location')
+        if (saved) target = JSON.parse(saved)
+      } catch {}
+    }
+    if (!target) target = AGARTALA_CENTER
+
+    // Pan & zoom immediately to initial zoom level 16
+    if (googleMapRef.current) {
+      googleMapRef.current.panTo(target)
+      googleMapRef.current.setZoom(16)
+    }
+
+    // Refresh live GPS in background without blocking
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          const freshCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude }
+          setCurrentUserCoords(freshCoords)
+          try {
+            localStorage.setItem('parikrama_user_location', JSON.stringify(freshCoords))
+          } catch {}
+          if (googleMapRef.current) {
+            googleMapRef.current.panTo(freshCoords)
+            googleMapRef.current.setZoom(16)
+          }
+        },
+        () => {},
+        { enableHighAccuracy: true, timeout: 6000, maximumAge: 30000 }
+      )
+    }
   }
 
   return (

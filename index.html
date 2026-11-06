@@ -1072,18 +1072,43 @@
         return;
       }
 
+      // Check if we have cached user location
+      let savedLoc = null;
+      try {
+        const cached = localStorage.getItem('parikrama_user_location');
+        if (cached) savedLoc = JSON.parse(cached);
+      } catch (e) {}
+
+      if (savedLoc && map) {
+        currentUserCoords = savedLoc;
+        userLocation = savedLoc;
+        const latLng = new google.maps.LatLng(savedLoc.lat, savedLoc.lng);
+        map.setCenter(latLng);
+        map.setZoom(16);
+        if (window.UserLocationOverlay) {
+          if (userLiveMarker) {
+            userLiveMarker.setPosition(latLng);
+          } else {
+            userLiveMarker = new window.UserLocationOverlay(latLng, map);
+          }
+        }
+      }
+
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           const userLat = pos.coords.latitude;
           const userLng = pos.coords.longitude;
           currentUserCoords = { lat: userLat, lng: userLng };
           userLocation = { lat: userLat, lng: userLng };
+          try {
+            localStorage.setItem('parikrama_user_location', JSON.stringify(userLocation));
+          } catch (e) {}
 
-          // Center & Zoom map directly to user's live position
+          // Center & Zoom map directly to user's live position at initial zoom 16
           if (map) {
             const userLatLng = new google.maps.LatLng(userLat, userLng);
             map.setCenter(userLatLng);
-            map.setZoom(15);
+            map.setZoom(16);
 
             // Place/update user's glowing blue location dot marker
             if (window.UserLocationOverlay) {
@@ -1097,11 +1122,10 @@
 
           // Populate and sort Nearby Pandals list relative to live coordinates
           updateNearbyList();
-          showToast('📍 Located you! Zoomed to your position');
         },
         (err) => {
           console.warn('Geolocation denied or unavailable on startup:', err);
-          if (map) {
+          if (!savedLoc && map) {
             map.setCenter(AGARTALA_CENTER);
             map.setZoom(14);
           }
@@ -2665,17 +2689,59 @@
       btnSubmitSnap.innerHTML = `<span>🪔</span> Submit Snap for Moderation`;
     });
 
-    /* ── Recenter Map Button (Pans to Live User Location) ── */
+    /* ── Recenter Map Button (Pans to Live User Location at initial zoom 16) ── */
     document.getElementById('btn-recenter')?.addEventListener('click', () => {
-      const targetLoc = (typeof userLocation !== 'undefined' && userLocation) 
+      let targetLoc = (typeof userLocation !== 'undefined' && userLocation && userLocation.lat !== 23.8315) 
         ? userLocation 
-        : ((typeof currentUserCoords !== 'undefined' && currentUserCoords) ? currentUserCoords : { lat: 23.8315, lng: 91.2868 });
+        : ((typeof currentUserCoords !== 'undefined' && currentUserCoords && currentUserCoords.lat !== 23.8315) ? currentUserCoords : null);
+
+      if (!targetLoc) {
+        try {
+          const saved = localStorage.getItem('parikrama_user_location');
+          if (saved) targetLoc = JSON.parse(saved);
+        } catch (e) {}
+      }
+
+      if (!targetLoc) targetLoc = { lat: 23.8315, lng: 91.2868 };
+
       if (map) {
-        map.panTo(targetLoc);
-        map.setZoom(15);
-        showToast('📍 Centered on your live position');
-      } else {
-        showToast('📍 Centered on your position');
+        const targetLatLng = new google.maps.LatLng(targetLoc.lat, targetLoc.lng);
+        map.panTo(targetLatLng);
+        map.setZoom(16);
+
+        // Update/ensure blue dot marker is at user's location
+        if (window.UserLocationOverlay) {
+          if (userLiveMarker) {
+            userLiveMarker.setPosition(targetLatLng);
+          } else {
+            userLiveMarker = new window.UserLocationOverlay(targetLatLng, map);
+          }
+        }
+      }
+
+      // Refresh live GPS in background without blocking
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const freshLoc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+            userLocation = freshLoc;
+            currentUserCoords = freshLoc;
+            try {
+              localStorage.setItem('parikrama_user_location', JSON.stringify(freshLoc));
+            } catch (e) {}
+
+            if (map) {
+              const freshLatLng = new google.maps.LatLng(freshLoc.lat, freshLoc.lng);
+              map.panTo(freshLatLng);
+              map.setZoom(16);
+              if (userLiveMarker) {
+                userLiveMarker.setPosition(freshLatLng);
+              }
+            }
+          },
+          () => {},
+          { enableHighAccuracy: true, timeout: 6000, maximumAge: 30000 }
+        );
       }
     });
 
