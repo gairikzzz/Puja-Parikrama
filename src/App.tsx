@@ -1486,33 +1486,35 @@ export default function App() {
               )}
             </div>
 
-            {/* Right Section: Leaderboard CTA & Profile Icon */}
+            {/* Right Section: Leaderboard CTA & Profile Button (Rounded Rectangular: Name followed by Icon) */}
             <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 z-10 pl-1 sm:pl-2">
-              {/* Leaderboard CTA (matching Snap CTA golden glow & icon aesthetic) */}
+              {/* Leaderboard Button */}
               <button
                 id="btn-leaderboard"
                 type="button"
                 onClick={() => setLeaderboardModalVisible(true)}
                 title="Pandal Devotee Leaderboard"
-                className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gradient-to-tr from-amber-500 via-amber-300 to-amber-100 flex items-center justify-center border border-[#180924] shadow-[0_0_12px_rgba(251,191,36,0.6)] hover:shadow-[0_0_18px_rgba(251,191,36,0.9)] hover:scale-105 active:scale-95 transition-all flex-shrink-0 cursor-pointer"
+                className="h-7 sm:h-7.5 px-2.5 sm:px-3 rounded-xl bg-gradient-to-r from-amber-500 via-amber-300 to-amber-100 flex items-center gap-1.5 text-[#180924] font-bold text-[11px] sm:text-xs border border-[#180924]/40 shadow-[0_0_12px_rgba(251,191,36,0.6)] hover:shadow-[0_0_18px_rgba(251,191,36,0.9)] hover:scale-105 active:scale-95 transition-all flex-shrink-0 cursor-pointer"
               >
-                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#1c0a2b]" viewBox="0 0 24 24" fill="currentColor">
+                <span>Leaderboard</span>
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#1c0a2b] flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0 0 11 15.9V19H7v2h10v-2h-4v-3.1c1.8-.46 3.17-1.87 3.61-3.66C19.08 11.63 21 9.55 21 7V5c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z" />
                 </svg>
               </button>
 
-              {/* Profile Avatar Icon */}
-              <div
+              {/* Profile Button */}
+              <button
                 id="guest-avatar-chip"
-                title="Guest Devotee"
-                className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gradient-to-tr from-amber-500 via-amber-300 to-amber-100 p-[1.5px] flex items-center justify-center flex-shrink-0 drop-shadow-[0_0_5px_rgba(251,191,36,0.5)] cursor-default select-none transition hover:scale-105"
+                type="button"
+                onClick={() => setAuthModalVisible(true)}
+                title="Guest Devotee Profile"
+                className="h-7 sm:h-7.5 px-2.5 sm:px-3 rounded-xl bg-[#1c0a2b]/90 border border-amber-400/50 hover:border-amber-300 flex items-center gap-1.5 text-amber-200 hover:text-white font-semibold text-[11px] sm:text-xs shadow-[0_0_8px_rgba(251,191,36,0.25)] hover:shadow-[0_0_14px_rgba(251,191,36,0.45)] hover:scale-105 active:scale-95 transition-all flex-shrink-0 cursor-pointer"
               >
-                <div className="w-full h-full rounded-full bg-[#1c0a2b] flex items-center justify-center">
-                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-300" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                  </svg>
-                </div>
-              </div>
+                <span>Profile</span>
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-300 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                </svg>
+              </button>
             </div>
           </div>
         </header>
