@@ -1430,14 +1430,14 @@ export default function App() {
   }
 
   return (
-    <div className="relative w-full overflow-hidden font-inter" style={{ height: '100dvh', background: '#0a0a0f' }}>
+    <div className="relative w-full overflow-hidden font-inter" style={{ height: '100dvh', background: '#0D0C1B' }}>
 
       {/* ── MAP CANVAS ── */}
       <div ref={mapRef} className="absolute inset-0 z-0" />
 
       {/* ── MAP LOADING SCREEN ── */}
       {!mapReady && (
-        <div className="absolute inset-0 z-[90] flex flex-col items-center justify-center" style={{ background: '#0a0a0f' }}>
+        <div className="absolute inset-0 z-[90] flex flex-col items-center justify-center" style={{ background: '#0D0C1B' }}>
           <div className="relative mb-6">
             <div className="w-20 h-20 rounded-full flex items-center justify-center"
               style={{ background: 'linear-gradient(135deg, rgba(255,107,0,0.2), rgba(192,57,43,0.15))', border: '1.5px solid rgba(255,107,0,0.3)' }}>
@@ -1506,19 +1506,19 @@ export default function App() {
       {mapReady && (
         <header className="fixed top-3 left-0 right-0 z-50 px-3 sm:px-6 pointer-events-none flex flex-col items-center w-full">
           {/* Main Pill Bar */}
-          <div className="relative overflow-visible backdrop-blur-[3px] bg-gradient-to-r from-[#210c32]/35 via-[#2d1142]/30 to-[#1c082b]/35 border-[1.5px] border-[#d4af37]/60 rounded-full px-3 sm:px-4 py-1 h-10 sm:h-11 flex items-center justify-between w-full pointer-events-auto shadow-[0_4px_20px_rgba(0,0,0,0.3),0_0_12px_rgba(212,175,55,0.15)] transition-all">
+          <div className="relative overflow-visible backdrop-blur-md bg-[#211329]/70 border border-[#E9B83E]/40 rounded-full px-3 sm:px-4 py-1 h-10 sm:h-11 flex items-center justify-between w-full pointer-events-auto shadow-[0_4px_20px_rgba(13,12,27,0.5),0_0_8px_rgba(233,184,62,0.18)] transition-all">
 
             {/* Left Section: Transparent Glowing Durga Emblem & Bengali Typography */}
             <div className="relative flex items-center gap-1 sm:gap-1.5 min-w-0 z-10 flex-shrink-0 pr-1 sm:pr-2">
               <img
                 src="/durga-emblem.png"
                 alt="Maa Durga"
-                className="h-6 sm:h-7 w-auto object-contain flex-shrink-0 drop-shadow-[0_0_4px_rgba(251,191,36,0.5)]"
+                className="h-6 sm:h-7 w-auto object-contain flex-shrink-0 drop-shadow-[0_0_4px_rgba(233,184,62,0.45)]"
               />
               <img
                 src="/puja-text.png"
                 alt="পূজা পরিক্রমা"
-                className="h-6 sm:h-[29px] w-auto object-contain flex-shrink-0 drop-shadow-[0_0_6px_rgba(251,191,36,0.65)]"
+                className="h-6 sm:h-[29px] w-auto object-contain flex-shrink-0 drop-shadow-[0_0_6px_rgba(233,184,62,0.55)]"
               />
             </div>
 
@@ -1533,12 +1533,12 @@ export default function App() {
                   onFocus={() => setIsSearchFocused(true)}
                   onBlur={() => setIsSearchFocused(false)}
                   placeholder={isSearchFocused ? '' : 'Search Pandals...'}
-                  className="w-full bg-[#1b1328]/75 hover:bg-[#1b1328]/90 focus:bg-[#1b1328]/95 border border-amber-400/35 hover:border-amber-400/60 focus:border-amber-400 rounded-full pl-3 sm:pl-3.5 pr-8 py-1 h-7 sm:h-7.5 text-[11px] sm:text-xs text-white placeholder-amber-200/50 focus:placeholder-transparent backdrop-blur-md shadow-inner outline-none transition"
+                  className="w-full bg-[#0D0C1B]/60 hover:bg-[#0D0C1B]/80 focus:bg-[#0D0C1B]/95 border border-[#E9B83E]/35 hover:border-[#E9B83E]/60 focus:border-[#E9B83E] rounded-full pl-3 sm:pl-3.5 pr-8 py-1 h-7 sm:h-7.5 text-[11px] sm:text-xs text-[#F5E5B7] placeholder-[#F5E5B7]/45 focus:placeholder-transparent backdrop-blur-md shadow-inner outline-none transition"
                 />
                 <button
                   type="button"
                   onClick={() => searchInputRef.current?.focus()}
-                  className="absolute right-2.5 text-amber-300 hover:text-amber-200"
+                  className="absolute right-2.5 text-[#E9B83E] hover:text-[#F5E5B7]"
                 >
                   <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="11" cy="11" r="8" />
@@ -1549,7 +1549,7 @@ export default function App() {
 
               {/* Search Autocomplete Dropdown */}
               {topSearchResults.length > 0 && (
-                <div className="absolute top-full mt-2 left-0 right-0 bg-[#160c23]/95 border border-amber-400/30 rounded-2xl p-2 shadow-2xl backdrop-blur-xl z-50 max-h-60 overflow-y-auto space-y-1">
+                <div className="absolute top-full mt-2 left-0 right-0 bg-[#211329]/95 border border-[#E9B83E]/30 rounded-2xl p-2 shadow-2xl backdrop-blur-xl z-50 max-h-60 overflow-y-auto space-y-1">
                   {topSearchResults.map(pandal => (
                     <div
                       key={pandal.name}
@@ -1565,10 +1565,10 @@ export default function App() {
                         <span className="text-base">{pandal.emoji}</span>
                         <div className="truncate">
                           <p className="text-xs font-bold text-white truncate">{pandal.name}</p>
-                          <p className="text-[10px] text-amber-200/70 truncate">{pandal.neighborhood}</p>
+                          <p className="text-[10px] text-[#F5E5B7]/70 truncate">{pandal.neighborhood}</p>
                         </div>
                       </div>
-                      <span className="text-[10px] text-amber-300 font-mono flex-shrink-0">
+                      <span className="text-[10px] text-[#E9B83E] font-mono flex-shrink-0">
                         {formatDistance(calcHaversineMeters(currentUserCoords.lat, currentUserCoords.lng, pandal.lat, pandal.lng) / 1000)}
                       </span>
                     </div>
@@ -1586,17 +1586,17 @@ export default function App() {
                   id="btn-year-selector"
                   onClick={() => setYearDropdownOpen(o => !o)}
                   title="Select Puja Year"
-                  className="h-7 sm:h-7.5 px-2.5 sm:px-3 rounded-xl bg-[#1c0a2b]/90 hover:bg-[#250d38] border border-amber-400/50 hover:border-amber-300 flex items-center gap-1.5 text-amber-200 hover:text-white font-semibold text-[11px] sm:text-xs shadow-[0_0_8px_rgba(251,191,36,0.25)] hover:shadow-[0_0_14px_rgba(251,191,36,0.45)] hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                  className="h-7 sm:h-7.5 px-2.5 sm:px-3 rounded-xl bg-[#211329]/90 hover:bg-[#2b1935] border border-[#E9B83E]/40 hover:border-[#E9B83E] flex items-center gap-1.5 text-[#F5E5B7] hover:text-white font-semibold text-[11px] sm:text-xs shadow-[0_0_8px_rgba(233,184,62,0.22)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] hover:scale-105 active:scale-95 transition-all cursor-pointer"
                 >
-                  <span className="text-amber-400/80 text-[10px] sm:text-[11px] font-bold tracking-wider uppercase">YEAR</span>
-                  <span className="text-amber-200 font-bold">{selectedYear}</span>
-                  <svg className={`w-3 h-3 text-amber-300 transition-transform duration-200 ${yearDropdownOpen ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
+                  <span className="text-[#E9B83E] text-[10px] sm:text-[11px] font-bold tracking-wider uppercase">YEAR</span>
+                  <span className="text-[#F5E5B7] font-bold">{selectedYear}</span>
+                  <svg className={`w-3 h-3 text-[#E9B83E] transition-transform duration-200 ${yearDropdownOpen ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                   </svg>
                 </button>
 
                 {yearDropdownOpen && (
-                  <div className="absolute top-full mt-2 right-0 bg-[#160c23]/95 border border-amber-400/30 rounded-2xl p-2 shadow-2xl backdrop-blur-xl z-50 flex flex-col min-w-[120px] space-y-1 animate-in fade-in zoom-in-95 duration-150">
+                  <div className="absolute top-full mt-2 right-0 bg-[#211329]/95 border border-[#E9B83E]/30 rounded-2xl p-2 shadow-2xl backdrop-blur-xl z-50 flex flex-col min-w-[120px] space-y-1 animate-in fade-in zoom-in-95 duration-150">
                     {[2026, 2025].map(year => (
                       <button
                         key={year}
@@ -1607,13 +1607,13 @@ export default function App() {
                         }}
                         className={`px-3 py-2 rounded-xl text-left text-xs font-semibold flex items-center justify-between transition cursor-pointer ${
                           selectedYear === year
-                            ? 'bg-amber-400/20 text-amber-300 font-bold border border-amber-400/30'
-                            : 'text-white/80 hover:bg-white/10 hover:text-white'
+                            ? 'bg-[#E9B83E]/20 text-[#E9B83E] font-bold border border-[#E9B83E]/30'
+                            : 'text-[#F5E5B7]/80 hover:bg-white/10 hover:text-white'
                         }`}
                       >
                         <span>{year}</span>
                         {selectedYear === year && (
-                          <span className="text-amber-400 text-xs font-bold">✓</span>
+                          <span className="text-[#E9B83E] text-xs font-bold">✓</span>
                         )}
                       </button>
                     ))}
@@ -1627,10 +1627,10 @@ export default function App() {
                 type="button"
                 onClick={() => setLeaderboardModalVisible(true)}
                 title="Pandal Devotee Leaderboard"
-                className="h-7 sm:h-7.5 px-2.5 sm:px-3 rounded-xl bg-gradient-to-r from-amber-500 via-amber-300 to-amber-100 flex items-center gap-1.5 text-[#180924] font-bold text-[11px] sm:text-xs border border-[#180924]/40 shadow-[0_0_8px_rgba(251,191,36,0.25)] hover:shadow-[0_0_14px_rgba(251,191,36,0.45)] hover:scale-105 active:scale-95 transition-all flex-shrink-0 cursor-pointer"
+                className="h-7 sm:h-7.5 px-2.5 sm:px-3 rounded-xl bg-gradient-to-r from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] flex items-center gap-1.5 text-[#211329] font-bold text-[11px] sm:text-xs border border-[#211329]/30 shadow-[0_0_8px_rgba(233,184,62,0.22)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] hover:scale-105 active:scale-95 transition-all flex-shrink-0 cursor-pointer"
               >
                 <span>Leaderboard</span>
-                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#1c0a2b] flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#211329] flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0 0 11 15.9V19H7v2h10v-2h-4v-3.1c1.8-.46 3.17-1.87 3.61-3.66C19.08 11.63 21 9.55 21 7V5c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z" />
                 </svg>
               </button>
@@ -1641,10 +1641,10 @@ export default function App() {
                 type="button"
                 onClick={() => setAuthModalVisible(true)}
                 title="Guest Devotee Profile"
-                className="h-7 sm:h-7.5 px-2.5 sm:px-3 rounded-xl bg-[#1c0a2b]/90 border border-amber-400/50 hover:border-amber-300 flex items-center gap-1.5 text-amber-200 hover:text-white font-semibold text-[11px] sm:text-xs shadow-[0_0_8px_rgba(251,191,36,0.25)] hover:shadow-[0_0_14px_rgba(251,191,36,0.45)] hover:scale-105 active:scale-95 transition-all flex-shrink-0 cursor-pointer"
+                className="h-7 sm:h-7.5 px-2.5 sm:px-3 rounded-xl bg-[#211329]/90 border border-[#E9B83E]/40 hover:border-[#E9B83E] flex items-center gap-1.5 text-[#F5E5B7] hover:text-white font-semibold text-[11px] sm:text-xs shadow-[0_0_8px_rgba(233,184,62,0.22)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] hover:scale-105 active:scale-95 transition-all flex-shrink-0 cursor-pointer"
               >
                 <span>Profile</span>
-                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-300 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#E9B83E] flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
                 </svg>
               </button>
@@ -1658,26 +1658,26 @@ export default function App() {
         <div className="fixed left-[calc(25%-14px)] -translate-x-1/2 bottom-4 sm:bottom-5 z-30 w-[calc(50%-24px)] max-w-[560px] min-w-[320px] pointer-events-auto select-none flex flex-col gap-2">
           {/* Spotify Official Interactive Playlist Embed Popup */}
           {spotifyEmbedVisible && (
-            <div className="w-full bg-[#12071f]/95 border-[1.5px] border-[#d4af37]/70 rounded-2xl p-2.5 shadow-2xl backdrop-blur-xl animate-in fade-in slide-in-from-bottom-2 duration-200">
-              <div className="flex items-center justify-between pb-1.5 px-1 border-b border-white/10 mb-2">
+            <div className="w-full bg-[#211329]/95 border border-[#E9B83E]/40 rounded-2xl p-2.5 shadow-2xl backdrop-blur-xl animate-in fade-in slide-in-from-bottom-2 duration-200">
+              <div className="flex items-center justify-between pb-1.5 px-1 border-b border-[#E9B83E]/20 mb-2">
                 <div className="flex items-center gap-1.5">
                   <svg className="w-4 h-4 text-[#1db954] fill-current" viewBox="0 0 24 24">
                     <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
                   </svg>
-                  <span className="text-xs font-bold text-white">Durga Puja Songs</span>
+                  <span className="text-xs font-bold text-[#F5E5B7]">Durga Puja Songs</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
                     onClick={() => setSpotifyEmbedHeight(h => (h === 352 ? 152 : 352))}
-                    className="text-[10px] text-amber-300/80 hover:text-amber-200 bg-white/5 hover:bg-white/10 px-2 py-0.5 rounded-full transition border border-amber-300/30"
+                    className="text-[10px] text-[#E9B83E] hover:text-[#F5E5B7] bg-white/5 hover:bg-white/10 px-2 py-0.5 rounded-full transition border border-[#E9B83E]/30"
                   >
                     {spotifyEmbedHeight === 352 ? 'Compact' : 'Playlist'}
                   </button>
                   <button
                     type="button"
                     onClick={() => setSpotifyEmbedVisible(false)}
-                    className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:text-white text-xs transition"
+                    className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-[#F5E5B7]/70 hover:text-white text-xs transition"
                   >
                     ✕
                   </button>
@@ -1701,7 +1701,7 @@ export default function App() {
           {/* Main Custom Styled Music Player Pill Bar - SINGLE ROW LAYOUT MATCHING SNAP CTA DIAMETER */}
           <div
             id="spotify-music-player-bar"
-            className="w-full h-13 sm:h-14 overflow-hidden backdrop-blur-[3px] bg-gradient-to-r from-[#210c32]/50 via-[#2d1142]/45 to-[#1c082b]/50 border-[1.5px] border-[#d4af37]/70 rounded-full px-2.5 sm:px-3.5 flex items-center justify-between gap-2 sm:gap-3 shadow-[0_4px_20px_rgba(0,0,0,0.35),0_0_12px_rgba(212,175,55,0.2)] transition-all"
+            className="w-full h-13 sm:h-14 overflow-hidden backdrop-blur-md bg-[#211329]/75 border border-[#E9B83E]/40 rounded-full px-2.5 sm:px-3.5 flex items-center justify-between gap-2 sm:gap-3 shadow-[0_4px_20px_rgba(13,12,27,0.5),0_0_10px_rgba(233,184,62,0.20)] transition-all"
           >
             {/* Left: Album Cover + Title + Artist (Clean cover without badge, full un-truncated title) */}
             <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-shrink-0">
@@ -1714,7 +1714,7 @@ export default function App() {
                 <img
                   src={currentTrack.cover}
                   alt={currentTrack.title}
-                  className="w-8 h-8 sm:w-9 sm:h-9 rounded-[8px] object-cover border border-white/10 shadow group-hover:scale-105 transition-transform"
+                  className="w-8 h-8 sm:w-9 sm:h-9 rounded-[8px] object-cover border border-[#E9B83E]/20 shadow group-hover:scale-105 transition-transform"
                 />
               </button>
 
@@ -1723,25 +1723,25 @@ export default function App() {
                   type="button"
                   onClick={() => setSpotifyEmbedVisible(v => !v)}
                   title="Toggle Spotify Playlist Embed"
-                  className="text-left text-xs sm:text-[13px] font-bold text-white hover:text-amber-200 whitespace-nowrap leading-tight transition cursor-pointer"
+                  className="text-left text-xs sm:text-[13px] font-bold text-[#F5E5B7] hover:text-[#E9B83E] whitespace-nowrap leading-tight transition cursor-pointer"
                 >
                   {currentTrack.title}
                 </button>
-                <span className="text-[10px] sm:text-[11px] text-white/50 whitespace-nowrap leading-tight mt-0.5">
+                <span className="text-[10px] sm:text-[11px] text-[#F5E5B7]/60 whitespace-nowrap leading-tight mt-0.5">
                   {currentTrack.artist}
                 </span>
               </div>
             </div>
 
             {/* Middle: Scrubber Track with Left & Right Timestamps */}
-            <div className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-[50px] text-[9px] sm:text-[10px] font-mono text-white/50">
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-[50px] text-[9px] sm:text-[10px] font-mono text-[#F5E5B7]/50">
               <span className="text-left flex-shrink-0">{formatSongTime(currentTimeSec)}</span>
               <div
                 onClick={handleScrubberClick}
-                className="relative flex-1 h-[2.5px] bg-white/20 hover:h-1 rounded-full overflow-hidden cursor-pointer group transition-all"
+                className="relative flex-1 h-[2.5px] bg-[#0D0C1B]/80 hover:h-1 rounded-full overflow-hidden cursor-pointer group transition-all"
               >
                 <div
-                  className="h-full bg-gradient-to-r from-amber-400 to-amber-300 transition-all"
+                  className="h-full bg-gradient-to-r from-[#E9B83E] to-[#F5E5B7] transition-all"
                   style={{ width: `${Math.min(100, (currentTimeSec / currentTrack.durationSec) * 100)}%` }}
                 />
               </div>
@@ -1819,9 +1819,9 @@ export default function App() {
           id="camera-btn"
           onClick={() => setUploadVisible(true)}
           title="Snap Pandal"
-          className="fixed bottom-4 sm:bottom-5 left-1/2 -translate-x-1/2 z-30 w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-amber-500 via-amber-300 to-amber-100 flex items-center justify-center border-2 sm:border-[3px] border-[#180924] shadow-[0_0_14px_rgba(251,191,36,0.32),0_4px_16px_rgba(0,0,0,0.4)] hover:shadow-[0_0_20px_rgba(251,191,36,0.48),0_4px_18px_rgba(0,0,0,0.45)] active:scale-95 transition-all pointer-events-auto flex-shrink-0"
+          className="fixed bottom-4 sm:bottom-5 left-1/2 -translate-x-1/2 z-30 w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] flex items-center justify-center border-2 sm:border-[2.5px] border-[#211329] shadow-[0_0_14px_rgba(233,184,62,0.30),0_4px_16px_rgba(13,12,27,0.55)] hover:shadow-[0_0_20px_rgba(233,184,62,0.45),0_4px_18px_rgba(13,12,27,0.60)] active:scale-95 transition-all pointer-events-auto flex-shrink-0 cursor-pointer"
         >
-          <svg className="w-5 h-5 sm:w-6 sm:h-6 text-[#1c0a2b]" viewBox="0 0 24 24" fill="currentColor">
+          <svg className="w-5 h-5 sm:w-6 sm:h-6 text-[#211329]" viewBox="0 0 24 24" fill="currentColor">
             <path d="M9 3L7.17 5H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2h-3.17L15 3H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z" />
             <circle cx="12" cy="13" r="3" fill="currentColor" />
           </svg>
@@ -1840,17 +1840,17 @@ export default function App() {
             id="filter-btn-latest"
             onClick={() => handleToggleFilter('latest')}
             title="Filter by Latest Pandals"
-            className={`flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all cursor-pointer active:scale-95 backdrop-blur-[3px] ${
+            className={`flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all cursor-pointer active:scale-95 backdrop-blur-md ${
               activeFilter === 'latest'
-                ? 'bg-gradient-to-r from-[#2e1245]/70 via-[#3a1452]/65 to-[#210c32]/70 border-[1.5px] border-amber-400/80 text-amber-300 shadow-[0_0_10px_rgba(251,191,36,0.28),0_2px_12px_rgba(0,0,0,0.35)]'
-                : 'bg-gradient-to-r from-[#210c32]/50 via-[#2d1142]/45 to-[#1c082b]/50 border-[1.5px] border-[#d4af37]/50 hover:border-amber-400/60 text-white/70 hover:text-white shadow-[0_2px_10px_rgba(0,0,0,0.25)]'
+                ? 'bg-[#211329]/90 border border-[#E9B83E] text-[#E9B83E] shadow-[0_0_10px_rgba(233,184,62,0.28),0_2px_12px_rgba(13,12,27,0.45)]'
+                : 'bg-[#211329]/65 border border-[#E9B83E]/30 hover:border-[#E9B83E]/60 text-[#F5E5B7]/80 hover:text-[#F5E5B7] shadow-[0_2px_10px_rgba(13,12,27,0.35)]'
             }`}
           >
-            <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors ${activeFilter === 'latest' ? 'text-amber-300' : 'text-amber-300/80'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors ${activeFilter === 'latest' ? 'text-[#E9B83E]' : 'text-[#E9B83E]/80'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="10" />
               <polyline points="12 6 12 12 16 14" />
             </svg>
-            <span className={`text-[10px] sm:text-xs leading-tight tracking-wide ${activeFilter === 'latest' ? 'text-amber-300 font-bold' : 'text-amber-200/90 font-semibold'}`}>Latest</span>
+            <span className={`text-[10px] sm:text-xs leading-tight tracking-wide ${activeFilter === 'latest' ? 'text-[#E9B83E] font-bold' : 'text-[#F5E5B7]/85 font-semibold'}`}>Latest</span>
           </button>
 
           {/* Trending Filter */}
@@ -1859,17 +1859,17 @@ export default function App() {
             id="filter-btn-trending"
             onClick={() => handleToggleFilter('trending')}
             title="Filter by Trending Pandals"
-            className={`flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all cursor-pointer active:scale-95 backdrop-blur-[3px] ${
+            className={`flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all cursor-pointer active:scale-95 backdrop-blur-md ${
               activeFilter === 'trending'
-                ? 'bg-gradient-to-r from-[#2e1245]/70 via-[#3a1452]/65 to-[#210c32]/70 border-[1.5px] border-amber-400/80 text-amber-300 shadow-[0_0_10px_rgba(251,191,36,0.28),0_2px_12px_rgba(0,0,0,0.35)]'
-                : 'bg-gradient-to-r from-[#210c32]/50 via-[#2d1142]/45 to-[#1c082b]/50 border-[1.5px] border-[#d4af37]/50 hover:border-amber-400/60 text-white/70 hover:text-white shadow-[0_2px_10px_rgba(0,0,0,0.25)]'
+                ? 'bg-[#211329]/90 border border-[#E9B83E] text-[#E9B83E] shadow-[0_0_10px_rgba(233,184,62,0.28),0_2px_12px_rgba(13,12,27,0.45)]'
+                : 'bg-[#211329]/65 border border-[#E9B83E]/30 hover:border-[#E9B83E]/60 text-[#F5E5B7]/80 hover:text-[#F5E5B7] shadow-[0_2px_10px_rgba(13,12,27,0.35)]'
             }`}
           >
-            <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors ${activeFilter === 'trending' ? 'text-amber-300' : 'text-amber-300/80'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors ${activeFilter === 'trending' ? 'text-[#E9B83E]' : 'text-[#E9B83E]/80'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
               <polyline points="17 6 23 6 23 12" />
             </svg>
-            <span className={`text-[10px] sm:text-xs leading-tight tracking-wide ${activeFilter === 'trending' ? 'text-amber-300 font-bold' : 'text-amber-200/90 font-semibold'}`}>Trending</span>
+            <span className={`text-[10px] sm:text-xs leading-tight tracking-wide ${activeFilter === 'trending' ? 'text-[#E9B83E] font-bold' : 'text-[#F5E5B7]/85 font-semibold'}`}>Trending</span>
           </button>
 
           {/* Nearby Filter */}
@@ -1878,17 +1878,17 @@ export default function App() {
             id="filter-btn-nearby"
             onClick={() => handleToggleFilter('nearby')}
             title="Filter by Nearby Pandals"
-            className={`flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all cursor-pointer active:scale-95 backdrop-blur-[3px] ${
+            className={`flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all cursor-pointer active:scale-95 backdrop-blur-md ${
               activeFilter === 'nearby'
-                ? 'bg-gradient-to-r from-[#2e1245]/70 via-[#3a1452]/65 to-[#210c32]/70 border-[1.5px] border-amber-400/80 text-amber-300 shadow-[0_0_10px_rgba(251,191,36,0.28),0_2px_12px_rgba(0,0,0,0.35)]'
-                : 'bg-gradient-to-r from-[#210c32]/50 via-[#2d1142]/45 to-[#1c082b]/50 border-[1.5px] border-[#d4af37]/50 hover:border-amber-400/60 text-white/70 hover:text-white shadow-[0_2px_10px_rgba(0,0,0,0.25)]'
+                ? 'bg-[#211329]/90 border border-[#E9B83E] text-[#E9B83E] shadow-[0_0_10px_rgba(233,184,62,0.28),0_2px_12px_rgba(13,12,27,0.45)]'
+                : 'bg-[#211329]/65 border border-[#E9B83E]/30 hover:border-[#E9B83E]/60 text-[#F5E5B7]/80 hover:text-[#F5E5B7] shadow-[0_2px_10px_rgba(13,12,27,0.35)]'
             }`}
           >
-            <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors ${activeFilter === 'nearby' ? 'text-amber-300' : 'text-amber-300/80'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors ${activeFilter === 'nearby' ? 'text-[#E9B83E]' : 'text-[#E9B83E]/80'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
               <circle cx="12" cy="13" r="4" />
             </svg>
-            <span className={`text-[10px] sm:text-xs leading-tight tracking-wide ${activeFilter === 'nearby' ? 'text-amber-300 font-bold' : 'text-amber-200/90 font-semibold'}`}>Nearby</span>
+            <span className={`text-[10px] sm:text-xs leading-tight tracking-wide ${activeFilter === 'nearby' ? 'text-[#E9B83E] font-bold' : 'text-[#F5E5B7]/85 font-semibold'}`}>Nearby</span>
           </button>
         </div>
       )}
@@ -1899,7 +1899,7 @@ export default function App() {
           id="btn-recenter"
           onClick={handleLocateMe}
           title="Locate My Position"
-          className="fixed right-3 sm:right-6 bottom-[74px] sm:bottom-[82px] z-30 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#1e0f2b]/90 hover:bg-[#2e1742] border-[1.5px] border-amber-400/60 hover:border-amber-300 text-amber-300 hover:text-white flex items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.4),0_0_10px_rgba(251,191,36,0.25)] hover:shadow-[0_0_16px_rgba(251,191,36,0.45)] backdrop-blur-md transition-all active:scale-90 hover:scale-105 pointer-events-auto flex-shrink-0 cursor-pointer"
+          className="fixed right-3 sm:right-6 bottom-[74px] sm:bottom-[82px] z-30 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#211329]/90 hover:bg-[#2b1935] border border-[#E9B83E]/40 hover:border-[#E9B83E] text-[#F5E5B7] hover:text-[#E9B83E] flex items-center justify-center shadow-[0_4px_16px_rgba(13,12,27,0.5),0_0_8px_rgba(233,184,62,0.22)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] backdrop-blur-md transition-all active:scale-90 hover:scale-105 pointer-events-auto flex-shrink-0 cursor-pointer"
         >
           <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
