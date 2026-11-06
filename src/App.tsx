@@ -1078,9 +1078,6 @@ export default function App() {
             />
           </picture>
 
-          {/* Subtle top vignette on laptop screens to ensure flawless sky blending */}
-          <div className="hidden md:block absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#140d1c] via-[#140d1c]/60 to-transparent pointer-events-none" />
-
           {/* Subtle bottom vignette to ensure perfect loader contrast */}
           <div className="absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-[#0a0a14] via-[#0a0a14]/80 to-transparent pointer-events-none" />
 
