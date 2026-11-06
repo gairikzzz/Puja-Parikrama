@@ -786,6 +786,7 @@ export default function App() {
     return sessionStorage.getItem('visited') !== 'true'
   })
   const [splashExiting, setSplashExiting] = useState(false)
+  const [splashFlashing, setSplashFlashing] = useState(false)
 
   const [user, setUser] = useState<AuthUser | null>(() => {
     const cached = localStorage.getItem('puja_parikrama_user')
@@ -801,25 +802,35 @@ export default function App() {
     setTimeout(() => setToast(t => ({ ...t, visible: false })), 3000)
   }, [])
 
-  // ── Parikrama Splash Screen Controller ──
-  useEffect(() => {
-    if (!showSplash) return
-    sessionStorage.setItem('visited', 'true')
-    const timer1 = setTimeout(() => {
+  const triggerSplashExit = useCallback(() => {
+    if (splashExiting) return
+    setSplashFlashing(true)
+    if (navigator.vibrate) {
+      try { navigator.vibrate(35) } catch {}
+    }
+    setTimeout(() => {
       setSplashExiting(true)
       if (googleMapRef.current) {
         googleMapRef.current.panTo(currentUserCoords || AGARTALA_CENTER)
         googleMapRef.current.setZoom(15)
       }
-    }, 1800)
-    const timer2 = setTimeout(() => {
+    }, 140)
+    setTimeout(() => {
       setShowSplash(false)
-    }, 2500)
+    }, 650)
+  }, [splashExiting, currentUserCoords])
+
+  // ── Parikrama Splash Screen Controller ──
+  useEffect(() => {
+    if (!showSplash) return
+    sessionStorage.setItem('visited', 'true')
+    const timer = setTimeout(() => {
+      triggerSplashExit()
+    }, 4500)
     return () => {
-      clearTimeout(timer1)
-      clearTimeout(timer2)
+      clearTimeout(timer)
     }
-  }, [showSplash, currentUserCoords])
+  }, [showSplash, triggerSplashExit])
 
   const handleGoogleSignIn = () => {
     const simulatedNames = ['Shatadru Sarkar', 'Ananya Roy', 'Priya Saha', 'Saptarshi Sen']
@@ -1061,9 +1072,11 @@ export default function App() {
       {showSplash && (
         <div
           id="splash-screen"
-          className={`fixed inset-0 z-[9999] flex flex-col items-center justify-end pb-8 sm:pb-12 px-6 bg-[#0a0a14] select-none pointer-events-auto overflow-hidden transition-all duration-700 ease-in-out ${
+          onClick={triggerSplashExit}
+          className={`fixed inset-0 z-[9999] bg-[#0a0a14] select-none cursor-pointer pointer-events-auto overflow-hidden transition-all duration-500 ease-out ${
             splashExiting ? 'scale-[1.08] opacity-0 pointer-events-none' : 'scale-100 opacity-100'
           }`}
+          title="Click to enter"
         >
           {/* Responsive Platform Splash Background: Mobile vs Laptop/Desktop (shifted 10px up on laptop) */}
           <picture className="absolute inset-0 w-full h-full pointer-events-none select-none md:-top-[10px] md:h-[calc(100%+20px)]">
@@ -1078,22 +1091,12 @@ export default function App() {
             />
           </picture>
 
-          {/* Subtle bottom vignette to ensure perfect loader contrast */}
-          <div className="absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-[#0a0a14] via-[#0a0a14]/80 to-transparent pointer-events-none" />
-
-          {/* High-Contrast Bottom Pulse Loader with Semi-Transparent Dark Overlay */}
-          <div className="relative z-10 flex flex-col items-center mb-4 sm:mb-6">
-            <div className="flex items-center gap-3 px-5 py-2.5 rounded-full bg-black/75 backdrop-blur-md border border-amber-400/30 shadow-[0_8px_32px_rgba(0,0,0,0.9)]">
-              <div className="flex items-center gap-1.5 flex-shrink-0">
-                <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
-                <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-                <span className="w-2 h-2 rounded-full bg-amber-400" />
-              </div>
-              <span className="text-[11px] sm:text-xs font-bold tracking-[0.18em] text-amber-100 uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,1)]">
-                Initializing Map &amp; GPS...
-              </span>
-            </div>
-          </div>
+          {/* Camera / Divine Light Flash Burst Overlay on Click */}
+          <div
+            className={`absolute inset-0 pointer-events-none bg-white transition-opacity duration-200 z-50 ${
+              splashFlashing ? 'opacity-90' : 'opacity-0'
+            }`}
+          />
         </div>
       )}
 

@@ -383,7 +383,7 @@
 <body class="bg-[#0a0a14] text-white">
 
   <!-- ── 0. INTRO SPLASH SCREEN ("PUJA PARIKRAMA") ── -->
-  <div id="splash-screen" class="fixed inset-0 z-[9999] flex flex-col items-center justify-end pb-8 sm:pb-12 px-6 bg-[#0a0a14] select-none pointer-events-auto overflow-hidden">
+  <div id="splash-screen" class="fixed inset-0 z-[9999] bg-[#0a0a14] select-none cursor-pointer pointer-events-auto overflow-hidden" title="Click to enter">
     <!-- Responsive Platform Splash Background: Mobile vs Laptop/Desktop (shifted 10px up on laptop) -->
     <picture class="absolute inset-0 w-full h-full pointer-events-none select-none md:-top-[10px] md:h-[calc(100%+20px)]">
       <!-- Desktop / Laptop platforms (wide screens or landscape) -->
@@ -393,28 +393,15 @@
       <img src="splash-mobile.jpg" alt="Puja Parikrama" class="w-full h-full object-cover object-center md:object-top">
     </picture>
 
-    <!-- Subtle bottom vignette to ensure perfect loader contrast -->
-    <div class="absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-[#0a0a14] via-[#0a0a14]/80 to-transparent pointer-events-none"></div>
-
-    <!-- High-Contrast Bottom Pulse Loader with Semi-Transparent Dark Overlay -->
-    <div class="relative z-10 flex flex-col items-center mb-4 sm:mb-6 splash-fade-in-delayed">
-      <div class="flex items-center gap-3 px-5 py-2.5 rounded-full bg-black/75 backdrop-blur-md border border-amber-400/30 shadow-[0_8px_32px_rgba(0,0,0,0.9)]">
-        <div class="flex items-center gap-1.5 flex-shrink-0">
-          <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
-          <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-          <span class="w-2 h-2 rounded-full bg-amber-400"></span>
-        </div>
-        <span class="text-[11px] sm:text-xs font-bold tracking-[0.18em] text-amber-100 uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,1)]">
-          Initializing Map &amp; GPS...
-        </span>
-      </div>
-    </div>
+    <!-- Camera / Divine Light Flash Burst Overlay on Click -->
+    <div id="splash-flash-overlay" class="absolute inset-0 pointer-events-none bg-white opacity-0 transition-opacity duration-200 z-50"></div>
   </div>
 
   <script>
-    // Immediate Splash Screen Execution Controller
+    // Immediate Splash Screen Execution Controller with Flash & Click-to-Enter
     (function() {
       const splashEl = document.getElementById('splash-screen');
+      const flashEl = document.getElementById('splash-flash-overlay');
       if (!splashEl) return;
       if (sessionStorage.getItem('visited') === 'true') {
         splashEl.style.display = 'none';
@@ -423,24 +410,54 @@
         return;
       }
       sessionStorage.setItem('visited', 'true');
-      setTimeout(() => {
-        if (splashEl) {
-          splashEl.classList.add('splash-exit');
-          if (typeof map !== 'undefined' && map) {
-            const loc = (typeof userLocation !== 'undefined' && userLocation) 
-              ? userLocation 
-              : ((typeof currentUserCoords !== 'undefined' && currentUserCoords) ? currentUserCoords : { lat: 23.8315, lng: 91.2868 });
-            map.panTo(loc);
-            map.setZoom(15);
+
+      let exiting = false;
+      function triggerFlashAndExit() {
+        if (exiting) return;
+        exiting = true;
+
+        // 1. Camera / Divine flash burst
+        if (flashEl) {
+          flashEl.style.transition = 'opacity 0.12s ease-in';
+          flashEl.style.opacity = '0.92';
+        }
+        if (navigator.vibrate) {
+          try { navigator.vibrate(35); } catch(e) {}
+        }
+
+        // 2. Zoom & fade splash into live map landing page
+        setTimeout(() => {
+          if (splashEl) {
+            splashEl.classList.add('splash-exit');
+            if (typeof map !== 'undefined' && map) {
+              const loc = (typeof userLocation !== 'undefined' && userLocation) 
+                ? userLocation 
+                : ((typeof currentUserCoords !== 'undefined' && currentUserCoords) ? currentUserCoords : { lat: 23.8315, lng: 91.2868 });
+              map.panTo(loc);
+              map.setZoom(15);
+            }
           }
-        }
-      }, 1800);
+        }, 140);
+
+        // 3. Remove splash screen from DOM
+        setTimeout(() => {
+          if (splashEl) {
+            splashEl.style.pointerEvents = 'none';
+            splashEl.remove();
+          }
+        }, 650);
+      }
+
+      // Click or tap anywhere to trigger flash and land to app
+      splashEl.addEventListener('click', triggerFlashAndExit);
+      splashEl.addEventListener('touchstart', triggerFlashAndExit, { passive: true });
+
+      // Fallback auto-transition after 4.5s if not clicked
       setTimeout(() => {
-        if (splashEl) {
-          splashEl.style.pointerEvents = 'none';
-          splashEl.remove();
+        if (!exiting) {
+          triggerFlashAndExit();
         }
-      }, 2500);
+      }, 4500);
     })();
   </script>
 
