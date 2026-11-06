@@ -832,13 +832,13 @@ export default function App() {
     }, 750)
   }, [splashExiting, currentUserCoords])
 
-  // ── Parikrama Splash Screen Controller: auto-flash after 2 seconds ──
+  // ── Parikrama Splash Screen Controller: auto-flash after 1.5 seconds ──
   useEffect(() => {
     if (!showSplash) return
     sessionStorage.setItem('visited', 'true')
     const timer = setTimeout(() => {
       triggerCameraFlashAndEnter()
-    }, 2000)
+    }, 1500)
     return () => {
       clearTimeout(timer)
     }
