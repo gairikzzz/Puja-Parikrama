@@ -384,7 +384,7 @@
 <body class="bg-[#0a0a14] text-white">
 
   <!-- ── 0. INTRO SPLASH SCREEN ("PUJA PARIKRAMA") ── -->
-  <div id="splash-screen" class="fixed inset-0 z-[9999] bg-[#0a0a14] select-none cursor-pointer pointer-events-auto overflow-hidden" title="Click to enter">
+  <div id="splash-screen" class="fixed inset-0 z-[9999] bg-[#0a0a14] select-none cursor-default pointer-events-auto overflow-hidden">
     <!-- Responsive Platform Splash Background: Mobile vs Laptop/Desktop (shifted 10px up on laptop) -->
     <div id="splash-bg-wrapper" class="absolute inset-0 w-full h-full pointer-events-none select-none md:-top-[10px] md:h-[calc(100%+20px)]">
       <picture class="w-full h-full">
@@ -472,17 +472,7 @@
       }
 
       // Auto-trigger camera flash after 2 seconds
-      const autoTimer = setTimeout(triggerCameraFlashAndEnter, 2000);
-
-      // Or click/tap anywhere to trigger immediately
-      splashEl.addEventListener('click', () => {
-        clearTimeout(autoTimer);
-        triggerCameraFlashAndEnter();
-      });
-      splashEl.addEventListener('touchstart', () => {
-        clearTimeout(autoTimer);
-        triggerCameraFlashAndEnter();
-      }, { passive: true });
+      setTimeout(triggerCameraFlashAndEnter, 2000);
     })();
   </script>
 

@@ -1084,11 +1084,9 @@ export default function App() {
       {showSplash && (
         <div
           id="splash-screen"
-          onClick={triggerCameraFlashAndEnter}
-          className={`fixed inset-0 z-[9999] bg-[#0a0a14] select-none cursor-pointer pointer-events-auto overflow-hidden transition-all duration-500 ease-out ${
+          className={`fixed inset-0 z-[9999] bg-[#0a0a14] select-none pointer-events-auto cursor-default overflow-hidden transition-all duration-500 ease-out ${
             splashExiting ? 'scale-[1.05] opacity-0 pointer-events-none' : 'scale-100 opacity-100'
           }`}
-          title="Click to enter"
         >
           {/* Responsive Platform Splash Background: Mobile vs Laptop/Desktop (shifted 10px up on laptop) */}
           <div className="absolute inset-0 w-full h-full pointer-events-none select-none md:-top-[10px] md:h-[calc(100%+20px)]">
