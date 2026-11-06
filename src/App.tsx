@@ -955,6 +955,7 @@ export default function App() {
   const mapRef = useRef<HTMLDivElement>(null)
   const googleMapRef = useRef<any>(null)
   const markersRef = useRef<Map<string, any>>(new Map())
+  const userMarkerRef = useRef<any>(null)
 
   const [posts, setPosts] = useState<SnapPost[]>(SEED_POSTS)
   const [selectedPost, setSelectedPost] = useState<SnapPost | null>(null)
@@ -1324,23 +1325,63 @@ export default function App() {
   }, [showToast])
 
   const handleLocateMe = () => {
-    // Determine the user's location immediately
+    showToast('📍 Locating position...')
+
+    const updateMapToCoords = (coords: { lat: number; lng: number }) => {
+      if (googleMapRef.current) {
+        googleMapRef.current.panTo(coords)
+        googleMapRef.current.setZoom(16)
+      }
+      if (googleMapRef.current && window.google?.maps) {
+        if (!userMarkerRef.current) {
+          const dot = document.createElement('div')
+          dot.className = 'user-gps-marker'
+          dot.innerHTML = '<div class="user-gps-halo"></div><div class="user-gps-dot"></div>'
+          if (window.google.maps.marker?.AdvancedMarkerElement) {
+            userMarkerRef.current = new window.google.maps.marker.AdvancedMarkerElement({
+              map: googleMapRef.current,
+              position: coords,
+              content: dot,
+              title: 'My Location'
+            })
+          } else {
+            userMarkerRef.current = new window.google.maps.Marker({
+              map: googleMapRef.current,
+              position: coords,
+              title: 'My Location',
+              icon: {
+                path: window.google.maps.SymbolPath.CIRCLE,
+                scale: 8,
+                fillColor: '#4285F4',
+                fillOpacity: 1,
+                strokeColor: '#FFFFFF',
+                strokeWeight: 2.5,
+              }
+            })
+          }
+        } else {
+          if (userMarkerRef.current.position) {
+            userMarkerRef.current.position = coords
+          } else if (typeof userMarkerRef.current.setPosition === 'function') {
+            userMarkerRef.current.setPosition(coords)
+          }
+        }
+      }
+    }
+
+    // 1. Pan immediately to known/saved location if available
     let target = currentUserCoords
-    if (!target || target.lat === AGARTALA_CENTER.lat) {
+    if (!target || (target.lat === AGARTALA_CENTER.lat && target.lng === AGARTALA_CENTER.lng)) {
       try {
         const saved = localStorage.getItem('parikrama_user_location')
         if (saved) target = JSON.parse(saved)
       } catch {}
     }
-    if (!target) target = AGARTALA_CENTER
-
-    // Pan & zoom immediately to initial zoom level 16
-    if (googleMapRef.current) {
-      googleMapRef.current.panTo(target)
-      googleMapRef.current.setZoom(16)
+    if (target && (target.lat !== AGARTALA_CENTER.lat || target.lng !== AGARTALA_CENTER.lng)) {
+      updateMapToCoords(target)
     }
 
-    // Refresh live GPS in background without blocking
+    // 2. Fetch fresh live GPS with high accuracy
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         pos => {
@@ -1349,14 +1390,20 @@ export default function App() {
           try {
             localStorage.setItem('parikrama_user_location', JSON.stringify(freshCoords))
           } catch {}
-          if (googleMapRef.current) {
-            googleMapRef.current.panTo(freshCoords)
-            googleMapRef.current.setZoom(16)
-          }
+          updateMapToCoords(freshCoords)
+          showToast('📍 Focused on your live location')
         },
-        () => {},
-        { enableHighAccuracy: true, timeout: 6000, maximumAge: 30000 }
+        err => {
+          console.warn('Geolocation lookup failed:', err)
+          if (!target) {
+            updateMapToCoords(AGARTALA_CENTER)
+          }
+          showToast('📍 Centered on map')
+        },
+        { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
       )
+    } else if (target) {
+      updateMapToCoords(target)
     }
   }
 
@@ -1842,15 +1889,15 @@ export default function App() {
         </div>
       )}
 
-      {/* ── 4. RECENTER / LOCATE ME BUTTON (Parallel on Right) ── */}
+      {/* ── 4. RECENTER / LOCATE ME BUTTON (Floating Just Above the Footer Line) ── */}
       {mapReady && (
         <button
           id="btn-recenter"
           onClick={handleLocateMe}
           title="Locate My Position"
-          className="fixed right-3 sm:right-6 bottom-4 sm:bottom-5 z-30 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#1e0f2b]/85 hover:bg-[#2e1742] border border-amber-400/40 text-amber-300 flex items-center justify-center shadow-xl backdrop-blur-md transition active:scale-90 pointer-events-auto flex-shrink-0"
+          className="fixed right-3 sm:right-6 bottom-[74px] sm:bottom-[82px] z-30 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#1e0f2b]/90 hover:bg-[#2e1742] border-[1.5px] border-amber-400/60 hover:border-amber-300 text-amber-300 hover:text-white flex items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.4),0_0_10px_rgba(251,191,36,0.25)] hover:shadow-[0_0_16px_rgba(251,191,36,0.45)] backdrop-blur-md transition-all active:scale-90 hover:scale-105 pointer-events-auto flex-shrink-0 cursor-pointer"
         >
-          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+          <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
           </svg>
         </button>

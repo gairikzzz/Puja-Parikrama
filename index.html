@@ -932,13 +932,13 @@
     </button>
   </div>
 
-  <!-- ── 4. RECENTER / LOCATE ME BUTTON (Parallel on Right) ── -->
+  <!-- ── 4. RECENTER / LOCATE ME BUTTON (Floating Just Above the Footer Line) ── -->
   <button
     id="btn-recenter"
     title="Locate My Position"
-    class="fixed right-3 sm:right-6 bottom-4 sm:bottom-5 z-30 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#1e0f2b]/85 hover:bg-[#2e1742] border border-amber-400/40 text-amber-300 flex items-center justify-center shadow-xl backdrop-blur-md transition active:scale-90 pointer-events-auto flex-shrink-0"
+    class="fixed right-3 sm:right-6 bottom-[74px] sm:bottom-[82px] z-30 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#1e0f2b]/90 hover:bg-[#2e1742] border-[1.5px] border-amber-400/60 hover:border-amber-300 text-amber-300 hover:text-white flex items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.4),0_0_10px_rgba(251,191,36,0.25)] hover:shadow-[0_0_16px_rgba(251,191,36,0.45)] backdrop-blur-md transition-all active:scale-90 hover:scale-105 pointer-events-auto flex-shrink-0 cursor-pointer"
   >
-    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+    <svg class="w-4.5 h-4.5 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="currentColor">
       <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
     </svg>
   </button>
@@ -3051,8 +3051,10 @@
       btnSubmitSnap.innerHTML = `<span>🪔</span> Submit Snap for Moderation`;
     });
 
-    /* ── Recenter Map Button (Pans to Live User Location at initial zoom 16) ── */
+    /* ── Recenter Map Button (Pans & Focuses to Live User Location at zoom 16) ── */
     document.getElementById('btn-recenter')?.addEventListener('click', () => {
+      showToast('📍 Focusing on your current location...');
+
       let targetLoc = (typeof userLocation !== 'undefined' && userLocation && userLocation.lat !== 23.8315) 
         ? userLocation 
         : ((typeof currentUserCoords !== 'undefined' && currentUserCoords && currentUserCoords.lat !== 23.8315) ? currentUserCoords : null);
@@ -3081,7 +3083,7 @@
         }
       }
 
-      // Refresh live GPS in background without blocking
+      // Refresh live GPS with high accuracy and zero cached age
       if ('geolocation' in navigator) {
         navigator.geolocation.getCurrentPosition(
           (pos) => {
@@ -3100,9 +3102,13 @@
                 userLiveMarker.setPosition(freshLatLng);
               }
             }
+            showToast('📍 Focused on your live location');
           },
-          () => {},
-          { enableHighAccuracy: true, timeout: 6000, maximumAge: 30000 }
+          (err) => {
+            console.warn('Geolocation error:', err);
+            showToast('📍 Centered on map');
+          },
+          { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
         );
       }
     });
