@@ -1160,7 +1160,7 @@ export default function App() {
                   type="text"
                   value={topSearchQuery}
                   onChange={e => setTopSearchQuery(e.target.value)}
-                  placeholder="Search Pandals or Events..."
+                  placeholder="Search Pandals..."
                   className="w-full bg-[#1b1328]/75 hover:bg-[#1b1328]/90 focus:bg-[#1b1328]/95 border border-amber-400/35 hover:border-amber-400/60 focus:border-amber-400 rounded-full pl-3 sm:pl-3.5 pr-8 py-1 h-7 sm:h-7.5 text-[11px] sm:text-xs text-white placeholder-amber-200/50 backdrop-blur-md shadow-inner outline-none transition"
                 />
                 <button
