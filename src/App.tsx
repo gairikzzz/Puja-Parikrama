@@ -954,6 +954,7 @@ export default function App() {
     return null
   })
   const [authModalVisible, setAuthModalVisible] = useState(false)
+  const [leaderboardModalVisible, setLeaderboardModalVisible] = useState(false)
   const [topSearchQuery, setTopSearchQuery] = useState('')
   const searchInputRef = useRef<HTMLInputElement>(null)
 
@@ -1449,8 +1450,22 @@ export default function App() {
               )}
             </div>
 
-            {/* Right Section: Guest Circle Icon */}
-            <div className="flex items-center flex-shrink-0 z-10 pl-1 sm:pl-2">
+            {/* Right Section: Leaderboard CTA & Profile Icon */}
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 z-10 pl-1 sm:pl-2">
+              {/* Leaderboard CTA (matching Snap CTA golden glow & icon aesthetic) */}
+              <button
+                id="btn-leaderboard"
+                type="button"
+                onClick={() => setLeaderboardModalVisible(true)}
+                title="Pandal Devotee Leaderboard"
+                className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gradient-to-tr from-amber-500 via-amber-300 to-amber-100 flex items-center justify-center border border-[#180924] shadow-[0_0_12px_rgba(251,191,36,0.6)] hover:shadow-[0_0_18px_rgba(251,191,36,0.9)] hover:scale-105 active:scale-95 transition-all flex-shrink-0 cursor-pointer"
+              >
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#1c0a2b]" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0 0 11 15.9V19H7v2h10v-2h-4v-3.1c1.8-.46 3.17-1.87 3.61-3.66C19.08 11.63 21 9.55 21 7V5c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z" />
+                </svg>
+              </button>
+
+              {/* Profile Avatar Icon */}
               <div
                 id="guest-avatar-chip"
                 title="Guest Devotee"
@@ -1636,6 +1651,58 @@ export default function App() {
             <p className="text-white/40 text-[11px] mt-4">
               🔒 Powered by Firebase Auth • Popup & Session Cache
             </p>
+          </div>
+        </div>
+      )}
+
+      {/* ── LEADERBOARD MODAL ── */}
+      {leaderboardModalVisible && (
+        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(16px)' }}>
+          <div className="w-full max-w-sm rounded-3xl p-6 text-center relative border border-amber-400/30 shadow-2xl overflow-hidden backdrop-blur-2xl" style={{ background: 'linear-gradient(135deg, #1b0a2a, #12061e)' }}>
+            <button
+              onClick={() => setLeaderboardModalVisible(false)}
+              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:text-white transition"
+            >
+              ✕
+            </button>
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-500 via-amber-300 to-amber-100 mx-auto flex items-center justify-center mb-3 shadow-[0_0_20px_rgba(251,191,36,0.6)]">
+              <svg className="w-8 h-8 text-[#1c0a2b]" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0 0 11 15.9V19H7v2h10v-2h-4v-3.1c1.8-.46 3.17-1.87 3.61-3.66C19.08 11.63 21 9.55 21 7V5c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z" />
+              </svg>
+            </div>
+            <h3 className="text-white font-extrabold text-xl mb-0.5">Parikrama Leaderboard</h3>
+            <p className="text-amber-300/80 text-xs mb-4">Top Devotees & Pandal Explorers</p>
+
+            <div className="space-y-2 text-left max-h-60 overflow-y-auto pr-1">
+              {[
+                { rank: '🥇', name: 'Debasish Roy', pandals: 18, pts: '940 pts' },
+                { rank: '🥈', name: 'Ankita Saha', pandals: 15, pts: '810 pts' },
+                { rank: '🥉', name: 'Suman Paul', pandals: 13, pts: '720 pts' },
+                { rank: '4', name: 'Pooja Debbarma', pandals: 11, pts: '610 pts' },
+                { rank: '5', name: 'Rohan Bhowmik', pandals: 9, pts: '500 pts' },
+              ].map((item, idx) => (
+                <div key={idx} className="flex items-center justify-between p-2.5 rounded-xl bg-white/5 border border-white/5 hover:border-amber-400/30 transition">
+                  <div className="flex items-center gap-2.5">
+                    <span className="font-bold text-sm w-5 text-center text-amber-300">{item.rank}</span>
+                    <div>
+                      <p className="text-xs font-bold text-white">{item.name}</p>
+                      <p className="text-[10px] text-white/50">{item.pandals} pandals visited</p>
+                    </div>
+                  </div>
+                  <span className="text-xs font-mono font-bold text-amber-300">{item.pts}</span>
+                </div>
+              ))}
+            </div>
+
+            <button
+              onClick={() => {
+                setLeaderboardModalVisible(false)
+                setUploadVisible(true)
+              }}
+              className="mt-4 w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-300 text-black font-bold text-xs shadow-lg hover:brightness-110 active:scale-95 transition"
+            >
+              📸 Snap Pandal to Climb Rank
+            </button>
           </div>
         </div>
       )}
