@@ -591,97 +591,139 @@
     </div>
   </div>
 
-  <!-- ── FLOATING SPOTIFY MUSIC PLAYER (Bottom Left) ── -->
-  <div class="fixed left-4 bottom-5 sm:bottom-6 z-30 flex flex-col items-start pointer-events-auto">
-    <!-- Expanded Player Card Floating Above Pill -->
+  <!-- ── SPOTIFY STYLE MUSIC PLAYER (Matching User Screenshot & Header Aesthetic) ── -->
+  <div class="fixed left-3 sm:left-4 bottom-20 sm:bottom-6 z-30 pointer-events-auto select-none">
     <div
-      id="spotify-expanded-player"
-      class="hidden mb-2 sm:mb-3 w-72 sm:w-80 max-w-[calc(100vw-32px)] backdrop-blur-xl bg-gradient-to-br from-[#210c32]/95 via-[#2d1142]/90 to-[#1c082b]/95 border-[1.5px] border-[#d4af37]/60 rounded-2xl p-2.5 shadow-[0_8px_32px_rgba(0,0,0,0.6),0_0_16px_rgba(212,175,55,0.2)] flex flex-col gap-2 transition-all duration-300"
+      id="spotify-music-player-bar"
+      class="relative overflow-hidden backdrop-blur-[3px] bg-gradient-to-r from-[#210c32]/45 via-[#2d1142]/40 to-[#1c082b]/45 border-[1.5px] border-[#d4af37]/60 rounded-full px-3 sm:px-4 py-1.5 sm:py-2 h-14 sm:h-15 flex items-center justify-between gap-3 sm:gap-6 shadow-[0_4px_20px_rgba(0,0,0,0.35),0_0_12px_rgba(212,175,55,0.18)] transition-all max-w-[calc(100vw-24px)] w-auto"
     >
-      <!-- Header inside player card -->
-      <div class="flex items-center justify-between px-1">
-        <div class="flex items-center gap-2 min-w-0">
-          <div class="w-5 h-5 rounded-full bg-[#140824] border border-amber-400/50 flex items-center justify-center flex-shrink-0 drop-shadow-[0_0_6px_rgba(29,185,84,0.4)]">
-            <svg class="w-3 h-3 text-[#1DB954]" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.498 17.31c-.218.358-.684.471-1.042.253-2.859-1.748-6.458-2.143-10.697-1.174-.407.094-.816-.16-.91-.567-.094-.407.16-.816.567-.91 4.6-1.051 8.566-.606 11.83 1.356.358.218.471.684.252 1.042zm1.468-3.264c-.274.446-.86.588-1.306.314-3.273-2.012-8.262-2.596-12.133-1.42-.504.153-1.036-.134-1.189-.638-.153-.504.134-1.036.638-1.189 4.417-1.341 9.919-.684 13.676 1.627.446.274.588.86.314 1.306zm.126-3.41c-3.926-2.331-10.395-2.546-14.154-1.404-.6.182-1.24-.163-1.422-.763-.182-.6.163-1.24.763-1.422 4.316-1.31 11.45-1.06 15.98 1.63.539.32.716 1.02.396 1.559-.32.539-1.02.716-1.559.396z"/>
-            </svg>
-          </div>
-          <div class="truncate">
-            <h4 class="text-xs font-bold text-amber-200 truncate leading-tight">Durga puja songs 🔱</h4>
-            <p class="text-[10px] text-amber-200/60 truncate leading-tight">Spotify • ANURADHA</p>
-          </div>
-        </div>
+      <!-- Left Section: Album Cover, Title, Artist, Plus button -->
+      <div class="flex items-center gap-2.5 min-w-0 flex-shrink-0">
+        <a
+          href="https://open.spotify.com/playlist/2cjLMgWAt3S6YNCEKFtVtk"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Open in Spotify"
+          class="relative group flex-shrink-0"
+        >
+          <img
+            id="player-track-cover"
+            src="dugga-ma-asche.png"
+            alt="Dugga Ma Asche"
+            class="w-10 h-10 sm:w-11 sm:h-11 rounded-[4px] object-cover border border-white/10 shadow group-hover:scale-105 transition-transform"
+          />
+        </a>
 
-        <div class="flex items-center gap-1.5 flex-shrink-0">
-          <!-- Height expand toggle -->
-          <button
-            type="button"
-            id="btn-spotify-toggle-height"
-            title="Toggle playlist size"
-            class="w-6 h-6 rounded-full bg-[#1c0a2b] hover:bg-[#2b1042] border border-amber-400/30 text-amber-300 flex items-center justify-center transition active:scale-95"
+        <div class="flex flex-col min-w-0 pr-0.5">
+          <a
+            id="player-track-title"
+            href="https://open.spotify.com/playlist/2cjLMgWAt3S6YNCEKFtVtk"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-xs sm:text-sm font-semibold text-white hover:text-amber-200 truncate leading-tight transition"
           >
-            <svg id="spotify-expand-icon" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline></svg>
-          </button>
-
-          <!-- Close / Minimize button -->
-          <button
-            type="button"
-            id="btn-spotify-close"
-            title="Minimize player"
-            class="w-6 h-6 rounded-full bg-white/10 hover:bg-white/20 text-amber-200 flex items-center justify-center transition text-xs font-bold"
-          >
-            ✕
-          </button>
-        </div>
-      </div>
-
-      <!-- Spotify Official Responsive Embed -->
-      <iframe
-        id="spotify-iframe"
-        title="Durga Puja Spotify Playlist"
-        style="border-radius: 12px;"
-        src="https://open.spotify.com/embed/playlist/2cjLMgWAt3S6YNCEKFtVtk?utm_source=generator&theme=0"
-        width="100%"
-        height="152"
-        frameBorder="0"
-        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-        loading="lazy"
-        class="transition-all duration-300 shadow-md"
-      ></iframe>
-    </div>
-
-    <!-- Persistent Pill Button (Matches the Header Aesthetic Exactly) -->
-    <div
-      id="spotify-pill-btn"
-      title="Open Durga Puja Music Player"
-      class="relative overflow-visible backdrop-blur-[3px] bg-gradient-to-r from-[#210c32]/35 via-[#2d1142]/30 to-[#1c082b]/35 border-[1.5px] border-[#d4af37]/60 hover:border-amber-400 rounded-full px-2.5 sm:px-3 py-1 h-10 sm:h-11 flex items-center gap-2 cursor-pointer shadow-[0_4px_20px_rgba(0,0,0,0.3),0_0_12px_rgba(212,175,55,0.15)] select-none transition-all active:scale-95 group"
-    >
-      <!-- Spotify Green Icon Circle -->
-      <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#140824] border border-amber-400/50 flex items-center justify-center flex-shrink-0 drop-shadow-[0_0_6px_rgba(29,185,84,0.5)] group-hover:scale-105 transition-transform">
-        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#1DB954]" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.498 17.31c-.218.358-.684.471-1.042.253-2.859-1.748-6.458-2.143-10.697-1.174-.407.094-.816-.16-.91-.567-.094-.407.16-.816.567-.91 4.6-1.051 8.566-.606 11.83 1.356.358.218.471.684.252 1.042zm1.468-3.264c-.274.446-.86.588-1.306.314-3.273-2.012-8.262-2.596-12.133-1.42-.504.153-1.036-.134-1.189-.638-.153-.504.134-1.036.638-1.189 4.417-1.341 9.919-.684 13.676 1.627.446.274.588.86.314 1.306zm.126-3.41c-3.926-2.331-10.395-2.546-14.154-1.404-.6.182-1.24-.163-1.422-.763-.182-.6.163-1.24.763-1.422 4.316-1.31 11.45-1.06 15.98 1.63.539.32.716 1.02.396 1.559-.32.539-1.02.716-1.559.396z"/>
-        </svg>
-      </div>
-
-      <!-- Title & Animated Equalizer Bars -->
-      <div class="flex flex-col text-left leading-tight pr-1">
-        <div class="flex items-center gap-1.5">
-          <span class="text-[11px] sm:text-xs font-bold text-amber-200 group-hover:text-amber-100 truncate">
-            Durga Puja Songs 🔱
+            Dugga Ma Asche
+          </a>
+          <span id="player-track-artist" class="text-[10px] sm:text-[11px] text-white/50 truncate leading-tight">
+            Infra
           </span>
-          <!-- 3 Animated Sound Bars -->
-          <div class="flex items-end gap-[2px] h-2.5 flex-shrink-0">
-            <span class="w-[2px] bg-amber-400 rounded-full animate-eq-1" style="height: 8px;"></span>
-            <span class="w-[2px] bg-amber-300 rounded-full animate-eq-2" style="height: 4px;"></span>
-            <span class="w-[2px] bg-amber-400 rounded-full animate-eq-3" style="height: 10px;"></span>
-          </div>
         </div>
-        <span class="text-[9px] text-amber-200/60 font-medium">Spotify Playlist</span>
+
+        <!-- Plus / Liked Button -->
+        <button
+          type="button"
+          id="btn-player-like"
+          title="Save to your library"
+          class="w-5 h-5 flex items-center justify-center text-white/60 hover:text-white transition flex-shrink-0"
+        >
+          <svg id="icon-player-like" class="w-4 h-4" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8z" />
+            <path d="M8 4.75a.75.75 0 0 1 .75.75v1.75h1.75a.75.75 0 0 1 0 1.5h-1.75v1.75a.75.75 0 0 1-1.5 0v-1.75H5.5a.75.75 0 0 1 0-1.5h1.75V5.5A.75.75 0 0 1 8 4.75z" />
+          </svg>
+        </button>
       </div>
 
-      <!-- Play / Chevron Icon -->
-      <div id="spotify-pill-icon" class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#1c0a2b] border border-amber-400/40 text-amber-300 group-hover:text-amber-100 flex items-center justify-center flex-shrink-0 ml-0.5">
-        <svg class="w-2.5 h-2.5 ml-0.5 fill-current" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+      <!-- Center / Right Section: Controls & Scrubber -->
+      <div class="flex flex-col items-center justify-center gap-1 min-w-[170px] sm:min-w-[230px]">
+        <!-- Playback Controls Row -->
+        <div class="flex items-center gap-3.5 sm:gap-4">
+          <!-- Shuffle -->
+          <button
+            type="button"
+            id="btn-player-shuffle"
+            title="Enable shuffle"
+            class="text-white/60 hover:text-white transition"
+          >
+            <svg class="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M13.151.922a.75.75 0 1 0-1.06 1.06L13.109 3H11.16a3.75 3.75 0 0 0-2.873 1.34l-6.173 7.356A2.25 2.25 0 0 1 .39 12.5H0V14h.391a3.75 3.75 0 0 0 2.873-1.34l6.173-7.356a2.25 2.25 0 0 1 1.724-.804h1.947l-1.017 1.018a.75.75 0 0 0 1.06 1.06L15.98 3.75 13.15.922zM.391 3.5H0V2h.391c1.109 0 2.16.49 2.873 1.34L4.89 5.277l-.979 1.167-1.796-2.14A2.25 2.25 0 0 0 .39 3.5z"/>
+              <path d="m7.5 10.723.98-1.167 1.795 2.14a2.25 2.25 0 0 0 1.725.804h1.947l-1.017-1.018a.75.75 0 1 1 1.06-1.06l2.829 2.828-2.829 2.828a.75.75 0 1 1-1.06-1.06L13.109 14H11.16a3.75 3.75 0 0 1-2.873-1.34l-1.787-2.137z"/>
+            </svg>
+          </button>
+
+          <!-- Previous -->
+          <button
+            type="button"
+            id="btn-player-prev"
+            title="Previous"
+            class="text-white/70 hover:text-white transition"
+          >
+            <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 16 16">
+              <path d="M3.3 1a.7.7 0 0 1 .7.7v5.15l9.95-5.744a.7.7 0 0 1 1.05.606v12.576a.7.7 0 0 1-1.05.607L4 9.149V14.3a.7.7 0 0 1-.7.7H1.7a.7.7 0 0 1-.7-.7V1.7a.7.7 0 0 1 .7-.7h1.6z"/>
+            </svg>
+          </button>
+
+          <!-- Play / Pause Circular Button -->
+          <button
+            type="button"
+            id="btn-player-play-pause"
+            title="Play"
+            class="w-7.5 h-7.5 sm:w-8 sm:h-8 rounded-full bg-white text-black hover:scale-105 active:scale-95 flex items-center justify-center transition shadow-lg flex-shrink-0"
+          >
+            <svg id="icon-player-play" class="w-3.5 h-3.5 ml-0.5 fill-black" viewBox="0 0 16 16">
+              <path d="M3 1.713a.7.7 0 0 1 1.05-.607l10.89 6.288a.7.7 0 0 1 0 1.212L4.05 14.894A.7.7 0 0 1 3 14.288V1.713z"/>
+            </svg>
+          </button>
+
+          <!-- Next -->
+          <button
+            type="button"
+            id="btn-player-next"
+            title="Next"
+            class="text-white/70 hover:text-white transition"
+          >
+            <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 16 16">
+              <path d="M12.7 1a.7.7 0 0 0-.7.7v5.15L2.05.106A.7.7 0 0 0 1 .712v12.576a.7.7 0 0 0 1.05.607L12 8.149V14.3a.7.7 0 0 0 .7.7h1.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7h-1.6z"/>
+            </svg>
+          </button>
+
+          <!-- Repeat -->
+          <button
+            type="button"
+            id="btn-player-repeat"
+            title="Enable repeat"
+            class="text-white/60 hover:text-white transition"
+          >
+            <svg class="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M0 4.75A3.75 3.75 0 0 1 3.75 1h8.5A3.75 3.75 0 0 1 16 4.75v5a3.75 3.75 0 0 1-3.75 3.75H9.81l1.018 1.018a.75.75 0 1 1-1.06 1.06L6.939 12.75l2.829-2.828a.75.75 0 1 1 1.06 1.06L9.811 12h2.439a2.25 2.25 0 0 0 2.25-2.25v-5a2.25 2.25 0 0 0-2.25-2.25h-8.5A2.25 2.25 0 0 0 1.5 4.75v5A2.25 2.25 0 0 0 3.75 12H5v1.5H3.75A3.75 3.75 0 0 1 0 9.75v-5z"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Progress Scrubber Bar Row -->
+        <div class="flex items-center gap-2 w-full text-[10px] sm:text-[11px] font-mono text-white/50">
+          <span id="player-time-current" class="w-7 text-right">2:43</span>
+          <div
+            id="player-scrubber-track"
+            class="relative flex-1 h-1 bg-white/20 hover:h-1.5 rounded-full overflow-hidden cursor-pointer group transition-all"
+          >
+            <div
+              id="player-scrubber-fill"
+              class="h-full bg-white group-hover:bg-[#1db954] transition-all"
+              style="width: 76.5%;"
+            ></div>
+          </div>
+          <span id="player-time-total" class="w-7 text-left">3:33</span>
+        </div>
       </div>
     </div>
   </div>
@@ -2929,57 +2971,252 @@
       // browsing as guest
     });
 
-    /* ── Spotify Music Player Widget Handlers ── */
-    const spotifyPillBtn = document.getElementById('spotify-pill-btn');
-    const spotifyExpandedPlayer = document.getElementById('spotify-expanded-player');
-    const btnSpotifyClose = document.getElementById('btn-spotify-close');
-    const btnSpotifyToggleHeight = document.getElementById('btn-spotify-toggle-height');
-    const spotifyIframe = document.getElementById('spotify-iframe');
-    const spotifyPillIcon = document.getElementById('spotify-pill-icon');
-    let isSpotifyPlayerOpen = false;
-    let isSpotifyFullHeight = false;
+    /* ── Spotify Music Player Widget Handlers (Screenshot Matching & Dhak Engine) ── */
+    const SPOTIFY_TRACKS = [
+      {
+        id: '1',
+        title: 'Dugga Ma Asche',
+        artist: 'Infra',
+        cover: 'dugga-ma-asche.png',
+        durationSec: 213, // 3:33
+        initialSec: 163, // 2:43 as in screenshot!
+        spotifyUrl: 'https://open.spotify.com/playlist/2cjLMgWAt3S6YNCEKFtVtk',
+      },
+      {
+        id: '2',
+        title: 'Dhaker Taale',
+        artist: 'Abhijeet Bhattacharya, Shreya Ghoshal',
+        cover: 'dugga-ma-asche.png',
+        durationSec: 232, // 3:52
+        initialSec: 45,
+        spotifyUrl: 'https://open.spotify.com/playlist/2cjLMgWAt3S6YNCEKFtVtk',
+      },
+      {
+        id: '3',
+        title: 'Bolo Durga Mai Ki Jai',
+        artist: 'Nakash Aziz',
+        cover: 'dugga-ma-asche.png',
+        durationSec: 195, // 3:15
+        initialSec: 30,
+        spotifyUrl: 'https://open.spotify.com/playlist/2cjLMgWAt3S6YNCEKFtVtk',
+      },
+    ];
 
-    function toggleSpotifyPlayer(open) {
-      if (typeof open === 'boolean') {
-        isSpotifyPlayerOpen = open;
-      } else {
-        isSpotifyPlayerOpen = !isSpotifyPlayerOpen;
+    let currentTrackIdx = 0;
+    let isTrackPlaying = false;
+    let trackCurrentSec = 163; // 2:43
+    let isTrackLiked = false;
+    let isTrackShuffle = false;
+    let isTrackRepeat = false;
+    let playerTicker = null;
+
+    function formatSec(sec) {
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
+      return `${m}:${s < 10 ? '0' : ''}${s}`;
+    }
+
+    // Web Audio Dhak Synthesizer
+    class WebDhakEngine {
+      constructor() {
+        this.ctx = null;
+        this.timer = null;
+        this.active = false;
+        this.step = 0;
       }
-
-      if (isSpotifyPlayerOpen) {
-        spotifyExpandedPlayer?.classList.remove('hidden');
-        spotifyExpandedPlayer?.classList.add('flex');
-        if (spotifyPillIcon) {
-          spotifyPillIcon.innerHTML = `<svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg>`;
+      init() {
+        if (!this.ctx && (window.AudioContext || window.webkitAudioContext)) {
+          const AC = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AC();
         }
-      } else {
-        spotifyExpandedPlayer?.classList.add('hidden');
-        spotifyExpandedPlayer?.classList.remove('flex');
-        if (spotifyPillIcon) {
-          spotifyPillIcon.innerHTML = `<svg class="w-2.5 h-2.5 ml-0.5 fill-current" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>`;
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+      play() {
+        this.init();
+        if (!this.ctx || this.active) return;
+        this.active = true;
+        this.step = 0;
+        const pattern = ['dhang', 'rest', 'kash', 'kash', 'dhang', 'kash', 'kash', 'rest', 'dhang', 'rest', 'kash', 'ghanta', 'dhang', 'kash', 'kash', 'kash'];
+        const loop = () => {
+          if (!this.active) return;
+          const stroke = pattern[this.step % pattern.length];
+          const t = this.ctx.currentTime;
+          if (stroke === 'dhang') {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(130, t);
+            osc.frequency.exponentialRampToValueAtTime(45, t + 0.16);
+            gain.gain.setValueAtTime(0.35, t);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+            osc.connect(gain)
+            gain.connect(this.ctx.destination);
+            osc.start(t);
+            osc.stop(t + 0.2);
+          } else if (stroke === 'kash') {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(300, t);
+            osc.frequency.exponentialRampToValueAtTime(120, t + 0.07);
+            gain.gain.setValueAtTime(0.18, t);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(t);
+            osc.stop(t + 0.08);
+          } else if (stroke === 'ghanta') {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(1760, t);
+            gain.gain.setValueAtTime(0.1, t);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(t);
+            osc.stop(t + 0.3);
+          }
+          this.step++;
+          this.timer = setTimeout(loop, 130);
+        };
+        loop();
+      }
+      stop() {
+        this.active = false;
+        if (this.timer) {
+          clearTimeout(this.timer);
+          this.timer = null;
         }
       }
     }
 
-    spotifyPillBtn?.addEventListener('click', () => toggleSpotifyPlayer());
-    btnSpotifyClose?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      toggleSpotifyPlayer(false);
+    const dhakEngine = new WebDhakEngine();
+
+    const elTrackTitle = document.getElementById('player-track-title');
+    const elTrackArtist = document.getElementById('player-track-artist');
+    const elTrackCover = document.getElementById('player-track-cover');
+    const elTimeCurrent = document.getElementById('player-time-current');
+    const elTimeTotal = document.getElementById('player-time-total');
+    const elScrubberFill = document.getElementById('player-scrubber-fill');
+    const elScrubberTrack = document.getElementById('player-scrubber-track');
+    const btnPlayPause = document.getElementById('btn-player-play-pause');
+    const iconPlayerPlay = document.getElementById('icon-player-play');
+    const btnPlayerLike = document.getElementById('btn-player-like');
+    const iconPlayerLike = document.getElementById('icon-player-like');
+    const btnPlayerShuffle = document.getElementById('btn-player-shuffle');
+    const btnPlayerRepeat = document.getElementById('btn-player-repeat');
+    const btnPlayerPrev = document.getElementById('btn-player-prev');
+    const btnPlayerNext = document.getElementById('btn-player-next');
+
+    function syncPlayerUI() {
+      const track = SPOTIFY_TRACKS[currentTrackIdx];
+      if (elTrackTitle) elTrackTitle.textContent = track.title;
+      if (elTrackArtist) elTrackArtist.textContent = track.artist;
+      if (elTrackCover) elTrackCover.src = track.cover;
+      if (elTimeCurrent) elTimeCurrent.textContent = formatSec(trackCurrentSec);
+      if (elTimeTotal) elTimeTotal.textContent = formatSec(track.durationSec);
+      if (elScrubberFill) {
+        const pct = Math.min(100, (trackCurrentSec / track.durationSec) * 100);
+        elScrubberFill.style.width = `${pct}%`;
+      }
+      if (iconPlayerPlay) {
+        if (isTrackPlaying) {
+          iconPlayerPlay.innerHTML = `<path d="M2.7 1a.7.7 0 0 0-.7.7v12.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7H2.7zm8 0a.7.7 0 0 0-.7.7v12.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7h-2.6z"/>`;
+          iconPlayerPlay.classList.remove('ml-0.5');
+        } else {
+          iconPlayerPlay.innerHTML = `<path d="M3 1.713a.7.7 0 0 1 1.05-.607l10.89 6.288a.7.7 0 0 1 0 1.212L4.05 14.894A.7.7 0 0 1 3 14.288V1.713z"/>`;
+          iconPlayerPlay.classList.add('ml-0.5');
+        }
+      }
+    }
+
+    function togglePlayback() {
+      isTrackPlaying = !isTrackPlaying;
+      if (isTrackPlaying) {
+        dhakEngine.play();
+        if (playerTicker) clearInterval(playerTicker);
+        playerTicker = setInterval(() => {
+          const track = SPOTIFY_TRACKS[currentTrackIdx];
+          if (trackCurrentSec >= track.durationSec) {
+            if (isTrackRepeat) {
+              trackCurrentSec = 0;
+            } else {
+              currentTrackIdx = (currentTrackIdx + 1) % SPOTIFY_TRACKS.length;
+              trackCurrentSec = 0;
+            }
+          } else {
+            trackCurrentSec += 1;
+          }
+          syncPlayerUI();
+        }, 1000);
+      } else {
+        dhakEngine.stop();
+        if (playerTicker) {
+          clearInterval(playerTicker);
+          playerTicker = null;
+        }
+      }
+      syncPlayerUI();
+    }
+
+    btnPlayPause?.addEventListener('click', togglePlayback);
+
+    btnPlayerLike?.addEventListener('click', () => {
+      isTrackLiked = !isTrackLiked;
+      if (iconPlayerLike) {
+        if (isTrackLiked) {
+          btnPlayerLike.classList.remove('text-white/60');
+          btnPlayerLike.classList.add('text-[#1db954]');
+          iconPlayerLike.innerHTML = `<circle cx="8" cy="8" r="7" fill="currentColor"/><path d="M4.5 8l2.5 2.5 4.5-5" stroke="#000" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
+        } else {
+          btnPlayerLike.classList.remove('text-[#1db954]');
+          btnPlayerLike.classList.add('text-white/60');
+          iconPlayerLike.innerHTML = `<path d="M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8z"/><path d="M8 4.75a.75.75 0 0 1 .75.75v1.75h1.75a.75.75 0 0 1 0 1.5h-1.75v1.75a.75.75 0 0 1-1.5 0v-1.75H5.5a.75.75 0 0 1 0-1.5h1.75V5.5A.75.75 0 0 1 8 4.75z"/>`;
+        }
+      }
     });
 
-    btnSpotifyToggleHeight?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      isSpotifyFullHeight = !isSpotifyFullHeight;
-      if (spotifyIframe) {
-        spotifyIframe.height = isSpotifyFullHeight ? '352' : '152';
-      }
-      const expandIcon = document.getElementById('spotify-expand-icon');
-      if (expandIcon) {
-        expandIcon.innerHTML = isSpotifyFullHeight
-          ? `<polyline points="4 14 10 14 10 20"></polyline><polyline points="20 10 14 10 14 4"></polyline>`
-          : `<polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline>`;
-      }
+    btnPlayerShuffle?.addEventListener('click', () => {
+      isTrackShuffle = !isTrackShuffle;
+      btnPlayerShuffle.classList.toggle('text-[#1db954]', isTrackShuffle);
+      btnPlayerShuffle.classList.toggle('text-white/60', !isTrackShuffle);
     });
+
+    btnPlayerRepeat?.addEventListener('click', () => {
+      isTrackRepeat = !isTrackRepeat;
+      btnPlayerRepeat.classList.toggle('text-[#1db954]', isTrackRepeat);
+      btnPlayerRepeat.classList.toggle('text-white/60', !isTrackRepeat);
+    });
+
+    btnPlayerNext?.addEventListener('click', () => {
+      if (isTrackShuffle) {
+        currentTrackIdx = Math.floor(Math.random() * SPOTIFY_TRACKS.length);
+      } else {
+        currentTrackIdx = (currentTrackIdx + 1) % SPOTIFY_TRACKS.length;
+      }
+      trackCurrentSec = 0;
+      syncPlayerUI();
+    });
+
+    btnPlayerPrev?.addEventListener('click', () => {
+      currentTrackIdx = (currentTrackIdx - 1 + SPOTIFY_TRACKS.length) % SPOTIFY_TRACKS.length;
+      trackCurrentSec = 0;
+      syncPlayerUI();
+    });
+
+    elScrubberTrack?.addEventListener('click', (e) => {
+      const rect = elScrubberTrack.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const fraction = Math.max(0, Math.min(1, clickX / rect.width));
+      const track = SPOTIFY_TRACKS[currentTrackIdx];
+      trackCurrentSec = Math.round(fraction * track.durationSec);
+      syncPlayerUI();
+    });
+
+    syncPlayerUI();
 
     /* ── Initial Render ── */
     renderRecentSnapsList();

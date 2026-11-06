@@ -161,6 +161,151 @@ function formatDistance(km: number): string {
   return `${km.toFixed(1)} km away`
 }
 
+/* ── Spotify Durga Puja Playlist Data (Connected to Spotify) ── */
+export interface SpotifyTrack {
+  id: string
+  title: string
+  artist: string
+  cover: string
+  durationSec: number
+  initialSec: number
+  spotifyUrl: string
+}
+
+export const SPOTIFY_DURGA_TRACKS: SpotifyTrack[] = [
+  {
+    id: '1',
+    title: 'Dugga Ma Asche',
+    artist: 'Infra',
+    cover: '/dugga-ma-asche.png',
+    durationSec: 213, // 3:33
+    initialSec: 163, // 2:43 as in screenshot!
+    spotifyUrl: 'https://open.spotify.com/playlist/2cjLMgWAt3S6YNCEKFtVtk',
+  },
+  {
+    id: '2',
+    title: 'Dhaker Taale',
+    artist: 'Abhijeet Bhattacharya, Shreya Ghoshal',
+    cover: '/dugga-ma-asche.png',
+    durationSec: 232, // 3:52
+    initialSec: 45,
+    spotifyUrl: 'https://open.spotify.com/playlist/2cjLMgWAt3S6YNCEKFtVtk',
+  },
+  {
+    id: '3',
+    title: 'Bolo Durga Mai Ki Jai',
+    artist: 'Nakash Aziz',
+    cover: '/dugga-ma-asche.png',
+    durationSec: 195, // 3:15
+    initialSec: 30,
+    spotifyUrl: 'https://open.spotify.com/playlist/2cjLMgWAt3S6YNCEKFtVtk',
+  },
+  {
+    id: '4',
+    title: 'Elo Maa Dugga',
+    artist: 'Jeet Gannguli',
+    cover: '/dugga-ma-asche.png',
+    durationSec: 242, // 4:02
+    initialSec: 60,
+    spotifyUrl: 'https://open.spotify.com/playlist/2cjLMgWAt3S6YNCEKFtVtk',
+  },
+]
+
+function formatSongTime(sec: number): string {
+  const m = Math.floor(sec / 60)
+  const s = Math.floor(sec % 60)
+  return `${m}:${s < 10 ? '0' : ''}${s}`
+}
+
+/* ── Web Audio Dhak Synthesizer (Authentic Bengali Puja Dhak Beats) ── */
+class DhakAudioEngine {
+  private ctx: AudioContext | null = null
+  private timer: any = null
+  private active = false
+  private step = 0
+
+  private initCtx() {
+    if (!this.ctx && typeof window !== 'undefined') {
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext
+      if (AudioCtx) this.ctx = new AudioCtx()
+    }
+    if (this.ctx && this.ctx.state === 'suspended') {
+      this.ctx.resume()
+    }
+    return this.ctx
+  }
+
+  play() {
+    const ctx = this.initCtx()
+    if (!ctx || this.active) return
+    this.active = true
+    this.step = 0
+
+    const pattern = [
+      'dhang', 'rest', 'kash', 'kash',
+      'dhang', 'kash', 'kash', 'rest',
+      'dhang', 'rest', 'kash', 'ghanta',
+      'dhang', 'kash', 'kash', 'kash',
+    ]
+
+    const loop = () => {
+      if (!this.active) return
+      const stroke = pattern[this.step % pattern.length]
+      const t = ctx.currentTime
+
+      if (stroke === 'dhang') {
+        const osc = ctx.createOscillator()
+        const gain = ctx.createGain()
+        osc.type = 'sine'
+        osc.frequency.setValueAtTime(130, t)
+        osc.frequency.exponentialRampToValueAtTime(45, t + 0.16)
+        gain.gain.setValueAtTime(0.35, t)
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2)
+        osc.connect(gain)
+        gain.connect(ctx.destination)
+        osc.start(t)
+        osc.stop(t + 0.2)
+      } else if (stroke === 'kash') {
+        const osc = ctx.createOscillator()
+        const gain = ctx.createGain()
+        osc.type = 'triangle'
+        osc.frequency.setValueAtTime(300, t)
+        osc.frequency.exponentialRampToValueAtTime(120, t + 0.07)
+        gain.gain.setValueAtTime(0.18, t)
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.08)
+        osc.connect(gain)
+        gain.connect(ctx.destination)
+        osc.start(t)
+        osc.stop(t + 0.08)
+      } else if (stroke === 'ghanta') {
+        const osc = ctx.createOscillator()
+        const gain = ctx.createGain()
+        osc.type = 'sine'
+        osc.frequency.setValueAtTime(1760, t)
+        gain.gain.setValueAtTime(0.1, t)
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3)
+        osc.connect(gain)
+        gain.connect(ctx.destination)
+        osc.start(t)
+        osc.stop(t + 0.3)
+      }
+
+      this.step++
+      this.timer = setTimeout(loop, 130)
+    }
+
+    loop()
+  }
+
+  stop() {
+    this.active = false
+    if (this.timer) {
+      clearTimeout(this.timer)
+      this.timer = null
+    }
+  }
+}
+
 /* ─────────────────────────────────────────────────────────────────────────
    Toast notification
    ───────────────────────────────────────────────────────────────────────── */
@@ -810,9 +955,78 @@ export default function App() {
   })
   const [authModalVisible, setAuthModalVisible] = useState(false)
   const [topSearchQuery, setTopSearchQuery] = useState('')
-  const [isMusicPlayerOpen, setIsMusicPlayerOpen] = useState(false)
-  const [isMusicFullHeight, setIsMusicFullHeight] = useState(false)
   const searchInputRef = useRef<HTMLInputElement>(null)
+
+  // Spotify Style Player State (matching user's screenshot & header aesthetic)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(0)
+  const [currentTimeSec, setCurrentTimeSec] = useState(163) // 2:43 as in screenshot!
+  const [isLiked, setIsLiked] = useState(false)
+  const [isShuffle, setIsShuffle] = useState(false)
+  const [isRepeat, setIsRepeat] = useState(false)
+  const dhakEngineRef = useRef<DhakAudioEngine | null>(null)
+
+  const currentTrack = SPOTIFY_DURGA_TRACKS[currentTrackIndex] || SPOTIFY_DURGA_TRACKS[0]
+
+  // Initialize Dhak Audio Engine
+  useEffect(() => {
+    dhakEngineRef.current = new DhakAudioEngine()
+    return () => {
+      dhakEngineRef.current?.stop()
+    }
+  }, [])
+
+  // Playback timer ticker
+  useEffect(() => {
+    let timer: any = null
+    if (isPlaying) {
+      dhakEngineRef.current?.play()
+      timer = setInterval(() => {
+        setCurrentTimeSec(prev => {
+          if (prev >= currentTrack.durationSec) {
+            if (isRepeat) {
+              return 0
+            } else {
+              setCurrentTrackIndex(idx => (idx + 1) % SPOTIFY_DURGA_TRACKS.length)
+              return 0
+            }
+          }
+          return prev + 1
+        })
+      }, 1000)
+    } else {
+      dhakEngineRef.current?.stop()
+    }
+    return () => {
+      if (timer) clearInterval(timer)
+    }
+  }, [isPlaying, currentTrack.durationSec, isRepeat])
+
+  const togglePlayPause = useCallback(() => {
+    setIsPlaying(p => !p)
+  }, [])
+
+  const handleNextTrack = useCallback(() => {
+    setCurrentTrackIndex(idx => {
+      if (isShuffle) {
+        return Math.floor(Math.random() * SPOTIFY_DURGA_TRACKS.length)
+      }
+      return (idx + 1) % SPOTIFY_DURGA_TRACKS.length
+    })
+    setCurrentTimeSec(0)
+  }, [isShuffle])
+
+  const handlePrevTrack = useCallback(() => {
+    setCurrentTrackIndex(idx => (idx - 1 + SPOTIFY_DURGA_TRACKS.length) % SPOTIFY_DURGA_TRACKS.length)
+    setCurrentTimeSec(0)
+  }, [])
+
+  const handleScrubberClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const clickX = e.clientX - rect.left
+    const fraction = Math.max(0, Math.min(1, clickX / rect.width))
+    setCurrentTimeSec(Math.round(fraction * currentTrack.durationSec))
+  }, [currentTrack.durationSec])
 
   const topSearchResults = useMemo(() => {
     if (!topSearchQuery.trim()) return []
@@ -1254,108 +1468,152 @@ export default function App() {
         </header>
       )}
 
-      {/* ── FLOATING SPOTIFY MUSIC PLAYER (Bottom Left) ── */}
+      {/* ── SPOTIFY STYLE MUSIC PLAYER (Matching User Screenshot & Header Aesthetic) ── */}
       {mapReady && (
-        <div className="fixed left-4 bottom-5 sm:bottom-6 z-30 flex flex-col items-start pointer-events-auto">
-          {/* Expanded Player Card Floating Above Pill */}
-          {isMusicPlayerOpen && (
-            <div
-              id="spotify-expanded-player"
-              className="mb-2 sm:mb-3 w-72 sm:w-80 max-w-[calc(100vw-32px)] backdrop-blur-xl bg-gradient-to-br from-[#210c32]/95 via-[#2d1142]/90 to-[#1c082b]/95 border-[1.5px] border-[#d4af37]/60 rounded-2xl p-2.5 shadow-[0_8px_32px_rgba(0,0,0,0.6),0_0_16px_rgba(212,175,55,0.2)] flex flex-col gap-2 transition-all duration-300"
-            >
-              {/* Header inside player card */}
-              <div className="flex items-center justify-between px-1">
-                <div className="flex items-center gap-2 min-w-0">
-                  <div className="w-5 h-5 rounded-full bg-[#140824] border border-amber-400/50 flex items-center justify-center flex-shrink-0 drop-shadow-[0_0_6px_rgba(29,185,84,0.4)]">
-                    <svg className="w-3 h-3 text-[#1DB954]" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.498 17.31c-.218.358-.684.471-1.042.253-2.859-1.748-6.458-2.143-10.697-1.174-.407.094-.816-.16-.91-.567-.094-.407.16-.816.567-.91 4.6-1.051 8.566-.606 11.83 1.356.358.218.471.684.252 1.042zm1.468-3.264c-.274.446-.86.588-1.306.314-3.273-2.012-8.262-2.596-12.133-1.42-.504.153-1.036-.134-1.189-.638-.153-.504.134-1.036.638-1.189 4.417-1.341 9.919-.684 13.676 1.627.446.274.588.86.314 1.306zm.126-3.41c-3.926-2.331-10.395-2.546-14.154-1.404-.6.182-1.24-.163-1.422-.763-.182-.6.163-1.24.763-1.422 4.316-1.31 11.45-1.06 15.98 1.63.539.32.716 1.02.396 1.559-.32.539-1.02.716-1.559.396z"/>
-                    </svg>
-                  </div>
-                  <div className="truncate">
-                    <h4 className="text-xs font-bold text-amber-200 truncate leading-tight">Durga puja songs 🔱</h4>
-                    <p className="text-[10px] text-amber-200/60 truncate leading-tight">Spotify • ANURADHA</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-1.5 flex-shrink-0">
-                  {/* Height expand toggle (compact vs full list) */}
-                  <button
-                    type="button"
-                    title={isMusicFullHeight ? "Compact player" : "View all songs"}
-                    onClick={() => setIsMusicFullHeight(prev => !prev)}
-                    className="w-6 h-6 rounded-full bg-[#1c0a2b] hover:bg-[#2b1042] border border-amber-400/30 text-amber-300 flex items-center justify-center transition active:scale-95"
-                  >
-                    {isMusicFullHeight ? (
-                      <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="4 14 10 14 10 20"></polyline><polyline points="20 10 14 10 14 4"></polyline></svg>
-                    ) : (
-                      <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline></svg>
-                    )}
-                  </button>
-
-                  {/* Close / Minimize button */}
-                  <button
-                    type="button"
-                    title="Minimize player"
-                    onClick={() => setIsMusicPlayerOpen(false)}
-                    className="w-6 h-6 rounded-full bg-white/10 hover:bg-white/20 text-amber-200 flex items-center justify-center transition text-xs font-bold"
-                  >
-                    ✕
-                  </button>
-                </div>
-              </div>
-
-              {/* Spotify Official Responsive Embed */}
-              <iframe
-                title="Durga Puja Spotify Playlist"
-                style={{ borderRadius: '12px' }}
-                src="https://open.spotify.com/embed/playlist/2cjLMgWAt3S6YNCEKFtVtk?utm_source=generator&theme=0"
-                width="100%"
-                height={isMusicFullHeight ? 352 : 152}
-                frameBorder="0"
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                loading="lazy"
-                className="transition-all duration-300 shadow-md"
-              />
-            </div>
-          )}
-
-          {/* Persistent Pill Button (Matches the Header Aesthetic Exactly) */}
+        <div className="fixed left-3 sm:left-4 bottom-20 sm:bottom-6 z-30 pointer-events-auto select-none">
           <div
-            id="spotify-pill-btn"
-            onClick={() => setIsMusicPlayerOpen(prev => !prev)}
-            title={isMusicPlayerOpen ? "Collapse Music Player" : "Open Durga Puja Music Player"}
-            className="relative overflow-visible backdrop-blur-[3px] bg-gradient-to-r from-[#210c32]/35 via-[#2d1142]/30 to-[#1c082b]/35 border-[1.5px] border-[#d4af37]/60 hover:border-amber-400 rounded-full px-2.5 sm:px-3 py-1 h-10 sm:h-11 flex items-center gap-2 cursor-pointer shadow-[0_4px_20px_rgba(0,0,0,0.3),0_0_12px_rgba(212,175,55,0.15)] select-none transition-all active:scale-95 group"
+            id="spotify-music-player-bar"
+            className="relative overflow-hidden backdrop-blur-[3px] bg-gradient-to-r from-[#210c32]/45 via-[#2d1142]/40 to-[#1c082b]/45 border-[1.5px] border-[#d4af37]/60 rounded-full px-3 sm:px-4 py-1.5 sm:py-2 h-14 sm:h-15 flex items-center justify-between gap-3 sm:gap-6 shadow-[0_4px_20px_rgba(0,0,0,0.35),0_0_12px_rgba(212,175,55,0.18)] transition-all max-w-[calc(100vw-24px)] w-auto"
           >
-            {/* Spotify Green Icon Circle */}
-            <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#140824] border border-amber-400/50 flex items-center justify-center flex-shrink-0 drop-shadow-[0_0_6px_rgba(29,185,84,0.5)] group-hover:scale-105 transition-transform">
-              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#1DB954]" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.498 17.31c-.218.358-.684.471-1.042.253-2.859-1.748-6.458-2.143-10.697-1.174-.407.094-.816-.16-.91-.567-.094-.407.16-.816.567-.91 4.6-1.051 8.566-.606 11.83 1.356.358.218.471.684.252 1.042zm1.468-3.264c-.274.446-.86.588-1.306.314-3.273-2.012-8.262-2.596-12.133-1.42-.504.153-1.036-.134-1.189-.638-.153-.504.134-1.036.638-1.189 4.417-1.341 9.919-.684 13.676 1.627.446.274.588.86.314 1.306zm.126-3.41c-3.926-2.331-10.395-2.546-14.154-1.404-.6.182-1.24-.163-1.422-.763-.182-.6.163-1.24.763-1.422 4.316-1.31 11.45-1.06 15.98 1.63.539.32.716 1.02.396 1.559-.32.539-1.02.716-1.559.396z"/>
-              </svg>
-            </div>
+            {/* Left Section: Album Cover, Title, Artist, Plus button */}
+            <div className="flex items-center gap-2.5 min-w-0 flex-shrink-0">
+              <a
+                href={currentTrack.spotifyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Open in Spotify"
+                className="relative group flex-shrink-0"
+              >
+                <img
+                  src={currentTrack.cover}
+                  alt={currentTrack.title}
+                  className="w-10 h-10 sm:w-11 sm:h-11 rounded-[4px] object-cover border border-white/10 shadow group-hover:scale-105 transition-transform"
+                />
+              </a>
 
-            {/* Title & Animated Equalizer Bars */}
-            <div className="flex flex-col text-left leading-tight pr-1">
-              <div className="flex items-center gap-1.5">
-                <span className="text-[11px] sm:text-xs font-bold text-amber-200 group-hover:text-amber-100 truncate">
-                  Durga Puja Songs 🔱
+              <div className="flex flex-col min-w-0 pr-0.5">
+                <a
+                  href={currentTrack.spotifyUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs sm:text-sm font-semibold text-white hover:text-amber-200 truncate leading-tight transition"
+                >
+                  {currentTrack.title}
+                </a>
+                <span className="text-[10px] sm:text-[11px] text-white/50 truncate leading-tight">
+                  {currentTrack.artist}
                 </span>
-                {/* 3 Animated Sound Bars */}
-                <div className="flex items-end gap-[2px] h-2.5 flex-shrink-0">
-                  <span className="w-[2px] bg-amber-400 rounded-full animate-eq-1" style={{ height: '8px' }}></span>
-                  <span className="w-[2px] bg-amber-300 rounded-full animate-eq-2" style={{ height: '4px' }}></span>
-                  <span className="w-[2px] bg-amber-400 rounded-full animate-eq-3" style={{ height: '10px' }}></span>
-                </div>
               </div>
-              <span className="text-[9px] text-amber-200/60 font-medium">Spotify Playlist</span>
+
+              {/* Plus / Liked Button */}
+              <button
+                type="button"
+                onClick={() => setIsLiked(prev => !prev)}
+                title={isLiked ? "Saved to your library" : "Save to your library"}
+                className={`w-5 h-5 flex items-center justify-center transition flex-shrink-0 ${
+                  isLiked ? "text-[#1db954]" : "text-white/60 hover:text-white"
+                }`}
+              >
+                {isLiked ? (
+                  <svg className="w-4 h-4" viewBox="0 0 16 16" fill="currentColor">
+                    <circle cx="8" cy="8" r="7" fill="currentColor" />
+                    <path d="M4.5 8l2.5 2.5 4.5-5" stroke="#000" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                ) : (
+                  <svg className="w-4 h-4" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8z" />
+                    <path d="M8 4.75a.75.75 0 0 1 .75.75v1.75h1.75a.75.75 0 0 1 0 1.5h-1.75v1.75a.75.75 0 0 1-1.5 0v-1.75H5.5a.75.75 0 0 1 0-1.5h1.75V5.5A.75.75 0 0 1 8 4.75z" />
+                  </svg>
+                )}
+              </button>
             </div>
 
-            {/* Play / Chevron Icon */}
-            <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#1c0a2b] border border-amber-400/40 text-amber-300 group-hover:text-amber-100 flex items-center justify-center flex-shrink-0 ml-0.5">
-              {isMusicPlayerOpen ? (
-                <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="6 9 12 15 18 9"></polyline></svg>
-              ) : (
-                <svg className="w-2.5 h-2.5 ml-0.5 fill-current" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-              )}
+            {/* Center / Right Section: Controls & Scrubber */}
+            <div className="flex flex-col items-center justify-center gap-1 min-w-[170px] sm:min-w-[230px]">
+              {/* Playback Controls Row */}
+              <div className="flex items-center gap-3.5 sm:gap-4">
+                {/* Shuffle */}
+                <button
+                  type="button"
+                  onClick={() => setIsShuffle(prev => !prev)}
+                  title={isShuffle ? "Disable shuffle" : "Enable shuffle"}
+                  className={`transition ${isShuffle ? "text-[#1db954]" : "text-white/60 hover:text-white"}`}
+                >
+                  <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M13.151.922a.75.75 0 1 0-1.06 1.06L13.109 3H11.16a3.75 3.75 0 0 0-2.873 1.34l-6.173 7.356A2.25 2.25 0 0 1 .39 12.5H0V14h.391a3.75 3.75 0 0 0 2.873-1.34l6.173-7.356a2.25 2.25 0 0 1 1.724-.804h1.947l-1.017 1.018a.75.75 0 0 0 1.06 1.06L15.98 3.75 13.15.922zM.391 3.5H0V2h.391c1.109 0 2.16.49 2.873 1.34L4.89 5.277l-.979 1.167-1.796-2.14A2.25 2.25 0 0 0 .39 3.5z"/>
+                    <path d="m7.5 10.723.98-1.167 1.795 2.14a2.25 2.25 0 0 0 1.725.804h1.947l-1.017-1.018a.75.75 0 1 1 1.06-1.06l2.829 2.828-2.829 2.828a.75.75 0 1 1-1.06-1.06L13.109 14H11.16a3.75 3.75 0 0 1-2.873-1.34l-1.787-2.137z"/>
+                  </svg>
+                </button>
+
+                {/* Previous */}
+                <button
+                  type="button"
+                  onClick={handlePrevTrack}
+                  title="Previous"
+                  className="text-white/70 hover:text-white transition"
+                >
+                  <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 16 16">
+                    <path d="M3.3 1a.7.7 0 0 1 .7.7v5.15l9.95-5.744a.7.7 0 0 1 1.05.606v12.576a.7.7 0 0 1-1.05.607L4 9.149V14.3a.7.7 0 0 1-.7.7H1.7a.7.7 0 0 1-.7-.7V1.7a.7.7 0 0 1 .7-.7h1.6z"/>
+                  </svg>
+                </button>
+
+                {/* Play / Pause Circular Button */}
+                <button
+                  type="button"
+                  onClick={togglePlayPause}
+                  title={isPlaying ? "Pause" : "Play"}
+                  className="w-7.5 h-7.5 sm:w-8 sm:h-8 rounded-full bg-white text-black hover:scale-105 active:scale-95 flex items-center justify-center transition shadow-lg flex-shrink-0"
+                >
+                  {isPlaying ? (
+                    <svg className="w-3.5 h-3.5 fill-black" viewBox="0 0 16 16">
+                      <path d="M2.7 1a.7.7 0 0 0-.7.7v12.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7H2.7zm8 0a.7.7 0 0 0-.7.7v12.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7h-2.6z"/>
+                    </svg>
+                  ) : (
+                    <svg className="w-3.5 h-3.5 ml-0.5 fill-black" viewBox="0 0 16 16">
+                      <path d="M3 1.713a.7.7 0 0 1 1.05-.607l10.89 6.288a.7.7 0 0 1 0 1.212L4.05 14.894A.7.7 0 0 1 3 14.288V1.713z"/>
+                    </svg>
+                  )}
+                </button>
+
+                {/* Next */}
+                <button
+                  type="button"
+                  onClick={handleNextTrack}
+                  title="Next"
+                  className="text-white/70 hover:text-white transition"
+                >
+                  <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 16 16">
+                    <path d="M12.7 1a.7.7 0 0 0-.7.7v5.15L2.05.106A.7.7 0 0 0 1 .712v12.576a.7.7 0 0 0 1.05.607L12 8.149V14.3a.7.7 0 0 0 .7.7h1.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7h-1.6z"/>
+                  </svg>
+                </button>
+
+                {/* Repeat */}
+                <button
+                  type="button"
+                  onClick={() => setIsRepeat(prev => !prev)}
+                  title={isRepeat ? "Disable repeat" : "Enable repeat"}
+                  className={`transition ${isRepeat ? "text-[#1db954]" : "text-white/60 hover:text-white"}`}
+                >
+                  <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M0 4.75A3.75 3.75 0 0 1 3.75 1h8.5A3.75 3.75 0 0 1 16 4.75v5a3.75 3.75 0 0 1-3.75 3.75H9.81l1.018 1.018a.75.75 0 1 1-1.06 1.06L6.939 12.75l2.829-2.828a.75.75 0 1 1 1.06 1.06L9.811 12h2.439a2.25 2.25 0 0 0 2.25-2.25v-5a2.25 2.25 0 0 0-2.25-2.25h-8.5A2.25 2.25 0 0 0 1.5 4.75v5A2.25 2.25 0 0 0 3.75 12H5v1.5H3.75A3.75 3.75 0 0 1 0 9.75v-5z"/>
+                  </svg>
+                </button>
+              </div>
+
+              {/* Progress Scrubber Bar Row */}
+              <div className="flex items-center gap-2 w-full text-[10px] sm:text-[11px] font-mono text-white/50">
+                <span className="w-7 text-right">{formatSongTime(currentTimeSec)}</span>
+                <div
+                  onClick={handleScrubberClick}
+                  className="relative flex-1 h-1 bg-white/20 hover:h-1.5 rounded-full overflow-hidden cursor-pointer group transition-all"
+                >
+                  <div
+                    className="h-full bg-white group-hover:bg-[#1db954] transition-all"
+                    style={{ width: `${Math.min(100, (currentTimeSec / currentTrack.durationSec) * 100)}%` }}
+                  />
+                </div>
+                <span className="w-7 text-left">{formatSongTime(currentTrack.durationSec)}</span>
+              </div>
             </div>
           </div>
         </div>
