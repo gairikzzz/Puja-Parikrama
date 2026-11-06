@@ -677,10 +677,10 @@
     </div>
   </div>
 
-  <!-- ── 1. SPOTIFY MUSIC PLAYER (Positioned on the Left, Parallel with Center Camera CTA) ── -->
+  <!-- ── 1. SPOTIFY MUSIC PLAYER (Centered in space between leftmost screen & Snap CTA) ── -->
   <div
     id="spotify-music-player-bar"
-    class="fixed left-3 sm:left-6 bottom-4 sm:bottom-5 z-30 right-[calc(50%+32px)] sm:right-auto sm:w-[400px] md:w-[440px] sm:max-w-[calc(50%-40px)] pointer-events-auto select-none overflow-hidden backdrop-blur-[3px] bg-gradient-to-r from-[#210c32]/50 via-[#2d1142]/45 to-[#1c082b]/50 border-[1.5px] border-[#d4af37]/70 rounded-full px-3 sm:px-4 py-1.5 h-13 sm:h-14 flex items-center justify-between gap-2 sm:gap-3.5 shadow-[0_4px_20px_rgba(0,0,0,0.35),0_0_12px_rgba(212,175,55,0.2)] transition-all"
+    class="fixed left-[calc(25%-17px)] -translate-x-1/2 bottom-4 sm:bottom-5 z-30 w-[calc(50%-44px)] max-w-[420px] min-w-[240px] pointer-events-auto select-none overflow-hidden backdrop-blur-[3px] bg-gradient-to-r from-[#210c32]/50 via-[#2d1142]/45 to-[#1c082b]/50 border-[1.5px] border-[#d4af37]/70 rounded-full px-3 sm:px-4 py-1.5 h-13 sm:h-14 flex items-center justify-between gap-2 sm:gap-3 shadow-[0_4px_20px_rgba(0,0,0,0.35),0_0_12px_rgba(212,175,55,0.2)] transition-all"
   >
     <!-- Left: Album Cover + Title + Artist -->
     <div class="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-shrink">
@@ -715,8 +715,8 @@
       </div>
     </div>
 
-    <!-- Right: Smaller Controls & Thin Scrubber (Centrally Aligned to the Dialog Box) -->
-    <div class="flex flex-col items-center justify-center gap-1 min-w-[115px] sm:min-w-[160px] md:min-w-[180px] flex-shrink-0 pr-1 my-auto pt-0.5">
+    <!-- Right: Smaller Controls & Thin Scrubber (Decreased gap, Centrally Aligned to Dialog Box) -->
+    <div class="flex flex-col items-center justify-center gap-0.5 min-w-[110px] sm:min-w-[150px] md:min-w-[170px] flex-shrink-0 pr-1 my-auto">
       <!-- Small Playback Controls Row -->
       <div class="flex items-center gap-2 sm:gap-3">
         <button
