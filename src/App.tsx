@@ -1520,9 +1520,9 @@ export default function App() {
         </header>
       )}
 
-      {/* ── 1. SPOTIFY MUSIC PLAYER (Elongated Single Row Layout matching Snap CTA diameter) ── */}
+      {/* ── 1. SPOTIFY MUSIC PLAYER (Takes Up Entire Left Side from Screen Edge to Snap CTA) ── */}
       {mapReady && (
-        <div className="fixed left-[calc(25%-14px)] -translate-x-1/2 bottom-4 sm:bottom-5 z-30 w-[calc(50%-24px)] max-w-[560px] min-w-[320px] pointer-events-auto select-none flex flex-col gap-2">
+        <div className="fixed bottom-4 sm:bottom-5 left-3 sm:left-4 right-[calc(50%+34px)] sm:right-[calc(50%+38px)] z-30 pointer-events-auto select-none flex flex-col gap-2">
           {/* Spotify Official Interactive Playlist Embed Popup */}
           {spotifyEmbedVisible && (
             <div className="w-full bg-[#12071f]/95 border-[1.5px] border-[#d4af37]/70 rounded-2xl p-2.5 shadow-2xl backdrop-blur-xl animate-in fade-in slide-in-from-bottom-2 duration-200">
@@ -1570,8 +1570,8 @@ export default function App() {
             id="spotify-music-player-bar"
             className="w-full h-13 sm:h-14 overflow-hidden backdrop-blur-[3px] bg-gradient-to-r from-[#210c32]/50 via-[#2d1142]/45 to-[#1c082b]/50 border-[1.5px] border-[#d4af37]/70 rounded-full px-2.5 sm:px-3.5 flex items-center justify-between gap-2 sm:gap-3 shadow-[0_4px_20px_rgba(0,0,0,0.35),0_0_12px_rgba(212,175,55,0.2)] transition-all"
           >
-            {/* Left: Album Cover + Title + Artist (Clean cover without badge, full un-truncated title) */}
-            <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-shrink-0">
+            {/* Left: Album Cover + Title + Artist (Never truncated: min-w-max flex-shrink-0) */}
+            <div className="flex items-center gap-2 sm:gap-2.5 min-w-max flex-shrink-0">
               <button
                 type="button"
                 onClick={() => setSpotifyEmbedVisible(v => !v)}
@@ -1585,7 +1585,7 @@ export default function App() {
                 />
               </button>
 
-              <div className="flex flex-col min-w-0 pr-0.5">
+              <div className="flex flex-col min-w-max flex-shrink-0 pr-0.5">
                 <button
                   type="button"
                   onClick={() => setSpotifyEmbedVisible(v => !v)}
@@ -1600,8 +1600,8 @@ export default function App() {
               </div>
             </div>
 
-            {/* Middle: Scrubber Track with Left & Right Timestamps */}
-            <div className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-[50px] text-[9px] sm:text-[10px] font-mono text-white/50">
+            {/* Middle: Variable-length Progress Bar (flex-1 dynamically absorbs remaining space so song title is NEVER truncated) */}
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-[30px] text-[9px] sm:text-[10px] font-mono text-white/50 px-1">
               <span className="text-left flex-shrink-0">{formatSongTime(currentTimeSec)}</span>
               <div
                 onClick={handleScrubberClick}
