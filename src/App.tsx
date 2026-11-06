@@ -1586,7 +1586,7 @@ export default function App() {
                   id="btn-year-selector"
                   onClick={() => setYearDropdownOpen(o => !o)}
                   title="Select Puja Year"
-                  className="h-7 sm:h-7.5 px-2.5 sm:px-3 rounded-xl bg-[#211329]/90 hover:bg-[#2b1935] border border-[#E9B83E]/40 hover:border-[#E9B83E] flex items-center gap-1.5 text-[#F5E5B7] hover:text-white font-semibold text-[11px] sm:text-xs shadow-[0_0_8px_rgba(233,184,62,0.22)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                  className="h-7 sm:h-7.5 px-2.5 sm:px-3 rounded-xl bg-[#211329]/90 hover:bg-[#2b1935] border border-[#E9B83E]/40 hover:border-[#E9B83E] flex items-center gap-1.5 text-[#F5E5B7] font-semibold text-[11px] sm:text-xs shadow-[0_0_8px_rgba(233,184,62,0.22)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] hover:scale-110 active:scale-95 transition-all cursor-pointer"
                 >
                   <span className="text-[#E9B83E] text-[10px] sm:text-[11px] font-bold tracking-wider uppercase">YEAR</span>
                   <span className="text-[#F5E5B7] font-bold">{selectedYear}</span>
@@ -1627,7 +1627,7 @@ export default function App() {
                 type="button"
                 onClick={() => setLeaderboardModalVisible(true)}
                 title="Pandal Devotee Leaderboard"
-                className="h-7 sm:h-7.5 px-2.5 sm:px-3 rounded-xl bg-gradient-to-r from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] flex items-center gap-1.5 text-[#211329] font-bold text-[11px] sm:text-xs border border-[#211329]/30 shadow-[0_0_8px_rgba(233,184,62,0.22)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] hover:scale-105 active:scale-95 transition-all flex-shrink-0 cursor-pointer"
+                className="h-7 sm:h-7.5 px-2.5 sm:px-3 rounded-xl bg-gradient-to-r from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] flex items-center gap-1.5 text-[#211329] font-bold text-[11px] sm:text-xs border border-[#211329]/30 shadow-[0_0_8px_rgba(233,184,62,0.22)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] hover:scale-110 active:scale-95 transition-all flex-shrink-0 cursor-pointer"
               >
                 <span>Leaderboard</span>
                 <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#211329] flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
@@ -1641,7 +1641,7 @@ export default function App() {
                 type="button"
                 onClick={() => setAuthModalVisible(true)}
                 title="Guest Devotee Profile"
-                className="h-7 sm:h-7.5 px-2.5 sm:px-3 rounded-xl bg-[#211329]/90 border border-[#E9B83E]/40 hover:border-[#E9B83E] flex items-center gap-1.5 text-[#F5E5B7] hover:text-white font-semibold text-[11px] sm:text-xs shadow-[0_0_8px_rgba(233,184,62,0.22)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] hover:scale-105 active:scale-95 transition-all flex-shrink-0 cursor-pointer"
+                className="h-7 sm:h-7.5 px-2.5 sm:px-3 rounded-xl bg-[#211329]/90 border border-[#E9B83E]/40 hover:border-[#E9B83E] flex items-center gap-1.5 text-[#F5E5B7] font-semibold text-[11px] sm:text-xs shadow-[0_0_8px_rgba(233,184,62,0.22)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] hover:scale-110 active:scale-95 transition-all flex-shrink-0 cursor-pointer"
               >
                 <span>Profile</span>
                 <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#E9B83E] flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
