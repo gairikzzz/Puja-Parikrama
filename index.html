@@ -486,88 +486,42 @@
     <div id="sim-markers-container" class="absolute inset-0 pointer-events-auto"></div>
   </div>
 
-  <!-- ── 2. NEW FLOATING BRANDING BAR & TOP SEARCH ("PUJA PARIKRAMA") ── -->
+  <!-- ── 2. NEW FLOATING BRANDING BAR & EMBEDDED SEARCH ("PUJA PARIKRAMA") ── -->
   <header class="fixed top-3 left-0 right-0 z-50 px-3 sm:px-6 pointer-events-none flex flex-col items-center w-full">
     <!-- Main Pill Bar -->
-    <div class="relative overflow-hidden backdrop-blur-md bg-gradient-to-r from-[#210c32]/60 via-[#2d1142]/55 to-[#1c082b]/60 border-[1.5px] border-[#d4af37]/60 rounded-full px-3.5 sm:px-6 py-2 flex items-center justify-between w-full pointer-events-auto shadow-[0_6px_30px_rgba(0,0,0,0.5),0_0_15px_rgba(212,175,55,0.15),inset_0_1px_0_rgba(255,255,255,0.12)] transition-all">
+    <div class="relative overflow-visible backdrop-blur-md bg-gradient-to-r from-[#210c32]/60 via-[#2d1142]/55 to-[#1c082b]/60 border-[1.5px] border-[#d4af37]/60 rounded-full px-3.5 sm:px-6 py-2 flex items-center justify-between w-full pointer-events-auto shadow-[0_6px_30px_rgba(0,0,0,0.5),0_0_15px_rgba(212,175,55,0.15),inset_0_1px_0_rgba(255,255,255,0.12)] transition-all">
       
       <!-- Background Festive Garlands & Lanterns -->
       <img
         src="header-garlands.png"
         alt=""
-        class="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-40"
+        class="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-40 rounded-full overflow-hidden"
       />
 
-      <!-- Left Section: Transparent Glowing Durga Emblem & Typography -->
-      <div class="relative flex items-center min-w-0 z-10">
+      <!-- Left Section: Transparent Glowing Durga Emblem & Bengali Typography Only -->
+      <div class="relative flex items-center min-w-0 z-10 flex-shrink-0">
         <img
           src="logo-transparent.png"
           alt="পূজা পরিক্রমা"
           class="h-6 sm:h-7.5 w-auto object-contain flex-shrink-0 drop-shadow-[0_0_4px_rgba(251,191,36,0.5)]"
         />
-        <span class="text-[#f8de9e]/40 mx-2 hidden md:inline text-xs font-light">|</span>
-        <span class="hidden md:inline font-medium tracking-[0.22em] text-[10px] sm:text-[11px] text-[#f8de9e] uppercase select-none drop-shadow-[0_0_3px_rgba(245,158,11,0.4)]">
-          PUJA PARIKRAMA
-        </span>
       </div>
 
-      <!-- Right Section: Search Toggle & Google Profile Avatar / Sign-In -->
-      <div class="flex items-center gap-2 flex-shrink-0 z-10">
-        <!-- Search Toggle Icon -->
-        <button
-          id="btn-header-search"
-          title="Search Pandals"
-          class="w-8 h-8 rounded-full bg-[#34164c]/70 hover:bg-[#43235d]/90 border border-amber-400/40 flex items-center justify-center text-amber-300 transition active:scale-95 shadow-sm"
-        >
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
-        </button>
-
-        <!-- Google Auth Header Controls -->
-        <div id="auth-header-container" class="flex items-center">
-          <!-- Unauthenticated: Sign in with Google Button -->
-          <button
-            id="btn-google-signin"
-            title="Sign in with Google"
-            class="flex items-center gap-1.5 bg-[#251037]/90 hover:bg-[#34164c] border-[1.5px] border-[#d4af37]/80 hover:border-amber-300 px-3.5 py-1.5 rounded-full text-xs font-semibold text-amber-200 transition active:scale-95 shadow-[0_0_12px_rgba(212,175,55,0.3)]"
-          >
-            <svg class="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24">
-              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-            </svg>
-            <span class="font-medium text-amber-200">Sign In</span>
-          </button>
-
-          <!-- Authenticated: Profile Avatar & Name Chip -->
-          <div id="user-profile-chip" class="hidden flex items-center gap-1.5 bg-black/40 hover:bg-black/60 border border-amber-400/40 pl-1 pr-2.5 py-1 rounded-full cursor-pointer transition active:scale-95 shadow-sm">
-            <img id="user-avatar-img" src="" alt="Google Profile" class="w-6 h-6 rounded-full border border-amber-400 object-cover">
-            <span id="user-name-label" class="text-xs font-semibold text-amber-200 max-w-[70px] truncate">User</span>
-            <button id="btn-signout" title="Sign out" class="text-white/40 hover:text-red-400 text-xs ml-1 transition">✕</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── TOP SEARCH PANDALS BAR (Brought to the Top) ── -->
-    <div class="w-full flex justify-end mt-2 pointer-events-auto">
-      <div class="relative w-full max-w-xs sm:max-w-sm">
+      <!-- Middle Section: Integrated Search Bar in the Header -->
+      <div class="relative flex-1 max-w-xs sm:max-w-sm md:max-w-md mx-2 sm:mx-4 z-10">
         <div class="relative flex items-center">
           <input
             id="top-search-input"
             type="text"
             placeholder="Search Pandals or Events..."
-            class="w-full bg-[#1b1328]/90 border border-amber-400/30 hover:border-amber-400/60 focus:border-amber-400 rounded-full pl-4 pr-10 py-2 text-xs sm:text-sm text-white placeholder-amber-200/50 backdrop-blur-md shadow-lg outline-none transition"
+            class="w-full bg-[#1b1328]/75 hover:bg-[#1b1328]/90 focus:bg-[#1b1328]/95 border border-amber-400/35 hover:border-amber-400/60 focus:border-amber-400 rounded-full pl-3.5 sm:pl-4 pr-9 sm:pr-10 py-1.5 text-xs text-white placeholder-amber-200/50 backdrop-blur-md shadow-inner outline-none transition"
           />
           <button
             type="button"
             id="btn-trigger-top-search"
-            class="absolute right-3.5 text-amber-300 hover:text-amber-200"
+            class="absolute right-3 text-amber-300 hover:text-amber-200"
           >
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="11" cy="11" r="8" />
               <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
@@ -575,7 +529,35 @@
         </div>
 
         <!-- Search Autocomplete Dropdown -->
-        <div id="top-search-dropdown" class="hidden absolute top-full mt-1.5 left-0 right-0 bg-[#160c23]/95 border border-amber-400/30 rounded-2xl p-2 shadow-2xl backdrop-blur-xl z-50 max-h-60 overflow-y-auto space-y-1">
+        <div id="top-search-dropdown" class="hidden absolute top-full mt-2 left-0 right-0 bg-[#160c23]/95 border border-amber-400/30 rounded-2xl p-2 shadow-2xl backdrop-blur-xl z-50 max-h-60 overflow-y-auto space-y-1">
+        </div>
+      </div>
+
+      <!-- Right Section: Google Profile Avatar / Sign-In -->
+      <div class="flex items-center gap-2 flex-shrink-0 z-10">
+        <!-- Google Auth Header Controls -->
+        <div id="auth-header-container" class="flex items-center">
+          <!-- Unauthenticated: Sign in with Google Button -->
+          <button
+            id="btn-google-signin"
+            title="Sign in with Google"
+            class="flex items-center gap-1.5 bg-[#251037]/90 hover:bg-[#34164c] border-[1.5px] border-[#d4af37]/80 hover:border-amber-300 px-3 py-1.5 sm:px-3.5 sm:py-1.5 rounded-full text-xs font-semibold text-amber-200 transition active:scale-95 shadow-[0_0_12px_rgba(212,175,55,0.3)]"
+          >
+            <svg class="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+            </svg>
+            <span class="font-medium text-amber-200 hidden xs:inline sm:inline">Sign In</span>
+          </button>
+
+          <!-- Authenticated: Profile Avatar & Name Chip -->
+          <div id="user-profile-chip" class="hidden flex items-center gap-1.5 bg-black/40 hover:bg-black/60 border border-amber-400/40 pl-1 pr-2.5 py-1 rounded-full cursor-pointer transition active:scale-95 shadow-sm">
+            <img id="user-avatar-img" src="" alt="Google Profile" class="w-6 h-6 rounded-full border border-amber-400 object-cover">
+            <span id="user-name-label" class="text-xs font-semibold text-amber-200 max-w-[70px] truncate hidden sm:inline">User</span>
+            <button id="btn-signout" title="Sign out" class="text-white/40 hover:text-red-400 text-xs ml-1 transition">✕</button>
+          </div>
         </div>
       </div>
     </div>
