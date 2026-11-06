@@ -1535,16 +1535,17 @@ export default function App() {
                   id="btn-year-selector"
                   onClick={() => setYearDropdownOpen(o => !o)}
                   title="Select Puja Year"
-                  className="h-7 sm:h-7.5 px-2 sm:px-2.5 rounded-xl bg-[#1c0a2b]/90 hover:bg-[#250d38] border border-amber-400/50 hover:border-amber-300 flex items-center gap-1 sm:gap-1.5 text-amber-200 hover:text-white font-semibold text-[11px] sm:text-xs shadow-[0_0_8px_rgba(251,191,36,0.25)] hover:shadow-[0_0_14px_rgba(251,191,36,0.45)] hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                  className="h-7 sm:h-7.5 px-2.5 sm:px-3 rounded-xl bg-[#1c0a2b]/90 hover:bg-[#250d38] border border-amber-400/50 hover:border-amber-300 flex items-center gap-1.5 text-amber-200 hover:text-white font-semibold text-[11px] sm:text-xs shadow-[0_0_8px_rgba(251,191,36,0.25)] hover:shadow-[0_0_14px_rgba(251,191,36,0.45)] hover:scale-105 active:scale-95 transition-all cursor-pointer"
                 >
-                  <span>{selectedYear}</span>
+                  <span className="text-amber-400/80 text-[10px] sm:text-[11px] font-bold tracking-wider uppercase">YEAR</span>
+                  <span className="text-amber-200 font-bold">{selectedYear}</span>
                   <svg className={`w-3 h-3 text-amber-300 transition-transform duration-200 ${yearDropdownOpen ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                   </svg>
                 </button>
 
                 {yearDropdownOpen && (
-                  <div className="absolute top-full mt-1.5 right-0 bg-[#160c23]/95 border border-amber-400/40 rounded-xl p-1 shadow-2xl backdrop-blur-xl z-50 flex flex-col min-w-[85px] animate-in fade-in zoom-in-95 duration-150">
+                  <div className="absolute top-full mt-2 right-0 bg-[#160c23]/95 border border-amber-400/30 rounded-2xl p-2 shadow-2xl backdrop-blur-xl z-50 flex flex-col min-w-[120px] space-y-1 animate-in fade-in zoom-in-95 duration-150">
                     {[2026, 2025].map(year => (
                       <button
                         key={year}
@@ -1553,15 +1554,15 @@ export default function App() {
                           setSelectedYear(year)
                           setYearDropdownOpen(false)
                         }}
-                        className={`px-2.5 py-1.5 rounded-lg text-left text-[11px] sm:text-xs font-semibold flex items-center justify-between transition cursor-pointer ${
+                        className={`px-3 py-2 rounded-xl text-left text-xs font-semibold flex items-center justify-between transition cursor-pointer ${
                           selectedYear === year
-                            ? 'bg-amber-400/20 text-amber-300 font-bold'
+                            ? 'bg-amber-400/20 text-amber-300 font-bold border border-amber-400/30'
                             : 'text-white/80 hover:bg-white/10 hover:text-white'
                         }`}
                       >
                         <span>{year}</span>
                         {selectedYear === year && (
-                          <span className="text-amber-400 text-xs">✓</span>
+                          <span className="text-amber-400 text-xs font-bold">✓</span>
                         )}
                       </button>
                     ))}

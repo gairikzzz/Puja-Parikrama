@@ -556,32 +556,33 @@
             type="button"
             id="btn-year-selector"
             title="Select Puja Year"
-            class="h-7 sm:h-7.5 px-2 sm:px-2.5 rounded-xl bg-[#1c0a2b]/90 hover:bg-[#250d38] border border-amber-400/50 hover:border-amber-300 flex items-center gap-1 sm:gap-1.5 text-amber-200 hover:text-white font-semibold text-[11px] sm:text-xs shadow-[0_0_8px_rgba(251,191,36,0.25)] hover:shadow-[0_0_14px_rgba(251,191,36,0.45)] hover:scale-105 active:scale-95 transition-all cursor-pointer"
+            class="h-7 sm:h-7.5 px-2.5 sm:px-3 rounded-xl bg-[#1c0a2b]/90 hover:bg-[#250d38] border border-amber-400/50 hover:border-amber-300 flex items-center gap-1.5 text-amber-200 hover:text-white font-semibold text-[11px] sm:text-xs shadow-[0_0_8px_rgba(251,191,36,0.25)] hover:shadow-[0_0_14px_rgba(251,191,36,0.45)] hover:scale-105 active:scale-95 transition-all cursor-pointer"
           >
-            <span id="selected-year-label">2026</span>
+            <span class="text-amber-400/80 text-[10px] sm:text-[11px] font-bold tracking-wider uppercase">YEAR</span>
+            <span id="selected-year-label" class="text-amber-200 font-bold">2026</span>
             <svg id="year-chevron" class="w-3 h-3 text-amber-300 transition-transform duration-200" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
             </svg>
           </button>
           <!-- Dropdown Menu -->
-          <div id="year-dropdown-menu" class="hidden absolute top-full mt-1.5 right-0 bg-[#160c23]/95 border border-amber-400/40 rounded-xl p-1 shadow-2xl backdrop-blur-xl z-50 flex flex-col min-w-[85px]">
+          <div id="year-dropdown-menu" class="hidden absolute top-full mt-2 right-0 bg-[#160c23]/95 border border-amber-400/30 rounded-2xl p-2 shadow-2xl backdrop-blur-xl z-50 flex flex-col min-w-[120px] space-y-1">
             <button
               type="button"
               onclick="selectPujaYear(2026)"
-              class="year-option px-2.5 py-1.5 rounded-lg text-left text-[11px] sm:text-xs font-semibold flex items-center justify-between transition cursor-pointer bg-amber-400/20 text-amber-300 font-bold"
+              class="year-option px-3 py-2 rounded-xl text-left text-xs font-semibold flex items-center justify-between transition cursor-pointer bg-amber-400/20 text-amber-300 font-bold border border-amber-400/30"
               data-year="2026"
             >
               <span>2026</span>
-              <span class="year-check text-amber-400 text-xs">✓</span>
+              <span class="year-check text-amber-400 text-xs font-bold">✓</span>
             </button>
             <button
               type="button"
               onclick="selectPujaYear(2025)"
-              class="year-option px-2.5 py-1.5 rounded-lg text-left text-[11px] sm:text-xs font-semibold flex items-center justify-between transition cursor-pointer text-white/80 hover:bg-white/10 hover:text-white"
+              class="year-option px-3 py-2 rounded-xl text-left text-xs font-semibold flex items-center justify-between transition cursor-pointer text-white/80 hover:bg-white/10 hover:text-white"
               data-year="2025"
             >
               <span>2025</span>
-              <span class="year-check hidden text-amber-400 text-xs">✓</span>
+              <span class="year-check hidden text-amber-400 text-xs font-bold">✓</span>
             </button>
           </div>
         </div>
@@ -3560,10 +3561,10 @@
         const isCurrent = Number(el.getAttribute('data-year')) === year;
         const check = el.querySelector('.year-check');
         if (isCurrent) {
-          el.className = 'year-option px-2.5 py-1.5 rounded-lg text-left text-[11px] sm:text-xs font-semibold flex items-center justify-between transition cursor-pointer bg-amber-400/20 text-amber-300 font-bold';
+          el.className = 'year-option px-3 py-2 rounded-xl text-left text-xs font-semibold flex items-center justify-between transition cursor-pointer bg-amber-400/20 text-amber-300 font-bold border border-amber-400/30';
           check?.classList.remove('hidden');
         } else {
-          el.className = 'year-option px-2.5 py-1.5 rounded-lg text-left text-[11px] sm:text-xs font-semibold flex items-center justify-between transition cursor-pointer text-white/80 hover:bg-white/10 hover:text-white';
+          el.className = 'year-option px-3 py-2 rounded-xl text-left text-xs font-semibold flex items-center justify-between transition cursor-pointer text-white/80 hover:bg-white/10 hover:text-white';
           check?.classList.add('hidden');
         }
       });
