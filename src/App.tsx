@@ -778,8 +778,6 @@ export default function App() {
 
   const [posts, setPosts] = useState<SnapPost[]>(SEED_POSTS)
   const [selectedPost, setSelectedPost] = useState<SnapPost | null>(null)
-  const [sheetExpanded, setSheetExpanded] = useState(false)
-  const [activeTab, setActiveTab] = useState<'recent' | 'nearby'>('recent')
   const [currentUserCoords, setCurrentUserCoords] = useState<{ lat: number; lng: number }>(AGARTALA_CENTER)
   const [uploadVisible, setUploadVisible] = useState(false)
   const [mapReady, setMapReady] = useState(false)
@@ -968,7 +966,6 @@ export default function App() {
         })
         marker.addListener('click', () => {
           setSelectedPost(post)
-          setSheetExpanded(false)
           googleMapRef.current?.panTo({ lat: post.lat, lng: post.lng })
         })
       } else {
@@ -985,7 +982,6 @@ export default function App() {
         })
         marker.addListener('click', () => {
           setSelectedPost(post)
-          setSheetExpanded(false)
           googleMapRef.current?.panTo({ lat: post.lat, lng: post.lng })
         })
       }
@@ -1050,18 +1046,6 @@ export default function App() {
         showToast('📍 Centered on Agartala')
       }
     )
-  }
-
-  // ── Swipe gesture for bottom sheet ──
-  const sheetRef = useRef<HTMLDivElement>(null)
-  const dragStart = useRef<number | null>(null)
-  const handleTouchStart = (e: React.TouchEvent) => { dragStart.current = e.touches[0].clientY }
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (dragStart.current === null) return
-    const delta = e.changedTouches[0].clientY - dragStart.current
-    if (delta < -40) setSheetExpanded(true)
-    else if (delta > 40) setSheetExpanded(false)
-    dragStart.current = null
   }
 
   return (
@@ -1223,14 +1207,13 @@ export default function App() {
         </header>
       )}
 
-      {/* ── FLOATING RECENTER / LOCATE ME BUTTON (Bottom Right above drawer) ── */}
+      {/* ── FLOATING RECENTER / LOCATE ME BUTTON (Bottom Right) ── */}
       {mapReady && (
         <button
           id="btn-recenter"
           onClick={handleLocateMe}
           title="Locate My Position"
-          className="fixed right-4 z-30 w-11 h-11 rounded-full bg-[#1e0f2b]/85 hover:bg-[#2e1742] border border-amber-400/40 text-amber-300 flex items-center justify-center shadow-xl backdrop-blur-md transition active:scale-90"
-          style={{ bottom: sheetExpanded ? 330 : 120, transition: 'bottom 0.4s cubic-bezier(.32,.72,0,1)' }}
+          className="fixed right-4 bottom-5 sm:bottom-6 z-30 w-11 h-11 rounded-full bg-[#1e0f2b]/85 hover:bg-[#2e1742] border border-amber-400/40 text-amber-300 flex items-center justify-center shadow-xl backdrop-blur-md transition active:scale-90"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
@@ -1238,20 +1221,14 @@ export default function App() {
         </button>
       )}
 
-      {/* ── FLOATING CAMERA BUTTON ── */}
+      {/* ── FLOATING CAMERA BUTTON (Bottom Center) ── */}
       {mapReady && (
-        <div className="absolute z-30 flex flex-col items-center gap-2"
-          style={{ bottom: sheetExpanded ? 320 : 112, left: '50%', transform: 'translateX(-50%)', transition: 'bottom 0.4s cubic-bezier(.32,.72,0,1)' }}>
+        <div className="fixed bottom-5 sm:bottom-6 z-30 flex flex-col items-center gap-1.5"
+          style={{ left: '50%', transform: 'translateX(-50%)' }}>
           <button
             id="camera-btn"
-            onClick={() => {
-              if (!user) {
-                setAuthModalVisible(true)
-                return
-              }
-              setUploadVisible(true)
-            }}
-            className="w-16 h-16 rounded-full flex items-center justify-center shadow-2xl"
+            onClick={() => setUploadVisible(true)}
+            className="w-16 h-16 rounded-full flex items-center justify-center shadow-2xl active:scale-95 transition-all"
             style={{
               background: 'linear-gradient(135deg, #FF6B00, #C0392B)',
               boxShadow: '0 6px 40px rgba(255,107,0,0.55), 0 0 0 4px rgba(255,107,0,0.15)',
@@ -1262,223 +1239,9 @@ export default function App() {
               <circle cx="12" cy="13" r="3" fill="white" />
             </svg>
           </button>
-          <span className="text-white/60 text-xs font-medium">Snap Pandal</span>
-        </div>
-      )}
-
-      {/* ── BOTTOM SHEET ── */}
-      {mapReady && (
-        <div
-          id="bottom-sheet"
-          ref={sheetRef}
-          className={`absolute left-0 right-0 z-20 glass rounded-t-3xl ${sheetExpanded ? 'expanded' : 'collapsed'}`}
-          style={{ bottom: 0, maxHeight: '70vh' }}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-        >
-          {/* Drag handle */}
-          <div
-            className="flex justify-center pt-3 pb-2 cursor-pointer"
-            onClick={() => setSheetExpanded(e => !e)}
-          >
-            <div className="w-10 h-1 rounded-full" style={{ background: 'rgba(255,255,255,0.25)' }} />
-          </div>
-
-          {/* Sheet header */}
-          <div className="flex items-center justify-between px-5 pb-2">
-            <div>
-              <h2 className="text-white font-bold text-base">
-                {activeTab === 'recent' ? 'Recent Agartala Snaps' : 'Nearby Pandals'}
-              </h2>
-              <p className="text-white/40 text-xs">
-                {activeTab === 'recent'
-                  ? `${posts.length} pandals registered`
-                  : 'Sorted by proximity to your live location'}
-              </p>
-            </div>
-            <button
-              id="sheet-toggle-btn"
-              onClick={() => setSheetExpanded(e => !e)}
-              className="px-3 py-1.5 rounded-full glass-light text-white/70 text-xs font-medium"
-            >
-              {sheetExpanded ? 'Collapse ↓' : 'See all ↑'}
-            </button>
-          </div>
-
-          {/* Segmented Tab Navigation: Recent vs Nearby */}
-          <div className="px-4 pt-1 pb-2 flex items-center gap-2">
-            <button
-              onClick={() => setActiveTab('recent')}
-              className={`flex-1 py-2 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all ${
-                activeTab === 'recent'
-                  ? 'bg-saffron text-white shadow-lg shadow-saffron/25'
-                  : 'glass-light text-white/70 hover:text-white'
-              }`}
-            >
-              <span>🔥</span> Recent Snaps
-            </button>
-            <button
-              onClick={() => setActiveTab('nearby')}
-              className={`flex-1 py-2 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all ${
-                activeTab === 'nearby'
-                  ? 'bg-saffron text-white shadow-lg shadow-saffron/25'
-                  : 'glass-light text-white/70 hover:text-white'
-              }`}
-            >
-              <span>📍</span> Nearby Pandals
-            </button>
-          </div>
-
-          {/* Feed list */}
-          <div
-            className="overflow-y-auto no-scrollbar px-4 pb-6"
-            style={{ maxHeight: 'calc(70vh - 130px)' }}
-          >
-            {posts.length === 0 ? (
-              <div className="p-8 text-center glass-card rounded-2xl flex flex-col items-center justify-center space-y-2 border border-white/10 my-4">
-                <span className="text-3xl mb-1">🪔</span>
-                <h4 className="text-white font-bold text-sm">No Puja Snaps Yet</h4>
-                <p className="text-white/50 text-xs max-w-xs leading-relaxed">
-                  Be the first devotee to capture a pandal moment and broadcast it live to the Agartala map!
-                </p>
-                <button
-                  onClick={() => setUploadVisible(true)}
-                  className="mt-2 px-4 py-2 rounded-xl bg-gradient-to-r from-saffron to-puja-crimson text-white text-xs font-bold shadow-md shadow-saffron/20 active:scale-95 transition"
-                >
-                  📸 Snap First Pandal
-                </button>
-              </div>
-            ) : activeTab === 'recent' ? (
-              <div className="flex flex-col gap-2">
-                {posts.map(post => (
-                  <FeedCard
-                    key={post.id}
-                    post={post}
-                    onClick={() => {
-                      setSelectedPost(post)
-                      setSheetExpanded(false)
-                      googleMapRef.current?.panTo({ lat: post.lat, lng: post.lng })
-                      googleMapRef.current?.setZoom(16)
-                    }}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="flex flex-col gap-2">
-                {(() => {
-                  const withDistance = posts.map(p => {
-                    const distKm = calculateHaversineDistance(
-                      currentUserCoords.lat,
-                      currentUserCoords.lng,
-                      p.lat,
-                      p.lng
-                    )
-                    const popularityScore = (p.views || 1000) + ((p.likes || 100) * 4)
-                    return { ...p, distKm, popularityScore }
-                  })
-
-                  // Filter/prioritize nearby candidates
-                  let candidates = withDistance.filter(p => p.distKm <= 15.0)
-                  if (candidates.length < 5) {
-                    candidates = [...withDistance].sort((a, b) => a.distKm - b.distKm).slice(0, 15)
-                  }
-
-                  // Sort by popularity score descending
-                  candidates.sort((a, b) => b.popularityScore - a.popularityScore)
-
-                  // Limit to top 10
-                  const top10 = candidates.slice(0, 10)
-
-                  return top10.map((p, index) => {
-                    const distStr = formatDistance(p.distKm)
-                    const rank = index + 1
-
-                    return (
-                      <div
-                        key={p.id}
-                        className="glass-card rounded-2xl p-3 flex flex-col gap-2 text-left"
-                        style={{ background: 'rgba(255,255,255,0.05)' }}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div
-                            className="relative w-14 h-14 rounded-2xl overflow-hidden flex-shrink-0 cursor-pointer"
-                            style={{ border: '2px solid rgba(240,180,41,0.6)' }}
-                            onClick={() => {
-                              setSelectedPost(p)
-                              setSheetExpanded(false)
-                              googleMapRef.current?.panTo({ lat: p.lat, lng: p.lng })
-                              googleMapRef.current?.setZoom(16)
-                            }}
-                          >
-                            <img src={p.imageUrl} alt={p.pandal} className="w-full h-full object-cover" />
-                            <span className="absolute top-1 left-1 w-5 h-5 rounded-full bg-black/75 text-[10px] font-black text-amber-300 flex items-center justify-center border border-amber-400/30">
-                              #{rank}
-                            </span>
-                            <span className="absolute bottom-1 right-1 text-xs drop-shadow">{p.emoji}</span>
-                          </div>
-                          <div
-                            className="flex-1 min-w-0 cursor-pointer"
-                            onClick={() => {
-                              setSelectedPost(p)
-                              setSheetExpanded(false)
-                              googleMapRef.current?.panTo({ lat: p.lat, lng: p.lng })
-                              googleMapRef.current?.setZoom(16)
-                            }}
-                          >
-                            <h4 className="text-white font-bold text-sm truncate">{p.pandal}</h4>
-                            <p className="text-white/60 text-xs truncate mb-1">{p.neighborhood}</p>
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                                {rank === 1 ? '🔥 #1 Trending' : rank === 2 ? '⭐ #2 Popular' : rank === 3 ? '✨ #3 Top Rated' : `👁️ ${(p.views ?? p.viewsCount ?? 0).toLocaleString()} views`}
-                              </span>
-                              <span className="text-white/40 text-[11px]">❤️ {p.likes}</span>
-                            </div>
-                          </div>
-                          <div className="flex flex-col items-end gap-1 flex-shrink-0">
-                            <span
-                              className="px-2.5 py-1 rounded-full text-xs font-bold whitespace-nowrap"
-                              style={{
-                                background: 'rgba(16,185,129,0.18)',
-                                color: '#6ee7b7',
-                                border: '1px solid rgba(16,185,129,0.35)',
-                              }}
-                            >
-                              📍 {distStr}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-2 pt-1 border-t border-white/5">
-                          <button
-                            onClick={() => {
-                              googleMapRef.current?.panTo({ lat: p.lat, lng: p.lng })
-                              googleMapRef.current?.setZoom(17)
-                              setSelectedPost(p)
-                              setSheetExpanded(false)
-                              showToast(`🎯 Centered on ${p.pandal} (${distStr})`)
-                            }}
-                            className="flex-1 py-1.5 px-3 rounded-xl text-white text-xs font-bold flex items-center justify-center gap-1 active:scale-95 transition"
-                            style={{ background: 'linear-gradient(135deg, rgba(255,107,0,0.25), rgba(192,57,43,0.25))', border: '1px solid rgba(255,107,0,0.4)' }}
-                          >
-                            🎯 Pan & View Story
-                          </button>
-                          <a
-                            href={`https://www.google.com/maps/dir/?api=1&origin=${currentUserCoords.lat},${currentUserCoords.lng}&destination=${p.lat},${p.lng}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="py-1.5 px-3 rounded-xl text-white text-xs font-semibold flex items-center justify-center gap-1 active:scale-95 transition"
-                            style={{ background: 'rgba(255,255,255,0.08)' }}
-                          >
-                            🗺️ Directions
-                          </a>
-                        </div>
-                      </div>
-                    )
-                  })
-                })()}
-              </div>
-            )}
-          </div>
+          <span className="text-[11px] font-semibold tracking-wide text-white/80 bg-black/50 px-2.5 py-0.5 rounded-full backdrop-blur-md shadow">
+            Snap Pandal
+          </span>
         </div>
       )}
 

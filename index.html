@@ -575,7 +575,7 @@
   </div>
 
   <!-- ── 3. FLOATING CAMERA ACTION BUTTON (Bottom Center) ── -->
-  <div class="fixed left-1/2 -translate-x-1/2 bottom-[108px] z-30 flex flex-col items-center gap-1.5 pointer-events-auto">
+  <div class="fixed left-1/2 -translate-x-1/2 bottom-5 sm:bottom-6 z-30 flex flex-col items-center gap-1.5 pointer-events-auto">
     <button id="floating-camera" class="w-16 h-16 rounded-full bg-gradient-to-tr from-saffron via-puja-gold to-puja-crimson flex items-center justify-center shadow-[0_8px_32px_rgba(255,107,0,0.6)] border-4 border-[#0a0a14] active:scale-95 transition-all">
       <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
         <path d="M9 3L7.17 5H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2h-3.17L15 3H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
@@ -587,51 +587,12 @@
     </span>
   </div>
 
-  <!-- ── FLOATING RECENTER / LOCATE ME BUTTON (Bottom Right above drawer) ── -->
-  <button id="btn-recenter" title="Locate My Position" class="fixed right-4 bottom-[114px] z-30 w-11 h-11 rounded-full bg-[#1e0f2b]/85 hover:bg-[#2e1742] border border-amber-400/40 text-amber-300 flex items-center justify-center shadow-xl backdrop-blur-md transition active:scale-90">
+  <!-- ── FLOATING RECENTER / LOCATE ME BUTTON (Bottom Right) ── -->
+  <button id="btn-recenter" title="Locate My Position" class="fixed right-4 bottom-5 sm:bottom-6 z-30 w-11 h-11 rounded-full bg-[#1e0f2b]/85 hover:bg-[#2e1742] border border-amber-400/40 text-amber-300 flex items-center justify-center shadow-xl backdrop-blur-md transition active:scale-90">
     <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
       <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
     </svg>
   </button>
-
-  <!-- ── 4. SNAPCHAT-STYLE BOTTOM SHEET DRAWER ── -->
-  <div id="bottom-sheet" class="glass-nav rounded-t-[28px] border-t border-white/10 flex flex-col shadow-[0_-12px_40px_rgba(0,0,0,0.7)]">
-    <!-- Drawer Drag Pill -->
-    <div id="drawer-handle" class="w-full pt-3 pb-2 flex justify-center cursor-pointer touch-none">
-      <div class="w-12 h-1.5 rounded-full bg-white/30 hover:bg-white/50 transition"></div>
-    </div>
-
-    <!-- Drawer Header -->
-    <div class="px-5 pb-2.5 flex items-center justify-between border-b border-white/5">
-      <div>
-        <h2 id="drawer-title" class="text-white font-bold text-base leading-tight">Agartala Pandals</h2>
-        <p id="drawer-subtitle" class="text-white/40 text-xs mt-0.5"><span id="pandal-count">5</span> pandals registered</p>
-      </div>
-      <button id="btn-toggle-drawer" class="text-xs font-semibold px-3 py-1.5 rounded-full glass-card text-white/80 hover:text-white">
-        Expand ↑
-      </button>
-    </div>
-
-    <!-- Segmented Tab Navigation: Recent vs Nearby -->
-    <div class="px-4 pt-2.5 pb-1 flex items-center gap-2">
-      <button id="tab-btn-recent" class="flex-1 py-2 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all bg-saffron text-white shadow-lg shadow-saffron/25 active:scale-98">
-        <span>🔥</span> Recent Snaps
-      </button>
-      <button id="tab-btn-nearby" class="flex-1 py-2 px-3 rounded-xl font-semibold text-xs flex items-center justify-center gap-1.5 transition-all glass-card text-white/70 hover:text-white active:scale-98">
-        <span>📍</span> Nearby Pandals
-      </button>
-    </div>
-
-    <!-- 1. Recent Snaps Scrollable List -->
-    <div id="recent-snaps-list" class="overflow-y-auto hide-scrollbar px-4 py-2.5 space-y-2 max-h-[50vh]">
-      <!-- Cards dynamically inserted via JS -->
-    </div>
-
-    <!-- 2. Nearby Pandals Scrollable List (Sorted by Proximity) -->
-    <div id="nearby-snaps-list" class="hidden overflow-y-auto hide-scrollbar px-4 py-2.5 space-y-2 max-h-[50vh]">
-      <!-- Nearby proximity cards dynamically inserted via JS -->
-    </div>
-  </div>
 
   <!-- ── 5. FULL-SCREEN VERTICAL STORY MODAL (Snapchat Style) ── -->
   <div id="story-modal" class="snap-modal-backdrop fixed inset-0 z-50 bg-black flex flex-col">
@@ -1647,34 +1608,36 @@
     const btnToggleDrawer = document.getElementById('btn-toggle-drawer');
 
     function toggleDrawer() {
+      if (!bottomSheet) return;
       const isExpanded = bottomSheet.classList.contains('expanded');
       if (isExpanded) {
         bottomSheet.classList.remove('expanded');
-        btnToggleDrawer.textContent = 'Expand ↑';
+        if (btnToggleDrawer) btnToggleDrawer.textContent = 'Expand ↑';
       } else {
         bottomSheet.classList.add('expanded');
-        btnToggleDrawer.textContent = 'Collapse ↓';
+        if (btnToggleDrawer) btnToggleDrawer.textContent = 'Collapse ↓';
       }
     }
 
-    drawerHandle.addEventListener('click', toggleDrawer);
-    btnToggleDrawer.addEventListener('click', toggleDrawer);
+    drawerHandle?.addEventListener('click', toggleDrawer);
+    btnToggleDrawer?.addEventListener('click', toggleDrawer);
 
     // Touch swipe gesture on mobile
     let touchStartY = 0;
-    bottomSheet.addEventListener('touchstart', (e) => {
+    bottomSheet?.addEventListener('touchstart', (e) => {
       touchStartY = e.touches[0].clientY;
     }, { passive: true });
 
-    bottomSheet.addEventListener('touchend', (e) => {
+    bottomSheet?.addEventListener('touchend', (e) => {
+      if (!bottomSheet) return;
       const touchEndY = e.changedTouches[0].clientY;
       const diff = touchStartY - touchEndY;
       if (diff > 45) {
         bottomSheet.classList.add('expanded');
-        btnToggleDrawer.textContent = 'Collapse ↓';
+        if (btnToggleDrawer) btnToggleDrawer.textContent = 'Collapse ↓';
       } else if (diff < -45) {
         bottomSheet.classList.remove('expanded');
-        btnToggleDrawer.textContent = 'Expand ↑';
+        if (btnToggleDrawer) btnToggleDrawer.textContent = 'Expand ↑';
       }
     }, { passive: true });
 
