@@ -913,10 +913,8 @@
     </div>
   </div>
 
-  <!-- ── 7. TOAST NOTIFICATION ── -->
-  <div id="toast" class="fixed top-24 left-1/2 -translate-x-1/2 z-50 glass-nav px-5 py-2.5 rounded-full text-white text-xs font-semibold shadow-2xl opacity-0 -translate-y-4 pointer-events-none transition-all duration-300 flex items-center gap-2">
-    <span>🪔</span> <span id="toast-msg">Toast message</span>
-  </div>
+  <!-- ── 7. TOAST NOTIFICATION (Disabled) ── -->
+  <div id="toast" class="hidden"></div>
 
   <!-- ──────────────────────────────────────────────────────────────────────────
        APPLICATION LOGIC & GOOGLE MAPS SETUP (FIREBASE AUTH & LIVE MAP SYNC)
@@ -1030,15 +1028,8 @@
 
     /* ── Show Toast Helper ── */
     function showToast(text) {
-      const toast = document.getElementById('toast');
-      const toastMsg = document.getElementById('toast-msg');
-      toastMsg.textContent = text;
-      toast.classList.remove('opacity-0', '-translate-y-4');
-      toast.classList.add('opacity-100', 'translate-y-0');
-      setTimeout(() => {
-        toast.classList.add('opacity-0', '-translate-y-4');
-        toast.classList.remove('opacity-100', 'translate-y-0');
-      }, 2800);
+      // All toast popups/prompts disabled per user request
+      return;
     }
 
     let userLiveMarker = null;

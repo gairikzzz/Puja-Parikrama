@@ -808,9 +808,8 @@ export default function App() {
     ).slice(0, 6)
   }, [topSearchQuery])
 
-  const showToast = useCallback((msg: string) => {
-    setToast({ msg, visible: true })
-    setTimeout(() => setToast(t => ({ ...t, visible: false })), 3000)
+  const showToast = useCallback((_msg: string) => {
+    // All toast prompts disabled per user request
   }, [])
 
   const triggerCameraFlashAndEnter = useCallback(() => {
@@ -1547,8 +1546,6 @@ export default function App() {
         onSubmit={handlePhotoSubmission}
       />
 
-      {/* ── TOAST ── */}
-      <Toast message={toast.msg} visible={toast.visible} />
 
       {/* ── Global animation keyframes injected via style tag ── */}
       <style>{`
