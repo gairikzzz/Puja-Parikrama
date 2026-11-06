@@ -1205,21 +1205,18 @@ export default function App() {
               )}
             </div>
 
-            {/* Right Section: Guest Avatar */}
-            <div className="flex items-center gap-1.5 flex-shrink-0 z-10">
+            {/* Right Section: Guest Circle Icon */}
+            <div className="flex items-center flex-shrink-0 z-10 pl-1 sm:pl-2">
               <div
                 id="guest-avatar-chip"
                 title="Guest Devotee"
-                className="flex items-center gap-1.5 bg-[#251037]/80 hover:bg-[#34164c]/90 border border-[#d4af37]/70 pl-1 pr-2.5 py-0.5 h-7 sm:h-7.5 rounded-full shadow-[0_0_10px_rgba(212,175,55,0.25)] cursor-default select-none transition"
+                className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gradient-to-tr from-amber-500 via-amber-300 to-amber-100 p-[1.5px] flex items-center justify-center flex-shrink-0 drop-shadow-[0_0_5px_rgba(251,191,36,0.5)] cursor-default select-none transition hover:scale-105"
               >
-                <div className="w-5 h-5 rounded-full bg-gradient-to-tr from-amber-500 via-amber-300 to-amber-100 p-[1px] flex items-center justify-center flex-shrink-0 shadow-sm">
-                  <div className="w-full h-full rounded-full bg-[#1c0a2b] flex items-center justify-center">
-                    <svg className="w-3.5 h-3.5 text-amber-300" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                    </svg>
-                  </div>
+                <div className="w-full h-full rounded-full bg-[#1c0a2b] flex items-center justify-center">
+                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-300" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                  </svg>
                 </div>
-                <span className="text-[11px] font-semibold text-amber-200 tracking-wide">Guest</span>
               </div>
             </div>
           </div>
