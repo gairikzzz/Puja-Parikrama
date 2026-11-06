@@ -593,14 +593,14 @@
 
   <!-- ── UNIFIED BOTTOM ACTION DOCK (Exact Match to User's Design Mockup) ── -->
   <div class="fixed left-3 sm:left-6 right-3 sm:right-6 bottom-4 sm:bottom-6 z-30 pointer-events-none flex items-center gap-2.5 sm:gap-4 max-w-4xl mx-auto">
-    {/* 1. SPOTIFY MUSIC PLAYER CARD (Exact Match to Mockup) */}
+    <!-- 1. SPOTIFY MUSIC PLAYER CARD (Exact Match to Mockup) -->
     <div
       id="spotify-music-player-bar"
       class="relative flex-1 min-w-0 pointer-events-auto select-none overflow-hidden backdrop-blur-md bg-[#180a24]/90 border-[2px] border-[#c89d47]/85 rounded-[26px] sm:rounded-[32px] p-2.5 sm:p-3.5 shadow-[0_8px_32px_rgba(0,0,0,0.5),0_0_20px_rgba(200,157,71,0.22)] transition-all flex flex-col justify-between"
     >
-      {/* Top Row: Track Artwork + Info on Left, Controls on Right */}
+      <!-- Top Row: Track Artwork + Info on Left, Controls on Right -->
       <div class="flex items-center justify-between gap-2 sm:gap-4 mb-2">
-        {/* Left: Album Cover + Bengali Badge + Title + Artist */}
+        <!-- Left: Album Cover + Bengali Badge + Title + Artist -->
         <div class="flex items-center gap-2.5 sm:gap-3.5 min-w-0">
           <a
             href="https://open.spotify.com/playlist/2cjLMgWAt3S6YNCEKFtVtk"
@@ -636,9 +636,9 @@
           </div>
         </div>
 
-        {/* Right: Controls (Previous, Large Play/Pause, Next) */}
+        <!-- Right: Controls (Previous, Large Play/Pause, Next) -->
         <div class="flex items-center gap-2 sm:gap-3.5 flex-shrink-0 pr-1">
-          {/* Previous */}
+          <!-- Previous -->
           <button
             type="button"
             id="btn-player-prev"
@@ -650,7 +650,7 @@
             </svg>
           </button>
 
-          {/* Big White Circular Play / Pause Button */}
+          <!-- Big White Circular Play / Pause Button -->
           <button
             type="button"
             id="btn-player-play-pause"
@@ -662,7 +662,7 @@
             </svg>
           </button>
 
-          {/* Next */}
+          <!-- Next -->
           <button
             type="button"
             id="btn-player-next"
@@ -676,7 +676,7 @@
         </div>
       </div>
 
-      {/* Bottom Row: Full Progress Scrubber with 0:00 and 3:33 */}
+      <!-- Bottom Row: Full Progress Scrubber with 0:00 and 3:33 -->
       <div class="flex items-center gap-2 sm:gap-2.5 w-full text-[10px] sm:text-xs font-mono text-white/60">
         <span id="player-time-current" class="w-6 sm:w-7 text-left">0:00</span>
         <div
@@ -693,7 +693,7 @@
       </div>
     </div>
 
-    {/* 2. SNAP PANDAL CTA (Matching Diameter & Height of Player, Radiant Golden Aura) */}
+    <!-- 2. SNAP PANDAL CTA (Matching Diameter & Height of Player, Radiant Golden Aura) -->
     <button
       id="floating-camera"
       title="Snap Pandal"
