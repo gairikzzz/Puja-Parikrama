@@ -55,7 +55,7 @@ declare global {
    Constants & Master Pandals (For Search & Proximity Auto-Complete)
    ───────────────────────────────────────────────────────────────────────── */
 const AGARTALA_CENTER = { lat: 23.8315, lng: 91.2868 }
-const MAPS_API_KEY = 'AIzaSyAnnaozqfYaMR6oUS6ihqkbn1bwXJwcuR0'
+const MAPS_API_KEY = 'AIzaSyCV8RIIXa0kW_T63kKNkW-vOm30yDMAiYc'
 
 export const AGARTALA_MASTER_PANDALS = [
   { name: 'Bharat Ratna Sangha', neighborhood: 'Usha Bazar', lat: 23.8820, lng: 91.2785, emoji: '🪔' },
