@@ -797,6 +797,16 @@ export default function App() {
     return null
   })
   const [authModalVisible, setAuthModalVisible] = useState(false)
+  const [topSearchQuery, setTopSearchQuery] = useState('')
+  const searchInputRef = useRef<HTMLInputElement>(null)
+
+  const topSearchResults = useMemo(() => {
+    if (!topSearchQuery.trim()) return []
+    const q = topSearchQuery.toLowerCase()
+    return AGARTALA_MASTER_PANDALS.filter(p =>
+      p.name.toLowerCase().includes(q) || p.neighborhood.toLowerCase().includes(q)
+    ).slice(0, 6)
+  }, [topSearchQuery])
 
   const showToast = useCallback((msg: string) => {
     setToast({ msg, visible: true })
@@ -1124,33 +1134,57 @@ export default function App() {
         </div>
       )}
 
-      {/* ── 2. NEW FLOATING BRANDING BAR ("PUJA PARIKRAMA") ── */}
+      {/* ── 2. NEW FLOATING BRANDING BAR & TOP SEARCH ("PUJA PARIKRAMA") ── */}
       {mapReady && (
-        <header className="fixed top-3 left-0 right-0 z-50 px-3 sm:px-6 pointer-events-none flex justify-center w-full">
-          <div className="backdrop-blur-md bg-[#140123]/90 border border-purple-400/20 rounded-full px-3.5 sm:px-6 py-2 flex items-center justify-between w-full pointer-events-auto shadow-2xl transition-all">
-            {/* Left Section: Official Logo Banner */}
-            <div className="flex items-center gap-2.5 min-w-0">
+        <header className="fixed top-3 left-0 right-0 z-50 px-3 sm:px-6 pointer-events-none flex flex-col items-center w-full">
+          {/* Main Pill Bar */}
+          <div className="relative overflow-hidden backdrop-blur-xl bg-gradient-to-r from-[#210c32]/95 via-[#2d1142]/95 to-[#1c082b]/95 border-[1.5px] border-[#d4af37]/60 rounded-full px-3.5 sm:px-6 py-2 flex items-center justify-between w-full pointer-events-auto shadow-[0_6px_30px_rgba(0,0,0,0.65),0_0_15px_rgba(212,175,55,0.2),inset_0_1px_0_rgba(255,255,255,0.15)] transition-all">
+            
+            {/* Background Festive Garlands & Lanterns */}
+            <img
+              src="/header-garlands.png"
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-85"
+            />
+
+            {/* Left Section: Transparent Glowing Durga Emblem & Typography */}
+            <div className="relative flex items-center min-w-0 z-10">
+              {/* Warm radial golden glow behind emblem */}
+              <div className="absolute -left-1 sm:-left-2 top-1/2 -translate-y-1/2 w-12 sm:w-16 h-12 sm:h-16 bg-amber-500/30 blur-md rounded-full pointer-events-none" />
+
               <img
-                src="/header-logo.png"
+                src="/logo-transparent.png"
                 alt="পূজা পরিক্রমা"
-                className="h-7 sm:h-9 w-auto object-contain flex-shrink-0"
+                className="h-7 sm:h-9 w-auto object-contain flex-shrink-0 drop-shadow-[0_0_8px_rgba(251,191,36,0.9)] drop-shadow-[0_0_18px_rgba(245,158,11,0.5)]"
               />
-              <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex-shrink-0">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                {liveCount} live
+              <span className="text-[#f8de9e]/40 mx-2 hidden md:inline text-xs font-light">|</span>
+              <span className="hidden md:inline font-medium tracking-[0.22em] text-[10px] sm:text-[11px] text-[#f8de9e] uppercase select-none drop-shadow-[0_0_8px_rgba(245,158,11,0.6)]">
+                PUJA PARIKRAMA
               </span>
             </div>
 
-            {/* Right Section: Google Profile Avatar / Sign-In & Recenter Button */}
-            <div className="flex items-center gap-2 flex-shrink-0">
+            {/* Right Section: Search Toggle, Google Profile Avatar / Sign-In & Recenter Button */}
+            <div className="flex items-center gap-2 flex-shrink-0 z-10">
+              {/* Search Toggle Icon */}
+              <button
+                onClick={() => searchInputRef.current?.focus()}
+                title="Search Pandals"
+                className="w-8 h-8 rounded-full bg-[#43235d]/60 hover:bg-[#532c74]/80 border border-amber-400/35 flex items-center justify-center text-amber-300 transition active:scale-95 shadow-sm"
+              >
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+              </button>
+
               {/* Google Auth Controls */}
               {user ? (
                 <div
                   onClick={() => showToast(`👤 Signed in as ${user.displayName}`)}
-                  className="flex items-center gap-1.5 bg-white/10 hover:bg-white/15 border border-white/20 pl-1 pr-2.5 py-1 rounded-full cursor-pointer transition active:scale-95 shadow-sm"
+                  className="flex items-center gap-1.5 bg-black/40 hover:bg-black/60 border border-amber-400/40 pl-1 pr-2.5 py-1 rounded-full cursor-pointer transition active:scale-95 shadow-sm"
                 >
                   <img src={user.photoURL} alt={user.displayName} className="w-6 h-6 rounded-full border border-amber-400 object-cover" />
-                  <span className="text-xs font-semibold text-white max-w-[70px] truncate">{user.displayName.split(' ')[0]}</span>
+                  <span className="text-xs font-semibold text-amber-200 max-w-[70px] truncate">{user.displayName.split(' ')[0]}</span>
                   <button onClick={(e) => { e.stopPropagation(); handleSignOut() }} title="Sign Out" className="text-white/40 hover:text-red-400 text-xs ml-1 transition">✕</button>
                 </div>
               ) : (
@@ -1158,7 +1192,7 @@ export default function App() {
                   id="btn-google-signin"
                   onClick={handleGoogleSignIn}
                   title="Sign in with Google"
-                  className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-amber-400/40 px-2.5 py-1.5 rounded-full text-xs font-semibold text-white transition active:scale-95 shadow-sm"
+                  className="flex items-center gap-1.5 bg-[#251037]/90 hover:bg-[#34164c] border-[1.5px] border-[#d4af37]/80 hover:border-amber-300 px-3.5 py-1.5 rounded-full text-xs font-semibold text-amber-200 transition active:scale-95 shadow-[0_0_12px_rgba(212,175,55,0.3)]"
                 >
                   <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -1166,21 +1200,76 @@ export default function App() {
                     <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
                     <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
                   </svg>
-                  <span className="hidden xs:inline sm:inline">Sign In</span>
+                  <span className="font-medium text-amber-200">Sign In</span>
                 </button>
               )}
 
-              {/* Recenter / Locate Button (map.panTo(userLocation)) */}
+              {/* Recenter / Locate Button */}
               <button
                 id="btn-recenter"
                 onClick={handleLocateMe}
                 title="Locate My Position"
-                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center text-white/90 hover:text-amber-400 transition active:scale-90 shadow-sm"
+                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 border border-amber-400/30 flex items-center justify-center text-white/90 hover:text-amber-400 transition active:scale-90 shadow-sm"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
                 </svg>
               </button>
+            </div>
+          </div>
+
+          {/* ── TOP SEARCH PANDALS BAR (Brought to the Top) ── */}
+          <div className="w-full flex justify-end mt-2 pointer-events-auto">
+            <div className="relative w-full max-w-xs sm:max-w-sm">
+              <div className="relative flex items-center">
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  value={topSearchQuery}
+                  onChange={e => setTopSearchQuery(e.target.value)}
+                  placeholder="Search Pandals or Events..."
+                  className="w-full bg-[#1b1328]/90 border border-amber-400/30 hover:border-amber-400/60 focus:border-amber-400 rounded-full pl-4 pr-10 py-2 text-xs sm:text-sm text-white placeholder-amber-200/50 backdrop-blur-md shadow-lg outline-none transition"
+                />
+                <button
+                  type="button"
+                  onClick={() => searchInputRef.current?.focus()}
+                  className="absolute right-3.5 text-amber-300 hover:text-amber-200"
+                >
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Search Autocomplete Dropdown */}
+              {topSearchResults.length > 0 && (
+                <div className="absolute top-full mt-1.5 left-0 right-0 bg-[#160c23]/95 border border-amber-400/30 rounded-2xl p-2 shadow-2xl backdrop-blur-xl z-50 max-h-60 overflow-y-auto space-y-1">
+                  {topSearchResults.map(pandal => (
+                    <div
+                      key={pandal.name}
+                      onClick={() => {
+                        googleMapRef.current?.panTo({ lat: pandal.lat, lng: pandal.lng })
+                        googleMapRef.current?.setZoom(16)
+                        setTopSearchQuery('')
+                        showToast(`📍 Showing ${pandal.name}`)
+                      }}
+                      className="flex items-center justify-between p-2 rounded-xl hover:bg-white/10 cursor-pointer transition text-left"
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="text-base">{pandal.emoji}</span>
+                        <div className="truncate">
+                          <p className="text-xs font-bold text-white truncate">{pandal.name}</p>
+                          <p className="text-[10px] text-amber-200/70 truncate">{pandal.neighborhood}</p>
+                        </div>
+                      </div>
+                      <span className="text-[10px] text-amber-300 font-mono flex-shrink-0">
+                        {formatDistance(calcHaversineMeters(currentUserCoords.lat, currentUserCoords.lng, pandal.lat, pandal.lng) / 1000)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </header>
