@@ -983,6 +983,9 @@ export default function App() {
   const [topSearchQuery, setTopSearchQuery] = useState('')
   const searchInputRef = useRef<HTMLInputElement>(null)
   const [activeFilter, setActiveFilter] = useState<'recent' | 'trending' | 'nearby' | null>('recent')
+  const [selectedYear, setSelectedYear] = useState<number>(2026)
+  const [yearDropdownOpen, setYearDropdownOpen] = useState(false)
+  const yearDropdownRef = useRef<HTMLDivElement>(null)
 
   // Spotify Style Player State (matching user's screenshot & header aesthetic)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -1003,6 +1006,17 @@ export default function App() {
     return () => {
       dhakEngineRef.current?.stop()
     }
+  }, [])
+
+  // Close year dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (yearDropdownRef.current && !yearDropdownRef.current.contains(e.target as Node)) {
+        setYearDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
   const toggleMute = useCallback(() => {
@@ -1512,8 +1526,49 @@ export default function App() {
               )}
             </div>
 
-            {/* Right Section: Leaderboard CTA & Profile Button (Rounded Rectangular: Name followed by Icon) */}
+            {/* Right Section: Year Selector, Leaderboard CTA & Profile Button */}
             <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 z-10 pl-1 sm:pl-2">
+              {/* Year Selector Dropdown */}
+              <div className="relative flex-shrink-0" ref={yearDropdownRef}>
+                <button
+                  type="button"
+                  id="btn-year-selector"
+                  onClick={() => setYearDropdownOpen(o => !o)}
+                  title="Select Puja Year"
+                  className="h-7 sm:h-7.5 px-2 sm:px-2.5 rounded-xl bg-[#1c0a2b]/90 hover:bg-[#250d38] border border-amber-400/50 hover:border-amber-300 flex items-center gap-1 sm:gap-1.5 text-amber-200 hover:text-white font-semibold text-[11px] sm:text-xs shadow-[0_0_8px_rgba(251,191,36,0.25)] hover:shadow-[0_0_14px_rgba(251,191,36,0.45)] hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                >
+                  <span>{selectedYear}</span>
+                  <svg className={`w-3 h-3 text-amber-300 transition-transform duration-200 ${yearDropdownOpen ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </button>
+
+                {yearDropdownOpen && (
+                  <div className="absolute top-full mt-1.5 right-0 bg-[#160c23]/95 border border-amber-400/40 rounded-xl p-1 shadow-2xl backdrop-blur-xl z-50 flex flex-col min-w-[85px] animate-in fade-in zoom-in-95 duration-150">
+                    {[2026, 2025].map(year => (
+                      <button
+                        key={year}
+                        type="button"
+                        onClick={() => {
+                          setSelectedYear(year)
+                          setYearDropdownOpen(false)
+                        }}
+                        className={`px-2.5 py-1.5 rounded-lg text-left text-[11px] sm:text-xs font-semibold flex items-center justify-between transition cursor-pointer ${
+                          selectedYear === year
+                            ? 'bg-amber-400/20 text-amber-300 font-bold'
+                            : 'text-white/80 hover:bg-white/10 hover:text-white'
+                        }`}
+                      >
+                        <span>{year}</span>
+                        {selectedYear === year && (
+                          <span className="text-amber-400 text-xs">✓</span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               {/* Leaderboard Button */}
               <button
                 id="btn-leaderboard"
