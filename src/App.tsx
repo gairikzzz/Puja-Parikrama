@@ -1467,11 +1467,11 @@ export default function App() {
         </header>
       )}
 
-      {/* ── 1. SPOTIFY MUSIC PLAYER (Elongated Length, Compact Height, Smaller Non-Overlapping Buttons) ── */}
+      {/* ── 1. SPOTIFY MUSIC PLAYER (Positioned on the Left, Parallel with Center Camera CTA) ── */}
       {mapReady && (
         <div
           id="spotify-music-player-bar"
-          className="fixed left-3 sm:left-6 bottom-4 sm:bottom-5 z-30 w-[calc(100vw-84px)] sm:w-[440px] md:w-[480px] max-w-[480px] pointer-events-auto select-none overflow-hidden backdrop-blur-[3px] bg-gradient-to-r from-[#210c32]/50 via-[#2d1142]/45 to-[#1c082b]/50 border-[1.5px] border-[#d4af37]/70 rounded-full px-3 sm:px-4 py-1.5 h-13 sm:h-14 flex items-center justify-between gap-2.5 sm:gap-4 shadow-[0_4px_20px_rgba(0,0,0,0.35),0_0_12px_rgba(212,175,55,0.2)] transition-all"
+          className="fixed left-3 sm:left-6 bottom-4 sm:bottom-5 z-30 right-[calc(50%+32px)] sm:right-auto sm:w-[400px] md:w-[440px] sm:max-w-[calc(50%-40px)] pointer-events-auto select-none overflow-hidden backdrop-blur-[3px] bg-gradient-to-r from-[#210c32]/50 via-[#2d1142]/45 to-[#1c082b]/50 border-[1.5px] border-[#d4af37]/70 rounded-full px-3 sm:px-4 py-1.5 h-13 sm:h-14 flex items-center justify-between gap-2 sm:gap-3.5 shadow-[0_4px_20px_rgba(0,0,0,0.35),0_0_12px_rgba(212,175,55,0.2)] transition-all"
         >
           {/* Left: Album Cover + Title + Artist */}
           <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-shrink">
@@ -1505,7 +1505,7 @@ export default function App() {
           </div>
 
           {/* Right: Smaller Controls & Thin Scrubber (Ample padding, No Boundary Overlap) */}
-          <div className="flex flex-col items-center justify-center gap-0.5 min-w-[130px] sm:min-w-[170px] md:min-w-[190px] flex-shrink-0 pr-1">
+          <div className="flex flex-col items-center justify-center gap-0.5 min-w-[115px] sm:min-w-[160px] md:min-w-[180px] flex-shrink-0 pr-1">
             {/* Small Playback Controls Row */}
             <div className="flex items-center gap-2 sm:gap-3">
               <button
@@ -1566,13 +1566,13 @@ export default function App() {
         </div>
       )}
 
-      {/* ── 2. SNAP PANDAL CTA (Matching Height, Positioned on Right) ── */}
+      {/* ── 2. SNAP PANDAL CTA (Central Aligned to Screen, Parallel with Music Player) ── */}
       {mapReady && (
         <button
           id="camera-btn"
           onClick={() => setUploadVisible(true)}
           title="Snap Pandal"
-          className="fixed bottom-4 sm:bottom-5 right-3 sm:right-6 z-30 w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-amber-500 via-amber-300 to-amber-100 flex items-center justify-center border-2 sm:border-[3px] border-[#180924] shadow-[0_0_30px_rgba(251,191,36,0.7),0_0_12px_rgba(212,175,55,0.45)] hover:shadow-[0_0_40px_rgba(251,191,36,0.9)] active:scale-95 transition-all pointer-events-auto flex-shrink-0"
+          className="fixed bottom-4 sm:bottom-5 left-1/2 -translate-x-1/2 z-30 w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-amber-500 via-amber-300 to-amber-100 flex items-center justify-center border-2 sm:border-[3px] border-[#180924] shadow-[0_0_30px_rgba(251,191,36,0.7),0_0_12px_rgba(212,175,55,0.45)] hover:shadow-[0_0_40px_rgba(251,191,36,0.9)] active:scale-95 transition-all pointer-events-auto flex-shrink-0"
         >
           <svg className="w-5 h-5 sm:w-6 sm:h-6 text-[#1c0a2b]" viewBox="0 0 24 24" fill="currentColor">
             <path d="M9 3L7.17 5H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2h-3.17L15 3H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z" />
@@ -1581,15 +1581,15 @@ export default function App() {
         </button>
       )}
 
-      {/* ── 3. RECENTER / LOCATE ME BUTTON (Floating above the CTA) ── */}
+      {/* ── 3. RECENTER / LOCATE ME BUTTON (Parallel on Right) ── */}
       {mapReady && (
         <button
           id="btn-recenter"
           onClick={handleLocateMe}
           title="Locate My Position"
-          className="fixed right-4 sm:right-7 bottom-20 sm:bottom-22 z-30 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-[#1e0f2b]/85 hover:bg-[#2e1742] border border-amber-400/40 text-amber-300 flex items-center justify-center shadow-xl backdrop-blur-md transition active:scale-90 pointer-events-auto flex-shrink-0"
+          className="fixed right-3 sm:right-6 bottom-4 sm:bottom-5 z-30 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#1e0f2b]/85 hover:bg-[#2e1742] border border-amber-400/40 text-amber-300 flex items-center justify-center shadow-xl backdrop-blur-md transition active:scale-90 pointer-events-auto flex-shrink-0"
         >
-          <svg className="w-4.5 h-4.5" viewBox="0 0 24 24" fill="currentColor">
+          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
           </svg>
         </button>
