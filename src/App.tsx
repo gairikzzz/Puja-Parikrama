@@ -1138,14 +1138,7 @@ export default function App() {
       {mapReady && (
         <header className="fixed top-3 left-0 right-0 z-50 px-3 sm:px-6 pointer-events-none flex flex-col items-center w-full">
           {/* Main Pill Bar */}
-          <div className="relative overflow-visible backdrop-blur-md bg-gradient-to-r from-[#210c32]/60 via-[#2d1142]/55 to-[#1c082b]/60 border-[1.5px] border-[#d4af37]/60 rounded-full px-3.5 sm:px-6 py-2 flex items-center justify-between w-full pointer-events-auto shadow-[0_6px_30px_rgba(0,0,0,0.5),0_0_15px_rgba(212,175,55,0.15),inset_0_1px_0_rgba(255,255,255,0.12)] transition-all">
-            
-            {/* Background Festive Garlands & Lanterns */}
-            <img
-              src="/header-garlands.png"
-              alt=""
-              className="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-40 rounded-full overflow-hidden"
-            />
+          <div className="relative overflow-visible backdrop-blur-md bg-gradient-to-r from-[#210c32]/60 via-[#2d1142]/60 to-[#1c082b]/60 border-[1.5px] border-[#d4af37]/60 rounded-full px-3.5 sm:px-6 py-2 flex items-center justify-between w-full pointer-events-auto shadow-[0_6px_30px_rgba(0,0,0,0.5),0_0_15px_rgba(212,175,55,0.15),inset_0_1px_0_rgba(255,255,255,0.12)] transition-all">
 
             {/* Left Section: Transparent Glowing Durga Emblem & Bengali Typography Only */}
             <div className="relative flex items-center min-w-0 z-10 flex-shrink-0">
