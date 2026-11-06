@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
+import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
 import {
   submitPhotoToN8n,
   fetchApprovedSubmissions,
@@ -48,6 +50,7 @@ declare global {
     google: any
     initMap?: () => void
     exifr?: any
+    L?: any
   }
 }
 
@@ -55,7 +58,7 @@ declare global {
    Constants & Master Pandals (For Search & Proximity Auto-Complete)
    ───────────────────────────────────────────────────────────────────────── */
 const AGARTALA_CENTER = { lat: 23.8315, lng: 91.2868 }
-const MAPS_API_KEY = 'AIzaSyAnnaozqfYaMR6oUS6ihqkbn1bwXJwcuR0'
+const GEOAPIFY_API_KEY = '7e1899c5718847f5804a483b25574f05'
 
 export const AGARTALA_MASTER_PANDALS = [
   { name: 'Bharat Ratna Sangha', neighborhood: 'Usha Bazar', lat: 23.8820, lng: 91.2785, emoji: '🪔' },
@@ -769,6 +772,7 @@ function mapSupabaseRowToSnapPost(row: SupabaseSubmissionRow): SnapPost {
    ───────────────────────────────────────────────────────────────────────── */
 export default function App() {
   const mapRef = useRef<HTMLDivElement>(null)
+  const leafletMapRef = useRef<L.Map | null>(null)
   const googleMapRef = useRef<any>(null)
   const markersRef = useRef<Map<string, any>>(new Map())
 
@@ -873,36 +877,45 @@ export default function App() {
     return () => clearInterval(iv)
   }, [])
 
-  // ── Load Google Maps JS API ──
+  // ── Initialize Leaflet Map with Geoapify Dark Matter Yellow Roads ──
   useEffect(() => {
-    if (window.google?.maps) { initMap(); return }
-    window.initMap = initMap
-    const script = document.createElement('script')
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${MAPS_API_KEY}&callback=initMap&libraries=marker`
-    script.async = true
-    script.defer = true
-    document.head.appendChild(script)
-    return () => {
-      document.head.removeChild(script)
-      delete window.initMap
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    if (!mapRef.current || leafletMapRef.current) return
 
-  function initMap() {
-    if (!mapRef.current) return
-    const map = new window.google.maps.Map(mapRef.current, {
-      center: AGARTALA_CENTER,
+    const map = L.map(mapRef.current, {
+      center: [AGARTALA_CENTER.lat, AGARTALA_CENTER.lng],
       zoom: 14,
-      styles: DARK_MAP_STYLE,
-      disableDefaultUI: true,
-      gestureHandling: 'greedy',
-      backgroundColor: '#0a0a0f',
-      mapTypeId: 'roadmap',
-      clickableIcons: false,
-      mapId: 'durga-puja-snap',
+      zoomControl: false,
+      attributionControl: true,
     })
-    googleMapRef.current = map
+
+    const tileLayer = L.tileLayer(
+      `https://maps.geoapify.com/v1/tile/dark-matter-yellow-roads/{z}/{x}/{y}.png?apiKey=${GEOAPIFY_API_KEY}`,
+      {
+        maxZoom: 20,
+        subdomains: ['a', 'b', 'c'],
+        attribution: 'Powered by <a href="https://www.geoapify.com/" target="_blank">Geoapify</a> | &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>',
+      }
+    ).addTo(map)
+
+    tileLayer.on('tileerror', () => {
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        maxZoom: 20,
+        attribution: '&copy; OpenStreetMap &copy; CARTO',
+      }).addTo(map)
+    })
+
+    leafletMapRef.current = map
+    googleMapRef.current = {
+      panTo: (coords: { lat: number; lng: number }) => {
+        map.panTo([coords.lat, coords.lng])
+      },
+      setZoom: (zoom: number) => {
+        map.setZoom(zoom)
+      },
+      setView: (coords: [number, number], zoom: number) => {
+        map.setView(coords, zoom)
+      },
+    }
     setMapReady(true)
 
     // Auto-detect location & zoom on startup
@@ -911,71 +924,55 @@ export default function App() {
         (pos) => {
           const coords = { lat: pos.coords.latitude, lng: pos.coords.longitude }
           setCurrentUserCoords(coords)
-          map.setCenter(coords)
-          map.setZoom(15)
+          map.setView([coords.lat, coords.lng], 15)
           showToast('📍 Located you! Zoomed to your position')
         },
         () => {
-          map.setCenter(AGARTALA_CENTER)
-          map.setZoom(14)
+          map.setView([AGARTALA_CENTER.lat, AGARTALA_CENTER.lng], 14)
         },
         { enableHighAccuracy: true, timeout: 8000 }
       )
     }
-  }
+
+    return () => {
+      map.remove()
+      leafletMapRef.current = null
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // ── Add / update map markers whenever posts or map changes ──
   useEffect(() => {
-    const map = googleMapRef.current
+    const map = leafletMapRef.current
     if (!map || !mapReady) return
 
     posts.forEach(post => {
       if (markersRef.current.has(post.id)) return
 
-      // Build custom HTML marker element
-      const el = document.createElement('div')
-      el.className = 'snap-pin'
-      el.setAttribute('data-post-id', post.id)
-      el.innerHTML = `
-        <div class="avatar-ring">
-          <img src="${post.imageUrl}" alt="${post.pandal}" loading="lazy" />
-        </div>
-        <div class="pin-tail"></div>
-      `
+      const icon = L.divIcon({
+        className: 'snap-leaflet-marker-wrapper',
+        html: `
+          <div class="snap-marker-container" data-post-id="${post.id}" style="position:relative; transform:translate(-50%, -100%);">
+            <div class="snap-pulse-ring"></div>
+            <div class="snap-avatar-ring ${post.userId ? 'border-2 border-emerald-400' : ''}">
+              <div class="snap-avatar-inner">
+                <img src="${post.imageUrl || post.mediaUrl}" alt="${post.pandal || post.pandalName}" loading="lazy" />
+              </div>
+              <div class="snap-pin-badge">${post.emoji || '🪔'}</div>
+            </div>
+            <div class="snap-pin-tail"></div>
+          </div>
+        `,
+        iconSize: [58, 68],
+        iconAnchor: [29, 68],
+      })
 
-      let marker: any
-
-      // Use AdvancedMarkerElement if available
-      if (window.google.maps.marker?.AdvancedMarkerElement) {
-        marker = new window.google.maps.marker.AdvancedMarkerElement({
-          map,
-          position: { lat: post.lat, lng: post.lng },
-          content: el,
-          title: post.pandal,
-        })
-        marker.addListener('click', () => {
-          setSelectedPost(post)
-          setSheetExpanded(false)
-          googleMapRef.current?.panTo({ lat: post.lat, lng: post.lng })
-        })
-      } else {
-        // Fallback to legacy Marker with custom overlay
-        marker = new window.google.maps.Marker({
-          map,
-          position: { lat: post.lat, lng: post.lng },
-          title: post.pandal,
-          icon: {
-            url: post.imageUrl,
-            scaledSize: new window.google.maps.Size(56, 56),
-            anchor: new window.google.maps.Point(28, 56),
-          },
-        })
-        marker.addListener('click', () => {
-          setSelectedPost(post)
-          setSheetExpanded(false)
-          googleMapRef.current?.panTo({ lat: post.lat, lng: post.lng })
-        })
-      }
+      const marker = L.marker([post.lat, post.lng], { icon }).addTo(map)
+      marker.on('click', () => {
+        setSelectedPost(post)
+        setSheetExpanded(false)
+        map.panTo([post.lat, post.lng])
+      })
 
       markersRef.current.set(post.id, marker)
     })
@@ -1126,22 +1123,19 @@ export default function App() {
 
       {/* ── 2. NEW FLOATING BRANDING BAR ("PUJA PARIKRAMA") ── */}
       {mapReady && (
-        <header className="fixed top-3 left-0 right-0 z-50 px-3 sm:px-4 pointer-events-none flex justify-center">
-          <div className="backdrop-blur-md bg-slate-900/80 border border-white/10 rounded-full px-4 py-2 flex items-center justify-between w-full max-w-md pointer-events-auto shadow-2xl">
-            {/* Left / Center Section: Official Logo & Title */}
+        <header className="fixed top-3 left-0 right-0 z-50 px-3 sm:px-6 pointer-events-none flex justify-center w-full">
+          <div className="backdrop-blur-md bg-[#140123]/90 border border-purple-400/20 rounded-full px-3.5 sm:px-6 py-2 flex items-center justify-between w-full pointer-events-auto shadow-2xl transition-all">
+            {/* Left Section: Official Logo Banner */}
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-full p-0.5 bg-gradient-to-tr from-amber-400 via-orange-500 to-puja-crimson flex-shrink-0 shadow-sm flex items-center justify-center overflow-hidden">
-                <img src="/logo.png" alt="Puja Parikrama Logo" className="w-full h-full rounded-full object-cover" />
-              </div>
-              <div className="flex items-center gap-1.5 truncate">
-                <span className="text-white font-bold text-sm sm:text-base tracking-tight truncate">
-                  Puja <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-orange-400 font-extrabold">Parikrama</span>
-                </span>
-                <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  {liveCount} live
-                </span>
-              </div>
+              <img
+                src="/header-logo.png"
+                alt="পূজা পরিক্রমা"
+                className="h-7 sm:h-9 w-auto object-contain flex-shrink-0"
+              />
+              <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex-shrink-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                {liveCount} live
+              </span>
             </div>
 
             {/* Right Section: Google Profile Avatar / Sign-In & Recenter Button */}

@@ -21,6 +21,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
+  <!-- Leaflet Map Engine (Free, Open-Source) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lightweight exifr and EXIF.js libraries for client-side EXIF GPS extraction -->
@@ -173,6 +177,12 @@
       cursor: pointer;
       z-index: 20;
       transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .snap-leaflet-marker-wrapper, .user-gps-marker-container, .user-gps-marker-wrapper {
+      background: transparent !important;
+      border: none !important;
+      overflow: visible !important;
     }
 
     .snap-marker-container:hover, .snap-marker-container:active {
@@ -487,18 +497,11 @@
   </div>
 
   <!-- ── 2. NEW FLOATING BRANDING BAR ("PUJA PARIKRAMA") ── -->
-  <header class="fixed top-3 left-0 right-0 z-50 px-3 sm:px-4 pointer-events-none flex justify-center">
-    <div class="backdrop-blur-md bg-slate-900/80 border border-white/10 rounded-full px-4 py-2 flex items-center justify-between w-full max-w-md pointer-events-auto shadow-2xl">
-      <!-- Left / Center Section: Official Logo & Title -->
+  <header class="fixed top-3 left-0 right-0 z-50 px-3 sm:px-6 pointer-events-none flex justify-center w-full">
+    <div class="backdrop-blur-md bg-[#140123]/90 border border-purple-400/20 rounded-full px-3.5 sm:px-6 py-2 flex items-center justify-between w-full pointer-events-auto shadow-2xl transition-all">
+      <!-- Left Section: Official Logo Banner -->
       <div class="flex items-center gap-2.5 min-w-0">
-        <div class="w-8 h-8 rounded-full p-0.5 bg-gradient-to-tr from-amber-400 via-orange-500 to-puja-crimson flex-shrink-0 shadow-sm flex items-center justify-center overflow-hidden">
-          <img src="logo.png" alt="Puja Parikrama Logo" class="w-full h-full rounded-full object-cover">
-        </div>
-        <div class="flex items-center gap-1.5 truncate">
-          <span class="text-white font-bold text-sm sm:text-base tracking-tight truncate">
-            Puja <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-orange-400 font-extrabold">Parikrama</span>
-          </span>
-        </div>
+        <img src="header-logo.png" alt="পূজা পরিক্রমা" class="h-7 sm:h-9 w-auto object-contain flex-shrink-0">
       </div>
 
       <!-- Right Section: Google Profile Avatar / Sign-In & Recenter Button -->
@@ -1051,34 +1054,48 @@
       return `${(meters / 1000).toFixed(1)}km away`;
     }
 
-    /* ── Google Maps Initialization Callback ── */
+    /* ── Leaflet + Geoapify Initialization ── */
+    const GEOAPIFY_API_KEY = '7e1899c5718847f5804a483b25574f05';
+
     window._realInitMap = function() {
       try {
         const mapElement = document.getElementById('map');
-        map = new google.maps.Map(mapElement, {
-          center: AGARTALA_CENTER,
+        if (!mapElement) return;
+        if (map) return;
+
+        map = L.map(mapElement, {
+          center: [AGARTALA_CENTER.lat, AGARTALA_CENTER.lng],
           zoom: 14,
-          styles: DARK_MAP_STYLE,
-          disableDefaultUI: true, // Disables pegman, zoom buttons, map type
           zoomControl: false,
-          streetViewControl: false,
-          mapTypeControl: false,
-          fullscreenControl: false,
-          backgroundColor: '#0a0a14',
-          gestureHandling: 'greedy'
+          attributionControl: true
         });
 
-        // Initialize custom HTML OverlayView classes
-        createCustomOverlayClass();
-        createUserLocationOverlayClass();
+        // Geoapify Dark Matter Yellow Roads layer
+        const tileLayer = L.tileLayer(
+          `https://maps.geoapify.com/v1/tile/dark-matter-yellow-roads/{z}/{x}/{y}.png?apiKey=${GEOAPIFY_API_KEY}`,
+          {
+            maxZoom: 20,
+            subdomains: ['a', 'b', 'c'],
+            attribution: 'Powered by <a href="https://www.geoapify.com/" target="_blank">Geoapify</a> | &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>'
+          }
+        ).addTo(map);
+
+        // Seamless CARTO fallback if tile issues occur
+        tileLayer.on('tileerror', function() {
+          if (!window._cartoFallbackActive) {
+            window._cartoFallbackActive = true;
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+              maxZoom: 20,
+              attribution: '&copy; OpenStreetMap &copy; CARTO'
+            }).addTo(map);
+          }
+        });
+
         renderAllMapMarkers();
-
-        // ── 1. Auto-Geolocation & Zoom on Startup ──
         autoDetectUserAndZoom();
-
         showToast('📍 Live Agartala Durga Puja Map Connected');
       } catch (err) {
-        console.warn('Google Maps initialized with fallback preview', err);
+        console.warn('Leaflet map initialization fallback', err);
         enableMockFallbackMode();
         autoDetectUserAndZoom();
       }
@@ -1103,31 +1120,18 @@
           currentUserCoords = { lat: userLat, lng: userLng };
           userLocation = { lat: userLat, lng: userLng };
 
-          // Center & Zoom map directly to user's live position
           if (map) {
-            const userLatLng = new google.maps.LatLng(userLat, userLng);
-            map.setCenter(userLatLng);
-            map.setZoom(15);
-
-            // Place/update user's glowing blue location dot marker
-            if (window.UserLocationOverlay) {
-              if (userLiveMarker) {
-                userLiveMarker.setPosition(userLatLng);
-              } else {
-                userLiveMarker = new window.UserLocationOverlay(userLatLng, map);
-              }
-            }
+            map.setView([userLat, userLng], 15, { animate: true });
+            updateUserLocationMarker(userLat, userLng);
           }
 
-          // Populate and sort Nearby Pandals list relative to live coordinates
           updateNearbyList();
           showToast('📍 Located you! Zoomed to your position');
         },
         (err) => {
           console.warn('Geolocation denied or unavailable on startup:', err);
           if (map) {
-            map.setCenter(AGARTALA_CENTER);
-            map.setZoom(14);
+            map.setView([AGARTALA_CENTER.lat, AGARTALA_CENTER.lng], 14, { animate: true });
           }
           updateNearbyList();
         },
@@ -1135,122 +1139,66 @@
       );
     }
 
-    /* ── User Location Overlay Class (Glowing Blue Dot) ── */
-    function createUserLocationOverlayClass() {
-      if (!window.google || !google.maps) return;
-
-      window.UserLocationOverlay = function(latLng, map) {
-        this.latLng = latLng;
-        this.div = null;
-        this.setMap(map);
-      };
-
-      window.UserLocationOverlay.prototype = new google.maps.OverlayView();
-
-      window.UserLocationOverlay.prototype.onAdd = function() {
-        const div = document.createElement('div');
-        div.className = 'user-gps-marker';
-        div.innerHTML = `
-          <div class="user-gps-halo"></div>
-          <div class="user-gps-dot"></div>
-        `;
-        this.div = div;
-        const panes = this.getPanes();
-        panes.overlayMouseTarget.appendChild(div);
-      };
-
-      window.UserLocationOverlay.prototype.draw = function() {
-        const overlayProjection = this.getProjection();
-        if (!overlayProjection || !this.div) return;
-        const point = overlayProjection.fromLatLngToDivPixel(this.latLng);
-        if (point) {
-          this.div.style.left = point.x + 'px';
-          this.div.style.top = point.y + 'px';
-        }
-      };
-
-      window.UserLocationOverlay.prototype.onRemove = function() {
-        if (this.div && this.div.parentNode) {
-          this.div.parentNode.removeChild(this.div);
-          this.div = null;
-        }
-      };
-
-      window.UserLocationOverlay.prototype.setPosition = function(newLatLng) {
-        this.latLng = newLatLng;
-        this.draw();
-      };
-    }
-
-    /* ── Custom HTML Marker OverlayView Class ── */
-    function createCustomOverlayClass() {
-      if (!window.google || !google.maps) return;
-
-      window.SnapOverlayMarker = function(snap, map) {
-        this.snap = snap;
-        this.pos = new google.maps.LatLng(snap.lat, snap.lng);
-        this.div = null;
-        this.setMap(map);
-      };
-
-      window.SnapOverlayMarker.prototype = new google.maps.OverlayView();
-
-      window.SnapOverlayMarker.prototype.onAdd = function() {
-        const div = document.createElement('div');
-        div.className = 'snap-marker-container';
-        const markerAvatar = this.snap.userAvatar || this.snap.avatar || this.snap.imageUrl;
-        div.innerHTML = `
-          <div class="snap-pulse-ring"></div>
-          <div class="snap-avatar-ring ${this.snap.userId ? 'border-2 border-emerald-400' : ''}">
-            <div class="snap-avatar-inner">
-              <img src="${markerAvatar}" alt="${this.snap.pandal}" loading="lazy">
-            </div>
-            <div class="snap-pin-badge">${this.snap.emoji || '🪔'}</div>
+    /* ── User Location Glowing Beacon ── */
+    function updateUserLocationMarker(lat, lng) {
+      if (!map) return;
+      const userIcon = L.divIcon({
+        className: 'user-gps-marker-container',
+        html: `
+          <div class="user-gps-marker" style="position:relative;">
+            <div class="user-gps-halo"></div>
+            <div class="user-gps-dot"></div>
           </div>
-          <div class="snap-pin-tail"></div>
-        `;
+        `,
+        iconSize: [52, 52],
+        iconAnchor: [26, 26]
+      });
 
-        div.addEventListener('click', (e) => {
-          e.stopPropagation();
-          openStoryModal(this.snap);
-        });
-
-        this.div = div;
-        const panes = this.getPanes();
-        panes.overlayMouseTarget.appendChild(div);
-      };
-
-      window.SnapOverlayMarker.prototype.draw = function() {
-        const overlayProjection = this.getProjection();
-        if (!overlayProjection || !this.div) return;
-        const point = overlayProjection.fromLatLngToDivPixel(this.pos);
-        if (point) {
-          this.div.style.left = point.x + 'px';
-          this.div.style.top = point.y + 'px';
-        }
-      };
-
-      window.SnapOverlayMarker.prototype.onRemove = function() {
-        if (this.div && this.div.parentNode) {
-          this.div.parentNode.removeChild(this.div);
-          this.div = null;
-        }
-      };
+      if (userLiveMarker) {
+        userLiveMarker.setLatLng([lat, lng]);
+      } else {
+        userLiveMarker = L.marker([lat, lng], { icon: userIcon, zIndexOffset: 1000 }).addTo(map);
+      }
     }
 
     /* ── Render Snap Pins on Map ── */
     function renderAllMapMarkers() {
-      // Clear previous markers
-      customMarkers.forEach(m => m.setMap(null));
+      customMarkers.forEach(m => {
+        if (map && map.removeLayer) map.removeLayer(m);
+      });
       customMarkers = [];
 
-      if (!map || !window.SnapOverlayMarker) {
+      if (!map) {
         renderSimulatedMarkers();
         return;
       }
 
       snapsData.forEach(snap => {
-        const marker = new window.SnapOverlayMarker(snap, map);
+        const markerAvatar = snap.userAvatar || snap.avatar || snap.imageUrl;
+        const icon = L.divIcon({
+          className: 'snap-leaflet-marker-wrapper',
+          html: `
+            <div class="snap-marker-container" data-post-id="${snap.id}" style="position:relative; transform:translate(-50%, -100%);">
+              <div class="snap-pulse-ring"></div>
+              <div class="snap-avatar-ring ${snap.userId ? 'border-2 border-emerald-400' : ''}">
+                <div class="snap-avatar-inner">
+                  <img src="${markerAvatar}" alt="${snap.pandal}" loading="lazy">
+                </div>
+                <div class="snap-pin-badge">${snap.emoji || '🪔'}</div>
+              </div>
+              <div class="snap-pin-tail"></div>
+            </div>
+          `,
+          iconSize: [58, 68],
+          iconAnchor: [29, 68]
+        });
+
+        const marker = L.marker([snap.lat, snap.lng], { icon: icon }).addTo(map);
+        marker.on('click', (e) => {
+          if (e && e.originalEvent) e.originalEvent.stopPropagation();
+          openStoryModal(snap);
+          map.panTo([snap.lat, snap.lng]);
+        });
         customMarkers.push(marker);
       });
     }
@@ -2286,19 +2234,21 @@
       const fallbackEl = document.getElementById('mini-map-fallback');
       if (!container) return;
 
-      if (window.google?.maps?.Map) {
+      if (window.L) {
         if (fallbackEl) fallbackEl.classList.add('hidden');
 
         if (!miniMap) {
-          miniMap = new google.maps.Map(container, {
-            center: coords,
+          miniMap = L.map(container, {
+            center: [coords.lat, coords.lng],
             zoom: 16,
-            styles: DARK_MAP_STYLE,
-            disableDefaultUI: true,
             zoomControl: true,
-            gestureHandling: 'greedy',
-            backgroundColor: '#0a0a14'
+            attributionControl: false
           });
+
+          L.tileLayer(
+            `https://maps.geoapify.com/v1/tile/dark-matter-yellow-roads/{z}/{x}/{y}.png?apiKey=${GEOAPIFY_API_KEY}`,
+            { maxZoom: 20 }
+          ).addTo(miniMap);
 
           // Custom festive SVG pin
           const pinSvg = 'data:image/svg+xml;utf-8,' + encodeURIComponent(`
@@ -2309,25 +2259,22 @@
             </svg>
           `);
 
-          miniMapMarker = new google.maps.Marker({
-            position: coords,
-            map: miniMap,
-            draggable: true,
-            title: 'Drag to adjust exact location',
-            icon: {
-              url: pinSvg,
-              scaledSize: new google.maps.Size(38, 46),
-              anchor: new google.maps.Point(19, 46)
-            },
-            animation: google.maps.Animation.DROP
+          const pinIcon = L.icon({
+            iconUrl: pinSvg,
+            iconSize: [38, 46],
+            iconAnchor: [19, 46]
           });
 
+          miniMapMarker = L.marker([coords.lat, coords.lng], {
+            icon: pinIcon,
+            draggable: true
+          }).addTo(miniMap);
+
           // Pin Drag Listener (Fine-tune location)
-          miniMapMarker.addListener('dragend', (e) => {
-            const newLat = e.latLng.lat();
-            const newLng = e.latLng.lng();
+          miniMapMarker.on('dragend', (e) => {
+            const pos = e.target.getLatLng();
             onCoordinatesUpdated(
-              { lat: newLat, lng: newLng },
+              { lat: pos.lat, lng: pos.lng },
               'manual_drag',
               '🎯 Custom Pinned',
               'bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/30',
@@ -2338,12 +2285,10 @@
           });
 
           // Map Click Listener (Instant re-anchor)
-          miniMap.addListener('click', (e) => {
-            const newLat = e.latLng.lat();
-            const newLng = e.latLng.lng();
-            miniMapMarker.setPosition(e.latLng);
+          miniMap.on('click', (e) => {
+            miniMapMarker.setLatLng(e.latlng);
             onCoordinatesUpdated(
-              { lat: newLat, lng: newLng },
+              { lat: e.latlng.lat, lng: e.latlng.lng },
               'manual_tap',
               '🎯 Tap Pinned',
               'bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/30',
@@ -2353,12 +2298,11 @@
             showToast('📍 Pin repositioned');
           });
         } else {
-          miniMap.setCenter(coords);
-          miniMap.setZoom(16);
-          if (miniMapMarker) miniMapMarker.setPosition(coords);
+          miniMap.setView([coords.lat, coords.lng], 16);
+          if (miniMapMarker) miniMapMarker.setLatLng([coords.lat, coords.lng]);
           setTimeout(() => {
-            google.maps.event.trigger(miniMap, 'resize');
-            miniMap.setCenter(coords);
+            miniMap.invalidateSize();
+            miniMap.setView([coords.lat, coords.lng], 16);
           }, 80);
         }
       } else {
@@ -2410,8 +2354,8 @@
 
       // Sync Mini-Map Marker
       if (miniMap && miniMapMarker) {
-        miniMapMarker.setPosition(coords);
-        miniMap.panTo(coords);
+        miniMapMarker.setLatLng([coords.lat, coords.lng]);
+        miniMap.panTo([coords.lat, coords.lng]);
       }
 
       // Match nearest pandal and update list
@@ -2729,7 +2673,15 @@
     renderRecentSnapsList();
   </script>
 
-  <!-- ── 8. OFFICIAL GOOGLE MAPS JAVASCRIPT API SCRIPT TAG ── -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAnnaozqfYaMR6oUS6ihqkbn1bwXJwcuR0&callback=initMap" async defer></script>
+  <!-- ── 8. LEAFLET MAP INITIALIZER ── -->
+  <script>
+    if (window.L && typeof window._realInitMap === 'function') {
+      window._realInitMap();
+    } else {
+      window.addEventListener('DOMContentLoaded', () => {
+        if (typeof window._realInitMap === 'function') window._realInitMap();
+      });
+    }
+  </script>
 </body>
 </html>
