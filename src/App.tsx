@@ -1138,38 +1138,35 @@ export default function App() {
       {mapReady && (
         <header className="fixed top-3 left-0 right-0 z-50 px-3 sm:px-6 pointer-events-none flex flex-col items-center w-full">
           {/* Main Pill Bar */}
-          <div className="relative overflow-hidden backdrop-blur-xl bg-gradient-to-r from-[#210c32]/95 via-[#2d1142]/95 to-[#1c082b]/95 border-[1.5px] border-[#d4af37]/60 rounded-full px-3.5 sm:px-6 py-2 flex items-center justify-between w-full pointer-events-auto shadow-[0_6px_30px_rgba(0,0,0,0.65),0_0_15px_rgba(212,175,55,0.2),inset_0_1px_0_rgba(255,255,255,0.15)] transition-all">
+          <div className="relative overflow-hidden backdrop-blur-md bg-gradient-to-r from-[#210c32]/60 via-[#2d1142]/55 to-[#1c082b]/60 border-[1.5px] border-[#d4af37]/60 rounded-full px-3.5 sm:px-6 py-2 flex items-center justify-between w-full pointer-events-auto shadow-[0_6px_30px_rgba(0,0,0,0.5),0_0_15px_rgba(212,175,55,0.15),inset_0_1px_0_rgba(255,255,255,0.12)] transition-all">
             
             {/* Background Festive Garlands & Lanterns */}
             <img
               src="/header-garlands.png"
               alt=""
-              className="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-85"
+              className="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-40"
             />
 
             {/* Left Section: Transparent Glowing Durga Emblem & Typography */}
             <div className="relative flex items-center min-w-0 z-10">
-              {/* Warm radial golden glow behind emblem */}
-              <div className="absolute -left-1 sm:-left-2 top-1/2 -translate-y-1/2 w-12 sm:w-16 h-12 sm:h-16 bg-amber-500/30 blur-md rounded-full pointer-events-none" />
-
               <img
                 src="/logo-transparent.png"
                 alt="পূজা পরিক্রমা"
-                className="h-7 sm:h-9 w-auto object-contain flex-shrink-0 drop-shadow-[0_0_8px_rgba(251,191,36,0.9)] drop-shadow-[0_0_18px_rgba(245,158,11,0.5)]"
+                className="h-6 sm:h-7.5 w-auto object-contain flex-shrink-0 drop-shadow-[0_0_4px_rgba(251,191,36,0.5)]"
               />
               <span className="text-[#f8de9e]/40 mx-2 hidden md:inline text-xs font-light">|</span>
-              <span className="hidden md:inline font-medium tracking-[0.22em] text-[10px] sm:text-[11px] text-[#f8de9e] uppercase select-none drop-shadow-[0_0_8px_rgba(245,158,11,0.6)]">
+              <span className="hidden md:inline font-medium tracking-[0.22em] text-[10px] sm:text-[11px] text-[#f8de9e] uppercase select-none drop-shadow-[0_0_3px_rgba(245,158,11,0.4)]">
                 PUJA PARIKRAMA
               </span>
             </div>
 
-            {/* Right Section: Search Toggle, Google Profile Avatar / Sign-In & Recenter Button */}
+            {/* Right Section: Search Toggle & Google Profile Avatar / Sign-In */}
             <div className="flex items-center gap-2 flex-shrink-0 z-10">
               {/* Search Toggle Icon */}
               <button
                 onClick={() => searchInputRef.current?.focus()}
                 title="Search Pandals"
-                className="w-8 h-8 rounded-full bg-[#43235d]/60 hover:bg-[#532c74]/80 border border-amber-400/35 flex items-center justify-center text-amber-300 transition active:scale-95 shadow-sm"
+                className="w-8 h-8 rounded-full bg-[#34164c]/70 hover:bg-[#43235d]/90 border border-amber-400/40 flex items-center justify-center text-amber-300 transition active:scale-95 shadow-sm"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="11" cy="11" r="8" />
@@ -1203,18 +1200,6 @@ export default function App() {
                   <span className="font-medium text-amber-200">Sign In</span>
                 </button>
               )}
-
-              {/* Recenter / Locate Button */}
-              <button
-                id="btn-recenter"
-                onClick={handleLocateMe}
-                title="Locate My Position"
-                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 border border-amber-400/30 flex items-center justify-center text-white/90 hover:text-amber-400 transition active:scale-90 shadow-sm"
-              >
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
-                </svg>
-              </button>
             </div>
           </div>
 
@@ -1273,6 +1258,21 @@ export default function App() {
             </div>
           </div>
         </header>
+      )}
+
+      {/* ── FLOATING RECENTER / LOCATE ME BUTTON (Bottom Right above drawer) ── */}
+      {mapReady && (
+        <button
+          id="btn-recenter"
+          onClick={handleLocateMe}
+          title="Locate My Position"
+          className="fixed right-4 z-30 w-11 h-11 rounded-full bg-[#1e0f2b]/85 hover:bg-[#2e1742] border border-amber-400/40 text-amber-300 flex items-center justify-center shadow-xl backdrop-blur-md transition active:scale-90"
+          style={{ bottom: sheetExpanded ? 330 : 120, transition: 'bottom 0.4s cubic-bezier(.32,.72,0,1)' }}
+        >
+          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
+          </svg>
+        </button>
       )}
 
       {/* ── FLOATING CAMERA BUTTON ── */}
