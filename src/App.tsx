@@ -982,6 +982,7 @@ export default function App() {
   const [authModalVisible, setAuthModalVisible] = useState(false)
   const [leaderboardModalVisible, setLeaderboardModalVisible] = useState(false)
   const [topSearchQuery, setTopSearchQuery] = useState('')
+  const [isSearchFocused, setIsSearchFocused] = useState(false)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const [activeFilter, setActiveFilter] = useState<'recent' | 'trending' | 'nearby' | null>('recent')
   const [selectedYear, setSelectedYear] = useState<number>(2026)
@@ -1520,16 +1521,18 @@ export default function App() {
               />
             </div>
 
-            {/* Middle Section: Integrated Search Bar in the Header */}
-            <div className="relative flex-1 max-w-xs sm:max-w-sm md:max-w-md mx-2 sm:mx-3 z-10">
+            {/* Middle Section: Integrated Search Bar Centered in Header Box */}
+            <div className="absolute left-1/2 -translate-x-1/2 w-[calc(100%-360px)] min-w-[140px] max-w-xs sm:max-w-sm md:max-w-md z-20 pointer-events-auto">
               <div className="relative flex items-center">
                 <input
                   ref={searchInputRef}
                   type="text"
                   value={topSearchQuery}
                   onChange={e => setTopSearchQuery(e.target.value)}
-                  placeholder="Search Pandals..."
-                  className="w-full bg-[#1b1328]/75 hover:bg-[#1b1328]/90 focus:bg-[#1b1328]/95 border border-amber-400/35 hover:border-amber-400/60 focus:border-amber-400 rounded-full pl-3 sm:pl-3.5 pr-8 py-1 h-7 sm:h-7.5 text-[11px] sm:text-xs text-white placeholder-amber-200/50 backdrop-blur-md shadow-inner outline-none transition"
+                  onFocus={() => setIsSearchFocused(true)}
+                  onBlur={() => setIsSearchFocused(false)}
+                  placeholder={isSearchFocused ? '' : 'Search Pandals...'}
+                  className="w-full bg-[#1b1328]/75 hover:bg-[#1b1328]/90 focus:bg-[#1b1328]/95 border border-amber-400/35 hover:border-amber-400/60 focus:border-amber-400 rounded-full pl-3 sm:pl-3.5 pr-8 py-1 h-7 sm:h-7.5 text-[11px] sm:text-xs text-white placeholder-amber-200/50 focus:placeholder-transparent backdrop-blur-md shadow-inner outline-none transition"
                 />
                 <button
                   type="button"
@@ -1574,7 +1577,7 @@ export default function App() {
             </div>
 
             {/* Right Section: Year Selector, Leaderboard CTA & Profile Button */}
-            <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 z-10 pl-1 sm:pl-2">
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 z-10 pl-1 sm:pl-2 ml-auto">
               {/* Year Selector Dropdown */}
               <div className="relative flex-shrink-0" ref={yearDropdownRef}>
                 <button
