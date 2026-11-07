@@ -617,19 +617,19 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
     >
       <div className="snap-modal-content w-full sm:max-w-lg mx-auto bg-[#121224]/95 backdrop-blur-xl rounded-[24px] sm:rounded-[28px] border border-[#E9B83E]/30 p-5 sm:p-6 flex flex-col max-h-[92vh] overflow-y-auto hide-scrollbar shadow-[0_24px_60px_rgba(0,0,0,0.85),0_0_24px_rgba(233,184,62,0.15)]">
         {/* Header */}
-        <div className="flex items-center justify-between pb-3.5 border-b border-white/10 mb-4 flex-shrink-0">
+        <div className="flex items-center justify-between pb-3.5 border-b border-[#E9B83E]/20 mb-4 flex-shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full p-0.5 bg-gradient-to-tr from-amber-400 to-puja-crimson flex items-center justify-center overflow-hidden flex-shrink-0">
-              <span className="text-base">🪔</span>
+            <div className="w-8 h-8 rounded-full p-0.5 bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] flex items-center justify-center overflow-hidden flex-shrink-0 shadow-[0_0_10px_rgba(233,184,62,0.35)]">
+              <img src="/durga-emblem.png" alt="Puja Parikrama" className="w-full h-full rounded-full object-cover" />
             </div>
             <div>
               <h2 className="text-white font-bold text-base leading-tight">
-                Snap & Tag Pandal
+                Add a Pandal
               </h2>
-              <p className="text-white/40 text-[11px]">Strategy 4: Hybrid EXIF + Live GPS + Map Confirmation</p>
+              <p className="text-[#E9B83E]/80 text-[11px] font-medium">Share a pandal with the Puja Porikroma community</p>
             </div>
           </div>
-          <button id="upload-back-btn" onClick={handleClose} className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:text-white transition active:scale-95">
+          <button id="upload-back-btn" onClick={handleClose} className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition active:scale-95 cursor-pointer">
             ✕
           </button>
         </div>
