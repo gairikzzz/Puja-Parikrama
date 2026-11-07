@@ -346,7 +346,7 @@ function Toast({ message, visible }: { message: string; visible: boolean }) {
 /* ─────────────────────────────────────────────────────────────────────────
    Story Modal
    ───────────────────────────────────────────────────────────────────────── */
-function StoryModal({ post, onClose }: { post: SnapPost | null; onClose: () => void }) {
+function StoryModal({ post, onClose, onAddPhoto }: { post: SnapPost | null; onClose: () => void; onAddPhoto?: (pandal: string) => void }) {
   const [liked, setLiked] = useState(false)
   const [likes, setLikes] = useState(0)
   const progressRef = useRef<HTMLDivElement>(null)
@@ -425,16 +425,11 @@ function StoryModal({ post, onClose }: { post: SnapPost | null; onClose: () => v
               <p className="text-white/70 text-sm mt-1">📍 {post.neighborhood}, Agartala</p>
             </div>
 
-            <div className="flex items-center gap-3 mt-4">
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full" style={{ background: 'rgba(255,255,255,0.12)', backdropFilter: 'blur(10px)' }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="white" opacity="0.7"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" /></svg>
-                <span className="text-white text-sm font-medium">{(post.views ?? post.viewsCount ?? 0).toLocaleString()}</span>
-              </div>
-
+            <div className="flex items-center gap-2.5 mt-4">
               <button
                 id="story-like-btn"
                 onClick={handleLike}
-                className="flex items-center gap-2 px-4 py-2 rounded-full transition-all"
+                className="flex items-center gap-2 px-3.5 py-2 rounded-full transition-all"
                 style={{ background: liked ? 'rgba(255,107,0,0.35)' : 'rgba(255,255,255,0.12)', backdropFilter: 'blur(10px)' }}
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill={liked ? '#FF6B00' : 'white'} opacity={liked ? 1 : 0.7}>
@@ -443,9 +438,30 @@ function StoryModal({ post, onClose }: { post: SnapPost | null; onClose: () => v
                 <span className="text-white text-sm font-medium">{likes.toLocaleString()}</span>
               </button>
 
+              {onAddPhoto && (
+                <button
+                  id="story-add-photo-btn"
+                  onClick={() => {
+                    const p = post.pandal || post.pandalName || 'Durga Pandal'
+                    onClose()
+                    onAddPhoto(p)
+                  }}
+                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-full transition-all bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] text-[#211329] font-black text-xs shadow-md shadow-[#E9B83E]/20 active:scale-95 cursor-pointer"
+                  title="Add Photos of This Pandal"
+                >
+                  <span>📸</span>
+                  <span>Add Photo</span>
+                </button>
+              )}
+
+              <div className="flex items-center gap-1.5 px-3 py-2 rounded-full" style={{ background: 'rgba(255,255,255,0.12)', backdropFilter: 'blur(10px)' }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="white" opacity="0.7"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" /></svg>
+                <span className="text-white text-sm font-medium">{(post.views ?? post.viewsCount ?? 0).toLocaleString()}</span>
+              </div>
+
               <button
                 id="story-share-btn"
-                className="ml-auto w-11 h-11 rounded-full flex items-center justify-center"
+                className="ml-auto w-10 h-10 rounded-full flex items-center justify-center"
                 style={{ background: 'rgba(255,255,255,0.12)', backdropFilter: 'blur(10px)' }}
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="white" opacity="0.8">
@@ -466,12 +482,13 @@ function StoryModal({ post, onClose }: { post: SnapPost | null; onClose: () => v
 interface UploadModalProps {
   visible: boolean
   currentUser: AuthUser | null
+  initialPandal?: string
   onRequireAuth: () => void
   onClose: () => void
   onSubmit: (payload: SubmissionPayload) => Promise<boolean>
 }
 
-function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }: UploadModalProps) {
+function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClose, onSubmit }: UploadModalProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [mediaSource, setMediaSource] = useState<'camera' | 'gallery'>('gallery')
   const [preview, setPreview] = useState<string | null>(null)
@@ -479,6 +496,18 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
   const [neighborhood, setNeighborhood] = useState('')
   const [coords, setCoords] = useState<{ lat: number; lng: number }>(AGARTALA_CENTER)
   const [locationSource, setLocationSource] = useState<'exif' | 'live_gps' | 'city_center' | 'custom'>('live_gps')
+
+  useEffect(() => {
+    if (visible && initialPandal) {
+      setPandalName(initialPandal)
+      const found = AGARTALA_MASTER_PANDALS.find(p => p.name.toLowerCase() === initialPandal.toLowerCase())
+      if (found) {
+        setNeighborhood(found.neighborhood || 'Agartala')
+        setCoords({ lat: found.lat, lng: found.lng })
+        setLocationSource('custom')
+      }
+    }
+  }, [visible, initialPandal])
   const [sourceBadge, setSourceBadge] = useState({ text: '📡 Live Device GPS', cls: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' })
   const [showDropdown, setShowDropdown] = useState(false)
   const [searchFilter, setSearchFilter] = useState('')
@@ -624,9 +653,11 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
             </div>
             <div>
               <h2 className="text-white font-bold text-sm sm:text-base leading-tight">
-                Add a Pandal
+                {pandalName.trim() ? 'Add Photos of This Pandal' : 'Share Pandal Photos'}
               </h2>
-              <p className="text-[#E9B83E]/80 text-[10px] sm:text-[11px] font-medium leading-tight">Share a pandal with the Puja Porikroma community</p>
+              <p className="text-[#E9B83E]/80 text-[10px] sm:text-[11px] font-medium leading-tight">
+                {pandalName.trim() ? 'Take a new photo or select photos from your gallery' : 'Capture and share your favourite pandal with the Puja Porikroma community'}
+              </p>
             </div>
           </div>
           <button id="upload-back-btn" onClick={handleClose} className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition active:scale-95 cursor-pointer text-xs">
@@ -668,8 +699,8 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
                     <circle cx="12" cy="13" r="3" fill="white"/>
                   </svg>
                 </div>
-                <p className="text-white font-semibold text-xs leading-tight">Tap to capture or select pandal photo</p>
-                <p className="text-[#E9B83E]/80 text-[10px] mt-0.5 leading-tight">Camera or Gallery · EXIF GPS extracted automatically</p>
+                <p className="text-white font-semibold text-xs leading-tight">Add Photos of This Pandal</p>
+                <p className="text-[#E9B83E]/80 text-[10px] mt-0.5 leading-tight">Take a new photo or select photos from your gallery</p>
               </div>
             )}
           </div>
@@ -897,6 +928,7 @@ export default function App() {
   const [posts, setPosts] = useState<SnapPost[]>(SEED_POSTS)
   const [selectedPost, setSelectedPost] = useState<SnapPost | null>(null)
   const [uploadVisible, setUploadVisible] = useState(false)
+  const [selectedPandalForUpload, setSelectedPandalForUpload] = useState('')
   const [currentUserCoords, setCurrentUserCoords] = useState<{ lat: number; lng: number }>(() => {
     try {
       const cached = localStorage.getItem('parikrama_user_location')
@@ -2270,7 +2302,14 @@ export default function App() {
       )}
 
       {/* ── STORY MODAL ── */}
-      <StoryModal post={selectedPost} onClose={() => setSelectedPost(null)} />
+      <StoryModal
+        post={selectedPost}
+        onClose={() => setSelectedPost(null)}
+        onAddPhoto={(pandal) => {
+          setSelectedPandalForUpload(pandal)
+          setUploadVisible(true)
+        }}
+      />
 
       {/* ── GOOGLE AUTH MODAL ── */}
       {authModalVisible && (
@@ -2528,8 +2567,12 @@ export default function App() {
       <UploadModal
         visible={uploadVisible}
         currentUser={user}
+        initialPandal={selectedPandalForUpload}
         onRequireAuth={() => setAuthModalVisible(true)}
-        onClose={() => setUploadVisible(false)}
+        onClose={() => {
+          setUploadVisible(false)
+          setSelectedPandalForUpload('')
+        }}
         onSubmit={handlePhotoSubmission}
       />
 

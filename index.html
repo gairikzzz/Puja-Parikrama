@@ -1215,15 +1215,20 @@
       </div>
 
       <!-- Interactive Actions -->
-      <div class="flex items-center gap-3">
-        <button id="btn-story-like" class="flex-1 py-3 px-4 rounded-2xl glass-card flex items-center justify-center gap-2 text-white font-semibold text-sm active:scale-95 transition">
+      <div class="flex items-center gap-2.5">
+        <button id="btn-story-like" class="flex-1 py-3 px-3 rounded-2xl glass-card flex items-center justify-center gap-2 text-white font-semibold text-sm active:scale-95 transition">
           <svg id="story-like-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
           </svg>
           <span id="story-likes-count">248</span>
         </button>
 
-        <div class="py-3 px-4 rounded-2xl glass-card flex items-center gap-2 text-white/80 text-sm">
+        <button id="btn-story-add-photo" class="py-3 px-3.5 rounded-2xl bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] text-[#211329] font-black text-xs flex items-center justify-center gap-1.5 active:scale-95 transition shadow-lg shadow-[#E9B83E]/20 cursor-pointer" title="Add Photos of This Pandal">
+          <span>📸</span>
+          <span>Add Photo</span>
+        </button>
+
+        <div class="py-3 px-3 rounded-2xl glass-card flex items-center gap-1.5 text-white/80 text-sm">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
           </svg>
@@ -1250,8 +1255,8 @@
             <img src="durga-emblem.png" alt="Puja Parikrama" class="w-full h-full rounded-full object-cover">
           </div>
           <div>
-            <h2 class="text-white font-bold text-sm sm:text-base leading-tight">Add a Pandal</h2>
-            <p class="text-[#E9B83E]/80 text-[10px] sm:text-[11px] font-medium leading-tight">Share a pandal with the Puja Porikroma community</p>
+            <h2 id="upload-modal-title" class="text-white font-bold text-sm sm:text-base leading-tight">Share Pandal Photos</h2>
+            <p id="upload-modal-subtitle" class="text-[#E9B83E]/80 text-[10px] sm:text-[11px] font-medium leading-tight">Capture and share your favourite pandal with the Puja Porikroma community</p>
           </div>
         </div>
         <button id="btn-close-upload" class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition active:scale-95 cursor-pointer text-xs">
@@ -1274,8 +1279,8 @@
                 <circle cx="12" cy="13" r="3" fill="white"/>
               </svg>
             </div>
-            <p class="text-white font-semibold text-xs leading-tight">Tap to capture or select pandal photo</p>
-            <p class="text-[#E9B83E]/80 text-[10px] mt-0.5 leading-tight">Camera or Gallery · EXIF GPS extracted automatically</p>
+            <p id="preview-box-title" class="text-white font-semibold text-xs leading-tight">Add Photos of This Pandal</p>
+            <p id="preview-box-subtitle" class="text-[#E9B83E]/80 text-[10px] mt-0.5 leading-tight">Take a new photo or select photos from your gallery</p>
           </div>
           <img id="upload-preview-img" src="" alt="Upload Preview" class="hidden absolute inset-0 w-full h-full object-cover">
           <video id="upload-preview-video" class="hidden absolute inset-0 w-full h-full object-cover" playsinline autoplay loop muted></video>
@@ -2224,6 +2229,13 @@
       }
     });
 
+    // Add Photos of This Pandal button from Story Modal
+    document.getElementById('btn-story-add-photo')?.addEventListener('click', () => {
+      const currentPandal = document.getElementById('story-pandal-title')?.textContent || '';
+      closeStoryModal();
+      window.openSnapUploadModal(currentPandal);
+    });
+
     /* ── Swipeable Bottom Drawer Toggle ── */
     const bottomSheet = document.getElementById('bottom-sheet');
     const drawerHandle = document.getElementById('drawer-handle');
@@ -2924,6 +2936,7 @@
           const nbInput = document.getElementById('input-neighborhood');
           if (nbInput) nbInput.value = p.neighborhood;
           validateUploadForm();
+          updateUploadModalHeaders();
 
           // Reposition pin to this verified pandal
           onCoordinatesUpdated(
@@ -3178,10 +3191,30 @@
     }
 
     /* ── Wire Modal Triggers & Controls ── */
-    window.openSnapUploadModal = function() {
+    function updateUploadModalHeaders() {
+      const titleEl = document.getElementById('upload-modal-title');
+      const subEl = document.getElementById('upload-modal-subtitle');
+      if (!titleEl || !subEl) return;
+      const hasPandal = inputPandalName && inputPandalName.value.trim().length > 0;
+      if (hasPandal) {
+        titleEl.textContent = 'Add Photos of This Pandal';
+        subEl.textContent = 'Take a new photo or select photos from your gallery';
+      } else {
+        titleEl.textContent = 'Share Pandal Photos';
+        subEl.textContent = 'Capture and share your favourite pandal with the Puja Porikroma community';
+      }
+    }
+
+    window.openSnapUploadModal = function(prefillPandal) {
       const modal = document.getElementById('upload-modal');
       if (!modal) return;
       modal.classList.add('active');
+
+      if (typeof prefillPandal === 'string' && prefillPandal.trim()) {
+        inputPandalName.value = prefillPandal.trim();
+        validateUploadForm();
+      }
+      updateUploadModalHeaders();
 
       // Default to live coordinates if available, or current user coords
       const initialCoords = (typeof userLocation !== 'undefined' && userLocation) 
@@ -3256,6 +3289,7 @@
       dropdownMenu?.classList.remove('hidden');
       pandalChevron?.classList.add('rotate-180');
       validateUploadForm();
+      updateUploadModalHeaders();
     });
 
     // Close dropdown on outside click
@@ -3350,6 +3384,7 @@
       // 4. Reset form & close modal (Publishing gated until moderation approval)
       uploadModal.classList.remove('active');
       inputPandalName.value = '';
+      updateUploadModalHeaders();
       if (inputNeighborhood) inputNeighborhood.value = '';
       capturedMediaData = null;
       selectedMediaBlobFile = null;
