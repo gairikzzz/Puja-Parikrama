@@ -1011,6 +1011,10 @@ export default function App() {
     }
   }, [])
 
+  useEffect(() => {
+    document.title = 'Puja Parikrama'
+  }, [])
+
   // Close year dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
