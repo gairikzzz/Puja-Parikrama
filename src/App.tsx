@@ -721,8 +721,8 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
                 value={pandalName}
                 onFocus={() => setShowDropdown(true)}
                 onChange={e => { setPandalName(e.target.value); setSearchFilter(e.target.value); setShowDropdown(true); }}
-                placeholder="Select or Enter Pandal Name"
-                className="w-full bg-transparent pl-2 pr-9 py-2 text-[#F5E5B7] font-semibold text-xs sm:text-[13px] focus:outline-none placeholder-[#F5E5B7]/50"
+                placeholder="Select or Enter Pandal Name..."
+                className="w-full bg-transparent pl-2.5 pr-9 py-2 text-[#F5E5B7] font-normal placeholder:font-normal text-xs sm:text-[13px] placeholder-[#F5E5B7]/45 focus:placeholder-transparent focus:outline-none"
               />
               <button
                 type="button"
