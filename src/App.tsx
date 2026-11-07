@@ -997,9 +997,8 @@ export default function App() {
   const ytPlayerReady = useRef(false)
   const [isPlaying, setIsPlaying] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
-  const [youtubeDrawerVisible, setYoutubeDrawerVisible] = useState(false)
   const [trackTitle, setTrackTitle] = useState('Durga Ma Asche')
-  const [trackArtist, setTrackArtist] = useState('Infra · YouTube Music')
+  const [trackArtist, setTrackArtist] = useState('Infra')
   const [trackCover, setTrackCover] = useState('https://i.ytimg.com/vi/LLer3VPOcxg/hqdefault.jpg')
   const [currentTimeSec, setCurrentTimeSec] = useState(45) // 0:45 default from screenshot
   const [totalDurationSec, setTotalDurationSec] = useState(213) // 3:33 default from screenshot
@@ -1065,8 +1064,10 @@ export default function App() {
         const data = ytPlayerRef.current.getVideoData()
         if (data && data.title) {
           setTrackTitle(data.title)
-          const author = data.author ? data.author.replace(/ - Topic$/i, '').trim() : ''
-          setTrackArtist(author ? `${author} · YouTube Music` : 'Infra · YouTube Music')
+          let author = data.author ? data.author.replace(/\s*-\s*Topic$/i, '').trim() : ''
+          author = author.replace(/\s*·\s*YouTube(\s*Music)?/gi, '').trim()
+          author = author.replace(/\s*YouTube(\s*Music)?/gi, '').trim()
+          setTrackArtist(author || 'Infra')
           if (data.video_id) {
             setTrackCover(`https://i.ytimg.com/vi/${data.video_id}/hqdefault.jpg`)
           }
@@ -1850,101 +1851,49 @@ export default function App() {
         </header>
       )}
 
-      {/* ── 1. YOUTUBE MUSIC PLAYER & PLAYLIST EMBED ── */}
+      {/* Hidden YouTube IFrame Container for continuous audio playback (no drawer) */}
+      <div style={{ position: 'fixed', width: 1, height: 1, left: -9999, top: -9999, opacity: 0, pointerEvents: 'none', overflow: 'hidden' }}>
+        <div id="react-yt-player-iframe" />
+      </div>
+
+      {/* ── 1. YOUTUBE MUSIC PLAYER BAR ── */}
       {mapReady && (
         <div className="fixed left-[calc(25%-14px)] -translate-x-1/2 bottom-4 sm:bottom-5 z-30 w-[calc(50%-52px)] max-w-[500px] sm:max-w-[520px] md:max-w-[540px] min-w-[260px] pointer-events-auto select-none flex flex-col gap-2">
-          {/* YouTube Official Interactive Video Player & Playlist Embed Popup */}
-          <div
-            id="spotify-embed-popup"
-            className="w-full bg-[#211329]/95 border border-[#E9B83E]/45 rounded-2xl shadow-[0_12px_32px_rgba(13,12,27,0.75),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-xl transition-all duration-300 overflow-hidden"
-            style={{
-              maxHeight: youtubeDrawerVisible ? '360px' : '0px',
-              opacity: youtubeDrawerVisible ? 1 : 0,
-              pointerEvents: youtubeDrawerVisible ? 'auto' : 'none',
-              padding: youtubeDrawerVisible ? '10px' : '0px',
-              marginBottom: youtubeDrawerVisible ? '8px' : '0px',
-              borderWidth: youtubeDrawerVisible ? '1px' : '0px',
-            }}
-          >
-            <div className="flex items-center justify-between pb-1.5 px-1 border-b border-[#E9B83E]/20 mb-2">
-              <div className="flex items-center gap-1.5 min-w-0">
-                <svg className="w-4 h-4 text-[#FF0000] fill-current flex-shrink-0" viewBox="0 0 24 24">
-                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                </svg>
-                <span className="text-xs font-bold text-[#F5E5B7] truncate">Durga Puja Songs</span>
-                <span className="text-[9px] text-[#E9B83E]/75 hidden sm:inline-block flex-shrink-0">· Powered by YouTube</span>
-              </div>
-              <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
-                <a
-                  href="https://music.youtube.com/playlist?list=PLBFyKHpeq9js"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title="Open in YouTube Music"
-                  className="text-[10px] text-[#E9B83E] hover:text-[#F5E5B7] bg-white/5 hover:bg-white/10 px-2 py-0.5 rounded-full transition border border-[#E9B83E]/30 flex items-center gap-1"
-                >
-                  <span>Open</span>
-                  <svg className="w-2.5 h-2.5 fill-current" viewBox="0 0 16 16"><path d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/><path d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/></svg>
-                </a>
-                <button
-                  type="button"
-                  onClick={() => setYoutubeDrawerVisible(false)}
-                  title="Minimize YouTube Player"
-                  className="w-5 h-5 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-[#F5E5B7]/70 hover:text-white text-xs transition cursor-pointer"
-                >
-                  ✕
-                </button>
-              </div>
-            </div>
-            {/* YouTube Video Player Container (Compliant standard embedded player) */}
-            <div className="w-full aspect-video rounded-xl overflow-hidden bg-black/80 border border-[#E9B83E]/20 relative shadow-inner">
-              <div id="react-yt-player-iframe" className="w-full h-full" />
-            </div>
-          </div>
-
           {/* Main Custom Styled Music Player Pill Bar - SINGLE ROW LAYOUT MATCHING SNAP CTA DIAMETER */}
           <div
             id="spotify-music-player-bar"
             className="w-full h-[52px] sm:h-14 overflow-hidden backdrop-blur-lg bg-[#211329]/55 hover:bg-[#211329]/75 border border-[#E9B83E]/40 hover:border-[#E9B83E] rounded-full px-2 sm:px-3 flex items-center justify-between gap-1.5 sm:gap-2 shadow-[0_4px_24px_rgba(13,12,27,0.45),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_10px_rgba(233,184,62,0.20)] hover:shadow-[0_4px_24px_rgba(13,12,27,0.50),0_0_16px_rgba(233,184,62,0.40)] hover:scale-[1.004] duration-200 transition-all"
           >
-            {/* Left: Album Cover + Title + Artist (Clean cover with YouTube badge, live title) */}
+            {/* Left: Album Cover + Title + Artist (Clean cover without badge, full un-truncated title) */}
             <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-shrink-0">
-              <button
-                type="button"
-                onClick={() => setYoutubeDrawerVisible(v => !v)}
-                title="Toggle YouTube Video Player"
-                className="relative flex-shrink-0 cursor-pointer group"
-              >
+              <div className="relative flex-shrink-0">
                 <img
                   src={trackCover}
                   onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/dugga-ma-asche.png' }}
                   alt={trackTitle}
-                  className="w-8 h-8 sm:w-9 sm:h-9 rounded-[8px] object-cover border border-[#E9B83E]/20 shadow group-hover:scale-105 transition"
+                  className="w-8 h-8 sm:w-9 sm:h-9 rounded-[8px] object-cover border border-[#E9B83E]/20 shadow"
                 />
-                <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-[#FF0000] flex items-center justify-center shadow">
-                  <svg className="w-2 h-2 text-white fill-current ml-0.5" viewBox="0 0 16 16">
-                    <path d="M4 3.5v9l8-4.5-8-4.5z"/>
-                  </svg>
-                </div>
-              </button>
+              </div>
 
-              <div className="flex flex-col min-w-0 pr-0.5">
-                <button
-                  type="button"
-                  onClick={() => setYoutubeDrawerVisible(v => !v)}
-                  title="Toggle YouTube Video Player"
-                  className="text-left text-xs sm:text-[13px] font-bold text-[#F5E5B7] whitespace-nowrap leading-tight transition cursor-pointer hover:text-[#E9B83E] truncate max-w-[125px] sm:max-w-[175px]"
+              <div className="flex flex-col min-w-0 pr-1 flex-shrink-0">
+                <span
+                  id="player-track-title"
+                  className="text-left text-xs sm:text-[13px] font-bold text-[#F5E5B7] whitespace-nowrap leading-tight"
                 >
                   {trackTitle}
-                </button>
-                <span className="text-[10px] sm:text-[11px] text-[#F5E5B7]/60 whitespace-nowrap leading-tight mt-0.5 truncate max-w-[125px] sm:max-w-[175px]">
+                </span>
+                <span
+                  id="player-track-artist"
+                  className="text-[10px] sm:text-[11px] text-[#F5E5B7]/60 whitespace-nowrap leading-tight mt-0.5"
+                >
                   {trackArtist}
                 </span>
               </div>
             </div>
 
-            {/* Middle: Scrubber Track with Left & Right Timestamps */}
-            <div className="flex items-center gap-1 sm:gap-1.5 flex-1 min-w-[36px] text-[9px] sm:text-[10px] font-mono text-[#F5E5B7]/50">
-              <span className="text-left flex-shrink-0">{formatSongTime(currentTimeSec)}</span>
+            {/* Middle: Dynamic Scrubber Track with Left & Right Timestamps */}
+            <div className="flex items-center gap-1 sm:gap-1.5 flex-1 min-w-[36px] text-[9px] sm:text-[10px] font-mono text-[#F5E5B7]/50 px-1">
+              <span className="text-left flex-shrink-0 font-mono">{formatSongTime(currentTimeSec)}</span>
               <div
                 onClick={handleScrubberClick}
                 className="relative flex-1 h-[2.5px] bg-[#0D0C1B]/80 hover:h-1 rounded-full overflow-hidden cursor-pointer group transition-all"
@@ -1954,7 +1903,7 @@ export default function App() {
                   style={{ width: `${Math.min(100, (currentTimeSec / Math.max(1, totalDurationSec)) * 100)}%` }}
                 />
               </div>
-              <span className="text-right flex-shrink-0">{formatSongTime(totalDurationSec)}</span>
+              <span className="text-right flex-shrink-0 font-mono">{formatSongTime(totalDurationSec)}</span>
             </div>
 
             {/* Right: Playback Controls Row (Prev, Play, Next, Mute in White / Crossed) */}
