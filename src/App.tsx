@@ -1397,12 +1397,12 @@ export default function App() {
     }, 450)
   }, [currentUserCoords, computePhoneCoordinates, unlockAndPlayAudio])
 
-  // ── Parikrama Splash Screen Controller: auto-flash after 1.4 seconds ──
+  // ── Parikrama Splash Screen Controller: auto-flash after 2 seconds ──
   useEffect(() => {
     if (!showSplash) return
     const timer = setTimeout(() => {
       triggerCameraFlashAndEnter()
-    }, 1400)
+    }, 2000)
     return () => {
       clearTimeout(timer)
     }
