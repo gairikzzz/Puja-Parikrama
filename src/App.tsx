@@ -1331,18 +1331,17 @@ export default function App() {
     if (typeof window === 'undefined') return { x: 0, y: 0 }
     const vw = window.innerWidth
     const vh = window.innerHeight
-    const isDesktop = vw >= 1024 || (vw >= 768 && vw > vh)
-    const imgW = isDesktop ? 1024 : 576
-    const imgH = isDesktop ? 576 : 1024
-    const targetXRatio = isDesktop ? 0.6658 : 0.7168
-    const targetYRatio = isDesktop ? 0.8113 : 0.7548
 
-    const SPLASH_TOP_OFFSET = 50
-    const scale = Math.max(vw / imgW, (vh - SPLASH_TOP_OFFSET) / imgH)
+    const imgW = 1024
+    const imgH = 576
+    const targetXRatio = 0.6658
+    const targetYRatio = 0.8113
+
+    const scale = Math.max(vw / imgW, vh / imgH)
     const renderedW = imgW * scale
     const renderedH = imgH * scale
     const offsetX = (vw - renderedW) / 2
-    const offsetY = SPLASH_TOP_OFFSET // Positioned 50px down so logo is never cut off
+    const offsetY = 0 // Starts from top so logo is not cut
 
     return {
       x: Math.round(offsetX + targetXRatio * renderedW),
@@ -1870,24 +1869,16 @@ export default function App() {
         <div
           id="splash-screen"
           onClick={triggerCameraFlashAndEnter}
-          className="fixed inset-0 z-[9999] bg-[#150e1e] select-none pointer-events-auto cursor-pointer overflow-hidden"
+          className="fixed inset-0 z-[9999] bg-[#0a0a14] select-none pointer-events-auto cursor-pointer overflow-hidden"
         >
-          {/* Responsive Platform Splash Background: Mobile vs Laptop/Desktop, positioned 50px down so logo is never cut */}
-          <div className="absolute inset-x-0 bottom-0 top-[50px] w-full pointer-events-none select-none">
-            <picture className="w-full h-full block">
-              {/* Desktop / Laptop platforms (wide screens or landscape) */}
-              <source media="(min-width: 1024px)" srcSet="/splash-desktop.jpg" />
-              <source media="(min-width: 768px) and (orientation: landscape)" srcSet="/splash-desktop.jpg" />
-              {/* Mobile / Portrait platforms */}
-              <img
-                src="/splash-mobile.jpg"
-                alt="Puja Parikrama"
-                className="w-full h-full object-cover object-top"
-              />
-            </picture>
+          {/* Splash Artwork: starts from top so logo is not cut */}
+          <div className="absolute inset-0 w-full h-full pointer-events-none select-none">
+            <img
+              src="/splash.jpg"
+              alt="Puja Parikrama"
+              className="w-full h-full object-cover object-top"
+            />
           </div>
-          {/* Seamless top dark sky gradient blend */}
-          <div className="absolute top-0 inset-x-0 h-28 pointer-events-none bg-gradient-to-b from-[#150e1e] via-[#150e1e]/90 to-transparent z-[1]" />
         </div>
       )}
 
