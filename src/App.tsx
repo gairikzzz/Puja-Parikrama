@@ -982,6 +982,7 @@ export default function App() {
   })
   const [authModalVisible, setAuthModalVisible] = useState(false)
   const [leaderboardModalVisible, setLeaderboardModalVisible] = useState(false)
+  const [profileModalVisible, setProfileModalVisible] = useState(false)
   const [topSearchQuery, setTopSearchQuery] = useState('')
   const [isSearchFocused, setIsSearchFocused] = useState(false)
   const searchInputRef = useRef<HTMLInputElement>(null)
@@ -1660,7 +1661,7 @@ export default function App() {
               <button
                 id="guest-avatar-chip"
                 type="button"
-                onClick={() => setAuthModalVisible(true)}
+                onClick={() => setProfileModalVisible(true)}
                 title="Guest Devotee Profile"
                 className="h-7 sm:h-7.5 px-2.5 sm:px-3 rounded-xl backdrop-blur-md bg-[#211329]/70 hover:bg-[#211329]/85 border border-[#E9B83E]/40 hover:border-[#E9B83E] flex items-center gap-1.5 text-[#F5E5B7] font-semibold text-[11px] sm:text-xs shadow-[0_0_8px_rgba(233,184,62,0.22),inset_0_1px_1px_rgba(255,255,255,0.10)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] hover:scale-[1.02] active:scale-95 transition-all flex-shrink-0 cursor-pointer"
               >
@@ -1970,54 +1971,212 @@ export default function App() {
         </div>
       )}
 
-      {/* ── LEADERBOARD MODAL ── */}
+      {/* ── LEADERBOARD MODAL (Translucent floating layer above landing map) ── */}
       {leaderboardModalVisible && (
-        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(16px)' }}>
-          <div className="w-full max-w-sm rounded-3xl p-6 text-center relative border border-amber-400/30 shadow-2xl overflow-hidden backdrop-blur-2xl" style={{ background: 'linear-gradient(135deg, #1b0a2a, #12061e)' }}>
-            <button
-              onClick={() => setLeaderboardModalVisible(false)}
-              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:text-white transition"
-            >
-              ✕
-            </button>
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-500 via-amber-300 to-amber-100 mx-auto flex items-center justify-center mb-3 shadow-[0_0_20px_rgba(251,191,36,0.6)]">
-              <svg className="w-8 h-8 text-[#1c0a2b]" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0 0 11 15.9V19H7v2h10v-2h-4v-3.1c1.8-.46 3.17-1.87 3.61-3.66C19.08 11.63 21 9.55 21 7V5c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z" />
-              </svg>
+        <div
+          id="leaderboard-modal"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setLeaderboardModalVisible(false)
+          }}
+          className="snap-modal-backdrop active fixed inset-0 z-[150] bg-black/40 backdrop-blur-[2px] flex items-center justify-center p-3 sm:p-4"
+        >
+          <div className="snap-modal-content w-full sm:max-w-md mx-auto bg-[#121224]/95 backdrop-blur-xl rounded-[24px] sm:rounded-[28px] border border-[#E9B83E]/30 p-5 sm:p-6 flex flex-col max-h-[90vh] overflow-y-auto hide-scrollbar shadow-[0_24px_60px_rgba(0,0,0,0.85),0_0_24px_rgba(233,184,62,0.15)] relative">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between pb-3.5 border-b border-[#E9B83E]/20 mb-4 flex-shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full p-0.5 bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] flex items-center justify-center overflow-hidden flex-shrink-0 shadow-[0_0_12px_rgba(233,184,62,0.4)]">
+                  <svg className="w-4 h-4 text-[#211329]" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0 0 11 15.9V19H7v2h10v-2h-4v-3.1c1.8-.46 3.17-1.87 3.61-3.66C19.08 11.63 21 9.55 21 7V5c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z" />
+                  </svg>
+                </div>
+                <div>
+                  <h2 className="text-white font-bold text-base leading-tight">Parikrama Leaderboard</h2>
+                  <p className="text-[#E9B83E] text-[11px] font-medium">Top Devotees &amp; Pandal Explorers</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setLeaderboardModalVisible(false)}
+                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white/70 hover:text-white flex items-center justify-center transition cursor-pointer"
+              >
+                ✕
+              </button>
             </div>
-            <h3 className="text-white font-extrabold text-xl mb-0.5">Parikrama Leaderboard</h3>
-            <p className="text-amber-300/80 text-xs mb-4">Top Devotees & Pandal Explorers</p>
 
-            <div className="space-y-2 text-left max-h-60 overflow-y-auto pr-1">
+            {/* Top 3 Podium Highlights */}
+            <div className="grid grid-cols-3 gap-2 mb-4">
+              <div className="p-2.5 rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center text-center">
+                <span className="text-xl mb-0.5">🥈</span>
+                <span className="text-xs font-bold text-white truncate max-w-full">Ankita S.</span>
+                <span className="text-[10px] text-white/50">15 Pandals</span>
+                <span className="text-[11px] font-mono font-bold text-[#E9B83E] mt-1">810 pts</span>
+              </div>
+              <div className="p-2.5 rounded-2xl bg-gradient-to-b from-[#E9B83E]/20 to-[#211329]/80 border border-[#E9B83E]/50 flex flex-col items-center text-center shadow-[0_0_16px_rgba(233,184,62,0.2)]">
+                <span className="text-2xl mb-0.5">👑</span>
+                <span className="text-xs font-black text-[#F5E5B7] truncate max-w-full">Debasish R.</span>
+                <span className="text-[10px] text-white/60">18 Pandals</span>
+                <span className="text-xs font-mono font-black text-[#E9B83E] mt-1">940 pts</span>
+              </div>
+              <div className="p-2.5 rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center text-center">
+                <span className="text-xl mb-0.5">🥉</span>
+                <span className="text-xs font-bold text-white truncate max-w-full">Suman P.</span>
+                <span className="text-[10px] text-white/50">13 Pandals</span>
+                <span className="text-[11px] font-mono font-bold text-[#E9B83E] mt-1">720 pts</span>
+              </div>
+            </div>
+
+            {/* Ranked List */}
+            <div className="space-y-2 text-left max-h-56 overflow-y-auto pr-1">
               {[
-                { rank: '🥇', name: 'Debasish Roy', pandals: 18, pts: '940 pts' },
-                { rank: '🥈', name: 'Ankita Saha', pandals: 15, pts: '810 pts' },
-                { rank: '🥉', name: 'Suman Paul', pandals: 13, pts: '720 pts' },
-                { rank: '4', name: 'Pooja Debbarma', pandals: 11, pts: '610 pts' },
-                { rank: '5', name: 'Rohan Bhowmik', pandals: 9, pts: '500 pts' },
+                { rank: '4', name: 'Pooja Debbarma', area: 'College Tilla', pandals: 11, pts: '610 pts' },
+                { rank: '5', name: 'Rohan Bhowmik', area: 'Banamalipur', pandals: 9, pts: '500 pts' },
+                { rank: '6', name: 'Shreya Chakraborty', area: 'Ramnagar', pandals: 8, pts: '460 pts' },
               ].map((item, idx) => (
-                <div key={idx} className="flex items-center justify-between p-2.5 rounded-xl bg-white/5 border border-white/5 hover:border-amber-400/30 transition">
+                <div key={idx} className="flex items-center justify-between p-2.5 rounded-xl bg-white/5 border border-white/5 hover:border-[#E9B83E]/30 transition">
                   <div className="flex items-center gap-2.5">
-                    <span className="font-bold text-sm w-5 text-center text-amber-300">{item.rank}</span>
+                    <span className="w-6 h-6 rounded-full bg-white/10 text-white/70 font-bold text-xs flex items-center justify-center">{item.rank}</span>
                     <div>
                       <p className="text-xs font-bold text-white">{item.name}</p>
-                      <p className="text-[10px] text-white/50">{item.pandals} pandals visited</p>
+                      <p className="text-[10px] text-white/50">{item.pandals} pandals visited • {item.area}</p>
                     </div>
                   </div>
-                  <span className="text-xs font-mono font-bold text-amber-300">{item.pts}</span>
+                  <span className="text-xs font-mono font-bold text-[#E9B83E]">{item.pts}</span>
                 </div>
               ))}
             </div>
 
+            {/* Action Button */}
             <button
+              type="button"
               onClick={() => {
                 setLeaderboardModalVisible(false)
                 setUploadVisible(true)
               }}
-              className="mt-4 w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-300 text-black font-bold text-xs shadow-lg hover:brightness-110 active:scale-95 transition"
+              className="mt-4 w-full py-3 rounded-2xl bg-gradient-to-r from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] text-[#211329] font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-[#E9B83E]/20 hover:scale-[1.01] active:scale-98 transition cursor-pointer"
             >
-              📸 Snap Pandal to Climb Rank
+              <span>📸</span> Snap Pandal to Climb Rank
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── DEVOTEE PROFILE MODAL (Translucent floating layer above landing map) ── */}
+      {profileModalVisible && (
+        <div
+          id="profile-modal"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setProfileModalVisible(false)
+          }}
+          className="snap-modal-backdrop active fixed inset-0 z-[150] bg-black/40 backdrop-blur-[2px] flex items-center justify-center p-3 sm:p-4"
+        >
+          <div className="snap-modal-content w-full sm:max-w-md mx-auto bg-[#121224]/95 backdrop-blur-xl rounded-[24px] sm:rounded-[28px] border border-[#E9B83E]/30 p-5 sm:p-6 flex flex-col max-h-[90vh] overflow-y-auto hide-scrollbar shadow-[0_24px_60px_rgba(0,0,0,0.85),0_0_24px_rgba(233,184,62,0.15)] relative">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between pb-3.5 border-b border-[#E9B83E]/20 mb-4 flex-shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full p-0.5 bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] flex items-center justify-center overflow-hidden flex-shrink-0 shadow-[0_0_12px_rgba(233,184,62,0.4)]">
+                  <img src="/durga-emblem.png" alt="Devotee" className="w-full h-full rounded-full object-cover" />
+                </div>
+                <div>
+                  <h2 className="text-white font-bold text-base leading-tight">Devotee Profile</h2>
+                  <p className="text-[#E9B83E] text-[11px] font-medium">Puja Journey &amp; Contributions</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setProfileModalVisible(false)}
+                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white/70 hover:text-white flex items-center justify-center transition cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Devotee Identity Card */}
+            <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-between gap-3 mb-4">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="relative flex-shrink-0">
+                  <img
+                    src={user?.photoURL || '/durga-emblem.png'}
+                    alt="Profile Avatar"
+                    className="w-12 h-12 rounded-full border-2 border-[#E9B83E] object-cover shadow-md"
+                  />
+                  <span className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-[#121224] flex items-center justify-center text-[8px] text-white">✓</span>
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-white font-bold text-sm truncate">{user?.displayName || 'Guest Devotee'}</h3>
+                  <p className="text-white/50 text-[11px] truncate">{user?.email || 'Signed In Explorer'}</p>
+                  <span className="inline-flex items-center gap-1 text-[9px] text-[#E9B83E] bg-[#E9B83E]/10 border border-[#E9B83E]/30 px-2 py-0.5 rounded-full mt-1">
+                    ✨ Agartala Puja Parikrama 2026
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Stats Grid (3 Tiles) */}
+            <div className="grid grid-cols-3 gap-2 mb-4">
+              <div className="p-3 rounded-2xl bg-white/5 border border-white/10 text-center flex flex-col items-center">
+                <span className="text-lg mb-1">🪔</span>
+                <span className="text-xs font-semibold text-white/60">Pandals</span>
+                <span className="text-base font-mono font-bold text-[#F5E5B7]">12</span>
+              </div>
+              <div className="p-3 rounded-2xl bg-white/5 border border-white/10 text-center flex flex-col items-center">
+                <span className="text-lg mb-1">📸</span>
+                <span className="text-xs font-semibold text-white/60">Snaps</span>
+                <span className="text-base font-mono font-bold text-[#E9B83E]">5</span>
+              </div>
+              <div className="p-3 rounded-2xl bg-white/5 border border-white/10 text-center flex flex-col items-center">
+                <span className="text-lg mb-1">🏆</span>
+                <span className="text-xs font-semibold text-white/60">Rank</span>
+                <span className="text-base font-mono font-bold text-amber-300">#7</span>
+              </div>
+            </div>
+
+            {/* Puja Passport Badges */}
+            <div className="p-3 rounded-2xl bg-white/5 border border-white/10 mb-4">
+              <span className="text-[10px] uppercase font-bold text-white/50 tracking-wider block mb-2">Puja Badges Unlocked</span>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="px-2.5 py-1 rounded-xl bg-[#E9B83E]/15 border border-[#E9B83E]/30 text-[#F5E5B7] text-xs font-medium flex items-center gap-1">
+                  🪔 Pandal Hopper
+                </span>
+                <span className="px-2.5 py-1 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-medium flex items-center gap-1">
+                  📍 GPS Explorer
+                </span>
+                <span className="px-2.5 py-1 rounded-xl bg-purple-500/15 border border-purple-500/30 text-purple-200 text-xs font-medium flex items-center gap-1">
+                  🥁 Dhak Fan
+                </span>
+              </div>
+            </div>
+
+            {/* Auth Actions */}
+            <div className="space-y-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setProfileModalVisible(false)
+                  setAuthModalVisible(true)
+                }}
+                className="w-full py-2.5 rounded-xl bg-white hover:bg-gray-100 text-gray-900 font-bold text-xs flex items-center justify-center gap-2.5 shadow transition active:scale-98 cursor-pointer"
+              >
+                <svg className="w-4 h-4" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                </svg>
+                <span>{user ? 'Manage Google Account' : 'Connect with Google'}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (navigator.clipboard) {
+                    navigator.clipboard.writeText(window.location.href)
+                  }
+                }}
+                className="w-full py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white/90 font-semibold text-xs flex items-center justify-center gap-2 border border-white/10 transition active:scale-98 cursor-pointer"
+              >
+                <span>🔗</span> Share Devotee Passport
+              </button>
+            </div>
           </div>
         </div>
       )}
