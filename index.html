@@ -441,7 +441,7 @@
         <source media="(min-width: 1024px)" srcset="splash-desktop.jpg">
         <source media="(min-width: 768px) and (orientation: landscape)" srcset="splash-desktop.jpg">
         <!-- Mobile / Portrait platforms -->
-        <img src="splash-mobile.jpg" alt="Puja Parikrama" class="w-full h-full object-cover object-center">
+        <img src="splash-mobile.jpg" alt="Puja Parikrama" class="w-full h-full object-cover object-top">
       </picture>
     </div>
 
@@ -493,7 +493,7 @@
         const renderedH = imgH * scale;
 
         const offsetX = (vw - renderedW) / 2;
-        const offsetY = (vh - renderedH) / 2;
+        const offsetY = 0; // Anchored to top (object-top) so logo is never cut off
 
         return {
           x: Math.round(offsetX + (targetXRatio * renderedW)),

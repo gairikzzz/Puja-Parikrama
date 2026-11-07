@@ -1330,7 +1330,7 @@ export default function App() {
     const renderedW = imgW * scale
     const renderedH = imgH * scale
     const offsetX = (vw - renderedW) / 2
-    const offsetY = (vh - renderedH) / 2
+    const offsetY = 0 // Anchored to top (object-top) so logo is never cut off
 
     return {
       x: Math.round(offsetX + targetXRatio * renderedW),
@@ -1843,7 +1843,7 @@ export default function App() {
               <img
                 src="/splash-mobile.jpg"
                 alt="Puja Parikrama"
-                className="w-full h-full object-cover object-center"
+                className="w-full h-full object-cover object-top"
               />
             </picture>
           </div>
