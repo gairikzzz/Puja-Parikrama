@@ -1676,7 +1676,7 @@ export default function App() {
 
       {/* ── 1. SPOTIFY MUSIC PLAYER (Elongated Single Row Layout matching Snap CTA diameter) ── */}
       {mapReady && (
-        <div className="fixed left-[calc(25%-14px)] -translate-x-1/2 bottom-4 sm:bottom-5 z-30 w-[calc(50%-72px)] max-w-[360px] sm:max-w-[370px] min-w-[260px] pointer-events-auto select-none flex flex-col gap-2">
+        <div className="fixed left-[calc(25%-14px)] -translate-x-1/2 bottom-4 sm:bottom-5 z-30 w-[calc(50%-52px)] max-w-[500px] sm:max-w-[520px] md:max-w-[540px] min-w-[260px] pointer-events-auto select-none flex flex-col gap-2">
           {/* Spotify Official Interactive Playlist Embed Popup */}
           {spotifyEmbedVisible && (
             <div className="w-full bg-[#211329]/75 border border-[#E9B83E]/40 rounded-2xl p-2.5 shadow-[0_12px_32px_rgba(13,12,27,0.65),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-xl animate-in fade-in slide-in-from-bottom-2 duration-200">
@@ -1853,7 +1853,7 @@ export default function App() {
       {mapReady && (
         <div
           id="pandal-filter-group"
-          className="fixed left-[calc(75%+14px)] -translate-x-1/2 bottom-4 sm:bottom-5 z-30 w-[calc(50%-72px)] max-w-[360px] sm:max-w-[370px] min-w-[260px] pointer-events-auto select-none flex items-center justify-between gap-1.5 sm:gap-2 h-[52px] sm:h-14"
+          className="fixed left-[calc(75%+14px)] -translate-x-1/2 bottom-4 sm:bottom-5 z-30 w-[calc(50%-52px)] max-w-[500px] sm:max-w-[520px] md:max-w-[540px] min-w-[260px] pointer-events-auto select-none flex items-center justify-between gap-1.5 sm:gap-2 h-[52px] sm:h-14"
         >
           {/* Latest Filter */}
           <button
