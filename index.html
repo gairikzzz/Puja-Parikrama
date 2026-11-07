@@ -1317,13 +1317,13 @@
           <!-- Dropdown Menu (Styled exactly like Year Dropdown on Landing Page) -->
           <div 
             id="pandal-dropdown-menu" 
-            class="hidden absolute left-0 right-0 top-full mt-1.5 z-50 bg-[#211329]/95 border border-[#E9B83E]/35 rounded-2xl shadow-[0_12px_32px_rgba(13,12,27,0.85),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_12px_rgba(233,184,62,0.15)] backdrop-blur-2xl max-h-48 overflow-y-auto hide-scrollbar p-1.5 space-y-1"
+            class="hidden absolute left-0 right-0 top-full mt-1.5 z-50 bg-[#211329]/95 border border-[#E9B83E]/35 rounded-2xl shadow-[0_12px_32px_rgba(13,12,27,0.85),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_12px_rgba(233,184,62,0.15)] backdrop-blur-2xl max-h-48 overflow-y-auto hide-scrollbar p-1"
           >
-            <div class="px-2 py-0.5 text-[9px] font-bold text-[#E9B83E] uppercase tracking-wider flex items-center justify-between border-b border-[#E9B83E]/20 mb-1">
+            <div class="px-3 py-1.5 text-[9px] font-bold text-[#E9B83E] uppercase tracking-wider flex items-center justify-between border-b border-[#E9B83E]/20 mb-0.5">
               <span>Known Agartala Pandals</span>
               <span>Distance</span>
             </div>
-            <div id="pandal-dropdown-list" class="space-y-1">
+            <div id="pandal-dropdown-list">
               <!-- Dynamically populated pandals -->
             </div>
           </div>
@@ -2933,32 +2933,61 @@
       }
     }
 
-    function renderPandalDropdownList(sortedList) {
+    function renderPandalDropdownList(sortedList, typedQuery = '') {
       const listEl = document.getElementById('pandal-dropdown-list');
       if (!listEl) return;
 
       listEl.innerHTML = '';
-      const currentSelected = inputPandalName ? inputPandalName.value.trim().toLowerCase() : '';
+      const currentSelected = inputPandalName ? inputPandalName.value.trim() : '';
+      const queryTrimmed = (typedQuery || '').trim();
 
-      sortedList.forEach(p => {
-        const isSelected = currentSelected === p.name.toLowerCase();
-        const item = document.createElement('div');
-        item.className = isSelected
-          ? 'pandal-dropdown-item px-3 py-2.5 rounded-xl text-left text-xs font-semibold flex items-center justify-between transition cursor-pointer bg-[#E9B83E]/20 text-[#E9B83E] font-bold border border-[#E9B83E]/30 shadow-sm'
-          : 'pandal-dropdown-item px-3 py-2.5 rounded-xl text-left text-xs font-semibold flex items-center justify-between transition cursor-pointer text-[#F5E5B7]/90 hover:bg-[#E9B83E]/20 hover:text-[#E9B83E] active:scale-[0.99] border border-transparent';
+      // Check if typedQuery is custom (not in master list)
+      const isCustom = queryTrimmed.length > 0 && !AGARTALA_MASTER_PANDALS.some(p => p.name.toLowerCase() === queryTrimmed.toLowerCase());
 
-        item.innerHTML = `
-          <div class="flex items-center gap-2.5 min-w-0">
-            <span class="text-base flex-shrink-0">${p.emoji || '🪔'}</span>
-            <div class="min-w-0">
-              <span class="text-xs font-bold block truncate leading-tight">${p.name}</span>
+      if (isCustom) {
+        const customItem = document.createElement('div');
+        customItem.className = 'pandal-dropdown-item px-3.5 py-2.5 text-left text-xs font-semibold flex items-center justify-between transition cursor-pointer text-[#E9B83E] hover:bg-[#E9B83E]/20 bg-[#E9B83E]/10 border-b border-[#E9B83E]/30 first:rounded-t-xl';
+        customItem.innerHTML = `
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="text-sm font-bold">➕</span>
+            <div class="truncate">
+              <span class="text-xs font-bold block truncate">Add "${queryTrimmed}" as new pandal</span>
+              <span class="text-[9px] text-[#F5E5B7]/70 block">Custom puja location</span>
             </div>
           </div>
+          <span class="text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-[#E9B83E]/20 text-[#E9B83E] border border-[#E9B83E]/40">
+            New
+          </span>
+        `;
+        customItem.addEventListener('click', () => {
+          inputPandalName.value = queryTrimmed;
+          validateUploadForm();
+          updateUploadModalHeaders();
+          document.getElementById('pandal-dropdown-menu')?.classList.add('hidden');
+          document.getElementById('pandal-chevron')?.classList.remove('rotate-180');
+          showToast(`📍 Selected "${queryTrimmed}" as custom pandal`);
+        });
+        listEl.appendChild(customItem);
+      }
+
+      sortedList.forEach(p => {
+        const isSelected = currentSelected.toLowerCase() === p.name.toLowerCase();
+        const item = document.createElement('div');
+        item.className = `pandal-dropdown-item px-3.5 py-2.5 text-left text-xs font-semibold flex items-center justify-between transition cursor-pointer border-b border-[#E9B83E]/20 last:border-b-0 first:rounded-t-xl last:rounded-b-xl ${
+          isSelected
+            ? 'bg-[#E9B83E]/20 text-[#E9B83E] font-bold'
+            : 'text-[#F5E5B7]/90 hover:bg-[#E9B83E]/15 hover:text-[#E9B83E]'
+        }`;
+
+        item.innerHTML = `
+          <div class="truncate min-w-0">
+            <span class="text-xs font-bold block truncate leading-tight">${p.name}</span>
+            <span class="text-[9px] text-[#F5E5B7]/70 truncate mt-0.5 block">${p.neighborhood || 'Agartala'}, Agartala</span>
+          </div>
           <div class="flex items-center gap-2 flex-shrink-0 ml-2">
-            <span class="text-[10px] font-semibold text-[#E9B83E] bg-[#E9B83E]/15 border border-[#E9B83E]/30 px-2 py-0.5 rounded-full whitespace-nowrap">
+            <span class="text-[10px] font-semibold text-[#E9B83E] whitespace-nowrap">
               ${p.distText}
             </span>
-            ${isSelected ? '<span class="text-[#E9B83E] text-xs font-bold">✓</span>' : ''}
           </div>
         `;
 
@@ -3359,46 +3388,57 @@
     cameraInput.addEventListener('change', (e) => processMultiplePhotos(e.target.files, 'camera'));
     galleryInput.addEventListener('change', (e) => processMultiplePhotos(e.target.files, 'gallery'));
 
-    // Dropdown toggle
+    // Dropdown toggle & search
     const btnToggleDropdown = document.getElementById('btn-toggle-pandal-dropdown');
     const dropdownMenu = document.getElementById('pandal-dropdown-menu');
     const pandalChevron = document.getElementById('pandal-chevron');
 
+    function openPandalDropdown(query = '') {
+      const matchResult = matchNearestPandal(submissionCoords);
+      const q = (query || '').trim().toLowerCase();
+      const filtered = q.length === 0 
+        ? matchResult.allSorted 
+        : matchResult.allSorted.filter(p => 
+            (p.name && p.name.toLowerCase().includes(q)) ||
+            (p.neighborhood && p.neighborhood.toLowerCase().includes(q)) ||
+            (p.city && p.city.toLowerCase().includes(q)) ||
+            'agartala'.includes(q) || q.includes('agartala') ||
+            'tripura'.includes(q) || q.includes('tripura') ||
+            (p.keywords && p.keywords.some(k => k.includes(q) || q.includes(k)))
+          );
+      renderPandalDropdownList(filtered, query);
+      dropdownMenu?.classList.remove('hidden');
+      pandalChevron?.classList.add('rotate-180');
+    }
+
     btnToggleDropdown?.addEventListener('click', (e) => {
       e.stopPropagation();
       const isHidden = dropdownMenu?.classList.contains('hidden');
-      dropdownMenu?.classList.toggle('hidden');
-      pandalChevron?.classList.toggle('rotate-180', isHidden);
+      if (isHidden) {
+        openPandalDropdown('');
+      } else {
+        dropdownMenu?.classList.add('hidden');
+        pandalChevron?.classList.remove('rotate-180');
+      }
     });
 
     inputPandalName?.addEventListener('focus', () => {
-      dropdownMenu?.classList.remove('hidden');
-      pandalChevron?.classList.add('rotate-180');
+      openPandalDropdown('');
+    });
+
+    inputPandalName?.addEventListener('click', () => {
+      openPandalDropdown('');
     });
 
     inputPandalName?.addEventListener('input', () => {
-      const query = inputPandalName.value.trim().toLowerCase();
-      const matchResult = matchNearestPandal(submissionCoords);
-      const filtered = query.length === 0 
-        ? matchResult.allSorted 
-        : matchResult.allSorted.filter(p => 
-            (p.name && p.name.toLowerCase().includes(query)) ||
-            (p.neighborhood && p.neighborhood.toLowerCase().includes(query)) ||
-            (p.city && p.city.toLowerCase().includes(query)) ||
-            'agartala'.includes(query) || query.includes('agartala') ||
-            'tripura'.includes(query) || query.includes('tripura') ||
-            (p.keywords && p.keywords.some(k => k.includes(query) || query.includes(k)))
-          );
-      renderPandalDropdownList(filtered);
-      dropdownMenu?.classList.remove('hidden');
-      pandalChevron?.classList.add('rotate-180');
+      openPandalDropdown(inputPandalName.value);
       validateUploadForm();
       updateUploadModalHeaders();
     });
 
     // Close dropdown on outside click
     document.addEventListener('click', (e) => {
-      if (!e.target.closest('#pandal-dropdown-menu') && e.target !== inputPandalName && e.target !== btnToggleDropdown) {
+      if (!e.target.closest('#pandal-dropdown-menu') && e.target !== inputPandalName && !e.target.closest('#btn-toggle-pandal-dropdown')) {
         dropdownMenu?.classList.add('hidden');
         pandalChevron?.classList.remove('rotate-180');
       }

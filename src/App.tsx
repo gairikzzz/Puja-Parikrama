@@ -515,6 +515,17 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
   const [showMapSearch, setShowMapSearch] = useState(false)
   const [step, setStep] = useState<'capture' | 'details'>('details')
   const [submitting, setSubmitting] = useState(false)
+  const pandalContainerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (pandalContainerRef.current && !pandalContainerRef.current.contains(e.target as Node)) {
+        setShowDropdown(false)
+      }
+    }
+    document.addEventListener('mousedown', handleOutsideClick)
+    return () => document.removeEventListener('mousedown', handleOutsideClick)
+  }, [])
 
   const reset = () => {
     setSelectedFiles([])
@@ -622,8 +633,14 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
     }).sort((a, b) => a.distance - b.distance)
   }, [coords])
 
+  const isCustomPandal = useMemo(() => {
+    const trimmed = pandalName.trim().toLowerCase()
+    if (!trimmed) return false
+    return !AGARTALA_MASTER_PANDALS.some(p => p.name.toLowerCase() === trimmed)
+  }, [pandalName])
+
   const filteredPandals = useMemo(() => {
-    const q = (pandalName || searchFilter).trim().toLowerCase()
+    const q = searchFilter.trim().toLowerCase()
     if (!q) return pandalsWithProximity
     return pandalsWithProximity.filter(p => 
       p.name.toLowerCase().includes(q) ||
@@ -633,7 +650,7 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
       'tripura'.includes(q) || q.includes('tripura') ||
       (p.keywords && p.keywords.some(k => k.includes(q) || q.includes(k)))
     )
-  }, [pandalsWithProximity, pandalName, searchFilter])
+  }, [pandalsWithProximity, searchFilter])
 
   const filteredMapPandals = useMemo(() => {
     const q = mapSearchQuery.trim().toLowerCase()
@@ -769,7 +786,7 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
           </div>
 
           {/* Pandal Name & Dropdown (Styled like Search Bar & Landing Page Year) */}
-          <div className="space-y-1.5">
+          <div ref={pandalContainerRef} className="space-y-1.5 relative">
             <label className="block text-[11px] sm:text-xs font-semibold text-[#F5E5B7]">
               <span>Pandal Name</span> <span className="text-red-500 font-bold">*</span>
             </label>
@@ -782,14 +799,28 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
                 id="pandal-name-input"
                 type="text"
                 value={pandalName}
-                onFocus={() => setShowDropdown(true)}
-                onChange={e => { setPandalName(e.target.value); setSearchFilter(e.target.value); setShowDropdown(true); }}
+                onFocus={() => {
+                  setShowDropdown(true)
+                  setSearchFilter('')
+                }}
+                onClick={() => {
+                  setShowDropdown(true)
+                }}
+                onChange={e => {
+                  setPandalName(e.target.value)
+                  setSearchFilter(e.target.value)
+                  setShowDropdown(true)
+                }}
                 placeholder="Select or Enter Pandal Name..."
                 className="w-full bg-transparent pl-2.5 pr-9 py-2 text-[#F5E5B7] font-normal placeholder:font-normal text-xs sm:text-[13px] placeholder-[#F5E5B7]/45 focus:placeholder-transparent focus:outline-none"
               />
               <button
                 type="button"
-                onClick={() => setShowDropdown(!showDropdown)}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setShowDropdown(!showDropdown)
+                  setSearchFilter('')
+                }}
                 className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-[#E9B83E] hover:text-[#F5E5B7] flex items-center justify-center transition cursor-pointer"
                 title="Select pandal"
               >
@@ -801,12 +832,34 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
 
             {/* Proximity Dropdown (Styled like Year dropdown) */}
             {showDropdown && (
-              <div className="absolute left-0 right-0 top-full mt-1.5 z-50 bg-[#211329]/95 border border-[#E9B83E]/35 rounded-2xl shadow-[0_12px_32px_rgba(13,12,27,0.85),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_12px_rgba(233,184,62,0.15)] backdrop-blur-2xl max-h-48 overflow-y-auto no-scrollbar p-1.5 space-y-1">
-                <div className="px-2 py-0.5 text-[9px] font-bold text-[#E9B83E] uppercase tracking-wider flex items-center justify-between border-b border-[#E9B83E]/20 mb-1">
+              <div className="absolute left-0 right-0 top-full mt-1.5 z-50 bg-[#211329]/95 border border-[#E9B83E]/35 rounded-2xl shadow-[0_12px_32px_rgba(13,12,27,0.85),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_12px_rgba(233,184,62,0.15)] backdrop-blur-2xl max-h-48 overflow-y-auto no-scrollbar p-1">
+                <div className="px-3 py-1.5 text-[9px] font-bold text-[#E9B83E] uppercase tracking-wider flex items-center justify-between border-b border-[#E9B83E]/20 mb-0.5">
                   <span>Known Agartala Pandals</span>
                   <span>Distance</span>
                 </div>
-                <div className="space-y-1">
+                <div>
+                  {isCustomPandal && (
+                    <div
+                      onClick={() => {
+                        setSearchFilter('')
+                        setShowDropdown(false)
+                        setLocationSource('custom')
+                        setSourceBadge({ text: '📍 Custom Location', cls: 'bg-amber-500/20 text-amber-300 border-amber-500/30' })
+                      }}
+                      className="px-3.5 py-2.5 text-left text-xs font-semibold flex items-center justify-between transition cursor-pointer text-[#E9B83E] hover:bg-[#E9B83E]/20 bg-[#E9B83E]/10 border-b border-[#E9B83E]/30 first:rounded-t-xl"
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="text-sm font-bold">➕</span>
+                        <div className="truncate">
+                          <span className="text-xs font-bold block truncate">Add "{pandalName.trim()}" as new pandal</span>
+                          <span className="text-[9px] text-[#F5E5B7]/70 block">Custom puja location</span>
+                        </div>
+                      </div>
+                      <span className="text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-[#E9B83E]/20 text-[#E9B83E] border border-[#E9B83E]/40">
+                        New
+                      </span>
+                    </div>
+                  )}
                   {filteredPandals.map(p => {
                     const isSelected = pandalName.trim().toLowerCase() === p.name.toLowerCase();
                     return (
@@ -814,29 +867,27 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
                         key={p.name}
                         onClick={() => {
                           setPandalName(p.name)
+                          setSearchFilter('')
                           setNeighborhood(p.neighborhood || 'Agartala')
                           setCoords({ lat: p.lat, lng: p.lng })
                           setLocationSource('custom')
                           setSourceBadge({ text: '🏛️ Pandal Coordinates', cls: 'bg-amber-500/20 text-amber-300 border-amber-500/30' })
                           setShowDropdown(false)
                         }}
-                        className={`px-3 py-2 rounded-xl text-left text-xs font-semibold flex items-center justify-between transition cursor-pointer ${
+                        className={`px-3.5 py-2.5 text-left text-xs font-semibold flex items-center justify-between transition cursor-pointer border-b border-[#E9B83E]/20 last:border-b-0 first:rounded-t-xl last:rounded-b-xl ${
                           isSelected
-                            ? 'bg-[#E9B83E]/20 text-[#E9B83E] font-bold border border-[#E9B83E]/30 shadow-sm'
-                            : 'text-[#F5E5B7]/90 hover:bg-[#E9B83E]/20 hover:text-[#E9B83E] active:scale-[0.99] border border-transparent'
+                            ? 'bg-[#E9B83E]/20 text-[#E9B83E] font-bold'
+                            : 'text-[#F5E5B7]/90 hover:bg-[#E9B83E]/15 hover:text-[#E9B83E]'
                         }`}
                       >
-                        <div className="flex items-center gap-2.5 min-w-0">
-                          <span className="text-base flex-shrink-0">{p.emoji || '🪔'}</span>
-                          <div className="min-w-0">
-                            <span className="text-xs font-bold block truncate leading-tight">{p.name}</span>
-                          </div>
+                        <div className="truncate min-w-0">
+                          <span className="text-xs font-bold block truncate leading-tight">{p.name}</span>
+                          <span className="text-[9px] text-[#F5E5B7]/70 truncate mt-0.5 block">{p.neighborhood || 'Agartala'}, Agartala</span>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0 ml-2">
-                          <span className="text-[10px] font-semibold text-[#E9B83E] bg-[#E9B83E]/15 border border-[#E9B83E]/30 px-2 py-0.5 rounded-full whitespace-nowrap">
+                          <span className="text-[10px] font-semibold text-[#E9B83E] whitespace-nowrap">
                             {p.distText}
                           </span>
-                          {isSelected && <span className="text-[#E9B83E] text-xs font-bold">✓</span>}
                         </div>
                       </div>
                     );
