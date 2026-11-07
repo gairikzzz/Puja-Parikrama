@@ -991,24 +991,113 @@ export default function App() {
   const [yearDropdownOpen, setYearDropdownOpen] = useState(false)
   const yearDropdownRef = useRef<HTMLDivElement>(null)
 
-  // Spotify Style Player State (matching user's screenshot & header aesthetic)
+  // YouTube Music Player State & Refs
+  const YOUTUBE_PLAYLIST_ID = 'PLBFyKHpeq9js'
+  const ytPlayerRef = useRef<any>(null)
+  const ytPlayerReady = useRef(false)
   const [isPlaying, setIsPlaying] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
-  const [spotifyEmbedVisible, setSpotifyEmbedVisible] = useState(false)
-  const [spotifyEmbedHeight, setSpotifyEmbedHeight] = useState<152 | 352>(352)
-  const [currentTrackIndex, setCurrentTrackIndex] = useState(0)
-  const [currentTimeSec, setCurrentTimeSec] = useState(45) // 0:45 as in reference photo!
-  const [isShuffle, setIsShuffle] = useState(false)
-  const [isRepeat, setIsRepeat] = useState(false)
+  const [youtubeDrawerVisible, setYoutubeDrawerVisible] = useState(false)
+  const [trackTitle, setTrackTitle] = useState('Durga Ma Asche')
+  const [trackArtist, setTrackArtist] = useState('Infra · YouTube Music')
+  const [trackCover, setTrackCover] = useState('https://i.ytimg.com/vi/LLer3VPOcxg/hqdefault.jpg')
+  const [currentTimeSec, setCurrentTimeSec] = useState(45) // 0:45 default from screenshot
+  const [totalDurationSec, setTotalDurationSec] = useState(213) // 3:33 default from screenshot
   const dhakEngineRef = useRef<DhakAudioEngine | null>(null)
-
-  const currentTrack = SPOTIFY_DURGA_TRACKS[currentTrackIndex] || SPOTIFY_DURGA_TRACKS[0]
 
   // Initialize Dhak Audio Engine
   useEffect(() => {
     dhakEngineRef.current = new DhakAudioEngine()
     return () => {
       dhakEngineRef.current?.stop()
+    }
+  }, [])
+
+  // Initialize YouTube IFrame API
+  useEffect(() => {
+    if (!document.getElementById('youtube-iframe-api')) {
+      const tag = document.createElement('script')
+      tag.id = 'youtube-iframe-api'
+      tag.src = 'https://www.youtube.com/iframe_api'
+      const firstScriptTag = document.getElementsByTagName('script')[0]
+      firstScriptTag?.parentNode?.insertBefore(tag, firstScriptTag)
+    }
+
+    const initPlayer = () => {
+      const container = document.getElementById('react-yt-player-iframe')
+      if (!container || ytPlayerRef.current || !(window as any).YT || !(window as any).YT.Player) return
+      try {
+        ytPlayerRef.current = new (window as any).YT.Player('react-yt-player-iframe', {
+          height: '100%',
+          width: '100%',
+          playerVars: {
+            listType: 'playlist',
+            list: YOUTUBE_PLAYLIST_ID,
+            autoplay: 0,
+            controls: 1,
+            playsinline: 1,
+            rel: 0,
+            modestbranding: 1,
+            enablejsapi: 1,
+            origin: window.location.origin,
+          },
+          events: {
+            onReady: () => {
+              ytPlayerReady.current = true
+              updateYTTrackInfo()
+            },
+            onStateChange: (e: any) => {
+              handleYTStateChange(e.data)
+            },
+            onError: (err: any) => {
+              console.warn('YouTube Player API message:', err)
+            },
+          },
+        })
+      } catch (e) {
+        console.warn('Could not init React YouTube player:', e)
+      }
+    }
+
+    const updateYTTrackInfo = () => {
+      if (!ytPlayerRef.current || typeof ytPlayerRef.current.getVideoData !== 'function') return
+      try {
+        const data = ytPlayerRef.current.getVideoData()
+        if (data && data.title) {
+          setTrackTitle(data.title)
+          const author = data.author ? data.author.replace(/ - Topic$/i, '').trim() : ''
+          setTrackArtist(author ? `${author} · YouTube Music` : 'Infra · YouTube Music')
+          if (data.video_id) {
+            setTrackCover(`https://i.ytimg.com/vi/${data.video_id}/hqdefault.jpg`)
+          }
+        }
+        const dur = ytPlayerRef.current.getDuration()
+        if (dur && dur > 0) {
+          setTotalDurationSec(Math.round(dur))
+        }
+      } catch (e) {}
+    }
+
+    const handleYTStateChange = (state: number) => {
+      const YT = (window as any).YT
+      if (YT && state === YT.PlayerState.PLAYING) {
+        setIsPlaying(true)
+        updateYTTrackInfo()
+      } else if (YT && (state === YT.PlayerState.PAUSED || state === YT.PlayerState.ENDED)) {
+        setIsPlaying(false)
+      } else if (YT && (state === YT.PlayerState.BUFFERING || state === YT.PlayerState.CUED)) {
+        updateYTTrackInfo()
+      }
+    }
+
+    if ((window as any).YT && (window as any).YT.Player) {
+      initPlayer()
+    } else {
+      const prevOnReady = (window as any).onYouTubeIframeAPIReady
+      ;(window as any).onYouTubeIframeAPIReady = () => {
+        if (typeof prevOnReady === 'function') prevOnReady()
+        initPlayer()
+      }
     }
   }, [])
 
@@ -1030,6 +1119,13 @@ export default function App() {
   const toggleMute = useCallback(() => {
     setIsMuted(m => {
       const next = !m
+      if (ytPlayerRef.current && ytPlayerReady.current && typeof ytPlayerRef.current.mute === 'function') {
+        if (next) {
+          ytPlayerRef.current.mute()
+        } else {
+          ytPlayerRef.current.unMute()
+        }
+      }
       dhakEngineRef.current?.setMuted(next)
       return next
     })
@@ -1039,53 +1135,65 @@ export default function App() {
   useEffect(() => {
     let timer: any = null
     if (isPlaying) {
-      dhakEngineRef.current?.play()
       timer = setInterval(() => {
-        setCurrentTimeSec(prev => {
-          if (prev >= currentTrack.durationSec) {
-            if (isRepeat) {
-              return 0
-            } else {
-              setCurrentTrackIndex(idx => (idx + 1) % SPOTIFY_DURGA_TRACKS.length)
-              return 0
-            }
-          }
-          return prev + 1
-        })
-      }, 1000)
-    } else {
-      dhakEngineRef.current?.stop()
+        if (ytPlayerRef.current && typeof ytPlayerRef.current.getCurrentTime === 'function') {
+          try {
+            const cur = ytPlayerRef.current.getCurrentTime() || 0
+            const dur = ytPlayerRef.current.getDuration() || totalDurationSec
+            setCurrentTimeSec(Math.round(cur))
+            if (dur > 0) setTotalDurationSec(Math.round(dur))
+          } catch (e) {}
+        } else {
+          setCurrentTimeSec(prev => (prev >= totalDurationSec ? 0 : prev + 1))
+        }
+      }, 500)
     }
     return () => {
       if (timer) clearInterval(timer)
     }
-  }, [isPlaying, currentTrack.durationSec, isRepeat])
+  }, [isPlaying, totalDurationSec])
 
   const togglePlayPause = useCallback(() => {
-    setIsPlaying(p => !p)
-  }, [])
+    if (ytPlayerRef.current && ytPlayerReady.current && typeof ytPlayerRef.current.getPlayerState === 'function') {
+      const YT = (window as any).YT
+      const state = ytPlayerRef.current.getPlayerState()
+      if (state === YT?.PlayerState.PLAYING) {
+        ytPlayerRef.current.pauseVideo()
+      } else {
+        ytPlayerRef.current.playVideo()
+      }
+    } else {
+      setIsPlaying(p => !p)
+      if (!isPlaying) {
+        dhakEngineRef.current?.play()
+      } else {
+        dhakEngineRef.current?.stop()
+      }
+    }
+  }, [isPlaying])
 
   const handleNextTrack = useCallback(() => {
-    setCurrentTrackIndex(idx => {
-      if (isShuffle) {
-        return Math.floor(Math.random() * SPOTIFY_DURGA_TRACKS.length)
-      }
-      return (idx + 1) % SPOTIFY_DURGA_TRACKS.length
-    })
-    setCurrentTimeSec(0)
-  }, [isShuffle])
+    if (ytPlayerRef.current && ytPlayerReady.current && typeof ytPlayerRef.current.nextVideo === 'function') {
+      ytPlayerRef.current.nextVideo()
+    }
+  }, [])
 
   const handlePrevTrack = useCallback(() => {
-    setCurrentTrackIndex(idx => (idx - 1 + SPOTIFY_DURGA_TRACKS.length) % SPOTIFY_DURGA_TRACKS.length)
-    setCurrentTimeSec(0)
+    if (ytPlayerRef.current && ytPlayerReady.current && typeof ytPlayerRef.current.previousVideo === 'function') {
+      ytPlayerRef.current.previousVideo()
+    }
   }, [])
 
   const handleScrubberClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect()
     const clickX = e.clientX - rect.left
     const fraction = Math.max(0, Math.min(1, clickX / rect.width))
-    setCurrentTimeSec(Math.round(fraction * currentTrack.durationSec))
-  }, [currentTrack.durationSec])
+    const target = Math.round(fraction * totalDurationSec)
+    if (ytPlayerRef.current && ytPlayerReady.current && typeof ytPlayerRef.current.seekTo === 'function') {
+      ytPlayerRef.current.seekTo(target, true)
+    }
+    setCurrentTimeSec(target)
+  }, [totalDurationSec])
 
   const topSearchResults = useMemo(() => {
     if (!topSearchQuery.trim()) return []
@@ -1742,82 +1850,94 @@ export default function App() {
         </header>
       )}
 
-      {/* ── 1. SPOTIFY MUSIC PLAYER (Elongated Single Row Layout matching Snap CTA diameter) ── */}
+      {/* ── 1. YOUTUBE MUSIC PLAYER & PLAYLIST EMBED ── */}
       {mapReady && (
         <div className="fixed left-[calc(25%-14px)] -translate-x-1/2 bottom-4 sm:bottom-5 z-30 w-[calc(50%-52px)] max-w-[500px] sm:max-w-[520px] md:max-w-[540px] min-w-[260px] pointer-events-auto select-none flex flex-col gap-2">
-          {/* Spotify Official Interactive Playlist Embed Popup */}
-          {spotifyEmbedVisible && (
-            <div className="w-full bg-[#211329]/75 border border-[#E9B83E]/40 rounded-2xl p-2.5 shadow-[0_12px_32px_rgba(13,12,27,0.65),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-xl animate-in fade-in slide-in-from-bottom-2 duration-200">
-              <div className="flex items-center justify-between pb-1.5 px-1 border-b border-[#E9B83E]/20 mb-2">
-                <div className="flex items-center gap-1.5">
-                  <svg className="w-4 h-4 text-[#1db954] fill-current" viewBox="0 0 24 24">
-                    <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
-                  </svg>
-                  <span className="text-xs font-bold text-[#F5E5B7]">Durga Puja Songs</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setSpotifyEmbedHeight(h => (h === 352 ? 152 : 352))}
-                    className="text-[10px] text-[#E9B83E] hover:text-[#F5E5B7] bg-white/5 hover:bg-white/10 px-2 py-0.5 rounded-full transition border border-[#E9B83E]/30"
-                  >
-                    {spotifyEmbedHeight === 352 ? 'Compact' : 'Playlist'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setSpotifyEmbedVisible(false)}
-                    className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-[#F5E5B7]/70 hover:text-white text-xs transition"
-                  >
-                    ✕
-                  </button>
-                </div>
+          {/* YouTube Official Interactive Video Player & Playlist Embed Popup */}
+          <div
+            id="spotify-embed-popup"
+            className="w-full bg-[#211329]/95 border border-[#E9B83E]/45 rounded-2xl shadow-[0_12px_32px_rgba(13,12,27,0.75),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-xl transition-all duration-300 overflow-hidden"
+            style={{
+              maxHeight: youtubeDrawerVisible ? '360px' : '0px',
+              opacity: youtubeDrawerVisible ? 1 : 0,
+              pointerEvents: youtubeDrawerVisible ? 'auto' : 'none',
+              padding: youtubeDrawerVisible ? '10px' : '0px',
+              marginBottom: youtubeDrawerVisible ? '8px' : '0px',
+              borderWidth: youtubeDrawerVisible ? '1px' : '0px',
+            }}
+          >
+            <div className="flex items-center justify-between pb-1.5 px-1 border-b border-[#E9B83E]/20 mb-2">
+              <div className="flex items-center gap-1.5 min-w-0">
+                <svg className="w-4 h-4 text-[#FF0000] fill-current flex-shrink-0" viewBox="0 0 24 24">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                </svg>
+                <span className="text-xs font-bold text-[#F5E5B7] truncate">Durga Puja Songs</span>
+                <span className="text-[9px] text-[#E9B83E]/75 hidden sm:inline-block flex-shrink-0">· Powered by YouTube</span>
               </div>
-              <iframe
-                data-testid="embed-iframe"
-                style={{ borderRadius: '12px' }}
-                src="https://open.spotify.com/embed/playlist/2cjLMgWAt3S6YNCEKFtVtk?utm_source=generator&theme=0"
-                width="100%"
-                height={spotifyEmbedHeight}
-                frameBorder="0"
-                allowFullScreen
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                loading="lazy"
-                title="Spotify Playlist Embed"
-              />
+              <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+                <a
+                  href="https://music.youtube.com/playlist?list=PLBFyKHpeq9js"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Open in YouTube Music"
+                  className="text-[10px] text-[#E9B83E] hover:text-[#F5E5B7] bg-white/5 hover:bg-white/10 px-2 py-0.5 rounded-full transition border border-[#E9B83E]/30 flex items-center gap-1"
+                >
+                  <span>Open</span>
+                  <svg className="w-2.5 h-2.5 fill-current" viewBox="0 0 16 16"><path d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/><path d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/></svg>
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setYoutubeDrawerVisible(false)}
+                  title="Minimize YouTube Player"
+                  className="w-5 h-5 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-[#F5E5B7]/70 hover:text-white text-xs transition cursor-pointer"
+                >
+                  ✕
+                </button>
+              </div>
             </div>
-          )}
+            {/* YouTube Video Player Container (Compliant standard embedded player) */}
+            <div className="w-full aspect-video rounded-xl overflow-hidden bg-black/80 border border-[#E9B83E]/20 relative shadow-inner">
+              <div id="react-yt-player-iframe" className="w-full h-full" />
+            </div>
+          </div>
 
           {/* Main Custom Styled Music Player Pill Bar - SINGLE ROW LAYOUT MATCHING SNAP CTA DIAMETER */}
           <div
             id="spotify-music-player-bar"
             className="w-full h-[52px] sm:h-14 overflow-hidden backdrop-blur-lg bg-[#211329]/55 hover:bg-[#211329]/75 border border-[#E9B83E]/40 hover:border-[#E9B83E] rounded-full px-2 sm:px-3 flex items-center justify-between gap-1.5 sm:gap-2 shadow-[0_4px_24px_rgba(13,12,27,0.45),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_10px_rgba(233,184,62,0.20)] hover:shadow-[0_4px_24px_rgba(13,12,27,0.50),0_0_16px_rgba(233,184,62,0.40)] hover:scale-[1.004] duration-200 transition-all"
           >
-            {/* Left: Album Cover + Title + Artist (Clean cover without badge, full un-truncated title) */}
-            <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-shrink-0">
+            {/* Left: Album Cover + Title + Artist (Clean cover with YouTube badge, live title) */}
+            <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-shrink-0">
               <button
                 type="button"
-                onClick={() => setSpotifyEmbedVisible(v => !v)}
-                title={spotifyEmbedVisible ? "Hide Spotify Playlist" : "Open Spotify Playlist Embed"}
-                className="relative flex-shrink-0 cursor-pointer"
+                onClick={() => setYoutubeDrawerVisible(v => !v)}
+                title="Toggle YouTube Video Player"
+                className="relative flex-shrink-0 cursor-pointer group"
               >
                 <img
-                  src={currentTrack.cover}
-                  alt={currentTrack.title}
-                  className="w-8 h-8 sm:w-9 sm:h-9 rounded-[8px] object-cover border border-[#E9B83E]/20 shadow"
+                  src={trackCover}
+                  onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/dugga-ma-asche.png' }}
+                  alt={trackTitle}
+                  className="w-8 h-8 sm:w-9 sm:h-9 rounded-[8px] object-cover border border-[#E9B83E]/20 shadow group-hover:scale-105 transition"
                 />
+                <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-[#FF0000] flex items-center justify-center shadow">
+                  <svg className="w-2 h-2 text-white fill-current ml-0.5" viewBox="0 0 16 16">
+                    <path d="M4 3.5v9l8-4.5-8-4.5z"/>
+                  </svg>
+                </div>
               </button>
 
               <div className="flex flex-col min-w-0 pr-0.5">
                 <button
                   type="button"
-                  onClick={() => setSpotifyEmbedVisible(v => !v)}
-                  title="Toggle Spotify Playlist Embed"
-                  className="text-left text-xs sm:text-[13px] font-bold text-[#F5E5B7] whitespace-nowrap leading-tight transition cursor-pointer"
+                  onClick={() => setYoutubeDrawerVisible(v => !v)}
+                  title="Toggle YouTube Video Player"
+                  className="text-left text-xs sm:text-[13px] font-bold text-[#F5E5B7] whitespace-nowrap leading-tight transition cursor-pointer hover:text-[#E9B83E] truncate max-w-[125px] sm:max-w-[175px]"
                 >
-                  {currentTrack.title}
+                  {trackTitle}
                 </button>
-                <span className="text-[10px] sm:text-[11px] text-[#F5E5B7]/60 whitespace-nowrap leading-tight mt-0.5">
-                  {currentTrack.artist}
+                <span className="text-[10px] sm:text-[11px] text-[#F5E5B7]/60 whitespace-nowrap leading-tight mt-0.5 truncate max-w-[125px] sm:max-w-[175px]">
+                  {trackArtist}
                 </span>
               </div>
             </div>
@@ -1831,10 +1951,10 @@ export default function App() {
               >
                 <div
                   className="h-full bg-gradient-to-r from-[#E9B83E] to-[#F5E5B7] transition-all"
-                  style={{ width: `${Math.min(100, (currentTimeSec / currentTrack.durationSec) * 100)}%` }}
+                  style={{ width: `${Math.min(100, (currentTimeSec / Math.max(1, totalDurationSec)) * 100)}%` }}
                 />
               </div>
-              <span className="text-right flex-shrink-0">{formatSongTime(currentTrack.durationSec)}</span>
+              <span className="text-right flex-shrink-0">{formatSongTime(totalDurationSec)}</span>
             </div>
 
             {/* Right: Playback Controls Row (Prev, Play, Next, Mute in White / Crossed) */}
@@ -1843,7 +1963,7 @@ export default function App() {
                 type="button"
                 onClick={handlePrevTrack}
                 title="Previous Track"
-                className="text-white/70 hover:text-white transition p-0.5"
+                className="text-white/70 hover:text-white transition p-0.5 cursor-pointer"
               >
                 <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-current" viewBox="0 0 16 16">
                   <path d="M3.3 1a.7.7 0 0 1 .7.7v5.15l9.95-5.744a.7.7 0 0 1 1.05.606v12.576a.7.7 0 0 1-1.05.607L4 9.149V14.3a.7.7 0 0 1-.7.7H1.7a.7.7 0 0 1-.7-.7V1.7a.7.7 0 0 1 .7-.7h1.6z"/>
@@ -1854,7 +1974,7 @@ export default function App() {
                 type="button"
                 onClick={togglePlayPause}
                 title={isPlaying ? "Pause" : "Play"}
-                className="w-6 h-6 sm:w-6.5 sm:h-6.5 rounded-full bg-white text-black hover:scale-105 active:scale-95 flex items-center justify-center transition shadow-md flex-shrink-0"
+                className="w-6 h-6 sm:w-6.5 sm:h-6.5 rounded-full bg-white text-black hover:scale-105 active:scale-95 flex items-center justify-center transition shadow-md flex-shrink-0 cursor-pointer"
               >
                 {isPlaying ? (
                   <svg className="w-2.5 h-2.5 fill-black" viewBox="0 0 16 16">
@@ -1871,7 +1991,7 @@ export default function App() {
                 type="button"
                 onClick={handleNextTrack}
                 title="Next Track"
-                className="text-white/70 hover:text-white transition p-0.5"
+                className="text-white/70 hover:text-white transition p-0.5 cursor-pointer"
               >
                 <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-current" viewBox="0 0 16 16">
                   <path d="M12.7 1a.7.7 0 0 0-.7.7v5.15L2.05.106A.7.7 0 0 0 1 .712v12.576a.7.7 0 0 0 1.05.607L12 8.149V14.3a.7.7 0 0 0 .7.7h1.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7h-1.6z"/>
@@ -1883,7 +2003,7 @@ export default function App() {
                 type="button"
                 onClick={toggleMute}
                 title={isMuted ? "Unmute" : "Mute"}
-                className={`transition p-0.5 ${isMuted ? 'text-white/45 hover:text-white/70' : 'text-white hover:text-white/80'}`}
+                className={`transition p-0.5 cursor-pointer ${isMuted ? 'text-white/45 hover:text-white/70' : 'text-white hover:text-white/80'}`}
               >
                 {isMuted ? (
                   <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

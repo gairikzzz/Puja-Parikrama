@@ -25,6 +25,8 @@
 
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Official YouTube IFrame Player API -->
+  <script src="https://www.youtube.com/iframe_api"></script>
   <!-- Lightweight exifr and EXIF.js libraries for client-side EXIF GPS extraction -->
   <script src="https://cdn.jsdelivr.net/npm/exifr/dist/full.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
@@ -915,47 +917,47 @@
     </div>
   </div>
 
-  <!-- ── 1. SPOTIFY MUSIC PLAYER & PLAYLIST EMBED ── -->
+  <!-- ── 1. YOUTUBE MUSIC PLAYER & PLAYLIST EMBED ── -->
   <div class="fixed left-[calc(25%-14px)] -translate-x-1/2 bottom-4 sm:bottom-5 z-30 w-[calc(50%-52px)] max-w-[500px] sm:max-w-[520px] md:max-w-[540px] min-w-[260px] pointer-events-auto select-none flex flex-col gap-2">
-    <!-- Spotify Official Interactive Playlist Embed Popup -->
-    <div id="spotify-embed-popup" class="hidden w-full bg-[#211329]/75 border border-[#E9B83E]/40 rounded-2xl p-2.5 shadow-[0_12px_32px_rgba(13,12,27,0.65),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-xl transition-all">
+    <!-- YouTube Official Interactive Video Player & Playlist Embed Popup -->
+    <div
+      id="spotify-embed-popup"
+      class="w-full bg-[#211329]/95 border border-[#E9B83E]/45 rounded-2xl shadow-[0_12px_32px_rgba(13,12,27,0.75),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-xl transition-all duration-300 overflow-hidden"
+      style="max-height: 0px; opacity: 0; pointer-events: none; padding: 0px; margin-bottom: 0px; border-width: 0px;"
+    >
       <div class="flex items-center justify-between pb-1.5 px-1 border-b border-[#E9B83E]/20 mb-2">
-        <div class="flex items-center gap-1.5">
-          <svg class="w-4 h-4 text-[#1db954] fill-current" viewBox="0 0 24 24">
-            <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+        <div class="flex items-center gap-1.5 min-w-0">
+          <svg class="w-4 h-4 text-[#FF0000] fill-current flex-shrink-0" viewBox="0 0 24 24">
+            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
           </svg>
-          <span class="text-xs font-bold text-[#F5E5B7]">Durga Puja Songs</span>
+          <span class="text-xs font-bold text-[#F5E5B7] truncate">Durga Puja Songs</span>
+          <span class="text-[9px] text-[#E9B83E]/75 hidden sm:inline-block flex-shrink-0">· Powered by YouTube</span>
         </div>
-        <div class="flex items-center gap-2">
-          <button
-            type="button"
-            id="btn-spotify-toggle-size"
-            class="text-[10px] text-[#E9B83E] hover:text-[#F5E5B7] bg-white/5 hover:bg-white/10 px-2 py-0.5 rounded-full transition border border-[#E9B83E]/30"
+        <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+          <a
+            href="https://music.youtube.com/playlist?list=PLBFyKHpeq9js"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Open in YouTube Music"
+            class="text-[10px] text-[#E9B83E] hover:text-[#F5E5B7] bg-white/5 hover:bg-white/10 px-2 py-0.5 rounded-full transition border border-[#E9B83E]/30 flex items-center gap-1"
           >
-            Compact
-          </button>
+            <span>Open</span>
+            <svg class="w-2.5 h-2.5 fill-current" viewBox="0 0 16 16"><path d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/><path d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/></svg>
+          </a>
           <button
             type="button"
             id="btn-spotify-embed-close"
-            class="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-[#F5E5B7]/70 hover:text-white text-xs transition"
+            title="Minimize YouTube Player"
+            class="w-5 h-5 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-[#F5E5B7]/70 hover:text-white text-xs transition cursor-pointer"
           >
             ✕
           </button>
         </div>
       </div>
-      <iframe
-        id="spotify-embed-iframe"
-        data-testid="embed-iframe"
-        style="border-radius:12px"
-        src="https://open.spotify.com/embed/playlist/2cjLMgWAt3S6YNCEKFtVtk?utm_source=generator&theme=0"
-        width="100%"
-        height="352"
-        frameborder="0"
-        allowfullscreen=""
-        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-        loading="lazy"
-        title="Spotify Playlist Embed"
-      ></iframe>
+      <!-- YouTube Video Player Container (Compliant standard embedded player) -->
+      <div class="w-full aspect-video rounded-xl overflow-hidden bg-black/80 border border-[#E9B83E]/20 relative shadow-inner">
+        <div id="yt-player-iframe" class="w-full h-full"></div>
+      </div>
     </div>
 
     <!-- Main Custom Styled Music Player Pill Bar - SINGLE ROW MATCHING SNAP CTA DIAMETER -->
@@ -963,33 +965,39 @@
       id="spotify-music-player-bar"
       class="w-full h-[52px] sm:h-14 overflow-hidden backdrop-blur-lg bg-[#211329]/55 hover:bg-[#211329]/75 border border-[#E9B83E]/40 hover:border-[#E9B83E] rounded-full px-2 sm:px-3 flex items-center justify-between gap-1.5 sm:gap-2 shadow-[0_4px_24px_rgba(13,12,27,0.45),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_10px_rgba(233,184,62,0.20)] hover:shadow-[0_4px_24px_rgba(13,12,27,0.50),0_0_16px_rgba(233,184,62,0.40)] hover:scale-[1.004] duration-200 transition-all"
     >
-      <!-- Left: Album Cover + Title + Artist (Clean cover without badge, full un-truncated title) -->
+      <!-- Left: Album Cover + Title + Artist (Clean cover with YouTube badge, live title) -->
       <div class="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-shrink-0">
         <button
           type="button"
           id="btn-spotify-cover-toggle"
-          title="Toggle Spotify Playlist Embed"
-          class="relative flex-shrink-0 cursor-pointer"
+          title="Toggle YouTube Video Player"
+          class="relative flex-shrink-0 cursor-pointer group"
         >
           <img
             id="player-track-cover"
-            src="dugga-ma-asche.png"
-            alt="Dugga Ma Asche"
-            class="w-8 h-8 sm:w-9 sm:h-9 rounded-[8px] object-cover border border-[#E9B83E]/20 shadow"
+            src="https://i.ytimg.com/vi/LLer3VPOcxg/hqdefault.jpg"
+            onerror="this.src='/dugga-ma-asche.png'"
+            alt="Durga Ma Asche"
+            class="w-8 h-8 sm:w-9 sm:h-9 rounded-[8px] object-cover border border-[#E9B83E]/20 shadow group-hover:scale-105 transition"
           />
+          <div class="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-[#FF0000] flex items-center justify-center shadow">
+            <svg class="w-2 h-2 text-white fill-current ml-0.5" viewBox="0 0 16 16">
+              <path d="M4 3.5v9l8-4.5-8-4.5z"/>
+            </svg>
+          </div>
         </button>
 
         <div class="flex flex-col min-w-0 pr-0.5">
           <button
             type="button"
             id="player-track-title-btn"
-            title="Toggle Spotify Playlist Embed"
-            class="text-left text-xs sm:text-[13px] font-bold text-[#F5E5B7] whitespace-nowrap leading-tight transition cursor-pointer"
+            title="Toggle YouTube Video Player"
+            class="text-left text-xs sm:text-[13px] font-bold text-[#F5E5B7] whitespace-nowrap leading-tight transition cursor-pointer hover:text-[#E9B83E] truncate max-w-[125px] sm:max-w-[175px]"
           >
-            <span id="player-track-title">Dugga Ma Asche</span>
+            <span id="player-track-title">Durga Ma Asche</span>
           </button>
-          <span id="player-track-artist" class="text-[10px] sm:text-[11px] text-[#F5E5B7]/60 whitespace-nowrap leading-tight mt-0.5">
-            Infra
+          <span id="player-track-artist" class="text-[10px] sm:text-[11px] text-[#F5E5B7]/60 whitespace-nowrap leading-tight mt-0.5 truncate max-w-[125px] sm:max-w-[175px]">
+            Infra · YouTube Music
           </span>
         </div>
       </div>
@@ -1016,7 +1024,7 @@
           type="button"
           id="btn-player-prev"
           title="Previous Track"
-          class="text-white/70 hover:text-white transition p-0.5"
+          class="text-white/70 hover:text-white transition p-0.5 cursor-pointer"
         >
           <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-current" viewBox="0 0 16 16">
             <path d="M3.3 1a.7.7 0 0 1 .7.7v5.15l9.95-5.744a.7.7 0 0 1 1.05.606v12.576a.7.7 0 0 1-1.05.607L4 9.149V14.3a.7.7 0 0 1-.7.7H1.7a.7.7 0 0 1-.7-.7V1.7a.7.7 0 0 1 .7-.7h1.6z"/>
@@ -1027,7 +1035,7 @@
           type="button"
           id="btn-player-play-pause"
           title="Play"
-          class="w-6 h-6 sm:w-6.5 sm:h-6.5 rounded-full bg-white text-black hover:scale-105 active:scale-95 flex items-center justify-center transition shadow-md flex-shrink-0"
+          class="w-6 h-6 sm:w-6.5 sm:h-6.5 rounded-full bg-white text-black hover:scale-105 active:scale-95 flex items-center justify-center transition shadow-md flex-shrink-0 cursor-pointer"
         >
           <svg id="icon-player-play" class="w-2.5 h-2.5 ml-0.5 fill-black" viewBox="0 0 16 16">
             <path d="M3 1.713a.7.7 0 0 1 1.05-.607l10.89 6.288a.7.7 0 0 1 0 1.212L4.05 14.894A.7.7 0 0 1 3 14.288V1.713z"/>
@@ -1038,7 +1046,7 @@
           type="button"
           id="btn-player-next"
           title="Next Track"
-          class="text-white/70 hover:text-white transition p-0.5"
+          class="text-white/70 hover:text-white transition p-0.5 cursor-pointer"
         >
           <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-current" viewBox="0 0 16 16">
             <path d="M12.7 1a.7.7 0 0 0-.7.7v5.15L2.05.106A.7.7 0 0 0 1 .712v12.576a.7.7 0 0 0 1.05.607L12 8.149V14.3a.7.7 0 0 0 .7.7h1.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7h-1.6z"/>
@@ -1050,7 +1058,7 @@
           type="button"
           id="btn-player-mute"
           title="Mute / Unmute"
-          class="text-white hover:text-white/80 transition p-0.5"
+          class="text-white hover:text-white/80 transition p-0.5 cursor-pointer"
         >
           <svg id="icon-player-mute" class="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current" viewBox="0 0 24 24">
             <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
@@ -3593,44 +3601,15 @@
 
     // End top search listeners
 
-    /* ── Spotify Music Player Widget Handlers (Screenshot Matching & Dhak Engine) ── */
-    const SPOTIFY_TRACKS = [
-      {
-        id: '1',
-        title: 'Dugga Ma Asche',
-        artist: 'Infra',
-        cover: 'dugga-ma-asche.png',
-        durationSec: 213, // 3:33
-        initialSec: 163, // 2:43 as in screenshot!
-        spotifyUrl: 'https://open.spotify.com/playlist/2cjLMgWAt3S6YNCEKFtVtk',
-      },
-      {
-        id: '2',
-        title: 'Dhaker Taale',
-        artist: 'Abhijeet Bhattacharya, Shreya Ghoshal',
-        cover: 'dugga-ma-asche.png',
-        durationSec: 232, // 3:52
-        initialSec: 45,
-        spotifyUrl: 'https://open.spotify.com/playlist/2cjLMgWAt3S6YNCEKFtVtk',
-      },
-      {
-        id: '3',
-        title: 'Bolo Durga Mai Ki Jai',
-        artist: 'Nakash Aziz',
-        cover: 'dugga-ma-asche.png',
-        durationSec: 195, // 3:15
-        initialSec: 30,
-        spotifyUrl: 'https://open.spotify.com/playlist/2cjLMgWAt3S6YNCEKFtVtk',
-      },
-    ];
-
-    let currentTrackIdx = 0;
+    /* ── YouTube Music Player & Playlist Engine (YouTube IFrame Player API) ── */
+    const YOUTUBE_PLAYLIST_ID = 'PLBFyKHpeq9js';
+    let ytPlayer = null;
+    let ytPlayerReady = false;
     let isTrackPlaying = false;
-    let trackCurrentSec = 163; // 2:43
-    let isTrackLiked = false;
-    let isTrackShuffle = false;
-    let isTrackRepeat = false;
-    let playerTicker = null;
+    let isAudioMuted = false;
+    let currentTrackElapsed = 45; // 0:45 default from screenshot
+    let currentTrackDuration = 213; // 3:33 default from screenshot
+    let ytProgressInterval = null;
 
     function formatSec(sec) {
       const m = Math.floor(sec / 60);
@@ -3638,7 +3617,7 @@
       return `${m}:${s < 10 ? '0' : ''}${s}`;
     }
 
-    // Web Audio Dhak Synthesizer
+    // Web Audio Dhak Synthesizer (Ambient fallback)
     class WebDhakEngine {
       constructor() {
         this.ctx = null;
@@ -3741,103 +3720,174 @@
     const btnPlayPauseMobile = document.getElementById('btn-player-play-pause-mobile');
     const iconPlayerPlay = document.getElementById('icon-player-play');
     const iconPlayerPlayMobile = document.getElementById('icon-player-play-mobile');
-    const btnPlayerShuffle = document.getElementById('btn-player-shuffle');
-    const btnPlayerRepeat = document.getElementById('btn-player-repeat');
     const btnPlayerPrev = document.getElementById('btn-player-prev');
     const btnPlayerNext = document.getElementById('btn-player-next');
+    const btnPlayerMute = document.getElementById('btn-player-mute');
+    const iconPlayerMute = document.getElementById('icon-player-mute');
 
-    function syncPlayerUI() {
-      const track = SPOTIFY_TRACKS[currentTrackIdx];
-      if (elTrackTitle) elTrackTitle.textContent = track.title;
-      if (elTrackArtist) elTrackArtist.textContent = track.artist;
-      if (elTrackCover) elTrackCover.src = track.cover;
-      if (elTimeCurrent) elTimeCurrent.textContent = formatSec(trackCurrentSec);
-      if (elTimeTotal) elTimeTotal.textContent = formatSec(track.durationSec);
-      const pct = Math.min(100, (trackCurrentSec / track.durationSec) * 100);
-      if (elScrubberFill) {
-        elScrubberFill.style.width = `${pct}%`;
-      }
-      if (elScrubberFillMobile) {
-        elScrubberFillMobile.style.width = `${pct}%`;
-      }
-      const playSvg = isTrackPlaying
+    function updatePlayPauseButtonUI(playing) {
+      const playSvg = playing
         ? `<path d="M2.7 1a.7.7 0 0 0-.7.7v12.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7H2.7zm8 0a.7.7 0 0 0-.7.7v12.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7h-2.6z"/>`
         : `<path d="M3 1.713a.7.7 0 0 1 1.05-.607l10.89 6.288a.7.7 0 0 1 0 1.212L4.05 14.894A.7.7 0 0 1 3 14.288V1.713z"/>`;
       if (iconPlayerPlay) {
         iconPlayerPlay.innerHTML = playSvg;
-        iconPlayerPlay.classList.toggle('ml-0.5', !isTrackPlaying);
+        iconPlayerPlay.classList.toggle('ml-0.5', !playing);
       }
       if (iconPlayerPlayMobile) {
         iconPlayerPlayMobile.innerHTML = playSvg;
-        iconPlayerPlayMobile.classList.toggle('ml-0.5', !isTrackPlaying);
+        iconPlayerPlayMobile.classList.toggle('ml-0.5', !playing);
       }
     }
 
-    function togglePlayback() {
-      isTrackPlaying = !isTrackPlaying;
-      if (isTrackPlaying) {
-        dhakEngine.play();
-        if (playerTicker) clearInterval(playerTicker);
-        playerTicker = setInterval(() => {
-          const track = SPOTIFY_TRACKS[currentTrackIdx];
-          if (trackCurrentSec >= track.durationSec) {
-            if (isTrackRepeat) {
-              trackCurrentSec = 0;
-            } else {
-              currentTrackIdx = (currentTrackIdx + 1) % SPOTIFY_TRACKS.length;
-              trackCurrentSec = 0;
-            }
-          } else {
-            trackCurrentSec += 1;
+    function updateYTTrackInfo() {
+      if (!ytPlayer || typeof ytPlayer.getVideoData !== 'function') return;
+      try {
+        const data = ytPlayer.getVideoData();
+        if (data && data.title) {
+          if (elTrackTitle) elTrackTitle.textContent = data.title;
+          const author = data.author ? data.author.replace(/ - Topic$/i, '').trim() : '';
+          if (elTrackArtist) elTrackArtist.textContent = author ? `${author} · YouTube Music` : 'Infra · YouTube Music';
+          if (data.video_id && elTrackCover) {
+            elTrackCover.src = `https://i.ytimg.com/vi/${data.video_id}/hqdefault.jpg`;
           }
-          syncPlayerUI();
-        }, 1000);
-      } else {
-        dhakEngine.stop();
-        if (playerTicker) {
-          clearInterval(playerTicker);
-          playerTicker = null;
         }
+        const dur = ytPlayer.getDuration();
+        if (dur && dur > 0) {
+          currentTrackDuration = Math.round(dur);
+          if (elTimeTotal) elTimeTotal.textContent = formatSec(currentTrackDuration);
+        }
+      } catch (e) {}
+    }
+
+    function startYTProgressTracker() {
+      if (ytProgressInterval) clearInterval(ytProgressInterval);
+      ytProgressInterval = setInterval(() => {
+        if (!ytPlayer || typeof ytPlayer.getCurrentTime !== 'function') return;
+        try {
+          const cur = ytPlayer.getCurrentTime() || 0;
+          const dur = ytPlayer.getDuration() || currentTrackDuration;
+          currentTrackElapsed = Math.round(cur);
+          if (dur > 0) currentTrackDuration = Math.round(dur);
+          if (elTimeCurrent) elTimeCurrent.textContent = formatSec(currentTrackElapsed);
+          if (elTimeTotal) elTimeTotal.textContent = formatSec(currentTrackDuration);
+          const pct = Math.min(100, (currentTrackElapsed / Math.max(1, currentTrackDuration)) * 100);
+          if (elScrubberFill) elScrubberFill.style.width = `${pct}%`;
+          if (elScrubberFillMobile) elScrubberFillMobile.style.width = `${pct}%`;
+        } catch (e) {}
+      }, 500);
+    }
+
+    function stopYTProgressTracker() {
+      if (ytProgressInterval) {
+        clearInterval(ytProgressInterval);
+        ytProgressInterval = null;
       }
-      syncPlayerUI();
+    }
+
+    function handleYTStateChange(state) {
+      if (window.YT && state === window.YT.PlayerState.PLAYING) {
+        isTrackPlaying = true;
+        updatePlayPauseButtonUI(true);
+        startYTProgressTracker();
+        updateYTTrackInfo();
+      } else if (window.YT && (state === window.YT.PlayerState.PAUSED || state === window.YT.PlayerState.ENDED)) {
+        isTrackPlaying = false;
+        updatePlayPauseButtonUI(false);
+        stopYTProgressTracker();
+      } else if (window.YT && (state === window.YT.PlayerState.BUFFERING || state === window.YT.PlayerState.CUED)) {
+        updateYTTrackInfo();
+      }
+    }
+
+    function initYouTubeIframePlayer() {
+      const container = document.getElementById('yt-player-iframe');
+      if (!container || ytPlayer || !window.YT || !window.YT.Player) return;
+      try {
+        ytPlayer = new window.YT.Player('yt-player-iframe', {
+          height: '100%',
+          width: '100%',
+          playerVars: {
+            listType: 'playlist',
+            list: YOUTUBE_PLAYLIST_ID,
+            autoplay: 0,
+            controls: 1,
+            playsinline: 1,
+            rel: 0,
+            modestbranding: 1,
+            enablejsapi: 1,
+            origin: window.location.origin
+          },
+          events: {
+            onReady: () => {
+              ytPlayerReady = true;
+              updateYTTrackInfo();
+            },
+            onStateChange: (e) => {
+              handleYTStateChange(e.data);
+            },
+            onError: (err) => {
+              console.warn('YouTube Player API message:', err);
+            }
+          }
+        });
+      } catch (err) {
+        console.warn('Could not initialize YouTube Player:', err);
+      }
+    }
+
+    if (window.YT && window.YT.Player) {
+      initYouTubeIframePlayer();
+    } else {
+      const prevYTReady = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = function() {
+        if (typeof prevYTReady === 'function') prevYTReady();
+        initYouTubeIframePlayer();
+      };
+    }
+
+    function togglePlayback() {
+      if (ytPlayer && ytPlayerReady && typeof ytPlayer.getPlayerState === 'function') {
+        const state = ytPlayer.getPlayerState();
+        if (state === window.YT.PlayerState.PLAYING) {
+          ytPlayer.pauseVideo();
+        } else {
+          ytPlayer.playVideo();
+        }
+      } else {
+        isTrackPlaying = !isTrackPlaying;
+        if (isTrackPlaying) {
+          dhakEngine.play();
+        } else {
+          dhakEngine.stop();
+        }
+        updatePlayPauseButtonUI(isTrackPlaying);
+      }
     }
 
     btnPlayPause?.addEventListener('click', togglePlayback);
     btnPlayPauseMobile?.addEventListener('click', togglePlayback);
 
-    btnPlayerShuffle?.addEventListener('click', () => {
-      isTrackShuffle = !isTrackShuffle;
-      btnPlayerShuffle.classList.toggle('text-[#1db954]', isTrackShuffle);
-      btnPlayerShuffle.classList.toggle('text-white/60', !isTrackShuffle);
-    });
-
-    btnPlayerRepeat?.addEventListener('click', () => {
-      isTrackRepeat = !isTrackRepeat;
-      btnPlayerRepeat.classList.toggle('text-[#1db954]', isTrackRepeat);
-      btnPlayerRepeat.classList.toggle('text-white/60', !isTrackRepeat);
-    });
-
     btnPlayerNext?.addEventListener('click', () => {
-      if (isTrackShuffle) {
-        currentTrackIdx = Math.floor(Math.random() * SPOTIFY_TRACKS.length);
-      } else {
-        currentTrackIdx = (currentTrackIdx + 1) % SPOTIFY_TRACKS.length;
+      if (ytPlayer && ytPlayerReady && typeof ytPlayer.nextVideo === 'function') {
+        ytPlayer.nextVideo();
       }
-      trackCurrentSec = 0;
-      syncPlayerUI();
     });
 
     btnPlayerPrev?.addEventListener('click', () => {
-      currentTrackIdx = (currentTrackIdx - 1 + SPOTIFY_TRACKS.length) % SPOTIFY_TRACKS.length;
-      trackCurrentSec = 0;
-      syncPlayerUI();
+      if (ytPlayer && ytPlayerReady && typeof ytPlayer.previousVideo === 'function') {
+        ytPlayer.previousVideo();
+      }
     });
 
-    let isAudioMuted = false;
-    const btnPlayerMute = document.getElementById('btn-player-mute');
-    const iconPlayerMute = document.getElementById('icon-player-mute');
     btnPlayerMute?.addEventListener('click', () => {
       isAudioMuted = !isAudioMuted;
+      if (ytPlayer && ytPlayerReady && typeof ytPlayer.mute === 'function') {
+        if (isAudioMuted) {
+          ytPlayer.mute();
+        } else {
+          ytPlayer.unMute();
+        }
+      }
       dhakEngine.setMuted(isAudioMuted);
       if (iconPlayerMute) {
         if (isAudioMuted) {
@@ -3862,43 +3912,55 @@
       const rect = elScrubberTrack.getBoundingClientRect();
       const clickX = e.clientX - rect.left;
       const fraction = Math.max(0, Math.min(1, clickX / rect.width));
-      const track = SPOTIFY_TRACKS[currentTrackIdx];
-      trackCurrentSec = Math.round(fraction * track.durationSec);
-      syncPlayerUI();
+      const targetSec = Math.round(fraction * currentTrackDuration);
+      if (ytPlayer && ytPlayerReady && typeof ytPlayer.seekTo === 'function') {
+        ytPlayer.seekTo(targetSec, true);
+      }
+      currentTrackElapsed = targetSec;
+      if (elTimeCurrent) elTimeCurrent.textContent = formatSec(currentTrackElapsed);
+      if (elScrubberFill) elScrubberFill.style.width = `${fraction * 100}%`;
     });
 
-    // Spotify Embed Popup Toggling & Sizing
+    // YouTube Embed Drawer Toggling & Minimizing (Keeps audio playing seamlessly)
     const popupSpotifyEmbed = document.getElementById('spotify-embed-popup');
-    const iframeSpotifyEmbed = document.getElementById('spotify-embed-iframe');
     const btnSpotifyCoverToggle = document.getElementById('btn-spotify-cover-toggle');
     const btnSpotifyTitleToggle = document.getElementById('player-track-title-btn');
     const btnSpotifyClose = document.getElementById('btn-spotify-embed-close');
-    const btnSpotifySize = document.getElementById('btn-spotify-toggle-size');
 
-    let isSpotifyEmbedVisible = false;
-    let isSpotifyEmbedCompact = false;
+    let isYouTubeEmbedOpen = false;
 
-    function toggleSpotifyEmbed() {
-      isSpotifyEmbedVisible = !isSpotifyEmbedVisible;
+    function toggleYouTubeEmbed() {
+      isYouTubeEmbedOpen = !isYouTubeEmbedOpen;
       if (popupSpotifyEmbed) {
-        popupSpotifyEmbed.classList.toggle('hidden', !isSpotifyEmbedVisible);
+        if (isYouTubeEmbedOpen) {
+          popupSpotifyEmbed.style.maxHeight = '360px';
+          popupSpotifyEmbed.style.opacity = '1';
+          popupSpotifyEmbed.style.pointerEvents = 'auto';
+          popupSpotifyEmbed.style.padding = '10px';
+          popupSpotifyEmbed.style.marginBottom = '8px';
+          popupSpotifyEmbed.style.borderWidth = '1px';
+        } else {
+          popupSpotifyEmbed.style.maxHeight = '0px';
+          popupSpotifyEmbed.style.opacity = '0';
+          popupSpotifyEmbed.style.pointerEvents = 'none';
+          popupSpotifyEmbed.style.padding = '0px';
+          popupSpotifyEmbed.style.marginBottom = '0px';
+          popupSpotifyEmbed.style.borderWidth = '0px';
+        }
       }
     }
 
-    btnSpotifyCoverToggle?.addEventListener('click', toggleSpotifyEmbed);
-    btnSpotifyTitleToggle?.addEventListener('click', toggleSpotifyEmbed);
+    btnSpotifyCoverToggle?.addEventListener('click', toggleYouTubeEmbed);
+    btnSpotifyTitleToggle?.addEventListener('click', toggleYouTubeEmbed);
     btnSpotifyClose?.addEventListener('click', () => {
-      isSpotifyEmbedVisible = false;
-      popupSpotifyEmbed?.classList.add('hidden');
-    });
-
-    btnSpotifySize?.addEventListener('click', () => {
-      isSpotifyEmbedCompact = !isSpotifyEmbedCompact;
-      if (iframeSpotifyEmbed) {
-        iframeSpotifyEmbed.height = isSpotifyEmbedCompact ? "152" : "352";
-      }
-      if (btnSpotifySize) {
-        btnSpotifySize.textContent = isSpotifyEmbedCompact ? "Playlist" : "Compact";
+      isYouTubeEmbedOpen = false;
+      if (popupSpotifyEmbed) {
+        popupSpotifyEmbed.style.maxHeight = '0px';
+        popupSpotifyEmbed.style.opacity = '0';
+        popupSpotifyEmbed.style.pointerEvents = 'none';
+        popupSpotifyEmbed.style.padding = '0px';
+        popupSpotifyEmbed.style.marginBottom = '0px';
+        popupSpotifyEmbed.style.borderWidth = '0px';
       }
     });
 
