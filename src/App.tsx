@@ -967,7 +967,11 @@ export default function App() {
   const [liveCount, setLiveCount] = useState(23)
 
   const [showSplash, setShowSplash] = useState(() => {
-    return sessionStorage.getItem('visited') !== 'true' && localStorage.getItem('parikrama_splash_seen') !== 'true'
+    try {
+      sessionStorage.removeItem('visited')
+      localStorage.removeItem('parikrama_splash_seen')
+    } catch {}
+    return true
   })
   const [cameraFlashing, setCameraFlashing] = useState(false)
   const [screenWhiteout, setScreenWhiteout] = useState(false)
@@ -1345,10 +1349,6 @@ export default function App() {
   const triggerCameraFlashAndEnter = useCallback(() => {
     // Start music on user entering from splash screen
     unlockAndPlayAudio()
-
-    // Mark visited immediately so splash NEVER shows again
-    sessionStorage.setItem('visited', 'true')
-    localStorage.setItem('parikrama_splash_seen', 'true')
 
     // 1. Position flash right at the guy's phone & ignite
     setPhonePos(computePhoneCoordinates())
