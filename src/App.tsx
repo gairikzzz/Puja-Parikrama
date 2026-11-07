@@ -1107,8 +1107,10 @@ export default function App() {
         const data = ytPlayerRef.current.getVideoData()
         if (data && data.title) {
           let cleanTitle = data.title
-          if (cleanTitle.includes('|')) {
-            cleanTitle = cleanTitle.split('|')[0].trim()
+          const separatorIdx = cleanTitle.search(/[|(\[\-(–—]/)
+          if (separatorIdx !== -1) {
+            const cut = cleanTitle.slice(0, separatorIdx).trim()
+            if (cut) cleanTitle = cut
           }
           setTrackTitle(cleanTitle)
           let author = data.author ? data.author.replace(/\s*-\s*Topic$/i, '').trim() : ''
