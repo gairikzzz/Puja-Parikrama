@@ -511,6 +511,8 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
   const [sourceBadge, setSourceBadge] = useState({ text: '📡 Live Device GPS', cls: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' })
   const [showDropdown, setShowDropdown] = useState(false)
   const [searchFilter, setSearchFilter] = useState('')
+  const [mapSearchQuery, setMapSearchQuery] = useState('')
+  const [showMapSearch, setShowMapSearch] = useState(false)
   const [step, setStep] = useState<'capture' | 'details'>('details')
   const [submitting, setSubmitting] = useState(false)
 
@@ -524,6 +526,8 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
     setSubmitting(false)
     setShowDropdown(false)
     setSearchFilter('')
+    setMapSearchQuery('')
+    setShowMapSearch(false)
   }
 
   const handleClose = () => { reset(); onClose() }
@@ -615,6 +619,14 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
     if (!q) return pandalsWithProximity
     return pandalsWithProximity.filter(p => p.name.toLowerCase().includes(q) || p.neighborhood.toLowerCase().includes(q))
   }, [pandalsWithProximity, pandalName, searchFilter])
+
+  const filteredMapPandals = useMemo(() => {
+    const q = mapSearchQuery.trim().toLowerCase()
+    if (!q) return []
+    return AGARTALA_MASTER_PANDALS.filter(p => 
+      p.name.toLowerCase().includes(q) || (p.neighborhood && p.neighborhood.toLowerCase().includes(q))
+    ).slice(0, 5)
+  }, [mapSearchQuery])
 
   const handleSubmit = async () => {
     if (!selectedFile || !pandalName.trim()) return
@@ -783,7 +795,7 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
             )}
           </div>
 
-          {/* Interactive Mini-Map Preview Card (Confirmation) */}
+          {/* Interactive Mini-Map Preview Card (Confirmation) with Floating Top Search Bar */}
           <div className="space-y-1">
             <label className="block text-[11px] sm:text-xs font-semibold text-[#F5E5B7] mb-1">
               <span>Confirm Pandal Location</span> <span className="text-red-500 font-bold">*</span>
@@ -801,10 +813,82 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
                 setLocationSource('custom')
                 setSourceBadge({ text: '🎯 Custom Pinned', cls: 'bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/30' })
               }}
-              className="relative w-full h-28 sm:h-32 rounded-xl overflow-hidden border border-white/15 bg-[#0a0a14] cursor-crosshair flex flex-col items-center justify-center text-center p-2 shadow-inner"
+              className="relative w-full h-32 sm:h-36 rounded-xl overflow-hidden border border-white/15 bg-[#0a0a14] cursor-crosshair flex flex-col items-center justify-center text-center p-2 pt-9 shadow-inner group"
             >
-              <div className="w-8 h-8 rounded-full bg-saffron/20 border border-saffron flex items-center justify-center text-sm mb-1 animate-bounce">
-                📍
+              {/* Map Search Bar Floating Over Top of Map */}
+              <div 
+                className="absolute top-2 left-2 right-2 z-20 pointer-events-auto" 
+                onClick={e => e.stopPropagation()}
+              >
+                <div className="relative flex items-center">
+                  <svg className="w-3 h-3 text-[#E9B83E] absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                  <input 
+                    type="text" 
+                    value={mapSearchQuery}
+                    onChange={e => { setMapSearchQuery(e.target.value); setShowMapSearch(true); }}
+                    onFocus={() => setShowMapSearch(true)}
+                    placeholder="Search place or pandal on map..." 
+                    className="w-full bg-[#121224]/85 hover:bg-[#121224]/95 focus:bg-[#121224] backdrop-blur-md border border-[#E9B83E]/45 focus:border-[#E9B83E] rounded-full pl-7 pr-7 py-1 text-[11px] text-[#F5E5B7] placeholder-[#F5E5B7]/50 focus:placeholder-transparent shadow-[0_2px_10px_rgba(0,0,0,0.6)] outline-none transition"
+                  />
+                  {mapSearchQuery && (
+                    <button 
+                      type="button" 
+                      onClick={() => { setMapSearchQuery(''); setShowMapSearch(false); }}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-white/15 hover:bg-white/25 text-white/70 hover:text-white flex items-center justify-center text-[9px] transition cursor-pointer"
+                      title="Clear"
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+
+                {/* Autocomplete Dropdown */}
+                {showMapSearch && filteredMapPandals.length > 0 && (
+                  <div className="mt-1 bg-[#121224]/95 backdrop-blur-xl border border-[#E9B83E]/40 rounded-xl shadow-2xl max-h-32 overflow-y-auto no-scrollbar p-1 space-y-0.5 text-left">
+                    {filteredMapPandals.map(p => (
+                      <div
+                        key={p.name}
+                        onClick={() => {
+                          setPandalName(p.name);
+                          setNeighborhood(p.neighborhood || 'Agartala');
+                          setCoords({ lat: p.lat, lng: p.lng });
+                          setLocationSource('custom');
+                          setSourceBadge({ text: '🏛️ Pandal Coordinates', cls: 'bg-amber-500/20 text-amber-300 border-amber-500/30' });
+                          setMapSearchQuery(p.name);
+                          setShowMapSearch(false);
+                        }}
+                        className="px-2.5 py-1.5 rounded-lg text-left text-xs font-semibold flex items-center justify-between transition cursor-pointer text-[#F5E5B7]/90 hover:bg-[#E9B83E]/20 hover:text-[#E9B83E]"
+                      >
+                        <div className="flex items-center gap-1.5 min-w-0">
+                          <span className="text-xs">{p.emoji || '🪔'}</span>
+                          <span className="text-[11px] font-bold truncate">{p.name}</span>
+                        </div>
+                        <span className="text-[9px] text-[#E9B83E] bg-[#E9B83E]/15 border border-[#E9B83E]/30 px-1.5 py-0.5 rounded-full flex-shrink-0 ml-1">
+                          {p.neighborhood}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Smaller Yellow Pin */}
+              <div className="relative flex items-center justify-center mb-0.5 drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)]">
+                <svg width="22" height="28" viewBox="0 0 26 32" fill="none">
+                  <defs>
+                    <linearGradient id="yellowPinGradReact" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#FCEAB8" />
+                      <stop offset="50%" stopColor="#E9B83E" />
+                      <stop offset="100%" stopColor="#B8861B" />
+                    </linearGradient>
+                  </defs>
+                  <path d="M13 1.5C6.9 1.5 2 6.4 2 12.5c0 7.8 9.9 16.7 10.4 17.1a1 1 0 0 0 1.2 0c0.5-0.4 10.4-9.3 10.4-17.1C24 6.4 19.1 1.5 13 1.5z" fill="url(#yellowPinGradReact)" stroke="#211329" strokeWidth="1.5" strokeLinejoin="round" />
+                  <circle cx="13" cy="12.5" r="4.5" fill="#FFFFFF" />
+                  <circle cx="13" cy="12.5" r="2.5" fill="#211329" />
+                </svg>
               </div>
               <span className="text-white text-xs font-bold truncate max-w-[90%]">{pandalName || 'Selected Location'}</span>
               <span className="font-mono text-amber-300 text-[9px] mt-0.5">{coords.lat.toFixed(4)}° N, {coords.lng.toFixed(4)}° E</span>
