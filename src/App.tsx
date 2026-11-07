@@ -58,20 +58,20 @@ const AGARTALA_CENTER = { lat: 23.8315, lng: 91.2868 }
 const MAPS_API_KEY = 'AIzaSyCV8RIIXa0kW_T63kKNkW-vOm30yDMAiYc'
 
 export const AGARTALA_MASTER_PANDALS = [
-  { name: 'Bharat Ratna Sangha', neighborhood: 'Usha Bazar', lat: 23.8820, lng: 91.2785, emoji: '🪔' },
-  { name: 'Ujjayanta Palace Mandap', neighborhood: 'Palace Compound', lat: 23.8350, lng: 91.2880, emoji: '👑' },
-  { name: 'Banamalipur Club & Youth Union', neighborhood: 'Banamalipur', lat: 23.8335, lng: 91.2915, emoji: '🎆' },
-  { name: 'Battala Durga Puja', neighborhood: 'Battala', lat: 23.8361, lng: 91.2812, emoji: '🪔' },
-  { name: 'Dhaleswar Netaji Play Center', neighborhood: 'Dhaleswar', lat: 23.8310, lng: 91.2965, emoji: '🌟' },
-  { name: 'Ramnagar Road No. 2', neighborhood: 'Ramnagar', lat: 23.8430, lng: 91.2840, emoji: '✨' },
-  { name: 'Shanti Para Youth Club', neighborhood: 'Shantipara', lat: 23.8375, lng: 91.2905, emoji: '🎊' },
-  { name: 'Melarmath Sarbajanin Mandap', neighborhood: 'Melarmath', lat: 23.8305, lng: 91.2855, emoji: '🕊️' },
-  { name: 'Kali Bari Puja Samiti', neighborhood: 'Kali Bari', lat: 23.8295, lng: 91.2940, emoji: '🌺' },
-  { name: 'Polestar Club', neighborhood: 'Banamalipur', lat: 23.8368, lng: 91.2932, emoji: '⚡' },
-  { name: 'Deshabandhu Chittaranjan Club', neighborhood: 'Dhaleswar', lat: 23.8285, lng: 91.2985, emoji: '🎺' },
-  { name: 'Aikatan Sangha', neighborhood: 'Kunjaban', lat: 23.8480, lng: 91.2890, emoji: '🪕' },
-  { name: 'Badharghat Sporting Club', neighborhood: 'Badharghat', lat: 23.8120, lng: 91.2740, emoji: '🥁' },
-  { name: 'Pratapgarh Youth Federation', neighborhood: 'Pratapgarh', lat: 23.8210, lng: 91.2895, emoji: '🔥' }
+  { name: 'Bharat Ratna Sangha', neighborhood: 'Usha Bazar', city: 'Agartala', lat: 23.8820, lng: 91.2785, emoji: '🪔', keywords: ['usha bazar', 'airport', 'singerbhil', 'agartala', 'tripura', 'north agartala'] },
+  { name: 'Ujjayanta Palace Mandap', neighborhood: 'Palace Compound', city: 'Agartala', lat: 23.8350, lng: 91.2880, emoji: '👑', keywords: ['palace compound', 'ujjayanta palace', 'post office chowmuhani', 'agartala', 'tripura'] },
+  { name: 'Banamalipur Club & Youth Union', neighborhood: 'Banamalipur', city: 'Agartala', lat: 23.8335, lng: 91.2915, emoji: '🎆', keywords: ['banamalipur', 'math chowmuhani', 'agartala', 'tripura'] },
+  { name: 'Battala Durga Puja', neighborhood: 'Battala', city: 'Agartala', lat: 23.8361, lng: 91.2812, emoji: '🪔', keywords: ['battala', 'gol bazar', 'bordowali', 'bardowali', 'akhaura road', 'agartala', 'tripura'] },
+  { name: 'Dhaleswar Netaji Play Center', neighborhood: 'Dhaleswar', city: 'Agartala', lat: 23.8310, lng: 91.2965, emoji: '🌟', keywords: ['dhaleswar', 'jail road', 'college tilla', 'agartala', 'tripura'] },
+  { name: 'Ramnagar Road No. 2', neighborhood: 'Ramnagar', city: 'Agartala', lat: 23.8430, lng: 91.2840, emoji: '✨', keywords: ['ramnagar', 'radhanagar', 'akhaura road', 'agartala', 'tripura'] },
+  { name: 'Shanti Para Youth Club', neighborhood: 'Shantipara', city: 'Agartala', lat: 23.8375, lng: 91.2905, emoji: '🎊', keywords: ['shantipara', 'santipara', 'lake chowmuhani', 'agartala', 'tripura'] },
+  { name: 'Melarmath Sarbajanin Mandap', neighborhood: 'Melarmath', city: 'Agartala', lat: 23.8305, lng: 91.2855, emoji: '🕊️', keywords: ['melarmath', 'city centre', 'post office', 'agartala', 'tripura', 'central agartala'] },
+  { name: 'Kali Bari Puja Samiti', neighborhood: 'Kali Bari', city: 'Agartala', lat: 23.8295, lng: 91.2940, emoji: '🌺', keywords: ['kali bari', 'central agartala', 'agartala', 'tripura'] },
+  { name: 'Polestar Club', neighborhood: 'Banamalipur', city: 'Agartala', lat: 23.8368, lng: 91.2932, emoji: '⚡', keywords: ['banamalipur', 'agartala', 'tripura'] },
+  { name: 'Deshabandhu Chittaranjan Club', neighborhood: 'Dhaleswar', city: 'Agartala', lat: 23.8285, lng: 91.2985, emoji: '🎺', keywords: ['dhaleswar', 'college tilla', 'agartala', 'tripura'] },
+  { name: 'Aikatan Sangha', neighborhood: 'Kunjaban', city: 'Agartala', lat: 23.8480, lng: 91.2890, emoji: '🪕', keywords: ['kunjaban', 'gb bazar', 'gb hospital', 'circuit house', 'secretariat', 'agartala', 'tripura'] },
+  { name: 'Badharghat Sporting Club', neighborhood: 'Badharghat', city: 'Agartala', lat: 23.8120, lng: 91.2740, emoji: '🥁', keywords: ['badharghat', 'amtali', 'railway station', 'south agartala', 'agartala', 'tripura'] },
+  { name: 'Pratapgarh Youth Federation', neighborhood: 'Pratapgarh', city: 'Agartala', lat: 23.8210, lng: 91.2895, emoji: '🔥', keywords: ['pratapgarh', 'arundhutinagar', 'agartala', 'tripura'] }
 ]
 
 function calcHaversineMeters(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -617,14 +617,26 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
   const filteredPandals = useMemo(() => {
     const q = (pandalName || searchFilter).trim().toLowerCase()
     if (!q) return pandalsWithProximity
-    return pandalsWithProximity.filter(p => p.name.toLowerCase().includes(q) || p.neighborhood.toLowerCase().includes(q))
+    return pandalsWithProximity.filter(p => 
+      p.name.toLowerCase().includes(q) ||
+      (p.neighborhood && p.neighborhood.toLowerCase().includes(q)) ||
+      (p.city && p.city.toLowerCase().includes(q)) ||
+      'agartala'.includes(q) || q.includes('agartala') ||
+      'tripura'.includes(q) || q.includes('tripura') ||
+      (p.keywords && p.keywords.some(k => k.includes(q) || q.includes(k)))
+    )
   }, [pandalsWithProximity, pandalName, searchFilter])
 
   const filteredMapPandals = useMemo(() => {
     const q = mapSearchQuery.trim().toLowerCase()
     if (!q) return []
     return AGARTALA_MASTER_PANDALS.filter(p => 
-      p.name.toLowerCase().includes(q) || (p.neighborhood && p.neighborhood.toLowerCase().includes(q))
+      p.name.toLowerCase().includes(q) ||
+      (p.neighborhood && p.neighborhood.toLowerCase().includes(q)) ||
+      (p.city && p.city.toLowerCase().includes(q)) ||
+      'agartala'.includes(q) || q.includes('agartala') ||
+      'tripura'.includes(q) || q.includes('tripura') ||
+      (p.keywords && p.keywords.some(k => k.includes(q) || q.includes(k)))
     ).slice(0, 5)
   }, [mapSearchQuery])
 
@@ -1365,10 +1377,16 @@ export default function App() {
 
   const topSearchResults = useMemo(() => {
     if (!topSearchQuery.trim()) return []
-    const q = topSearchQuery.toLowerCase()
-    return AGARTALA_MASTER_PANDALS.filter(p =>
-      p.name.toLowerCase().includes(q) || p.neighborhood.toLowerCase().includes(q)
-    ).slice(0, 6)
+    const q = topSearchQuery.trim().toLowerCase()
+    return AGARTALA_MASTER_PANDALS.filter(p => {
+      if (p.name && p.name.toLowerCase().includes(q)) return true
+      if (p.neighborhood && p.neighborhood.toLowerCase().includes(q)) return true
+      if (p.city && p.city.toLowerCase().includes(q)) return true
+      if ('agartala'.includes(q) || q.includes('agartala')) return true
+      if ('tripura'.includes(q) || q.includes('tripura')) return true
+      if (p.keywords && p.keywords.some(k => k.includes(q) || q.includes(k))) return true
+      return false
+    }).slice(0, 6)
   }, [topSearchQuery])
 
   const showToast = useCallback((_msg: string) => {
@@ -2001,9 +2019,9 @@ export default function App() {
                 </button>
               </div>
 
-              {/* Search Autocomplete Dropdown */}
+              {/* Search Autocomplete Dropdown (Starts just below search bar) */}
               {topSearchResults.length > 0 && (
-                <div className="absolute top-full mt-2 left-0 right-0 bg-[#211329]/75 border border-[#E9B83E]/30 rounded-2xl p-2 shadow-[0_12px_32px_rgba(13,12,27,0.65),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-xl z-50 max-h-60 overflow-y-auto space-y-1">
+                <div className="absolute top-full mt-1 left-0 right-0 bg-[#211329]/95 border border-[#E9B83E]/35 rounded-2xl p-1.5 shadow-[0_12px_32px_rgba(13,12,27,0.75),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-xl z-50 max-h-60 overflow-y-auto space-y-0.5">
                   {topSearchResults.map(pandal => (
                     <div
                       key={pandal.name}
@@ -2013,20 +2031,25 @@ export default function App() {
                         setTopSearchQuery('')
                         showToast(`📍 Showing ${pandal.name}`)
                       }}
-                      className="flex items-center justify-between p-2 rounded-xl hover:bg-white/10 cursor-pointer transition text-left"
+                      className="flex items-center justify-between px-3 py-2 rounded-xl hover:bg-[#E9B83E]/15 hover:text-[#E9B83E] text-white/90 cursor-pointer transition text-left group"
                     >
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span className="text-base">{pandal.emoji}</span>
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className="text-base flex-shrink-0">{pandal.emoji || '🪔'}</span>
                         <div className="truncate">
-                          <p className="text-xs font-bold text-white truncate">{pandal.name}</p>
-                          <p className="text-[10px] text-[#F5E5B7]/70 truncate">{pandal.neighborhood}</p>
+                          <p className="text-xs font-semibold text-white group-hover:text-[#E9B83E] truncate leading-tight">{pandal.name}</p>
+                          <p className="text-[10px] text-[#F5E5B7]/70 truncate mt-0.5 leading-tight">{pandal.neighborhood}, Agartala</p>
                         </div>
                       </div>
-                      <span className="text-[10px] text-[#E9B83E] font-mono flex-shrink-0">
-                        {formatDistance(calcHaversineMeters(currentUserCoords.lat, currentUserCoords.lng, pandal.lat, pandal.lng) / 1000)}
+                      <span className="text-[9px] text-[#E9B83E] bg-[#E9B83E]/15 border border-[#E9B83E]/30 px-2 py-0.5 rounded-full whitespace-nowrap ml-2 flex-shrink-0 font-medium">
+                        {pandal.neighborhood}
                       </span>
                     </div>
                   ))}
+                </div>
+              )}
+              {topSearchQuery.trim() && topSearchResults.length === 0 && (
+                <div className="absolute top-full mt-1 left-0 right-0 bg-[#211329]/95 border border-[#E9B83E]/35 rounded-2xl p-3 shadow-[0_12px_32px_rgba(13,12,27,0.75)] backdrop-blur-xl z-50 text-center text-xs text-[#F5E5B7]/60 flex items-center justify-center gap-2">
+                  <span>🔍</span> No pandals or locations found
                 </div>
               )}
             </div>
