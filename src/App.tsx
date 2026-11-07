@@ -998,6 +998,7 @@ export default function App() {
   const userExplicitlyPaused = useRef(false)
   const autoPlayStarted = useRef(false)
   const [isPlaying, setIsPlaying] = useState(false)
+  const isMutedRef = useRef(false)
   const [isMuted, setIsMuted] = useState(false)
   const [trackTitle, setTrackTitle] = useState('Durga Ma Asche')
   const [trackArtist, setTrackArtist] = useState('Infra')
@@ -1010,15 +1011,18 @@ export default function App() {
     if (userExplicitlyPaused.current) return
     if (ytPlayerRef.current && ytPlayerReady.current) {
       try {
-        if (typeof ytPlayerRef.current.unMute === 'function') ytPlayerRef.current.unMute()
-        if (typeof ytPlayerRef.current.setVolume === 'function') ytPlayerRef.current.setVolume(100)
+        if (!isMutedRef.current) {
+          if (typeof ytPlayerRef.current.unMute === 'function') ytPlayerRef.current.unMute()
+          if (typeof ytPlayerRef.current.setVolume === 'function') ytPlayerRef.current.setVolume(100)
+        } else {
+          if (typeof ytPlayerRef.current.mute === 'function') ytPlayerRef.current.mute()
+        }
         if (typeof ytPlayerRef.current.playVideoAt === 'function' && !autoPlayStarted.current) {
           ytPlayerRef.current.playVideoAt(0)
         } else if (typeof ytPlayerRef.current.playVideo === 'function') {
           ytPlayerRef.current.playVideo()
         }
         autoPlayStarted.current = true
-        setIsMuted(false)
       } catch (e) {}
     }
   }, [])
@@ -1033,16 +1037,21 @@ export default function App() {
 
   // Global user interaction listener to start music on first touch/click if unmuted autoplay is deferred by browser
   useEffect(() => {
+    const events = ['click', 'touchstart', 'touchend', 'pointerdown', 'pointerup', 'keydown', 'mousedown']
+    let cleanedUp = false
+    const removeListeners = () => {
+      if (cleanedUp) return
+      cleanedUp = true
+      events.forEach(evt => window.removeEventListener(evt, onGesture))
+    }
     const onGesture = () => {
-      if (!userExplicitlyPaused.current) {
+      removeListeners()
+      if (!userExplicitlyPaused.current && !isMutedRef.current) {
         unlockAndPlayAudio()
       }
     }
-    const events = ['click', 'touchstart', 'touchend', 'pointerdown', 'pointerup', 'keydown', 'mousedown']
     events.forEach(evt => window.addEventListener(evt, onGesture, { passive: true }))
-    return () => {
-      events.forEach(evt => window.removeEventListener(evt, onGesture))
-    }
+    return removeListeners
   }, [unlockAndPlayAudio])
 
   // Initialize YouTube IFrame API
@@ -1077,8 +1086,12 @@ export default function App() {
             onReady: (event: any) => {
               ytPlayerReady.current = true
               try {
-                event.target.unMute()
-                event.target.setVolume(100)
+                if (!isMutedRef.current) {
+                  event.target.unMute()
+                  event.target.setVolume(100)
+                } else {
+                  event.target.mute()
+                }
                 if (typeof event.target.playVideoAt === 'function') {
                   event.target.playVideoAt(0)
                 } else if (typeof event.target.playVideo === 'function') {
@@ -1143,10 +1156,16 @@ export default function App() {
       if (YT && state === YT.PlayerState.PLAYING) {
         setIsPlaying(true)
         autoPlayStarted.current = true
+        if (isMutedRef.current && ytPlayerRef.current && typeof ytPlayerRef.current.mute === 'function') {
+          ytPlayerRef.current.mute()
+        }
         updateYTTrackInfo()
       } else if (YT && (state === YT.PlayerState.PAUSED || state === YT.PlayerState.ENDED)) {
         setIsPlaying(false)
       } else if (YT && (state === YT.PlayerState.BUFFERING || state === YT.PlayerState.CUED)) {
+        if (isMutedRef.current && ytPlayerRef.current && typeof ytPlayerRef.current.mute === 'function') {
+          ytPlayerRef.current.mute()
+        }
         updateYTTrackInfo()
       }
     }
@@ -1177,19 +1196,23 @@ export default function App() {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  const toggleMute = useCallback(() => {
-    setIsMuted(m => {
-      const next = !m
-      if (ytPlayerRef.current && ytPlayerReady.current && typeof ytPlayerRef.current.mute === 'function') {
+  const toggleMute = useCallback((e?: React.MouseEvent) => {
+    e?.stopPropagation()
+    const next = !isMutedRef.current
+    isMutedRef.current = next
+    setIsMuted(next)
+
+    if (ytPlayerRef.current && ytPlayerReady.current) {
+      try {
         if (next) {
-          ytPlayerRef.current.mute()
+          if (typeof ytPlayerRef.current.mute === 'function') ytPlayerRef.current.mute()
         } else {
-          ytPlayerRef.current.unMute()
+          if (typeof ytPlayerRef.current.unMute === 'function') ytPlayerRef.current.unMute()
+          if (typeof ytPlayerRef.current.setVolume === 'function') ytPlayerRef.current.setVolume(100)
         }
-      }
-      dhakEngineRef.current?.setMuted(next)
-      return next
-    })
+      } catch (err) {}
+    }
+    dhakEngineRef.current?.setMuted(next)
   }, [])
 
   // Playback timer ticker
@@ -1214,7 +1237,8 @@ export default function App() {
     }
   }, [isPlaying, totalDurationSec])
 
-  const togglePlayPause = useCallback(() => {
+  const togglePlayPause = useCallback((e?: React.MouseEvent) => {
+    e?.stopPropagation()
     if (ytPlayerRef.current && ytPlayerReady.current && typeof ytPlayerRef.current.getPlayerState === 'function') {
       const YT = (window as any).YT
       const state = ytPlayerRef.current.getPlayerState()
@@ -1223,6 +1247,14 @@ export default function App() {
         ytPlayerRef.current.pauseVideo()
       } else {
         userExplicitlyPaused.current = false
+        try {
+          if (!isMutedRef.current) {
+            ytPlayerRef.current.unMute()
+            ytPlayerRef.current.setVolume(100)
+          } else {
+            ytPlayerRef.current.mute()
+          }
+        } catch(e) {}
         ytPlayerRef.current.playVideo()
       }
     } else {
@@ -1240,15 +1272,23 @@ export default function App() {
     }
   }, [])
 
-  const handleNextTrack = useCallback(() => {
+  const handleNextTrack = useCallback((e?: React.MouseEvent) => {
+    e?.stopPropagation()
     if (ytPlayerRef.current && ytPlayerReady.current && typeof ytPlayerRef.current.nextVideo === 'function') {
       ytPlayerRef.current.nextVideo()
+      if (isMutedRef.current && typeof ytPlayerRef.current.mute === 'function') {
+        ytPlayerRef.current.mute()
+      }
     }
   }, [])
 
-  const handlePrevTrack = useCallback(() => {
+  const handlePrevTrack = useCallback((e?: React.MouseEvent) => {
+    e?.stopPropagation()
     if (ytPlayerRef.current && ytPlayerReady.current && typeof ytPlayerRef.current.previousVideo === 'function') {
       ytPlayerRef.current.previousVideo()
+      if (isMutedRef.current && typeof ytPlayerRef.current.mute === 'function') {
+        ytPlayerRef.current.mute()
+      }
     }
   }, [])
 

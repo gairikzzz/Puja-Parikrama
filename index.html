@@ -3573,28 +3573,39 @@
     let currentTrackDuration = 0;
     let ytProgressInterval = null;
 
+    // Listen on first user gesture anywhere to unlock unmuted audio playback if autoplay was deferred
+    const gestureEvents = ['click', 'touchstart', 'touchend', 'pointerdown', 'pointerup', 'keydown', 'mousedown'];
+    let gestureCleanedUp = false;
+    function cleanupGestureListeners() {
+      if (gestureCleanedUp) return;
+      gestureCleanedUp = true;
+      gestureEvents.forEach(evt => window.removeEventListener(evt, onFirstUserGesture));
+    }
+
     function unlockAndPlayAudio() {
       if (userExplicitlyPaused) return;
       if (ytPlayer && ytPlayerReady) {
         try {
-          if (typeof ytPlayer.unMute === 'function') ytPlayer.unMute();
-          if (typeof ytPlayer.setVolume === 'function') ytPlayer.setVolume(100);
+          if (!isAudioMuted) {
+            if (typeof ytPlayer.unMute === 'function') ytPlayer.unMute();
+            if (typeof ytPlayer.setVolume === 'function') ytPlayer.setVolume(100);
+          } else {
+            if (typeof ytPlayer.mute === 'function') ytPlayer.mute();
+          }
           if (typeof ytPlayer.playVideoAt === 'function' && !autoPlayStarted) {
             ytPlayer.playVideoAt(0);
           } else if (typeof ytPlayer.playVideo === 'function') {
             ytPlayer.playVideo();
           }
           autoPlayStarted = true;
-          isAudioMuted = false;
         } catch (e) {}
       }
     }
     window.tryStartParikramaMusic = unlockAndPlayAudio;
 
-    // Listen on first user gesture anywhere to unlock unmuted audio playback if autoplay was deferred
-    const gestureEvents = ['click', 'touchstart', 'touchend', 'pointerdown', 'pointerup', 'keydown', 'mousedown'];
     function onFirstUserGesture() {
-      if (!userExplicitlyPaused) {
+      cleanupGestureListeners();
+      if (!userExplicitlyPaused && !isAudioMuted) {
         unlockAndPlayAudio();
       }
     }
@@ -3785,6 +3796,10 @@
       if (window.YT && state === window.YT.PlayerState.PLAYING) {
         isTrackPlaying = true;
         autoPlayStarted = true;
+        cleanupGestureListeners();
+        if (isAudioMuted && ytPlayer && typeof ytPlayer.mute === 'function') {
+          ytPlayer.mute();
+        }
         updatePlayPauseButtonUI(true);
         startYTProgressTracker();
         updateYTTrackInfo();
@@ -3793,6 +3808,9 @@
         updatePlayPauseButtonUI(false);
         stopYTProgressTracker();
       } else if (window.YT && (state === window.YT.PlayerState.BUFFERING || state === window.YT.PlayerState.CUED)) {
+        if (isAudioMuted && ytPlayer && typeof ytPlayer.mute === 'function') {
+          ytPlayer.mute();
+        }
         updateYTTrackInfo();
       }
     }
@@ -3818,9 +3836,14 @@
           events: {
             onReady: (event) => {
               ytPlayerReady = true;
+              cleanupGestureListeners();
               try {
-                event.target.unMute();
-                event.target.setVolume(100);
+                if (!isAudioMuted) {
+                  event.target.unMute();
+                  event.target.setVolume(100);
+                } else {
+                  event.target.mute();
+                }
                 if (typeof event.target.playVideoAt === 'function') {
                   event.target.playVideoAt(0);
                 } else if (typeof event.target.playVideo === 'function') {
@@ -3872,8 +3895,12 @@
         } else {
           userExplicitlyPaused = false;
           try {
-            ytPlayer.unMute();
-            ytPlayer.setVolume(100);
+            if (!isAudioMuted) {
+              ytPlayer.unMute();
+              ytPlayer.setVolume(100);
+            } else {
+              ytPlayer.mute();
+            }
           } catch(e) {}
           ytPlayer.playVideo();
         }
@@ -3893,45 +3920,62 @@
     btnPlayPause?.addEventListener('click', togglePlayback);
     btnPlayPauseMobile?.addEventListener('click', togglePlayback);
 
-    btnPlayerNext?.addEventListener('click', () => {
+    btnPlayerNext?.addEventListener('click', (e) => {
+      e?.stopPropagation();
       if (ytPlayer && ytPlayerReady && typeof ytPlayer.nextVideo === 'function') {
         ytPlayer.nextVideo();
+        if (isAudioMuted && typeof ytPlayer.mute === 'function') {
+          ytPlayer.mute();
+        }
       }
     });
 
-    btnPlayerPrev?.addEventListener('click', () => {
+    btnPlayerPrev?.addEventListener('click', (e) => {
+      e?.stopPropagation();
       if (ytPlayer && ytPlayerReady && typeof ytPlayer.previousVideo === 'function') {
         ytPlayer.previousVideo();
+        if (isAudioMuted && typeof ytPlayer.mute === 'function') {
+          ytPlayer.mute();
+        }
       }
     });
 
-    btnPlayerMute?.addEventListener('click', () => {
+    function updateMuteButtonUI(muted) {
+      if (!iconPlayerMute || !btnPlayerMute) return;
+      if (muted) {
+        iconPlayerMute.innerHTML = `
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor"/>
+          <line x1="23" y1="9" x2="17" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="17" y1="9" x2="23" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        `;
+        btnPlayerMute.setAttribute('title', 'Unmute');
+        btnPlayerMute.classList.add('text-white/45');
+        btnPlayerMute.classList.remove('text-white');
+      } else {
+        iconPlayerMute.innerHTML = `
+          <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+        `;
+        btnPlayerMute.setAttribute('title', 'Mute');
+        btnPlayerMute.classList.remove('text-white/45');
+        btnPlayerMute.classList.add('text-white');
+      }
+    }
+
+    btnPlayerMute?.addEventListener('click', (e) => {
+      e?.stopPropagation();
       isAudioMuted = !isAudioMuted;
-      if (ytPlayer && ytPlayerReady && typeof ytPlayer.mute === 'function') {
-        if (isAudioMuted) {
-          ytPlayer.mute();
-        } else {
-          ytPlayer.unMute();
-        }
+      if (ytPlayer && ytPlayerReady) {
+        try {
+          if (isAudioMuted) {
+            if (typeof ytPlayer.mute === 'function') ytPlayer.mute();
+          } else {
+            if (typeof ytPlayer.unMute === 'function') ytPlayer.unMute();
+            if (typeof ytPlayer.setVolume === 'function') ytPlayer.setVolume(100);
+          }
+        } catch (err) {}
       }
       dhakEngine.setMuted(isAudioMuted);
-      if (iconPlayerMute) {
-        if (isAudioMuted) {
-          iconPlayerMute.innerHTML = `
-            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor"/>
-            <line x1="23" y1="9" x2="17" y2="15" stroke="currentColor" stroke-width="2"/>
-            <line x1="17" y1="9" x2="23" y2="15" stroke="currentColor" stroke-width="2"/>
-          `;
-          btnPlayerMute.classList.add('text-white/45');
-          btnPlayerMute.classList.remove('text-white');
-        } else {
-          iconPlayerMute.innerHTML = `
-            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
-          `;
-          btnPlayerMute.classList.remove('text-white/45');
-          btnPlayerMute.classList.add('text-white');
-        }
-      }
+      updateMuteButtonUI(isAudioMuted);
     });
 
     elScrubberTrack?.addEventListener('click', (e) => {
