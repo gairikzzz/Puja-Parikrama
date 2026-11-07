@@ -651,10 +651,13 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
             <label
               htmlFor="snap-camera"
               id="camera-capture-label"
-              className="w-full py-3.5 rounded-2xl text-center text-white font-bold text-sm cursor-pointer transition-all active:scale-95"
-              style={{ background: 'linear-gradient(135deg, #FF6B00, #C0392B)', boxShadow: '0 8px 32px rgba(255,107,0,0.4)' }}
+              className="w-full py-3.5 px-4 rounded-2xl text-center text-[#F5E5B7] font-bold text-sm cursor-pointer transition-all active:scale-95 bg-[#211329]/80 hover:bg-[#211329] border border-[#E9B83E]/40 hover:border-[#E9B83E] shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.18)] hover:shadow-[0_0_12px_rgba(233,184,62,0.35)] flex items-center justify-center gap-2.5"
             >
-              📷 Open Camera
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9B83E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#E9B83E] flex-shrink-0">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                <circle cx="12" cy="13" r="4"/>
+              </svg>
+              <span>Live Camera</span>
             </label>
             <input
               id="snap-camera"
@@ -670,9 +673,14 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
             <label
               htmlFor="snap-gallery"
               id="gallery-pick-label"
-              className="w-full py-3.5 rounded-2xl text-center font-bold text-sm cursor-pointer transition-all active:scale-95 glass-light text-white/80"
+              className="w-full py-3.5 px-4 rounded-2xl text-center text-[#F5E5B7] font-bold text-sm cursor-pointer transition-all active:scale-95 bg-[#211329]/80 hover:bg-[#211329] border border-[#E9B83E]/40 hover:border-[#E9B83E] shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.18)] hover:shadow-[0_0_12px_rgba(233,184,62,0.35)] flex items-center justify-center gap-2.5"
             >
-              🖼️ Select from Gallery
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9B83E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#E9B83E] flex-shrink-0">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5" fill="#E9B83E"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
+              <span>Local Gallery</span>
             </label>
             <input
               id="snap-gallery"
@@ -699,89 +707,80 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
             </div>
           </div>
 
-          {/* Location Status Card */}
-          <div className="glass-card rounded-2xl p-3 border border-white/10 space-y-1.5">
-            <div className="flex items-center justify-between">
-              <span className="text-white text-xs font-bold">{sourceBadge.text}</span>
-              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${sourceBadge.cls}`}>
-                Location Source
-              </span>
-            </div>
-            <div className="flex items-center justify-between text-[11px] text-white/50">
-              <span>Coordinates</span>
-              <span className="font-mono text-amber-300 text-[10px]">{coords.lat.toFixed(4)}° N, {coords.lng.toFixed(4)}° E</span>
-            </div>
-          </div>
-
-          {/* Searchable Pandal Name & Dropdown */}
+          {/* Pandal Name & Dropdown (Styled like Year Selector on Landing Page) */}
           <div className="relative">
-            <label className="text-white/50 text-xs font-semibold uppercase tracking-widest mb-1.5 block">
-              Pandal Name *
+            <label className="text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5 flex items-center justify-between">
+              <span>Pandal Name *</span>
+              <span className="text-[10px] text-[#E9B83E]/80 font-normal">Select known club or enter name</span>
             </label>
-            <div className="relative">
+            <div className="relative flex items-center rounded-2xl bg-[#211329]/80 border border-[#E9B83E]/40 hover:border-[#E9B83E] focus-within:border-[#E9B83E] shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-md transition-all">
+              <span className="pl-3.5 text-[#F5E5B7] text-xs font-bold flex-shrink-0 select-none">Pandal</span>
               <input
                 id="pandal-name-input"
                 type="text"
                 value={pandalName}
                 onFocus={() => setShowDropdown(true)}
-                onChange={e => { setPandalName(e.target.value); setSearchFilter(e.target.value) }}
-                placeholder="Type or select pandal..."
-                className="w-full py-3 px-3.5 pr-10 rounded-xl text-white text-sm outline-none bg-white/5 border border-white/15 focus:border-amber-400"
+                onChange={e => { setPandalName(e.target.value); setSearchFilter(e.target.value); setShowDropdown(true); }}
+                placeholder="Select or enter pandal..."
+                className="w-full bg-transparent pl-2.5 pr-9 py-3 text-white font-semibold text-xs sm:text-sm focus:outline-none placeholder-white/35"
               />
               <button
                 type="button"
                 onClick={() => setShowDropdown(!showDropdown)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-lg bg-white/10 text-white/60 flex items-center justify-center text-xs"
+                className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-lg bg-white/5 hover:bg-[#E9B83E]/20 flex items-center justify-center transition cursor-pointer"
+                title="Select pandal"
               >
-                ▼
+                <svg className={`w-3.5 h-3.5 text-[#E9B83E] transition-transform duration-200 ${showDropdown ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
               </button>
             </div>
 
-            {/* Proximity Dropdown */}
+            {/* Proximity Dropdown (Styled like Year dropdown) */}
             {showDropdown && (
-              <div className="absolute left-0 right-0 top-full mt-1.5 z-40 bg-[#16162a] border border-white/15 rounded-xl shadow-2xl max-h-48 overflow-y-auto no-scrollbar p-1.5 backdrop-blur-xl">
-                {filteredPandals.map(p => (
-                  <div
-                    key={p.name}
-                    onClick={() => {
-                      setPandalName(p.name)
-                      setNeighborhood(p.neighborhood)
-                      setCoords({ lat: p.lat, lng: p.lng })
-                      setLocationSource('custom')
-                      setSourceBadge({ text: '🏛️ Pandal Coordinates', cls: 'bg-amber-500/20 text-amber-300 border-amber-500/30' })
-                      setShowDropdown(false)
-                    }}
-                    className="p-2 hover:bg-white/10 rounded-lg cursor-pointer flex items-center justify-between"
-                  >
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span>{p.emoji}</span>
-                      <div className="min-w-0">
-                        <span className="text-white text-xs font-bold block truncate">{p.name}</span>
-                        <span className="text-white/40 text-[10px] block truncate">{p.neighborhood}</span>
+              <div className="absolute left-0 right-0 top-full mt-2 z-50 bg-[#211329]/95 border border-[#E9B83E]/35 rounded-2xl shadow-[0_12px_32px_rgba(13,12,27,0.85),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_12px_rgba(233,184,62,0.15)] backdrop-blur-2xl max-h-56 overflow-y-auto no-scrollbar p-2 space-y-1">
+                <div className="px-2.5 py-1 text-[10px] font-bold text-[#E9B83E] uppercase tracking-wider flex items-center justify-between border-b border-[#E9B83E]/20 mb-1">
+                  <span>Known Agartala Pandals</span>
+                  <span>Distance</span>
+                </div>
+                <div className="space-y-1">
+                  {filteredPandals.map(p => {
+                    const isSelected = pandalName.trim().toLowerCase() === p.name.toLowerCase();
+                    return (
+                      <div
+                        key={p.name}
+                        onClick={() => {
+                          setPandalName(p.name)
+                          setNeighborhood(p.neighborhood || 'Agartala')
+                          setCoords({ lat: p.lat, lng: p.lng })
+                          setLocationSource('custom')
+                          setSourceBadge({ text: '🏛️ Pandal Coordinates', cls: 'bg-amber-500/20 text-amber-300 border-amber-500/30' })
+                          setShowDropdown(false)
+                        }}
+                        className={`px-3 py-2.5 rounded-xl text-left text-xs font-semibold flex items-center justify-between transition cursor-pointer ${
+                          isSelected
+                            ? 'bg-[#E9B83E]/20 text-[#E9B83E] font-bold border border-[#E9B83E]/30 shadow-sm'
+                            : 'text-[#F5E5B7]/90 hover:bg-[#E9B83E]/20 hover:text-[#E9B83E] active:scale-[0.99] border border-transparent'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <span className="text-base flex-shrink-0">{p.emoji || '🪔'}</span>
+                          <div className="min-w-0">
+                            <span className="text-xs font-bold block truncate leading-tight">{p.name}</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 flex-shrink-0 ml-2">
+                          <span className="text-[10px] font-semibold text-[#E9B83E] bg-[#E9B83E]/15 border border-[#E9B83E]/30 px-2 py-0.5 rounded-full whitespace-nowrap">
+                            {p.distText}
+                          </span>
+                          {isSelected && <span className="text-[#E9B83E] text-xs font-bold">✓</span>}
+                        </div>
                       </div>
-                    </div>
-                    <span className="text-[10px] font-semibold text-amber-300 bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 rounded-full ml-2 flex-shrink-0">
-                      {p.distText}
-                    </span>
-                  </div>
-                ))}
+                    );
+                  })}
+                </div>
               </div>
             )}
-          </div>
-
-          {/* Neighborhood / Locality */}
-          <div>
-            <label className="text-white/50 text-xs font-semibold uppercase tracking-widest mb-1.5 block">
-              Neighborhood / Area *
-            </label>
-            <input
-              id="neighborhood-input"
-              type="text"
-              value={neighborhood}
-              onChange={e => setNeighborhood(e.target.value)}
-              placeholder="e.g. Usha Bazar, Banamalipur..."
-              className="w-full py-3 px-3.5 rounded-xl text-white text-sm outline-none bg-white/5 border border-white/15 focus:border-amber-400"
-            />
           </div>
 
           {/* Interactive Mini-Map Preview Card (Confirmation) */}

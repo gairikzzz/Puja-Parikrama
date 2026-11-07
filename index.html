@@ -1288,86 +1288,63 @@
 
         <!-- Buttons for Camera vs Gallery -->
         <div class="grid grid-cols-2 gap-2.5">
-          <button id="btn-trigger-camera" class="py-2.5 px-3 rounded-xl bg-gradient-to-r from-saffron to-puja-crimson text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-lg shadow-saffron/25 active:scale-95 transition">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M9 3L7.17 5H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2h-3.17L15 3H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
+          <button id="btn-trigger-camera" class="py-2.5 px-3 rounded-xl bg-[#211329]/80 hover:bg-[#211329] border border-[#E9B83E]/40 hover:border-[#E9B83E] text-[#F5E5B7] font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.18)] hover:shadow-[0_0_12px_rgba(233,184,62,0.35)] active:scale-95 transition">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E9B83E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#E9B83E] flex-shrink-0">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+              <circle cx="12" cy="13" r="4"/>
             </svg>
             <span>Live Camera</span>
           </button>
-          <button id="btn-trigger-gallery" class="py-2.5 px-3 rounded-xl glass-card text-white/90 font-semibold text-xs sm:text-sm flex items-center justify-center gap-1.5 hover:text-white active:scale-95 transition">
-            <span>🖼️</span> <span>Local Gallery</span>
+          <button id="btn-trigger-gallery" class="py-2.5 px-3 rounded-xl bg-[#211329]/80 hover:bg-[#211329] border border-[#E9B83E]/40 hover:border-[#E9B83E] text-[#F5E5B7] font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.18)] hover:shadow-[0_0_12px_rgba(233,184,62,0.35)] active:scale-95 transition">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E9B83E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#E9B83E] flex-shrink-0">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5" fill="#E9B83E"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+            <span>Local Gallery</span>
           </button>
         </div>
 
-        <!-- 2. Location Detection Waterfall Status Card -->
-        <div id="gps-status-card" class="glass-card rounded-2xl p-3.5 border border-white/10 space-y-2">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2 min-w-0">
-              <span id="gps-status-dot" class="w-2.5 h-2.5 rounded-full bg-sky-400 animate-pulse flex-shrink-0"></span>
-              <span id="gps-status-text" class="text-white font-bold text-xs truncate">Ready for Media</span>
-            </div>
-            <span id="gps-strategy-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white/10 text-white/70 border border-white/15 flex-shrink-0">
-              Standby
-            </span>
-          </div>
-          <div class="flex items-center justify-between text-[11px] text-white/60 pt-0.5">
-            <span id="gps-method-desc" class="truncate pr-2">Extracting EXIF GPS or falling back to live location</span>
-            <span id="gps-coords-preview" class="font-mono text-[10px] text-amber-300 flex-shrink-0 bg-white/5 px-2 py-0.5 rounded border border-white/10">--° N, --° E</span>
-          </div>
-        </div>
-
-        <!-- 3. Pandal Name & Dropdown -->
-        <div class="relative">
+        <!-- Pandal Name & Dropdown (Styled like Year Selector on Landing Page) -->
+        <div class="relative" id="pandal-selector-container">
           <label class="block text-xs font-semibold text-white/60 uppercase tracking-wider mb-1.5 flex items-center justify-between">
             <span>Pandal Name *</span>
-            <span class="text-[10px] text-amber-300/80 font-normal">Select known club or type custom</span>
+            <span class="text-[10px] text-[#E9B83E]/80 font-normal">Select known club or enter name</span>
           </label>
-          <div class="relative">
+          <div class="relative flex items-center rounded-2xl bg-[#211329]/80 border border-[#E9B83E]/40 hover:border-[#E9B83E] focus-within:border-[#E9B83E] shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-md transition-all">
+            <span class="pl-3.5 text-[#F5E5B7] text-xs font-bold flex-shrink-0 select-none">Pandal</span>
             <input 
               id="input-pandal-name" 
               type="text" 
-              placeholder="e.g. Bharat Ratna Sangha or enter pandal name..." 
+              placeholder="Select or enter pandal..." 
               autocomplete="off"
-              class="w-full bg-white/5 border border-white/15 rounded-xl pl-3.5 pr-10 py-3 text-white text-xs sm:text-sm focus:outline-none focus:border-amber-400 transition"
+              class="w-full bg-transparent pl-2.5 pr-9 py-3 text-white font-semibold text-xs sm:text-sm focus:outline-none placeholder-white/35"
             >
             <button 
               type="button" 
               id="btn-toggle-pandal-dropdown" 
-              class="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-white/60 hover:text-white transition"
-              title="Show suggestions"
+              class="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-lg bg-white/5 hover:bg-[#E9B83E]/20 flex items-center justify-center transition cursor-pointer"
+              title="Select pandal"
             >
-              ▼
+              <svg id="pandal-chevron" class="w-3.5 h-3.5 text-[#E9B83E] transition-transform duration-200" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
             </button>
           </div>
 
-          <!-- Proximity-Sorted Dropdown Menu -->
+          <!-- Dropdown Menu (Styled exactly like Year Dropdown on Landing Page) -->
           <div 
             id="pandal-dropdown-menu" 
-            class="hidden absolute left-0 right-0 top-full mt-1.5 z-30 bg-[#16162a] border border-white/15 rounded-xl shadow-2xl max-h-48 overflow-y-auto hide-scrollbar p-1.5 backdrop-blur-xl"
+            class="hidden absolute left-0 right-0 top-full mt-2 z-50 bg-[#211329]/95 border border-[#E9B83E]/35 rounded-2xl shadow-[0_12px_32px_rgba(13,12,27,0.85),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_12px_rgba(233,184,62,0.15)] backdrop-blur-2xl max-h-56 overflow-y-auto hide-scrollbar p-2 space-y-1"
           >
-            <div class="px-2 py-1 text-[10px] font-semibold text-white/40 uppercase tracking-wider flex items-center justify-between border-b border-white/10 mb-1">
+            <div class="px-2.5 py-1 text-[10px] font-bold text-[#E9B83E] uppercase tracking-wider flex items-center justify-between border-b border-[#E9B83E]/20 mb-1">
               <span>Known Agartala Pandals</span>
               <span>Distance</span>
             </div>
             <div id="pandal-dropdown-list" class="space-y-1">
-              <!-- Dynamically populated pandals with live calculated distance -->
+              <!-- Dynamically populated pandals -->
             </div>
           </div>
-        </div>
-
-        <!-- Neighborhood / Locality Input -->
-        <div>
-          <label class="block text-xs font-semibold text-white/60 uppercase tracking-wider mb-1.5 flex items-center justify-between">
-            <span>Neighborhood / Locality *</span>
-            <span class="text-[10px] text-amber-300/80 font-normal">e.g. Usha Bazar, Banamalipur</span>
-          </label>
-          <input 
-            id="input-neighborhood" 
-            type="text" 
-            placeholder="e.g. Usha Bazar, Banamalipur, Dhaleswar..." 
-            autocomplete="off"
-            class="w-full bg-white/5 border border-white/15 rounded-xl px-3.5 py-3 text-white text-xs sm:text-sm focus:outline-none focus:border-amber-400 transition"
-          >
         </div>
 
         <!-- 4. Interactive Mini-Map Pin Picker (Confirmation) -->
@@ -2959,19 +2936,28 @@
       if (!listEl) return;
 
       listEl.innerHTML = '';
+      const currentSelected = inputPandalName ? inputPandalName.value.trim().toLowerCase() : '';
+
       sortedList.forEach(p => {
+        const isSelected = currentSelected === p.name.toLowerCase();
         const item = document.createElement('div');
-        item.className = 'pandal-dropdown-item p-2.5 hover:bg-white/10 rounded-xl cursor-pointer flex items-center justify-between transition active:scale-98 border-b border-white/5 last:border-0';
+        item.className = isSelected
+          ? 'pandal-dropdown-item px-3 py-2.5 rounded-xl text-left text-xs font-semibold flex items-center justify-between transition cursor-pointer bg-[#E9B83E]/20 text-[#E9B83E] font-bold border border-[#E9B83E]/30 shadow-sm'
+          : 'pandal-dropdown-item px-3 py-2.5 rounded-xl text-left text-xs font-semibold flex items-center justify-between transition cursor-pointer text-[#F5E5B7]/90 hover:bg-[#E9B83E]/20 hover:text-[#E9B83E] active:scale-[0.99] border border-transparent';
+
         item.innerHTML = `
           <div class="flex items-center gap-2.5 min-w-0">
             <span class="text-base flex-shrink-0">${p.emoji || '🪔'}</span>
             <div class="min-w-0">
-              <span class="text-white text-xs font-bold block truncate leading-tight">${p.name}</span>
+              <span class="text-xs font-bold block truncate leading-tight">${p.name}</span>
             </div>
           </div>
-          <span class="text-[10px] font-semibold text-amber-300 bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 rounded-full flex-shrink-0 whitespace-nowrap ml-2">
-            ${p.distText}
-          </span>
+          <div class="flex items-center gap-2 flex-shrink-0 ml-2">
+            <span class="text-[10px] font-semibold text-[#E9B83E] bg-[#E9B83E]/15 border border-[#E9B83E]/30 px-2 py-0.5 rounded-full whitespace-nowrap">
+              ${p.distText}
+            </span>
+            ${isSelected ? '<span class="text-[#E9B83E] text-xs font-bold">✓</span>' : ''}
+          </div>
         `;
 
         item.addEventListener('click', () => {
@@ -2990,8 +2976,9 @@
             `Aligned to verified coordinates of ${p.name}`
           );
 
-          // Close dropdown
+          // Close dropdown & reset chevron
           document.getElementById('pandal-dropdown-menu')?.classList.add('hidden');
+          document.getElementById('pandal-chevron')?.classList.remove('rotate-180');
           showToast(`📍 Aligned map to "${p.name}"`);
         });
 
@@ -3200,10 +3187,10 @@
       };
       reader.readAsDataURL(file);
 
-      // 2. Update status card
-      gpsStatusText.textContent = isVideo ? 'Resolving GPS for Video...' : 'Extracting EXIF GPS...';
-      gpsMethodDesc.textContent = isVideo ? 'Checking device background GPS...' : 'Analyzing EXIF tags from media file...';
-      gpsStatusDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping flex-shrink-0';
+      // 2. Update status card (if present)
+      if (gpsStatusText) gpsStatusText.textContent = isVideo ? 'Resolving GPS for Video...' : 'Extracting EXIF GPS...';
+      if (gpsMethodDesc) gpsMethodDesc.textContent = isVideo ? 'Checking device background GPS...' : 'Analyzing EXIF tags from media file...';
+      if (gpsStatusDot) gpsStatusDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping flex-shrink-0';
 
       // 3. Execute Waterfall Strategy 4
       const locResult = await resolveHybridLocationWaterfall(file, source === 'camera');
@@ -3288,14 +3275,18 @@
     // Dropdown toggle
     const btnToggleDropdown = document.getElementById('btn-toggle-pandal-dropdown');
     const dropdownMenu = document.getElementById('pandal-dropdown-menu');
+    const pandalChevron = document.getElementById('pandal-chevron');
 
     btnToggleDropdown?.addEventListener('click', (e) => {
       e.stopPropagation();
+      const isHidden = dropdownMenu?.classList.contains('hidden');
       dropdownMenu?.classList.toggle('hidden');
+      pandalChevron?.classList.toggle('rotate-180', isHidden);
     });
 
     inputPandalName?.addEventListener('focus', () => {
       dropdownMenu?.classList.remove('hidden');
+      pandalChevron?.classList.add('rotate-180');
     });
 
     inputPandalName?.addEventListener('input', () => {
@@ -3306,6 +3297,7 @@
         : matchResult.allSorted.filter(p => p.name.toLowerCase().includes(query));
       renderPandalDropdownList(filtered);
       dropdownMenu?.classList.remove('hidden');
+      pandalChevron?.classList.add('rotate-180');
       validateUploadForm();
     });
 
@@ -3313,6 +3305,7 @@
     document.addEventListener('click', (e) => {
       if (!e.target.closest('#pandal-dropdown-menu') && e.target !== inputPandalName && e.target !== btnToggleDropdown) {
         dropdownMenu?.classList.add('hidden');
+        pandalChevron?.classList.remove('rotate-180');
       }
     });
 
