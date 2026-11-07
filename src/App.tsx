@@ -1426,6 +1426,24 @@ export default function App() {
     }
   }
 
+  const handleZoomIn = () => {
+    if (googleMapRef.current && typeof googleMapRef.current.getZoom === 'function') {
+      const currentZoom = googleMapRef.current.getZoom() || 14
+      googleMapRef.current.setZoom(Math.min(currentZoom + 1, 21))
+    } else if (typeof (window as any).zoomInMap === 'function') {
+      ;(window as any).zoomInMap()
+    }
+  }
+
+  const handleZoomOut = () => {
+    if (googleMapRef.current && typeof googleMapRef.current.getZoom === 'function') {
+      const currentZoom = googleMapRef.current.getZoom() || 14
+      googleMapRef.current.setZoom(Math.max(currentZoom - 1, 3))
+    } else if (typeof (window as any).zoomOutMap === 'function') {
+      ;(window as any).zoomOutMap()
+    }
+  }
+
   const handleToggleFilter = (filter: 'latest' | 'trending' | 'nearby') => {
     setActiveFilter(prev => {
       const next = prev === filter ? null : filter
@@ -1912,18 +1930,55 @@ export default function App() {
         </div>
       )}
 
-      {/* ── 4. RECENTER / LOCATE ME BUTTON (Floating Just Above the Footer Line) ── */}
+      {/* ── 4. MAP FLOATING CONTROLS (Locate Me + Magnify / Demagnify Zoom Stack) ── */}
       {mapReady && (
-        <button
-          id="btn-recenter"
-          onClick={handleLocateMe}
-          title="Locate My Position"
-          className="fixed right-3 sm:right-6 bottom-[74px] sm:bottom-[82px] z-30 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#211329]/70 hover:bg-[#211329]/85 border border-[#E9B83E]/40 hover:border-[#E9B83E] text-[#E9B83E] flex items-center justify-center shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.22)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] backdrop-blur-md transition-all active:scale-90 hover:scale-[1.02] pointer-events-auto flex-shrink-0 cursor-pointer"
+        <div
+          id="map-floating-controls"
+          className="fixed right-3 sm:right-6 bottom-[130px] sm:bottom-[150px] z-30 flex flex-col items-center gap-2 sm:gap-2.5 pointer-events-auto select-none"
         >
-          <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-[#E9B83E]" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
-          </svg>
-        </button>
+          {/* Locate My Position Button */}
+          <button
+            id="btn-recenter"
+            onClick={handleLocateMe}
+            title="Locate My Position"
+            aria-label="Locate My Position"
+            style={{ touchAction: 'manipulation' }}
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#211329]/75 hover:bg-[#211329]/90 border border-[#E9B83E]/40 hover:border-[#E9B83E] text-[#E9B83E] flex items-center justify-center shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.22)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] backdrop-blur-md transition-all active:scale-90 hover:scale-[1.05] pointer-events-auto flex-shrink-0 cursor-pointer"
+          >
+            <svg className="pointer-events-none w-4.5 h-4.5 sm:w-5 sm:h-5 text-[#E9B83E]" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
+            </svg>
+          </button>
+
+          {/* Magnify Map (+) Button */}
+          <button
+            id="btn-zoom-in"
+            onClick={handleZoomIn}
+            title="Magnify Map (Zoom In)"
+            aria-label="Magnify Map"
+            style={{ touchAction: 'manipulation' }}
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#211329]/75 hover:bg-[#211329]/90 border border-[#E9B83E]/40 hover:border-[#E9B83E] text-[#E9B83E] flex items-center justify-center shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.22)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] backdrop-blur-md transition-all active:scale-90 hover:scale-[1.05] pointer-events-auto flex-shrink-0 cursor-pointer"
+          >
+            <svg className="pointer-events-none w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#E9B83E]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
+
+          {/* Demagnify Map (-) Button */}
+          <button
+            id="btn-zoom-out"
+            onClick={handleZoomOut}
+            title="Demagnify Map (Zoom Out)"
+            aria-label="Demagnify Map"
+            style={{ touchAction: 'manipulation' }}
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#211329]/75 hover:bg-[#211329]/90 border border-[#E9B83E]/40 hover:border-[#E9B83E] text-[#E9B83E] flex items-center justify-center shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.22)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] backdrop-blur-md transition-all active:scale-90 hover:scale-[1.05] pointer-events-auto flex-shrink-0 cursor-pointer"
+          >
+            <svg className="pointer-events-none w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#E9B83E]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
+        </div>
       )}
 
       {/* ── STORY MODAL ── */}
