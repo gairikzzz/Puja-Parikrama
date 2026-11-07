@@ -1476,6 +1476,17 @@ export default function App() {
     }
   }
 
+  const handleResetNorth = () => {
+    if (googleMapRef.current) {
+      if (typeof googleMapRef.current.setHeading === 'function') googleMapRef.current.setHeading(0)
+      if (typeof googleMapRef.current.setTilt === 'function') googleMapRef.current.setTilt(0)
+    } else if (typeof (window as any).resetMapNorth === 'function') {
+      ;(window as any).resetMapNorth()
+    }
+    const needle = document.getElementById('compass-needle-icon')
+    if (needle) needle.style.transform = 'rotate(0deg)'
+  }
+
   const handleToggleFilter = (filter: 'latest' | 'trending' | 'nearby') => {
     setActiveFilter(prev => {
       const next = prev === filter ? null : filter
@@ -1968,13 +1979,68 @@ export default function App() {
         </div>
       )}
 
-      {/* ── 4. MAP FLOATING CONTROLS (Locate Me + Magnify / Demagnify Zoom Stack) ── */}
+      {/* ── 4. MAP FLOATING CONTROLS (Compass + Combined Zoom Capsule + Focus Button on Right-Hand Side Center) ── */}
       {mapReady && (
         <div
           id="map-floating-controls"
-          className="fixed right-3 sm:right-6 bottom-[130px] sm:bottom-[150px] z-30 flex flex-col items-center gap-2 sm:gap-2.5 pointer-events-auto select-none"
+          className="fixed right-3.5 sm:right-6 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-2.5 sm:gap-3 pointer-events-auto select-none"
         >
-          {/* Locate My Position Button */}
+          {/* 1. Compass Button (North Arrow + 'N') */}
+          <button
+            id="btn-compass"
+            onClick={handleResetNorth}
+            title="Reset Bearing to North"
+            aria-label="Compass"
+            style={{ touchAction: 'manipulation' }}
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#211329]/75 hover:bg-[#211329]/90 border border-[#E9B83E]/40 hover:border-[#E9B83E] text-[#E9B83E] flex flex-col items-center justify-center shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.22)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] backdrop-blur-md transition-all active:scale-90 hover:scale-[1.05] pointer-events-auto flex-shrink-0 cursor-pointer"
+          >
+            <div id="compass-needle-icon" className="flex flex-col items-center transition-transform duration-300 pointer-events-none">
+              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#E9B83E]" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 3.5L5 16.5l7-2.5 7 2.5L12 3.5z"/>
+              </svg>
+              <span className="font-black text-[9px] sm:text-[10px] text-[#E9B83E] leading-none -mt-0.5 tracking-wider">N</span>
+            </div>
+          </button>
+
+          {/* 2. Combined Zoom Controls Capsule (+ and − in one shared vertical container) */}
+          <div
+            id="zoom-controls-capsule"
+            className="w-9 sm:w-10 h-[76px] sm:h-[84px] rounded-full bg-[#211329]/75 border border-[#E9B83E]/40 hover:border-[#E9B83E]/70 shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.22)] backdrop-blur-md flex flex-col items-center justify-between overflow-hidden flex-shrink-0 transition-colors"
+          >
+            {/* Magnify Map (+) Button */}
+            <button
+              id="btn-zoom-in"
+              onClick={handleZoomIn}
+              title="Magnify Map (Zoom In)"
+              aria-label="Magnify Map"
+              style={{ touchAction: 'manipulation' }}
+              className="w-full h-[37px] sm:h-[41px] flex items-center justify-center text-[#E9B83E] hover:bg-[#E9B83E]/15 active:bg-[#E9B83E]/25 transition-colors cursor-pointer"
+            >
+              <svg className="pointer-events-none w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#E9B83E]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </button>
+
+            {/* Thin Golden Divider Line */}
+            <div className="w-4 sm:w-5 h-[1px] bg-[#E9B83E]/30 pointer-events-none flex-shrink-0"></div>
+
+            {/* Demagnify Map (−) Button */}
+            <button
+              id="btn-zoom-out"
+              onClick={handleZoomOut}
+              title="Demagnify Map (Zoom Out)"
+              aria-label="Demagnify Map"
+              style={{ touchAction: 'manipulation' }}
+              className="w-full h-[37px] sm:h-[41px] flex items-center justify-center text-[#E9B83E] hover:bg-[#E9B83E]/15 active:bg-[#E9B83E]/25 transition-colors cursor-pointer"
+            >
+              <svg className="pointer-events-none w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#E9B83E]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </button>
+          </div>
+
+          {/* 3. Focus / Locate Button (Crosshair Target) */}
           <button
             id="btn-recenter"
             onClick={handleLocateMe}
@@ -1985,35 +2051,6 @@ export default function App() {
           >
             <svg className="pointer-events-none w-4.5 h-4.5 sm:w-5 sm:h-5 text-[#E9B83E]" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
-            </svg>
-          </button>
-
-          {/* Magnify Map (+) Button */}
-          <button
-            id="btn-zoom-in"
-            onClick={handleZoomIn}
-            title="Magnify Map (Zoom In)"
-            aria-label="Magnify Map"
-            style={{ touchAction: 'manipulation' }}
-            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#211329]/75 hover:bg-[#211329]/90 border border-[#E9B83E]/40 hover:border-[#E9B83E] text-[#E9B83E] flex items-center justify-center shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.22)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] backdrop-blur-md transition-all active:scale-90 hover:scale-[1.05] pointer-events-auto flex-shrink-0 cursor-pointer"
-          >
-            <svg className="pointer-events-none w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#E9B83E]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="12" y1="5" x2="12" y2="19"></line>
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-          </button>
-
-          {/* Demagnify Map (-) Button */}
-          <button
-            id="btn-zoom-out"
-            onClick={handleZoomOut}
-            title="Demagnify Map (Zoom Out)"
-            aria-label="Demagnify Map"
-            style={{ touchAction: 'manipulation' }}
-            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#211329]/75 hover:bg-[#211329]/90 border border-[#E9B83E]/40 hover:border-[#E9B83E] text-[#E9B83E] flex items-center justify-center shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.22)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] backdrop-blur-md transition-all active:scale-90 hover:scale-[1.05] pointer-events-auto flex-shrink-0 cursor-pointer"
-          >
-            <svg className="pointer-events-none w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#E9B83E]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="5" y1="12" x2="19" y2="12"></line>
             </svg>
           </button>
         </div>
