@@ -1705,7 +1705,7 @@ export default function App() {
           {/* Main Custom Styled Music Player Pill Bar - SINGLE ROW LAYOUT MATCHING SNAP CTA DIAMETER */}
           <div
             id="spotify-music-player-bar"
-            className="w-full h-13 sm:h-14 overflow-hidden backdrop-blur-lg bg-[#211329]/55 hover:bg-[#211329]/75 border border-[#E9B83E]/40 hover:border-[#E9B83E] rounded-full px-2.5 sm:px-3.5 flex items-center justify-between gap-2 sm:gap-3 shadow-[0_4px_24px_rgba(13,12,27,0.45),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_10px_rgba(233,184,62,0.20)] hover:shadow-[0_4px_24px_rgba(13,12,27,0.50),0_0_16px_rgba(233,184,62,0.40)] hover:scale-[1.01] duration-200 transition-all"
+            className="w-full h-13 sm:h-14 overflow-hidden backdrop-blur-lg bg-[#211329]/55 hover:bg-[#211329]/75 border border-[#E9B83E]/40 hover:border-[#E9B83E] rounded-full px-2.5 sm:px-3.5 flex items-center justify-between gap-2 sm:gap-3 shadow-[0_4px_24px_rgba(13,12,27,0.45),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_10px_rgba(233,184,62,0.20)] hover:shadow-[0_4px_24px_rgba(13,12,27,0.50),0_0_16px_rgba(233,184,62,0.40)] hover:scale-[1.008] duration-200 transition-all"
           >
             {/* Left: Album Cover + Title + Artist (Clean cover without badge, full un-truncated title) */}
             <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-shrink-0">
