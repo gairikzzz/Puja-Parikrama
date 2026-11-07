@@ -672,8 +672,8 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
         {/* Header */}
         <div className="flex items-center justify-between pb-2 border-b border-[#E9B83E]/20 mb-2.5 flex-shrink-0">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full p-0.5 bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] flex items-center justify-center overflow-hidden flex-shrink-0 shadow-[0_0_8px_rgba(233,184,62,0.35)]">
-              <img src="/durga-emblem.png" alt="Puja Parikrama" className="w-full h-full rounded-full object-cover" />
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full p-0.5 bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] flex items-center justify-center overflow-hidden flex-shrink-0 aspect-square shadow-[0_0_8px_rgba(233,184,62,0.35)]">
+              <img src="/durga-emblem.png?v=c2" alt="Puja Parikrama" className="w-full h-full rounded-full object-contain object-center" />
             </div>
             <div>
               <h2 className="text-[#F5E5B7] font-bold text-sm sm:text-base leading-tight">
