@@ -3659,15 +3659,6 @@
 
     let userInteracted = window.userHasInteractedWithPage || false;
 
-    // Listen on first user gesture anywhere to unlock unmuted audio playback if autoplay was deferred
-    const gestureEvents = ['click', 'touchstart', 'touchend', 'pointerdown', 'pointerup', 'keydown', 'mousedown'];
-    let gestureCleanedUp = false;
-    function cleanupGestureListeners() {
-      if (gestureCleanedUp) return;
-      gestureCleanedUp = true;
-      gestureEvents.forEach(evt => window.removeEventListener(evt, onFirstUserGesture));
-    }
-
     function unlockAndPlayAudio() {
       userInteracted = true;
       if (userExplicitlyPaused) return;
@@ -3689,22 +3680,6 @@
       }
     }
     window.tryStartParikramaMusic = unlockAndPlayAudio;
-
-    function onFirstUserGesture() {
-      userInteracted = true;
-      cleanupGestureListeners();
-      if (!userExplicitlyPaused && !isAudioMuted) {
-        if (ytPlayer && ytPlayerReady) {
-          try {
-            ytPlayer.seekTo(0, true);
-            ytPlayer.unMute();
-            ytPlayer.setVolume(100);
-            ytPlayer.playVideo();
-          } catch(e) {}
-        }
-      }
-    }
-    gestureEvents.forEach(evt => window.addEventListener(evt, onFirstUserGesture, { passive: true }));
 
     function formatSec(sec) {
       const m = Math.floor(sec / 60);
@@ -3905,7 +3880,6 @@
 
         isTrackPlaying = true;
         autoPlayStarted = true;
-        cleanupGestureListeners();
         if (isAudioMuted && ytPlayer && typeof ytPlayer.mute === 'function') {
           ytPlayer.mute();
         }

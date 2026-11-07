@@ -1037,32 +1037,6 @@ export default function App() {
     }
   }, [])
 
-  // Global user interaction listener to start music on first touch/click if unmuted autoplay is deferred by browser
-  useEffect(() => {
-    const events = ['click', 'touchstart', 'touchend', 'pointerdown', 'pointerup', 'keydown', 'mousedown']
-    let cleanedUp = false
-    const removeListeners = () => {
-      if (cleanedUp) return
-      cleanedUp = true
-      events.forEach(evt => window.removeEventListener(evt, onGesture))
-    }
-    const onGesture = () => {
-      userInteracted.current = true
-      removeListeners()
-      if (!userExplicitlyPaused.current && !isMutedRef.current) {
-        if (ytPlayerRef.current && ytPlayerReady.current) {
-          try {
-            ytPlayerRef.current.seekTo(0, true)
-            ytPlayerRef.current.unMute()
-            ytPlayerRef.current.setVolume(100)
-            ytPlayerRef.current.playVideo()
-          } catch(e) {}
-        }
-      }
-    }
-    events.forEach(evt => window.addEventListener(evt, onGesture, { passive: true }))
-    return removeListeners
-  }, [unlockAndPlayAudio])
 
   // Initialize YouTube IFrame API
   useEffect(() => {
