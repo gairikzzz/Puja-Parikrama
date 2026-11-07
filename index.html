@@ -964,7 +964,7 @@
 
       <!-- Middle: Dynamic Progress Bar Scrubber with Left & Right Timestamps -->
       <div class="flex items-center gap-1 sm:gap-1.5 flex-1 min-w-[36px] text-[9px] sm:text-[10px] font-mono text-[#F5E5B7]/50 px-1">
-        <span id="player-time-current" class="text-left flex-shrink-0">0:45</span>
+        <span id="player-time-current" class="text-left flex-shrink-0">0:00</span>
         <div
           id="player-scrubber-track"
           class="relative flex-1 h-[2.5px] bg-[#0D0C1B]/80 hover:h-1 rounded-full overflow-hidden cursor-pointer group transition-all"
@@ -972,10 +972,10 @@
           <div
             id="player-scrubber-fill"
             class="h-full bg-gradient-to-r from-[#E9B83E] to-[#F5E5B7] transition-all"
-            style="width: 21%;"
+            style="width: 0%;"
           ></div>
         </div>
-        <span id="player-time-total" class="text-right flex-shrink-0">3:33</span>
+        <span id="player-time-total" class="text-right flex-shrink-0">0:00</span>
       </div>
 
       <!-- Right: Playback Controls Row (Prev, Play, Next, Mute in White / Crossed) -->
@@ -3569,8 +3569,8 @@
     let isAudioMuted = false;
     let userExplicitlyPaused = false;
     let autoPlayStarted = false;
-    let currentTrackElapsed = 45; // 0:45 default from screenshot
-    let currentTrackDuration = 213; // 3:33 default from screenshot
+    let currentTrackElapsed = 0;
+    let currentTrackDuration = 0;
     let ytProgressInterval = null;
 
     function unlockAndPlayAudio() {
@@ -3808,7 +3808,6 @@
             listType: 'playlist',
             list: YOUTUBE_PLAYLIST_ID,
             autoplay: 1,
-            mute: 1,
             controls: 0,
             playsinline: 1,
             rel: 0,
@@ -3820,16 +3819,26 @@
             onReady: (event) => {
               ytPlayerReady = true;
               try {
+                event.target.unMute();
+                event.target.setVolume(100);
                 if (typeof event.target.playVideoAt === 'function') {
                   event.target.playVideoAt(0);
                 } else if (typeof event.target.playVideo === 'function') {
                   event.target.playVideo();
                 }
-                // Try immediate unmute if browser grants audio permission on cold load
-                event.target.unMute();
-                event.target.setVolume(100);
-              } catch (e) {}
+              } catch (e) {
+                try {
+                  event.target.mute();
+                  event.target.playVideo();
+                } catch(err) {}
+              }
               updateYTTrackInfo();
+            },
+            onAutoplayBlocked: (event) => {
+              try {
+                event.target.mute();
+                event.target.playVideo();
+              } catch(e) {}
             },
             onStateChange: (e) => {
               handleYTStateChange(e.data);

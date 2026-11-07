@@ -1002,8 +1002,8 @@ export default function App() {
   const [trackTitle, setTrackTitle] = useState('Durga Ma Asche')
   const [trackArtist, setTrackArtist] = useState('Infra')
   const [trackCover, setTrackCover] = useState('https://i.ytimg.com/vi/LLer3VPOcxg/hqdefault.jpg')
-  const [currentTimeSec, setCurrentTimeSec] = useState(45) // 0:45 default from screenshot
-  const [totalDurationSec, setTotalDurationSec] = useState(213) // 3:33 default from screenshot
+  const [currentTimeSec, setCurrentTimeSec] = useState(0)
+  const [totalDurationSec, setTotalDurationSec] = useState(0)
   const dhakEngineRef = useRef<DhakAudioEngine | null>(null)
 
   const unlockAndPlayAudio = useCallback(() => {
@@ -1066,7 +1066,6 @@ export default function App() {
             listType: 'playlist',
             list: YOUTUBE_PLAYLIST_ID,
             autoplay: 1,
-            mute: 1,
             controls: 0,
             playsinline: 1,
             rel: 0,
@@ -1078,15 +1077,26 @@ export default function App() {
             onReady: (event: any) => {
               ytPlayerReady.current = true
               try {
+                event.target.unMute()
+                event.target.setVolume(100)
                 if (typeof event.target.playVideoAt === 'function') {
                   event.target.playVideoAt(0)
                 } else if (typeof event.target.playVideo === 'function') {
                   event.target.playVideo()
                 }
-                event.target.unMute()
-                event.target.setVolume(100)
-              } catch (e) {}
+              } catch (e) {
+                try {
+                  event.target.mute()
+                  event.target.playVideo()
+                } catch(err) {}
+              }
               updateYTTrackInfo()
+            },
+            onAutoplayBlocked: (event: any) => {
+              try {
+                event.target.mute()
+                event.target.playVideo()
+              } catch(e) {}
             },
             onStateChange: (e: any) => {
               handleYTStateChange(e.data)
