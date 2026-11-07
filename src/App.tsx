@@ -482,7 +482,7 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
   const [sourceBadge, setSourceBadge] = useState({ text: '📡 Live Device GPS', cls: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' })
   const [showDropdown, setShowDropdown] = useState(false)
   const [searchFilter, setSearchFilter] = useState('')
-  const [step, setStep] = useState<'capture' | 'details'>('capture')
+  const [step, setStep] = useState<'capture' | 'details'>('details')
   const [submitting, setSubmitting] = useState(false)
 
   const reset = () => {
@@ -491,7 +491,7 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
     setPandalName('')
     setNeighborhood('')
     setCoords(AGARTALA_CENTER)
-    setStep('capture')
+    setStep('details')
     setSubmitting(false)
     setShowDropdown(false)
     setSearchFilter('')
@@ -624,7 +624,7 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
             </div>
             <div>
               <h2 className="text-white font-bold text-base leading-tight">
-                {step === 'capture' ? 'Snap & Tag Pandal' : 'Pandal Photo Verification'}
+                Snap & Tag Pandal
               </h2>
               <p className="text-white/40 text-[11px]">Strategy 4: Hybrid EXIF + Live GPS + Map Confirmation</p>
             </div>
@@ -634,77 +634,44 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
           </button>
         </div>
 
-      {step === 'capture' ? (
-        /* Capture step */
-        <div className="flex-1 flex flex-col items-center justify-center gap-6 px-8">
-          <div className="w-32 h-32 rounded-3xl flex items-center justify-center"
-            style={{ background: 'linear-gradient(135deg, rgba(255,107,0,0.2), rgba(192,57,43,0.2))', border: '2px dashed rgba(255,107,0,0.5)' }}>
-            <span className="text-5xl">🪔</span>
-          </div>
-          <div className="text-center">
-            <h3 className="text-white font-bold text-xl mb-1">Submit Pandal Photo</h3>
-            <p className="text-white/50 text-xs leading-relaxed max-w-xs">
-              Take or select a photo of the Durga Puja pandal or idol. Automatic EXIF GPS and AI moderation will screen the submission.
-            </p>
-          </div>
-          <div className="flex flex-col gap-3 w-full max-w-xs">
-            <label
-              htmlFor="snap-camera"
-              id="camera-capture-label"
-              className="w-full py-3.5 px-4 rounded-2xl text-center text-[#F5E5B7] font-bold text-sm cursor-pointer transition-all active:scale-95 bg-[#211329]/80 hover:bg-[#211329] border border-[#E9B83E]/40 hover:border-[#E9B83E] shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.18)] hover:shadow-[0_0_12px_rgba(233,184,62,0.35)] flex items-center justify-center gap-2.5"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9B83E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#E9B83E] flex-shrink-0">
-                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                <circle cx="12" cy="13" r="4"/>
-              </svg>
-              <span>Live Camera</span>
-            </label>
-            <input
-              id="snap-camera"
-              type="file"
-              accept="image/*"
-              capture="environment"
-              style={{ display: 'none' }}
-              onChange={e => {
-                const file = e.target.files?.[0]
-                if (file) processFileWaterfall(file, 'camera')
-              }}
-            />
-            <label
-              htmlFor="snap-gallery"
-              id="gallery-pick-label"
-              className="w-full py-3.5 px-4 rounded-2xl text-center text-[#F5E5B7] font-bold text-sm cursor-pointer transition-all active:scale-95 bg-[#211329]/80 hover:bg-[#211329] border border-[#E9B83E]/40 hover:border-[#E9B83E] shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.18)] hover:shadow-[0_0_12px_rgba(233,184,62,0.35)] flex items-center justify-center gap-2.5"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9B83E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#E9B83E] flex-shrink-0">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                <circle cx="8.5" cy="8.5" r="1.5" fill="#E9B83E"/>
-                <polyline points="21 15 16 10 5 21"/>
-              </svg>
-              <span>Local Gallery</span>
-            </label>
-            <input
-              id="snap-gallery"
-              type="file"
-              accept="image/*"
-              style={{ display: 'none' }}
-              onChange={e => {
-                const file = e.target.files?.[0]
-                if (file) processFileWaterfall(file, 'gallery')
-              }}
-            />
-          </div>
-        </div>
-      ) : (
-        /* Details & Pandal Tagging Confirmation */
+        {/* Hidden File Input */}
+        <input
+          id="snap-file-input"
+          type="file"
+          accept="image/*"
+          style={{ display: 'none' }}
+          onChange={e => {
+            const file = e.target.files?.[0]
+            if (file) processFileWaterfall(file, 'gallery')
+          }}
+        />
+
+        {/* Details & Pandal Tagging Confirmation */}
         <div className="flex-1 overflow-y-auto no-scrollbar px-5 py-4 space-y-4">
-          {/* Media Preview Box */}
-          <div className="relative w-full h-44 rounded-2xl overflow-hidden border border-white/15 bg-black/40">
-            {preview && (
-              <img src={preview} alt="preview" className="w-full h-full object-cover" />
+          {/* Media Preview Box (Tap to choose or change image) */}
+          <div
+            onClick={() => document.getElementById('snap-file-input')?.click()}
+            className="w-full h-44 sm:h-48 rounded-2xl border-2 border-dashed border-[#E9B83E]/40 hover:border-[#E9B83E] bg-[#211329]/50 flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer transition-all shadow-[0_4px_16px_rgba(13,12,27,0.5)]"
+          >
+            {preview ? (
+              <>
+                <img src={preview} alt="preview" className="w-full h-full object-cover" />
+                <div className="absolute top-2 right-2 bg-black/65 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] text-white/90 border border-white/20 flex items-center gap-1.5 shadow-md">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Tap to change photo
+                </div>
+              </>
+            ) : (
+              <div className="text-center p-4">
+                <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-saffron to-puja-gold mx-auto flex items-center justify-center mb-2.5 shadow-lg shadow-saffron/30 group-hover:scale-105 transition-transform">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                    <path d="M9 3L7.17 5H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2h-3.17L15 3H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
+                    <circle cx="12" cy="13" r="3" fill="white"/>
+                  </svg>
+                </div>
+                <p className="text-white font-semibold text-xs sm:text-sm">Tap to capture or select pandal photo</p>
+                <p className="text-[#E9B83E]/80 text-[11px] mt-0.5">Camera or Gallery · EXIF GPS extracted automatically</p>
+              </div>
             )}
-            <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] text-white/90 border border-white/20">
-              📸 Photo Attached
-            </div>
           </div>
 
           {/* Pandal Name & Dropdown (Styled like Year Selector on Landing Page) */}
@@ -836,7 +803,6 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
             </p>
           </div>
         </div>
-      )}
       </div>
     </div>
   )

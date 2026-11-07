@@ -1265,44 +1265,25 @@
         <input type="file" id="camera-input" accept="image/*" capture="environment" class="hidden">
         <input type="file" id="gallery-input" accept="image/*" class="hidden">
 
-        <!-- 1. Media Preview Area -->
-        <div id="preview-box" class="w-full h-44 sm:h-48 rounded-2xl border-2 border-dashed border-white/20 bg-white/5 flex flex-col items-center justify-center relative overflow-hidden group">
+        <!-- 1. Media Preview Area (Tap to choose from Camera or Gallery) -->
+        <div id="preview-box" class="w-full h-44 sm:h-48 rounded-2xl border-2 border-dashed border-[#E9B83E]/40 hover:border-[#E9B83E] bg-[#211329]/50 flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer transition-all shadow-[0_4px_16px_rgba(13,12,27,0.5)]">
           <div id="placeholder-content" class="text-center p-4">
-            <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-saffron to-puja-gold mx-auto flex items-center justify-center mb-2.5 shadow-lg shadow-saffron/30">
+            <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-saffron to-puja-gold mx-auto flex items-center justify-center mb-2.5 shadow-lg shadow-saffron/30 group-hover:scale-105 transition-transform">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
                 <path d="M9 3L7.17 5H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2h-3.17L15 3H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
                 <circle cx="12" cy="13" r="3" fill="white"/>
               </svg>
             </div>
-            <p class="text-white font-semibold text-xs sm:text-sm">Capture or select pandal media</p>
-            <p class="text-white/40 text-[11px] mt-0.5">EXIF GPS will be extracted automatically</p>
+            <p class="text-white font-semibold text-xs sm:text-sm">Tap to capture or select pandal photo</p>
+            <p class="text-[#E9B83E]/80 text-[11px] mt-0.5">Camera or Gallery · EXIF GPS extracted automatically</p>
           </div>
           <img id="upload-preview-img" src="" alt="Upload Preview" class="hidden absolute inset-0 w-full h-full object-cover">
           <video id="upload-preview-video" class="hidden absolute inset-0 w-full h-full object-cover" playsinline autoplay loop muted></video>
           
           <!-- Media Change Badge -->
           <div id="media-change-badge" class="hidden absolute top-2 right-2 bg-black/65 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] text-white/90 border border-white/20 flex items-center gap-1.5 shadow-md">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Media Selected
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Tap to change photo
           </div>
-        </div>
-
-        <!-- Buttons for Camera vs Gallery -->
-        <div class="grid grid-cols-2 gap-2.5">
-          <button id="btn-trigger-camera" class="py-2.5 px-3 rounded-xl bg-[#211329]/80 hover:bg-[#211329] border border-[#E9B83E]/40 hover:border-[#E9B83E] text-[#F5E5B7] font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.18)] hover:shadow-[0_0_12px_rgba(233,184,62,0.35)] active:scale-95 transition">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E9B83E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#E9B83E] flex-shrink-0">
-              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-              <circle cx="12" cy="13" r="4"/>
-            </svg>
-            <span>Live Camera</span>
-          </button>
-          <button id="btn-trigger-gallery" class="py-2.5 px-3 rounded-xl bg-[#211329]/80 hover:bg-[#211329] border border-[#E9B83E]/40 hover:border-[#E9B83E] text-[#F5E5B7] font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.18)] hover:shadow-[0_0_12px_rgba(233,184,62,0.35)] active:scale-95 transition">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E9B83E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#E9B83E] flex-shrink-0">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-              <circle cx="8.5" cy="8.5" r="1.5" fill="#E9B83E"/>
-              <polyline points="21 15 16 10 5 21"/>
-            </svg>
-            <span>Local Gallery</span>
-          </button>
         </div>
 
         <!-- Pandal Name & Dropdown (Styled like Year Selector on Landing Page) -->
@@ -3242,18 +3223,16 @@
       }
     });
 
-    btnTriggerCamera.addEventListener('click', () => {
-      cameraInput.click();
+    btnTriggerCamera?.addEventListener('click', () => {
+      cameraInput?.click();
     });
 
-    btnTriggerGallery.addEventListener('click', () => {
-      galleryInput.click();
+    btnTriggerGallery?.addEventListener('click', () => {
+      galleryInput?.click();
     });
 
     document.getElementById('preview-box')?.addEventListener('click', () => {
-      if (!capturedMediaData) {
-        galleryInput.click();
-      }
+      galleryInput?.click();
     });
 
     cameraInput.addEventListener('change', (e) => processPhotoSelection(e.target.files[0], 'camera'));
