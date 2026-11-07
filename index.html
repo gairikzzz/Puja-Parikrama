@@ -1340,17 +1340,19 @@
             
             <!-- Map Search Bar Floating Over Top of Map -->
             <div class="absolute top-2 left-2 right-2 z-20 pointer-events-auto">
-              <div class="relative flex items-center">
+              <div class="relative flex items-center rounded-full bg-[#121224]/85 hover:bg-[#121224]/95 focus-within:bg-[#121224] backdrop-blur-md border border-[#E9B83E]/45 focus-within:border-[#E9B83E] shadow-[0_2px_10px_rgba(0,0,0,0.6)] transition">
+                <svg class="w-3.5 h-3.5 text-[#E9B83E] flex-shrink-0 ml-3 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
                 <input 
                   id="mini-map-search-input" 
                   type="text" 
                   autocomplete="off"
-                  class="w-full bg-[#121224]/85 hover:bg-[#121224]/95 focus:bg-[#121224] backdrop-blur-md border border-[#E9B83E]/45 focus:border-[#E9B83E] rounded-full pl-8.5 pr-8 py-1.5 text-[11px] text-[#F5E5B7] shadow-[0_2px_10px_rgba(0,0,0,0.6)] outline-none transition"
+                  spellcheck="false"
+                  placeholder="Search location or pandal..."
+                  class="w-full bg-transparent pl-2.5 pr-8 py-1.5 text-[11px] text-[#F5E5B7] placeholder-[#F5E5B7]/40 outline-none"
                 >
-                <svg class="w-3.5 h-3.5 text-[#E9B83E] absolute left-3 top-1/2 -translate-y-1/2 z-10 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
                 <button 
                   type="button" 
                   id="btn-clear-mini-search" 
@@ -3463,17 +3465,14 @@
       }
       if (btnClearMiniSearch) btnClearMiniSearch.classList.remove('hidden');
 
-      const matches = AGARTALA_MASTER_PANDALS.filter(p => 
-        (p.name && p.name.toLowerCase().includes(q)) ||
-        (p.neighborhood && p.neighborhood.toLowerCase().includes(q)) ||
-        (p.city && p.city.toLowerCase().includes(q)) ||
-        'agartala'.includes(q) || q.includes('agartala') ||
-        'tripura'.includes(q) || q.includes('tripura') ||
-        (p.keywords && p.keywords.some(k => k.includes(q) || q.includes(k)))
-      );
+      const tokens = q.split(/\s+/).filter(Boolean);
+      const matches = AGARTALA_MASTER_PANDALS.filter(p => {
+        const text = `${p.name} ${p.neighborhood || ''} ${p.city || ''} ${(p.keywords || []).join(' ')}`.toLowerCase();
+        return tokens.every(t => text.includes(t));
+      });
 
       if (matches.length === 0) {
-        miniSearchResults.innerHTML = '<div class="px-2.5 py-1.5 text-[10px] text-white/50 text-center">No pandals or locations found</div>';
+        miniSearchResults.innerHTML = `<div class="px-3 py-2 text-[10px] text-white/50 text-center">No pandals found for "${(query || '').trim()}"</div>`;
         miniSearchResults.classList.remove('hidden');
         return;
       }
@@ -3819,15 +3818,11 @@
         return;
       }
 
+      const tokens = q.split(/\s+/).filter(Boolean);
       const results = (typeof AGARTALA_MASTER_PANDALS !== 'undefined' ? AGARTALA_MASTER_PANDALS : []).filter(p => {
-        if (p.name && p.name.toLowerCase().includes(q)) return true;
-        if (p.neighborhood && p.neighborhood.toLowerCase().includes(q)) return true;
-        if (p.city && p.city.toLowerCase().includes(q)) return true;
-        if ('agartala'.includes(q) || q.includes('agartala')) return true;
-        if ('tripura'.includes(q) || q.includes('tripura')) return true;
-        if (p.keywords && p.keywords.some(k => k.includes(q) || q.includes(k))) return true;
-        return false;
-      });
+        const text = `${p.name} ${p.neighborhood || ''} ${p.city || ''} ${(p.keywords || []).join(' ')}`.toLowerCase();
+        return tokens.every(token => text.includes(token));
+      }).slice(0, 6);
 
       if (results.length === 0) {
         topSearchDropdown.innerHTML = '<div class="px-3 py-3 text-xs text-[#F5E5B7]/60 text-center flex items-center justify-center gap-2"><span>🔍</span> No pandals or locations found</div>';

@@ -655,14 +655,11 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
   const filteredMapPandals = useMemo(() => {
     const q = mapSearchQuery.trim().toLowerCase()
     if (!q) return []
-    return AGARTALA_MASTER_PANDALS.filter(p => 
-      p.name.toLowerCase().includes(q) ||
-      (p.neighborhood && p.neighborhood.toLowerCase().includes(q)) ||
-      (p.city && p.city.toLowerCase().includes(q)) ||
-      'agartala'.includes(q) || q.includes('agartala') ||
-      'tripura'.includes(q) || q.includes('tripura') ||
-      (p.keywords && p.keywords.some(k => k.includes(q) || q.includes(k)))
-    ).slice(0, 5)
+    const tokens = q.split(/\s+/).filter(Boolean)
+    return AGARTALA_MASTER_PANDALS.filter(p => {
+      const text = `${p.name} ${p.neighborhood || ''} ${p.city || ''} ${(p.keywords || []).join(' ')}`.toLowerCase()
+      return tokens.every(t => text.includes(t))
+    }).slice(0, 5)
   }, [mapSearchQuery])
 
   const handleSubmit = async () => {
@@ -922,18 +919,21 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
                 className="absolute top-2 left-2 right-2 z-20 pointer-events-auto" 
                 onClick={e => e.stopPropagation()}
               >
-                <div className="relative flex items-center">
-                  <input 
-                    type="text" 
-                    value={mapSearchQuery}
-                    onChange={e => { setMapSearchQuery(e.target.value); setShowMapSearch(true); }}
-                    onFocus={() => setShowMapSearch(true)}
-                    className="w-full bg-[#121224]/85 hover:bg-[#121224]/95 focus:bg-[#121224] backdrop-blur-md border border-[#E9B83E]/45 focus:border-[#E9B83E] rounded-full pl-8.5 pr-8 py-1.5 text-[11px] text-[#F5E5B7] shadow-[0_2px_10px_rgba(0,0,0,0.6)] outline-none transition"
-                  />
-                  <svg className="w-3.5 h-3.5 text-[#E9B83E] absolute left-3 top-1/2 -translate-y-1/2 z-10 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <div className="relative flex items-center rounded-full bg-[#121224]/85 hover:bg-[#121224]/95 focus-within:bg-[#121224] backdrop-blur-md border border-[#E9B83E]/45 focus-within:border-[#E9B83E] shadow-[0_2px_10px_rgba(0,0,0,0.6)] transition">
+                  <svg className="w-3.5 h-3.5 text-[#E9B83E] flex-shrink-0 ml-3 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="11" cy="11" r="8"></circle>
                     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                   </svg>
+                  <input 
+                    type="text" 
+                    value={mapSearchQuery}
+                    spellCheck={false}
+                    autoComplete="off"
+                    onChange={e => { setMapSearchQuery(e.target.value); setShowMapSearch(true); }}
+                    onFocus={() => setShowMapSearch(true)}
+                    placeholder="Search location or pandal..."
+                    className="w-full bg-transparent pl-2.5 pr-8 py-1.5 text-[11px] text-[#F5E5B7] placeholder-[#F5E5B7]/40 outline-none"
+                  />
                   {mapSearchQuery && (
                     <button 
                       type="button" 
@@ -969,6 +969,11 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
                         </div>
                       </div>
                     ))}
+                  </div>
+                )}
+                {showMapSearch && mapSearchQuery.trim() && filteredMapPandals.length === 0 && (
+                  <div className="mt-1 bg-[#121224]/95 backdrop-blur-xl border border-[#E9B83E]/40 rounded-xl shadow-2xl p-2.5 text-center text-xs text-[#F5E5B7]/60">
+                    No pandals found for "{mapSearchQuery.trim()}"
                   </div>
                 )}
               </div>
@@ -1469,14 +1474,10 @@ export default function App() {
   const topSearchResults = useMemo(() => {
     if (!topSearchQuery.trim()) return []
     const q = topSearchQuery.trim().toLowerCase()
+    const tokens = q.split(/\s+/).filter(Boolean)
     return AGARTALA_MASTER_PANDALS.filter(p => {
-      if (p.name && p.name.toLowerCase().includes(q)) return true
-      if (p.neighborhood && p.neighborhood.toLowerCase().includes(q)) return true
-      if (p.city && p.city.toLowerCase().includes(q)) return true
-      if ('agartala'.includes(q) || q.includes('agartala')) return true
-      if ('tripura'.includes(q) || q.includes('tripura')) return true
-      if (p.keywords && p.keywords.some(k => k.includes(q) || q.includes(k))) return true
-      return false
+      const text = `${p.name} ${p.neighborhood || ''} ${p.city || ''} ${(p.keywords || []).join(' ')}`.toLowerCase()
+      return tokens.every(token => text.includes(token))
     }).slice(0, 6)
   }, [topSearchQuery])
 
