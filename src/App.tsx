@@ -785,12 +785,9 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
 
           {/* Interactive Mini-Map Preview Card (Confirmation) */}
           <div className="space-y-1">
-            <div className="flex items-center justify-between">
-              <label className="text-[11px] sm:text-xs font-semibold text-white/60 uppercase tracking-wider flex items-center gap-1.5">
-                <span>📍 Confirm Pin on Map</span>
-                <span className="text-[9px] text-emerald-400 font-normal lowercase">(draggable)</span>
-              </label>
-            </div>
+            <label className="block text-[11px] sm:text-xs font-semibold text-[#F5E5B7] mb-1">
+              <span>Confirm Pandal Location</span> <span className="text-red-500 font-bold">*</span>
+            </label>
             <div
               onClick={(e) => {
                 const rect = e.currentTarget.getBoundingClientRect()
