@@ -922,8 +922,8 @@
     </div>
   </div>
 
-  <!-- Hidden YouTube IFrame Container for continuous audio playback (no drawer) -->
-  <div style="position: fixed; width: 1px; height: 1px; left: -9999px; top: -9999px; opacity: 0; pointer-events: none; overflow: hidden;">
+  <!-- Persistent YouTube IFrame Container for continuous audio playback (minimum 240px dimensions required by YouTube API & browser media engine) -->
+  <div style="position: fixed; right: 0; bottom: 0; width: 240px; height: 240px; opacity: 0.001; pointer-events: none; z-index: -999; overflow: hidden;">
     <div id="yt-player-iframe"></div>
   </div>
 
@@ -3573,22 +3573,29 @@
     let currentTrackDuration = 213; // 3:33 default from screenshot
     let ytProgressInterval = null;
 
-    function tryStartMusic() {
-      if (userExplicitlyPaused || autoPlayStarted) return;
-      if (ytPlayer && ytPlayerReady && typeof ytPlayer.playVideo === 'function') {
+    function unlockAndPlayAudio() {
+      if (userExplicitlyPaused) return;
+      if (ytPlayer && ytPlayerReady) {
         try {
-          ytPlayer.playVideo();
+          if (typeof ytPlayer.unMute === 'function') ytPlayer.unMute();
+          if (typeof ytPlayer.setVolume === 'function') ytPlayer.setVolume(100);
+          if (typeof ytPlayer.playVideoAt === 'function' && !autoPlayStarted) {
+            ytPlayer.playVideoAt(0);
+          } else if (typeof ytPlayer.playVideo === 'function') {
+            ytPlayer.playVideo();
+          }
           autoPlayStarted = true;
+          isAudioMuted = false;
         } catch (e) {}
       }
     }
-    window.tryStartParikramaMusic = tryStartMusic;
+    window.tryStartParikramaMusic = unlockAndPlayAudio;
 
     // Listen on first user gesture anywhere to unlock unmuted audio playback if autoplay was deferred
-    const gestureEvents = ['click', 'touchstart', 'pointerdown', 'keydown'];
+    const gestureEvents = ['click', 'touchstart', 'touchend', 'pointerdown', 'pointerup', 'keydown', 'mousedown'];
     function onFirstUserGesture() {
-      if (!userExplicitlyPaused && !autoPlayStarted) {
-        tryStartMusic();
+      if (!userExplicitlyPaused) {
+        unlockAndPlayAudio();
       }
     }
     gestureEvents.forEach(evt => window.addEventListener(evt, onFirstUserGesture, { passive: true }));
@@ -3795,7 +3802,8 @@
             listType: 'playlist',
             list: YOUTUBE_PLAYLIST_ID,
             autoplay: 1,
-            controls: 1,
+            mute: 1,
+            controls: 0,
             playsinline: 1,
             rel: 0,
             modestbranding: 1,
@@ -3803,12 +3811,19 @@
             origin: window.location.origin
           },
           events: {
-            onReady: () => {
+            onReady: (event) => {
               ytPlayerReady = true;
+              try {
+                if (typeof event.target.playVideoAt === 'function') {
+                  event.target.playVideoAt(0);
+                } else if (typeof event.target.playVideo === 'function') {
+                  event.target.playVideo();
+                }
+                // Try immediate unmute if browser grants audio permission on cold load
+                event.target.unMute();
+                event.target.setVolume(100);
+              } catch (e) {}
               updateYTTrackInfo();
-              if (!userExplicitlyPaused) {
-                tryStartMusic();
-              }
             },
             onStateChange: (e) => {
               handleYTStateChange(e.data);
@@ -3841,6 +3856,10 @@
           ytPlayer.pauseVideo();
         } else {
           userExplicitlyPaused = false;
+          try {
+            ytPlayer.unMute();
+            ytPlayer.setVolume(100);
+          } catch(e) {}
           ytPlayer.playVideo();
         }
       } else {

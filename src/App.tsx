@@ -1006,12 +1006,19 @@ export default function App() {
   const [totalDurationSec, setTotalDurationSec] = useState(213) // 3:33 default from screenshot
   const dhakEngineRef = useRef<DhakAudioEngine | null>(null)
 
-  const tryStartMusic = useCallback(() => {
-    if (userExplicitlyPaused.current || autoPlayStarted.current) return
-    if (ytPlayerRef.current && ytPlayerReady.current && typeof ytPlayerRef.current.playVideo === 'function') {
+  const unlockAndPlayAudio = useCallback(() => {
+    if (userExplicitlyPaused.current) return
+    if (ytPlayerRef.current && ytPlayerReady.current) {
       try {
-        ytPlayerRef.current.playVideo()
+        if (typeof ytPlayerRef.current.unMute === 'function') ytPlayerRef.current.unMute()
+        if (typeof ytPlayerRef.current.setVolume === 'function') ytPlayerRef.current.setVolume(100)
+        if (typeof ytPlayerRef.current.playVideoAt === 'function' && !autoPlayStarted.current) {
+          ytPlayerRef.current.playVideoAt(0)
+        } else if (typeof ytPlayerRef.current.playVideo === 'function') {
+          ytPlayerRef.current.playVideo()
+        }
         autoPlayStarted.current = true
+        setIsMuted(false)
       } catch (e) {}
     }
   }, [])
@@ -1027,16 +1034,16 @@ export default function App() {
   // Global user interaction listener to start music on first touch/click if unmuted autoplay is deferred by browser
   useEffect(() => {
     const onGesture = () => {
-      if (!userExplicitlyPaused.current && !autoPlayStarted.current) {
-        tryStartMusic()
+      if (!userExplicitlyPaused.current) {
+        unlockAndPlayAudio()
       }
     }
-    const events = ['click', 'touchstart', 'pointerdown', 'keydown']
+    const events = ['click', 'touchstart', 'touchend', 'pointerdown', 'pointerup', 'keydown', 'mousedown']
     events.forEach(evt => window.addEventListener(evt, onGesture, { passive: true }))
     return () => {
       events.forEach(evt => window.removeEventListener(evt, onGesture))
     }
-  }, [tryStartMusic])
+  }, [unlockAndPlayAudio])
 
   // Initialize YouTube IFrame API
   useEffect(() => {
@@ -1059,7 +1066,8 @@ export default function App() {
             listType: 'playlist',
             list: YOUTUBE_PLAYLIST_ID,
             autoplay: 1,
-            controls: 1,
+            mute: 1,
+            controls: 0,
             playsinline: 1,
             rel: 0,
             modestbranding: 1,
@@ -1067,15 +1075,18 @@ export default function App() {
             origin: window.location.origin,
           },
           events: {
-            onReady: () => {
+            onReady: (event: any) => {
               ytPlayerReady.current = true
+              try {
+                if (typeof event.target.playVideoAt === 'function') {
+                  event.target.playVideoAt(0)
+                } else if (typeof event.target.playVideo === 'function') {
+                  event.target.playVideo()
+                }
+                event.target.unMute()
+                event.target.setVolume(100)
+              } catch (e) {}
               updateYTTrackInfo()
-              if (!userExplicitlyPaused.current) {
-                try {
-                  ytPlayerRef.current?.playVideo()
-                  autoPlayStarted.current = true
-                } catch (e) {}
-              }
             },
             onStateChange: (e: any) => {
               handleYTStateChange(e.data)
@@ -1280,7 +1291,7 @@ export default function App() {
 
   const triggerCameraFlashAndEnter = useCallback(() => {
     // Start music on user entering from splash screen
-    tryStartMusic()
+    unlockAndPlayAudio()
 
     // Mark visited immediately so splash NEVER shows again
     sessionStorage.setItem('visited', 'true')
@@ -1311,7 +1322,7 @@ export default function App() {
     setTimeout(() => {
       setScreenWhiteout(false)
     }, 450)
-  }, [currentUserCoords, computePhoneCoordinates, tryStartMusic])
+  }, [currentUserCoords, computePhoneCoordinates, unlockAndPlayAudio])
 
   // ── Parikrama Splash Screen Controller: auto-flash after 1.4 seconds ──
   useEffect(() => {
@@ -1894,8 +1905,8 @@ export default function App() {
         </header>
       )}
 
-      {/* Hidden YouTube IFrame Container for continuous audio playback (no drawer) */}
-      <div style={{ position: 'fixed', width: 1, height: 1, left: -9999, top: -9999, opacity: 0, pointerEvents: 'none', overflow: 'hidden' }}>
+      {/* Persistent YouTube IFrame Container for continuous audio playback (minimum 240px dimensions required by YouTube API & browser media engine) */}
+      <div style={{ position: 'fixed', right: 0, bottom: 0, width: 240, height: 240, opacity: 0.001, pointerEvents: 'none', zIndex: -999, overflow: 'hidden' }}>
         <div id="react-yt-player-iframe" />
       </div>
 
