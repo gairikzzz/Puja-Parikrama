@@ -654,24 +654,22 @@
             </svg>
           </button>
           <!-- Dropdown Menu -->
-          <div id="year-dropdown-menu" class="hidden absolute top-full mt-2 right-0 bg-[#211329]/75 border border-[#E9B83E]/30 rounded-2xl p-2 shadow-[0_12px_32px_rgba(13,12,27,0.65),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-xl z-50 flex flex-col min-w-[120px] space-y-1">
+          <div id="year-dropdown-menu" class="hidden absolute top-full mt-2 right-0 bg-[#211329]/75 border border-[#E9B83E]/30 rounded-2xl p-1 shadow-[0_12px_32px_rgba(13,12,27,0.65),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-xl z-50 flex flex-col min-w-[120px]">
             <button
               type="button"
               onclick="selectPujaYear(2026)"
-              class="year-option px-3 py-2 rounded-xl text-left text-xs font-semibold flex items-center justify-between transition cursor-pointer bg-[#E9B83E]/20 text-[#E9B83E] font-bold border border-[#E9B83E]/30"
+              class="year-option px-3.5 py-2.5 text-left text-xs font-semibold flex items-center transition cursor-pointer text-[#E9B83E] font-bold bg-[#E9B83E]/15 border-b border-[#E9B83E]/20 last:border-b-0 first:rounded-t-xl last:rounded-b-xl"
               data-year="2026"
             >
               <span>2026</span>
-              <span class="year-check text-[#E9B83E] text-xs font-bold">✓</span>
             </button>
             <button
               type="button"
               onclick="selectPujaYear(2025)"
-              class="year-option px-3 py-2 rounded-xl text-left text-xs font-semibold flex items-center justify-between transition cursor-pointer text-[#F5E5B7]/80 hover:bg-white/10 hover:text-white"
+              class="year-option px-3.5 py-2.5 text-left text-xs font-semibold flex items-center transition cursor-pointer text-[#F5E5B7]/80 hover:bg-[#E9B83E]/15 hover:text-[#E9B83E] border-b border-[#E9B83E]/20 last:border-b-0 first:rounded-t-xl last:rounded-b-xl"
               data-year="2025"
             >
               <span>2025</span>
-              <span class="year-check hidden text-[#E9B83E] text-xs font-bold">✓</span>
             </button>
           </div>
         </div>
@@ -4274,13 +4272,10 @@
       if (selectedYearLabel) selectedYearLabel.textContent = year;
       document.querySelectorAll('.year-option').forEach(el => {
         const isCurrent = Number(el.getAttribute('data-year')) === year;
-        const check = el.querySelector('.year-check');
         if (isCurrent) {
-          el.className = 'year-option px-3 py-2 rounded-xl text-left text-xs font-semibold flex items-center justify-between transition cursor-pointer bg-amber-400/20 text-amber-300 font-bold border border-amber-400/30';
-          check?.classList.remove('hidden');
+          el.className = 'year-option px-3.5 py-2.5 text-left text-xs font-semibold flex items-center transition cursor-pointer text-[#E9B83E] font-bold bg-[#E9B83E]/15 border-b border-[#E9B83E]/20 last:border-b-0 first:rounded-t-xl last:rounded-b-xl';
         } else {
-          el.className = 'year-option px-3 py-2 rounded-xl text-left text-xs font-semibold flex items-center justify-between transition cursor-pointer text-white/80 hover:bg-white/10 hover:text-white';
-          check?.classList.add('hidden');
+          el.className = 'year-option px-3.5 py-2.5 text-left text-xs font-semibold flex items-center transition cursor-pointer text-[#F5E5B7]/80 hover:bg-[#E9B83E]/15 hover:text-[#E9B83E] border-b border-[#E9B83E]/20 last:border-b-0 first:rounded-t-xl last:rounded-b-xl';
         }
       });
       yearDropdownMenu?.classList.add('hidden');
