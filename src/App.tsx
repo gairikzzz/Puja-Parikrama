@@ -644,7 +644,7 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
         visible ? 'active visible' : 'hidden'
       }`}
     >
-      <div className="snap-modal-content w-full sm:max-w-md mx-auto bg-[#121224]/95 backdrop-blur-xl rounded-[22px] sm:rounded-[26px] border border-[#E9B83E]/30 p-3.5 sm:p-4.5 flex flex-col overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.85),0_0_24px_rgba(233,184,62,0.15)]">
+      <div className="snap-modal-content w-full sm:max-w-md mx-auto bg-[#211329]/50 backdrop-blur-2xl rounded-[22px] sm:rounded-[26px] border border-[#E9B83E]/40 p-3.5 sm:p-4.5 flex flex-col overflow-hidden shadow-[0_24px_60px_rgba(13,12,27,0.7),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_24px_rgba(233,184,62,0.18)]">
         {/* Header */}
         <div className="flex items-center justify-between pb-2 border-b border-[#E9B83E]/20 mb-2.5 flex-shrink-0">
           <div className="flex items-center gap-2">
