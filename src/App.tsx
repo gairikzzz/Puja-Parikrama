@@ -799,9 +799,6 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
             >
               {submitting ? 'Submitting to AI Moderation...' : '🪔 Submit Snap for Moderation'}
             </button>
-            <p className="text-white/40 text-[11px] text-center leading-relaxed">
-              🛡️ Submissions are screened by Gemini AI &amp; verified before publishing live to the public map.
-            </p>
           </div>
         </div>
       </div>
