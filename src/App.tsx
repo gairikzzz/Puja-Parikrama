@@ -1387,7 +1387,7 @@ export default function App() {
       updateMapToCoords(target)
     }
 
-    // 2. Fetch fresh live GPS with high accuracy
+    // 2. Fetch fresh live GPS: first attempt high accuracy with 60s cache allowed, fallback to standard accuracy
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         pos => {
@@ -1397,16 +1397,28 @@ export default function App() {
             localStorage.setItem('parikrama_user_location', JSON.stringify(freshCoords))
           } catch {}
           updateMapToCoords(freshCoords)
-          showToast('📍 Focused on your live location')
         },
         err => {
-          console.warn('Geolocation lookup failed:', err)
-          if (!target) {
-            updateMapToCoords(AGARTALA_CENTER)
-          }
-          showToast('📍 Centered on map')
+          console.warn('High-accuracy geolocation failed, falling back to standard accuracy:', err)
+          navigator.geolocation.getCurrentPosition(
+            posFallback => {
+              const fallbackCoords = { lat: posFallback.coords.latitude, lng: posFallback.coords.longitude }
+              setCurrentUserCoords(fallbackCoords)
+              try {
+                localStorage.setItem('parikrama_user_location', JSON.stringify(fallbackCoords))
+              } catch {}
+              updateMapToCoords(fallbackCoords)
+            },
+            errFallback => {
+              console.warn('Standard geolocation failed:', errFallback)
+              if (!target) {
+                updateMapToCoords(AGARTALA_CENTER)
+              }
+            },
+            { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
+          )
         },
-        { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+        { enableHighAccuracy: true, timeout: 6000, maximumAge: 60000 }
       )
     } else if (target) {
       updateMapToCoords(target)

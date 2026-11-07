@@ -973,6 +973,7 @@
   <!-- ── 4. RECENTER / LOCATE ME BUTTON (Floating Just Above the Footer Line) ── -->
   <button
     id="btn-recenter"
+    onclick="window.recenterMap()"
     title="Locate My Position"
     class="fixed right-3 sm:right-6 bottom-[74px] sm:bottom-[82px] z-30 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#211329]/70 hover:bg-[#211329]/85 border border-[#E9B83E]/40 hover:border-[#E9B83E] text-[#E9B83E] flex items-center justify-center shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.22)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] backdrop-blur-md transition-all active:scale-90 hover:scale-[1.02] pointer-events-auto flex-shrink-0 cursor-pointer"
   >
@@ -3102,65 +3103,86 @@
     });
 
     /* ── Recenter Map Button (Pans & Focuses to Live User Location at zoom 16) ── */
-    document.getElementById('btn-recenter')?.addEventListener('click', () => {
-      showToast('📍 Focusing on your current location...');
+    window.recenterMap = function() {
+      const btnRecenter = document.getElementById('btn-recenter');
+      btnRecenter?.classList.add('animate-pulse');
 
-      let targetLoc = (typeof userLocation !== 'undefined' && userLocation && userLocation.lat !== 23.8315) 
-        ? userLocation 
-        : ((typeof currentUserCoords !== 'undefined' && currentUserCoords && currentUserCoords.lat !== 23.8315) ? currentUserCoords : null);
+      function applyLocation(loc) {
+        userLocation = loc;
+        currentUserCoords = loc;
+        try {
+          localStorage.setItem('parikrama_user_location', JSON.stringify(loc));
+        } catch (e) {}
 
-      if (!targetLoc) {
+        if (map && window.google && google.maps) {
+          const latLng = new google.maps.LatLng(loc.lat, loc.lng);
+          map.panTo(latLng);
+          map.setZoom(16);
+
+          if (window.UserLocationOverlay) {
+            if (userLiveMarker) {
+              userLiveMarker.setPosition(latLng);
+            } else {
+              userLiveMarker = new window.UserLocationOverlay(latLng, map);
+            }
+          }
+        }
+        if (typeof updateNearbyList === 'function') {
+          updateNearbyList();
+        }
+        btnRecenter?.classList.remove('animate-pulse');
+      }
+
+      // Fast path: if we already have a detected location, jump there immediately
+      let existingLoc = null;
+      if (userLocation && (userLocation.lat !== 23.8315 || userLocation.lng !== 91.2868)) {
+        existingLoc = userLocation;
+      } else if (currentUserCoords && (currentUserCoords.lat !== 23.8315 || currentUserCoords.lng !== 91.2868)) {
+        existingLoc = currentUserCoords;
+      } else {
         try {
           const saved = localStorage.getItem('parikrama_user_location');
-          if (saved) targetLoc = JSON.parse(saved);
+          if (saved) existingLoc = JSON.parse(saved);
         } catch (e) {}
       }
 
-      if (!targetLoc) targetLoc = { lat: 23.8315, lng: 91.2868 };
-
-      if (map) {
-        const targetLatLng = new google.maps.LatLng(targetLoc.lat, targetLoc.lng);
-        map.panTo(targetLatLng);
-        map.setZoom(16);
-
-        // Update/ensure blue dot marker is at user's location
-        if (window.UserLocationOverlay) {
-          if (userLiveMarker) {
-            userLiveMarker.setPosition(targetLatLng);
-          } else {
-            userLiveMarker = new window.UserLocationOverlay(targetLatLng, map);
-          }
-        }
+      if (existingLoc) {
+        applyLocation(existingLoc);
       }
 
-      // Refresh live GPS with high accuracy and zero cached age
+      // Query browser geolocation: first attempt high accuracy with 60s cache allowed, fallback to standard Wi-Fi/cell accuracy
       if ('geolocation' in navigator) {
         navigator.geolocation.getCurrentPosition(
           (pos) => {
-            const freshLoc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-            userLocation = freshLoc;
-            currentUserCoords = freshLoc;
-            try {
-              localStorage.setItem('parikrama_user_location', JSON.stringify(freshLoc));
-            } catch (e) {}
-
-            if (map) {
-              const freshLatLng = new google.maps.LatLng(freshLoc.lat, freshLoc.lng);
-              map.panTo(freshLatLng);
-              map.setZoom(16);
-              if (userLiveMarker) {
-                userLiveMarker.setPosition(freshLatLng);
-              }
-            }
-            showToast('📍 Focused on your live location');
+            applyLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
           },
           (err) => {
-            console.warn('Geolocation error:', err);
-            showToast('📍 Centered on map');
+            console.warn('High-accuracy GPS failed/timed out, attempting standard accuracy fallback...', err);
+            navigator.geolocation.getCurrentPosition(
+              (posFallback) => {
+                applyLocation({ lat: posFallback.coords.latitude, lng: posFallback.coords.longitude });
+              },
+              (errFallback) => {
+                console.warn('Standard geolocation failed:', errFallback);
+                btnRecenter?.classList.remove('animate-pulse');
+                if (!existingLoc && map) {
+                  map.panTo(new google.maps.LatLng(23.8315, 91.2868));
+                  map.setZoom(16);
+                }
+              },
+              { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
+            );
           },
-          { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+          { enableHighAccuracy: true, timeout: 6000, maximumAge: 60000 }
         );
+      } else {
+        btnRecenter?.classList.remove('animate-pulse');
       }
+    };
+
+    document.getElementById('btn-recenter')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.recenterMap();
     });
 
     /* ── Top Search Bar Handlers ── */
