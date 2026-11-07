@@ -889,13 +889,13 @@
       id="filter-btn-latest"
       onclick="togglePandalFilter('latest')"
       title="Filter by Latest Pandals"
-      class="flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-95 backdrop-blur-lg bg-[#211329]/70 hover:bg-[#211329]/85 border border-[#E9B83E] shadow-[0_0_12px_rgba(233,184,62,0.30),0_2px_12px_rgba(13,12,27,0.45),inset_0_1px_1px_rgba(255,255,255,0.15)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]"
+      class="flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-95 backdrop-blur-lg bg-[#211329]/45 hover:bg-[#211329]/85 border border-[#E9B83E]/30 hover:border-[#E9B83E] shadow-[0_2px_10px_rgba(13,12,27,0.35),inset_0_1px_1px_rgba(255,255,255,0.08)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]"
     >
-      <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 text-[#E9B83E] transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 text-[#E9B83E]/80 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="10" />
         <polyline points="12 6 12 12 16 14" />
       </svg>
-      <span class="text-[10px] sm:text-xs font-bold leading-tight tracking-wide text-[#F5E5B7]">Latest</span>
+      <span class="text-[10px] sm:text-xs font-semibold leading-tight tracking-wide text-[#F5E5B7]">Latest</span>
     </button>
 
     <!-- Trending Filter -->
@@ -3511,7 +3511,7 @@
     });
 
     /* ── PANDAL FILTERS (Recent / Trending / Nearby Activate/Deactivate) ── */
-    let activePandalFilter = 'latest';
+    let activePandalFilter = null;
 
     window.togglePandalFilter = function(filter) {
       if (filter === 'recent') filter = 'latest';
@@ -3545,11 +3545,11 @@
         const span = btn.querySelector('span');
         const svg = btn.querySelector('svg');
         if (isActive) {
-          btn.className = 'flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-95 backdrop-blur-lg bg-[#211329]/70 hover:bg-[#211329]/85 border border-[#E9B83E] shadow-[0_0_12px_rgba(233,184,62,0.30),0_2px_12px_rgba(13,12,27,0.45),inset_0_1px_1px_rgba(255,255,255,0.15)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]';
-          if (span) span.className = 'text-[10px] sm:text-xs font-bold leading-tight tracking-wide text-[#F5E5B7]';
-          if (svg) svg.className = 'w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 text-[#E9B83E] transition-colors';
+          btn.className = 'flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-95 bg-gradient-to-r from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] border border-[#211329]/30 text-[#211329] shadow-[0_0_16px_rgba(233,184,62,0.50),0_2px_12px_rgba(13,12,27,0.45)] hover:shadow-[0_0_20px_rgba(233,184,62,0.60)]';
+          if (span) span.className = 'text-[10px] sm:text-xs font-bold leading-tight tracking-wide text-[#211329]';
+          if (svg) svg.className = 'w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 text-[#211329] transition-colors';
         } else {
-          btn.className = 'flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-95 backdrop-blur-lg bg-[#211329]/45 hover:bg-[#211329]/85 border border-[#E9B83E]/30 hover:border-[#E9B83E] shadow-[0_2px_10px_rgba(13,12,27,0.35),inset_0_1px_1px_rgba(255,255,255,0.08)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]';
+          btn.className = 'flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-95 backdrop-blur-lg bg-[#211329]/45 hover:bg-[#211329]/85 border border-[#E9B83E]/30 hover:border-[#E9B83E] text-[#F5E5B7] shadow-[0_2px_10px_rgba(13,12,27,0.35),inset_0_1px_1px_rgba(255,255,255,0.08)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]';
           if (span) span.className = 'text-[10px] sm:text-xs font-semibold leading-tight tracking-wide text-[#F5E5B7]';
           if (svg) svg.className = 'w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 text-[#E9B83E]/80 transition-colors';
         }
