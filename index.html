@@ -3180,11 +3180,6 @@
       }
     };
 
-    document.getElementById('btn-recenter')?.addEventListener('click', (e) => {
-      e.preventDefault();
-      window.recenterMap();
-    });
-
     /* ── Top Search Bar Handlers ── */
     const topSearchInput = document.getElementById('top-search-input');
     const topSearchDropdown = document.getElementById('top-search-dropdown');
@@ -3575,29 +3570,34 @@
 
     /* ── PANDAL FILTERS (Recent / Trending / Nearby Activate/Deactivate) ── */
     let activePandalFilter = null;
+    let lastFilterToggleTime = 0;
 
     window.togglePandalFilter = function(filter) {
+      const now = Date.now();
+      if (now - lastFilterToggleTime < 250) return;
+      lastFilterToggleTime = now;
+
       if (filter === 'recent') filter = 'latest';
       if (activePandalFilter === filter) {
         activePandalFilter = null;
-        if (typeof showToast === 'function') showToast('Filter cleared');
       } else {
         activePandalFilter = filter;
         if (filter === 'latest') {
-          if (typeof showToast === 'function') showToast('✨ Filter: Latest Pandals Active');
           if (snapsData && snapsData.length > 0) {
             const sorted = [...snapsData].sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
             if (map && sorted[0]) map.panTo({ lat: sorted[0].lat, lng: sorted[0].lng });
           }
         } else if (filter === 'trending') {
-          if (typeof showToast === 'function') showToast('🔥 Filter: Trending Pandals Active');
           if (snapsData && snapsData.length > 0) {
             const sorted = [...snapsData].sort((a, b) => (Number(b.likesCount || 0)*4 + Number(b.viewsCount || 0)) - (Number(a.likesCount || 0)*4 + Number(a.viewsCount || 0)));
             if (map && sorted[0]) map.panTo({ lat: sorted[0].lat, lng: sorted[0].lng });
           }
         } else if (filter === 'nearby') {
-          if (typeof showToast === 'function') showToast('📍 Filter: Nearby Pandals Active');
-          document.getElementById('btn-recenter')?.click();
+          if (typeof window.recenterMap === 'function') {
+            window.recenterMap();
+          } else {
+            document.getElementById('btn-recenter')?.click();
+          }
         }
       }
       updateFilterButtonsUI();
@@ -3618,14 +3618,6 @@
         }
       });
     }
-
-    ['latest', 'trending', 'nearby'].forEach(f => {
-      const btn = document.getElementById(`filter-btn-${f}`);
-      btn?.addEventListener('click', (e) => {
-        e.preventDefault();
-        window.togglePandalFilter(f);
-      });
-    });
 
     /* ── YEAR SELECTOR DROPDOWN ── */
     let selectedPujaYear = 2026;
