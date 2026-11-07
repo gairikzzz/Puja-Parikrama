@@ -1417,17 +1417,22 @@ export default function App() {
     setActiveFilter(prev => {
       const next = prev === filter ? null : filter
       if (next === 'latest') {
+        showToast('✨ Filter: Latest Pandals Active')
         if (posts.length > 0) {
           const sorted = [...posts].sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime())
           if (sorted[0]) googleMapRef.current?.panTo({ lat: sorted[0].lat, lng: sorted[0].lng })
         }
       } else if (next === 'trending') {
+        showToast('🔥 Filter: Trending Pandals Active')
         if (posts.length > 0) {
           const sorted = [...posts].sort((a, b) => ((b.likesCount || 0) * 4 + (b.viewsCount || 0)) - ((a.likesCount || 0) * 4 + (a.viewsCount || 0)))
           if (sorted[0]) googleMapRef.current?.panTo({ lat: sorted[0].lat, lng: sorted[0].lng })
         }
       } else if (next === 'nearby') {
+        showToast('📍 Filter: Nearby Pandals Active')
         handleLocateMe()
+      } else {
+        showToast('Filter cleared')
       }
       return next
     })
@@ -1845,16 +1850,14 @@ export default function App() {
             onClick={() => handleToggleFilter('latest')}
             title="Filter by Latest Pandals"
             className={`flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-95 ${
-              activeFilter === 'latest'
-                ? 'bg-gradient-to-r from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] border border-[#211329]/30 text-[#211329] shadow-[0_0_16px_rgba(233,184,62,0.50),0_2px_12px_rgba(13,12,27,0.45)] hover:shadow-[0_0_20px_rgba(233,184,62,0.60)]'
-                : 'backdrop-blur-md bg-[#211329]/70 hover:bg-[#211329]/85 border border-[#E9B83E]/40 hover:border-[#E9B83E] text-[#F5E5B7] shadow-[0_0_8px_rgba(233,184,62,0.22),inset_0_1px_1px_rgba(255,255,255,0.10)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]'
+              activeFilter === 'latest' ? 'pandal-filter-active' : 'pandal-filter-inactive'
             }`}
           >
-            <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors ${activeFilter === 'latest' ? 'text-[#211329]' : 'text-[#E9B83E]'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="10" />
               <polyline points="12 6 12 12 16 14" />
             </svg>
-            <span className={`text-[10px] sm:text-xs leading-tight tracking-wide ${activeFilter === 'latest' ? 'text-[#211329] font-bold' : 'text-[#F5E5B7] font-semibold'}`}>Latest</span>
+            <span className="text-[10px] sm:text-xs leading-tight tracking-wide">Latest</span>
           </button>
 
           {/* Trending Filter */}
@@ -1864,16 +1867,14 @@ export default function App() {
             onClick={() => handleToggleFilter('trending')}
             title="Filter by Trending Pandals"
             className={`flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-95 ${
-              activeFilter === 'trending'
-                ? 'bg-gradient-to-r from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] border border-[#211329]/30 text-[#211329] shadow-[0_0_16px_rgba(233,184,62,0.50),0_2px_12px_rgba(13,12,27,0.45)] hover:shadow-[0_0_20px_rgba(233,184,62,0.60)]'
-                : 'backdrop-blur-md bg-[#211329]/70 hover:bg-[#211329]/85 border border-[#E9B83E]/40 hover:border-[#E9B83E] text-[#F5E5B7] shadow-[0_0_8px_rgba(233,184,62,0.22),inset_0_1px_1px_rgba(255,255,255,0.10)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]'
+              activeFilter === 'trending' ? 'pandal-filter-active' : 'pandal-filter-inactive'
             }`}
           >
-            <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors ${activeFilter === 'trending' ? 'text-[#211329]' : 'text-[#E9B83E]'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
               <polyline points="17 6 23 6 23 12" />
             </svg>
-            <span className={`text-[10px] sm:text-xs leading-tight tracking-wide ${activeFilter === 'trending' ? 'text-[#211329] font-bold' : 'text-[#F5E5B7] font-semibold'}`}>Trending</span>
+            <span className="text-[10px] sm:text-xs leading-tight tracking-wide">Trending</span>
           </button>
 
           {/* Nearby Filter */}
@@ -1883,16 +1884,14 @@ export default function App() {
             onClick={() => handleToggleFilter('nearby')}
             title="Filter by Nearby Pandals"
             className={`flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-95 ${
-              activeFilter === 'nearby'
-                ? 'bg-gradient-to-r from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] border border-[#211329]/30 text-[#211329] shadow-[0_0_16px_rgba(233,184,62,0.50),0_2px_12px_rgba(13,12,27,0.45)] hover:shadow-[0_0_20px_rgba(233,184,62,0.60)]'
-                : 'backdrop-blur-md bg-[#211329]/70 hover:bg-[#211329]/85 border border-[#E9B83E]/40 hover:border-[#E9B83E] text-[#F5E5B7] shadow-[0_0_8px_rgba(233,184,62,0.22),inset_0_1px_1px_rgba(255,255,255,0.10)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]'
+              activeFilter === 'nearby' ? 'pandal-filter-active' : 'pandal-filter-inactive'
             }`}
           >
-            <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors ${activeFilter === 'nearby' ? 'text-[#211329]' : 'text-[#E9B83E]'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
               <circle cx="12" cy="13" r="4" />
             </svg>
-            <span className={`text-[10px] sm:text-xs leading-tight tracking-wide ${activeFilter === 'nearby' ? 'text-[#211329] font-bold' : 'text-[#F5E5B7] font-semibold'}`}>Nearby</span>
+            <span className="text-[10px] sm:text-xs leading-tight tracking-wide">Nearby</span>
           </button>
         </div>
       )}
@@ -2026,6 +2025,44 @@ export default function App() {
           0%  { box-shadow: 0 4px 20px rgba(255,107,0,.6), 0 0 0 0 rgba(255,107,0,.4); }
           70% { box-shadow: 0 4px 20px rgba(255,107,0,.6), 0 0 0 16px rgba(255,107,0,0); }
           100%{ box-shadow: 0 4px 20px rgba(255,107,0,.6), 0 0 0 0 rgba(255,107,0,0); }
+        }
+        .pandal-filter-active {
+          background: linear-gradient(to right, #E9B83E, #f3cb69, #F5E5B7) !important;
+          color: #211329 !important;
+          border: 1px solid rgba(33, 19, 41, 0.3) !important;
+          box-shadow: 0 0 16px rgba(233, 184, 62, 0.50), 0 2px 12px rgba(13, 12, 27, 0.45) !important;
+        }
+        .pandal-filter-active:hover {
+          box-shadow: 0 0 20px rgba(233, 184, 62, 0.60) !important;
+        }
+        .pandal-filter-active span {
+          color: #211329 !important;
+          font-weight: 700 !important;
+        }
+        .pandal-filter-active svg {
+          color: #211329 !important;
+          stroke: #211329 !important;
+        }
+        .pandal-filter-inactive {
+          background: rgba(33, 19, 41, 0.70) !important;
+          border: 1px solid rgba(233, 184, 62, 0.40) !important;
+          color: #F5E5B7 !important;
+          box-shadow: 0 0 8px rgba(233, 184, 62, 0.22), inset 0 1px 1px rgba(255, 255, 255, 0.10) !important;
+          backdrop-filter: blur(12px) !important;
+          -webkit-backdrop-filter: blur(12px) !important;
+        }
+        .pandal-filter-inactive:hover {
+          background: rgba(33, 19, 41, 0.85) !important;
+          border-color: #E9B83E !important;
+          box-shadow: 0 0 12px rgba(233, 184, 62, 0.40) !important;
+        }
+        .pandal-filter-inactive span {
+          color: #F5E5B7 !important;
+          font-weight: 600 !important;
+        }
+        .pandal-filter-inactive svg {
+          color: #E9B83E !important;
+          stroke: #E9B83E !important;
         }
       `}</style>
     </div>

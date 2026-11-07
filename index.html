@@ -77,6 +77,47 @@
       position: fixed;
     }
 
+    /* ── PANDAL FILTERS (Leaderboard Active Gradient vs Profile Resting) ── */
+    .pandal-filter-active {
+      background: linear-gradient(to right, #E9B83E, #f3cb69, #F5E5B7) !important;
+      color: #211329 !important;
+      border: 1px solid rgba(33, 19, 41, 0.3) !important;
+      box-shadow: 0 0 16px rgba(233, 184, 62, 0.50), 0 2px 12px rgba(13, 12, 27, 0.45) !important;
+    }
+    .pandal-filter-active:hover {
+      box-shadow: 0 0 20px rgba(233, 184, 62, 0.60) !important;
+    }
+    .pandal-filter-active span {
+      color: #211329 !important;
+      font-weight: 700 !important;
+    }
+    .pandal-filter-active svg {
+      color: #211329 !important;
+      stroke: #211329 !important;
+    }
+
+    .pandal-filter-inactive {
+      background: rgba(33, 19, 41, 0.70) !important;
+      border: 1px solid rgba(233, 184, 62, 0.40) !important;
+      color: #F5E5B7 !important;
+      box-shadow: 0 0 8px rgba(233, 184, 62, 0.22), inset 0 1px 1px rgba(255, 255, 255, 0.10) !important;
+      backdrop-filter: blur(12px) !important;
+      -webkit-backdrop-filter: blur(12px) !important;
+    }
+    .pandal-filter-inactive:hover {
+      background: rgba(33, 19, 41, 0.85) !important;
+      border-color: #E9B83E !important;
+      box-shadow: 0 0 12px rgba(233, 184, 62, 0.40) !important;
+    }
+    .pandal-filter-inactive span {
+      color: #F5E5B7 !important;
+      font-weight: 600 !important;
+    }
+    .pandal-filter-inactive svg {
+      color: #E9B83E !important;
+      stroke: #E9B83E !important;
+    }
+
     /* ── 0. INTRO SPLASH SCREEN KEYFRAMES & TRANSITIONS ── */
     #splash-screen {
       transition: transform 0.7s ease-in-out, opacity 0.7s ease-in-out;
@@ -887,45 +928,45 @@
     <button
       type="button"
       id="filter-btn-latest"
-      onclick="togglePandalFilter('latest')"
+      onclick="window.togglePandalFilter('latest')"
       title="Filter by Latest Pandals"
-      class="flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-95 backdrop-blur-md bg-[#211329]/70 hover:bg-[#211329]/85 border border-[#E9B83E]/40 hover:border-[#E9B83E] text-[#F5E5B7] shadow-[0_0_8px_rgba(233,184,62,0.22),inset_0_1px_1px_rgba(255,255,255,0.10)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]"
+      class="pandal-filter-inactive flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-95"
     >
-      <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 text-[#E9B83E] transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="10" />
         <polyline points="12 6 12 12 16 14" />
       </svg>
-      <span class="text-[10px] sm:text-xs font-semibold leading-tight tracking-wide text-[#F5E5B7]">Latest</span>
+      <span class="text-[10px] sm:text-xs leading-tight tracking-wide">Latest</span>
     </button>
 
     <!-- Trending Filter -->
     <button
       type="button"
       id="filter-btn-trending"
-      onclick="togglePandalFilter('trending')"
+      onclick="window.togglePandalFilter('trending')"
       title="Filter by Trending Pandals"
-      class="flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-95 backdrop-blur-md bg-[#211329]/70 hover:bg-[#211329]/85 border border-[#E9B83E]/40 hover:border-[#E9B83E] text-[#F5E5B7] shadow-[0_0_8px_rgba(233,184,62,0.22),inset_0_1px_1px_rgba(255,255,255,0.10)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]"
+      class="pandal-filter-inactive flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-95"
     >
-      <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 text-[#E9B83E] transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
         <polyline points="17 6 23 6 23 12" />
       </svg>
-      <span class="text-[10px] sm:text-xs font-semibold leading-tight tracking-wide text-[#F5E5B7]">Trending</span>
+      <span class="text-[10px] sm:text-xs leading-tight tracking-wide">Trending</span>
     </button>
 
     <!-- Nearby Filter -->
     <button
       type="button"
       id="filter-btn-nearby"
-      onclick="togglePandalFilter('nearby')"
+      onclick="window.togglePandalFilter('nearby')"
       title="Filter by Nearby Pandals"
-      class="flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-95 backdrop-blur-md bg-[#211329]/70 hover:bg-[#211329]/85 border border-[#E9B83E]/40 hover:border-[#E9B83E] text-[#F5E5B7] shadow-[0_0_8px_rgba(233,184,62,0.22),inset_0_1px_1px_rgba(255,255,255,0.10)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]"
+      class="pandal-filter-inactive flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-95"
     >
-      <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 text-[#E9B83E] transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
         <circle cx="12" cy="13" r="4" />
       </svg>
-      <span class="text-[10px] sm:text-xs font-semibold leading-tight tracking-wide text-[#F5E5B7]">Nearby</span>
+      <span class="text-[10px] sm:text-xs leading-tight tracking-wide">Nearby</span>
     </button>
   </div>
 
@@ -3517,19 +3558,23 @@
       if (filter === 'recent') filter = 'latest';
       if (activePandalFilter === filter) {
         activePandalFilter = null;
+        if (typeof showToast === 'function') showToast('Filter cleared');
       } else {
         activePandalFilter = filter;
         if (filter === 'latest') {
-          if (snapsData.length > 0) {
+          if (typeof showToast === 'function') showToast('✨ Filter: Latest Pandals Active');
+          if (snapsData && snapsData.length > 0) {
             const sorted = [...snapsData].sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
             if (map && sorted[0]) map.panTo({ lat: sorted[0].lat, lng: sorted[0].lng });
           }
         } else if (filter === 'trending') {
-          if (snapsData.length > 0) {
+          if (typeof showToast === 'function') showToast('🔥 Filter: Trending Pandals Active');
+          if (snapsData && snapsData.length > 0) {
             const sorted = [...snapsData].sort((a, b) => (Number(b.likesCount || 0)*4 + Number(b.viewsCount || 0)) - (Number(a.likesCount || 0)*4 + Number(a.viewsCount || 0)));
             if (map && sorted[0]) map.panTo({ lat: sorted[0].lat, lng: sorted[0].lng });
           }
         } else if (filter === 'nearby') {
+          if (typeof showToast === 'function') showToast('📍 Filter: Nearby Pandals Active');
           document.getElementById('btn-recenter')?.click();
         }
       }
@@ -3542,19 +3587,23 @@
         const btn = document.getElementById(`filter-btn-${f}`) || (f === 'latest' ? document.getElementById('filter-btn-recent') : null);
         if (!btn) return;
         const isActive = activePandalFilter === f;
-        const span = btn.querySelector('span');
-        const svg = btn.querySelector('svg');
         if (isActive) {
-          btn.className = 'flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-95 bg-gradient-to-r from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] border border-[#211329]/30 text-[#211329] shadow-[0_0_16px_rgba(233,184,62,0.50),0_2px_12px_rgba(13,12,27,0.45)] hover:shadow-[0_0_20px_rgba(233,184,62,0.60)]';
-          if (span) span.className = 'text-[10px] sm:text-xs font-bold leading-tight tracking-wide text-[#211329]';
-          if (svg) svg.className = 'w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 text-[#211329] transition-colors';
+          btn.classList.add('pandal-filter-active');
+          btn.classList.remove('pandal-filter-inactive');
         } else {
-          btn.className = 'flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-95 backdrop-blur-md bg-[#211329]/70 hover:bg-[#211329]/85 border border-[#E9B83E]/40 hover:border-[#E9B83E] text-[#F5E5B7] shadow-[0_0_8px_rgba(233,184,62,0.22),inset_0_1px_1px_rgba(255,255,255,0.10)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)]';
-          if (span) span.className = 'text-[10px] sm:text-xs font-semibold leading-tight tracking-wide text-[#F5E5B7]';
-          if (svg) svg.className = 'w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 text-[#E9B83E] transition-colors';
+          btn.classList.remove('pandal-filter-active');
+          btn.classList.add('pandal-filter-inactive');
         }
       });
     }
+
+    ['latest', 'trending', 'nearby'].forEach(f => {
+      const btn = document.getElementById(`filter-btn-${f}`);
+      btn?.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.togglePandalFilter(f);
+      });
+    });
 
     /* ── YEAR SELECTOR DROPDOWN ── */
     let selectedPujaYear = 2026;
