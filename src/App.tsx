@@ -611,11 +611,11 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
   return (
     <div
       id="upload-modal"
-      className={`snap-modal-backdrop fixed inset-0 z-[120] flex flex-col justify-end sm:justify-center p-0 sm:p-4 bg-black/85 backdrop-blur-xl ${
+      className={`snap-modal-backdrop fixed inset-0 z-[120] flex flex-col justify-end sm:justify-center p-2 sm:p-4 bg-black/40 backdrop-blur-[2px] ${
         visible ? 'active visible' : 'hidden'
       }`}
     >
-      <div className="snap-modal-content w-full sm:max-w-lg mx-auto bg-[#121224] rounded-t-[32px] sm:rounded-[28px] border border-white/10 p-5 sm:p-6 flex flex-col max-h-[92vh] overflow-y-auto hide-scrollbar shadow-2xl">
+      <div className="snap-modal-content w-full sm:max-w-lg mx-auto bg-[#121224]/95 backdrop-blur-xl rounded-[24px] sm:rounded-[28px] border border-[#E9B83E]/30 p-5 sm:p-6 flex flex-col max-h-[92vh] overflow-y-auto hide-scrollbar shadow-[0_24px_60px_rgba(0,0,0,0.85),0_0_24px_rgba(233,184,62,0.15)]">
         {/* Header */}
         <div className="flex items-center justify-between pb-3.5 border-b border-white/10 mb-4 flex-shrink-0">
           <div className="flex items-center gap-2.5">
