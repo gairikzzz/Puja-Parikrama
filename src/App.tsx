@@ -1056,7 +1056,9 @@ export default function App() {
   const [profileModalVisible, setProfileModalVisible] = useState(false)
   const [topSearchQuery, setTopSearchQuery] = useState('')
   const [isSearchFocused, setIsSearchFocused] = useState(false)
+  const [showTopSearchDropdown, setShowTopSearchDropdown] = useState(false)
   const searchInputRef = useRef<HTMLInputElement>(null)
+  const topSearchContainerRef = useRef<HTMLDivElement>(null)
   const [activeFilter, setActiveFilter] = useState<'latest' | 'trending' | 'nearby' | null>(null)
   const [selectedYear, setSelectedYear] = useState<number>(2026)
   const [yearDropdownOpen, setYearDropdownOpen] = useState(false)
@@ -1253,11 +1255,14 @@ export default function App() {
     document.title = 'Puja Parikrama'
   }, [])
 
-  // Close year dropdown when clicking outside
+  // Close year & search dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (yearDropdownRef.current && !yearDropdownRef.current.contains(e.target as Node)) {
         setYearDropdownOpen(false)
+      }
+      if (topSearchContainerRef.current && !topSearchContainerRef.current.contains(e.target as Node)) {
+        setShowTopSearchDropdown(false)
       }
     }
     document.addEventListener('mousedown', handleClickOutside)
@@ -1991,21 +1996,30 @@ export default function App() {
             </div>
 
             {/* Middle Section: Integrated Search Bar Centered in Header Box */}
-            <div className="absolute left-1/2 -translate-x-1/2 w-[calc(100%-360px)] min-w-[140px] max-w-xs sm:max-w-sm md:max-w-md z-20 pointer-events-auto">
+            <div ref={topSearchContainerRef} className="absolute left-1/2 -translate-x-1/2 w-[calc(100%-360px)] min-w-[140px] max-w-xs sm:max-w-sm md:max-w-md z-20 pointer-events-auto">
               <div className="relative flex items-center">
                 <input
                   ref={searchInputRef}
                   type="text"
                   value={topSearchQuery}
-                  onChange={e => setTopSearchQuery(e.target.value)}
-                  onFocus={() => setIsSearchFocused(true)}
+                  onChange={e => {
+                    setTopSearchQuery(e.target.value)
+                    setShowTopSearchDropdown(true)
+                  }}
+                  onFocus={() => {
+                    setIsSearchFocused(true)
+                    if (topSearchQuery.trim()) setShowTopSearchDropdown(true)
+                  }}
                   onBlur={() => setIsSearchFocused(false)}
                   placeholder={isSearchFocused ? '' : 'Search Pandals...'}
                   className="w-full bg-[#0D0C1B]/60 hover:bg-[#0D0C1B]/80 focus:bg-[#0D0C1B]/95 border border-[#E9B83E]/35 hover:border-[#E9B83E]/60 focus:border-[#E9B83E] rounded-full pl-3 sm:pl-3.5 pr-8 py-1 h-7 sm:h-7.5 text-[11px] sm:text-xs text-[#F5E5B7] placeholder-[#F5E5B7]/45 focus:placeholder-transparent backdrop-blur-md shadow-inner outline-none transition"
                 />
                 <button
                   type="button"
-                  onClick={() => searchInputRef.current?.focus()}
+                  onClick={() => {
+                    searchInputRef.current?.focus()
+                    if (topSearchQuery.trim()) setShowTopSearchDropdown(true)
+                  }}
                   className="absolute right-2.5 text-[#E9B83E] hover:text-[#F5E5B7]"
                 >
                   <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -2016,7 +2030,7 @@ export default function App() {
               </div>
 
               {/* Search Autocomplete Dropdown (Starts just below search bar) */}
-              {topSearchResults.length > 0 && (
+              {showTopSearchDropdown && topSearchResults.length > 0 && (
                 <div className="absolute top-full mt-1.5 left-0 right-0 bg-[#211329]/95 border border-[#E9B83E]/35 rounded-2xl p-1 shadow-[0_12px_32px_rgba(13,12,27,0.75),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-xl z-50 max-h-60 overflow-y-auto">
                   {topSearchResults.map(pandal => (
                     <div
@@ -2024,7 +2038,8 @@ export default function App() {
                       onClick={() => {
                         googleMapRef.current?.panTo({ lat: pandal.lat, lng: pandal.lng })
                         googleMapRef.current?.setZoom(16)
-                        setTopSearchQuery('')
+                        setTopSearchQuery(pandal.name)
+                        setShowTopSearchDropdown(false)
                         showToast(`📍 Showing ${pandal.name}`)
                       }}
                       className="px-3.5 py-2.5 hover:bg-[#E9B83E]/15 hover:text-[#E9B83E] text-white/90 cursor-pointer transition text-left group border-b border-[#E9B83E]/20 last:border-b-0 first:rounded-t-xl last:rounded-b-xl"
@@ -2037,7 +2052,7 @@ export default function App() {
                   ))}
                 </div>
               )}
-              {topSearchQuery.trim() && topSearchResults.length === 0 && (
+              {showTopSearchDropdown && topSearchQuery.trim() && topSearchResults.length === 0 && (
                 <div className="absolute top-full mt-1 left-0 right-0 bg-[#211329]/95 border border-[#E9B83E]/35 rounded-2xl p-3 shadow-[0_12px_32px_rgba(13,12,27,0.75)] backdrop-blur-xl z-50 text-center text-xs text-[#F5E5B7]/60 flex items-center justify-center gap-2">
                   <span>🔍</span> No pandals or locations found
                 </div>

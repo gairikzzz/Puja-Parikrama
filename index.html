@@ -3751,7 +3751,7 @@
             map.panTo({ lat, lng });
             map.setZoom(16);
           }
-          topSearchInput.value = '';
+          topSearchInput.value = name;
           topSearchDropdown.classList.add('hidden');
           showToast(`📍 Showing ${name}`);
         });
