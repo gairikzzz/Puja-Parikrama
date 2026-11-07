@@ -13,7 +13,7 @@
 
   <script>
     // Immediate pre-render check to bypass splash on subsequent visits in the same session
-    if (sessionStorage.getItem('visited') === 'true') {
+    if (sessionStorage.getItem('visited') === 'true' || localStorage.getItem('parikrama_splash_seen') === 'true') {
       document.documentElement.classList.add('splash-bypassed');
     }
   </script>
@@ -122,25 +122,18 @@
 
     /* ── 0. INTRO SPLASH SCREEN KEYFRAMES & TRANSITIONS ── */
     #splash-screen {
-      transition: transform 0.7s ease-in-out, opacity 0.7s ease-in-out;
-      will-change: transform, opacity;
+      transition: opacity 0.5s ease-out;
+      will-change: opacity;
     }
 
     #splash-screen.splash-exit {
-      transform: scale(1.08) !important;
       opacity: 0 !important;
       pointer-events: none !important;
     }
 
-    @media (min-width: 768px) {
-      #splash-screen #splash-bg-wrapper,
-      #splash-screen picture {
-        top: -10px !important;
-        height: calc(100% + 20px) !important;
-      }
-      #splash-screen picture img {
-        object-position: center top !important;
-      }
+    #splash-screen picture img {
+      object-fit: cover !important;
+      object-position: center center !important;
     }
 
     @keyframes splashFadeInUp {
@@ -440,50 +433,99 @@
 <body class="bg-[#0a0a14] text-white">
 
   <!-- ── 0. INTRO SPLASH SCREEN ("PUJA PARIKRAMA") ── -->
-  <div id="splash-screen" class="fixed inset-0 z-[9999] bg-[#0a0a14] select-none cursor-default pointer-events-auto overflow-hidden">
-    <!-- Responsive Platform Splash Background: Mobile vs Laptop/Desktop (shifted 10px up on laptop) -->
-    <div id="splash-bg-wrapper" class="absolute inset-0 w-full h-full pointer-events-none select-none md:-top-[10px] md:h-[calc(100%+20px)]">
+  <div id="splash-screen" class="fixed inset-0 z-[9999] bg-[#0a0a14] select-none cursor-pointer pointer-events-auto overflow-hidden">
+    <!-- Responsive Platform Splash Background: Mobile vs Laptop/Desktop -->
+    <div id="splash-bg-wrapper" class="absolute inset-0 w-full h-full pointer-events-none select-none">
       <picture class="w-full h-full">
         <!-- Desktop / Laptop platforms (wide screens or landscape) -->
         <source media="(min-width: 1024px)" srcset="splash-desktop.jpg">
         <source media="(min-width: 768px) and (orientation: landscape)" srcset="splash-desktop.jpg">
         <!-- Mobile / Portrait platforms -->
-        <img src="splash-mobile.jpg" alt="Puja Parikrama" class="w-full h-full object-cover object-center md:object-top">
+        <img src="splash-mobile.jpg" alt="Puja Parikrama" class="w-full h-full object-cover object-center">
       </picture>
-
-      <!-- Man's Camera Lens Flash Strobe & Flare (ignites at the phone: 71.7%/75.5% on mobile, 66.7%/81.4% on desktop) -->
-      <div id="camera-lens-flash" class="hidden absolute left-[71.7%] top-[75.5%] md:left-[66.7%] md:top-[81.4%] -translate-x-1/2 -translate-y-1/2 pointer-events-none z-40">
-        <div class="w-8 h-8 rounded-full bg-white shadow-[0_0_60px_35px_rgba(255,255,255,1),0_0_140px_70px_rgba(255,245,200,0.95)] animate-ping"></div>
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[600px] h-[3px] bg-gradient-to-r from-transparent via-white to-transparent blur-[1px]"></div>
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[180px] sm:h-[300px] w-[2px] bg-gradient-to-b from-transparent via-white to-transparent blur-[1px]"></div>
-      </div>
     </div>
-
-    <!-- Full Screen Whiteout Flash: turns the entire page blinding white -->
-    <div id="splash-whiteout-flash" class="fixed inset-0 pointer-events-none bg-white opacity-0 transition-opacity duration-300 z-50"></div>
   </div>
 
+  <!-- Man's Camera Lens Flash Strobe & Flare (Dynamically positioned right on the man's smartphone) -->
+  <div id="camera-lens-flash" class="hidden fixed -translate-x-1/2 -translate-y-1/2 pointer-events-none z-[10001]">
+    <!-- Central super-bright white-hot core -->
+    <div class="w-10 h-10 rounded-full bg-white shadow-[0_0_80px_45px_rgba(255,255,255,1),0_0_160px_90px_rgba(255,245,210,0.95)] animate-ping"></div>
+    <!-- Anamorphic lens flare streak (horizontal) -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] sm:w-[700px] h-[3.5px] bg-gradient-to-r from-transparent via-white to-transparent blur-[0.5px]"></div>
+    <!-- Cross star flare streak (vertical) -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[220px] sm:h-[350px] w-[2.5px] bg-gradient-to-b from-transparent via-white to-transparent blur-[0.5px]"></div>
+    <!-- Diagonal glare streak -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[240px] sm:w-[380px] h-[2px] rotate-45 bg-gradient-to-r from-transparent via-white/80 to-transparent blur-[0.5px]"></div>
+  </div>
+
+  <!-- Full Screen Whiteout Flash: turns the entire screen blinding white and dissolves into landing page -->
+  <div id="splash-whiteout-flash" class="fixed inset-0 pointer-events-none bg-white opacity-0 z-[10002]"></div>
+
   <script>
-    // Immediate Splash Screen Execution Controller with Camera Flash & 3s Landing Transition
+    // Splash Screen Controller: Fires camera flash right at the man's phone, whiteout transition to landing page, never repeats
     (function() {
       const splashEl = document.getElementById('splash-screen');
       const lensFlashEl = document.getElementById('camera-lens-flash');
       const whiteoutEl = document.getElementById('splash-whiteout-flash');
       if (!splashEl) return;
-      if (sessionStorage.getItem('visited') === 'true') {
+
+      // If already visited on device or session, remove immediately
+      if (sessionStorage.getItem('visited') === 'true' || localStorage.getItem('parikrama_splash_seen') === 'true') {
         splashEl.style.display = 'none';
-        splashEl.style.pointerEvents = 'none';
         splashEl.remove();
+        lensFlashEl?.remove();
+        whiteoutEl?.remove();
         return;
       }
-      sessionStorage.setItem('visited', 'true');
+
+      // Compute exact pixel coordinates of the man's smartphone in the rendered object-cover image
+      function computePhoneCoordinates() {
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+        const isDesktop = vw >= 1024 || (vw >= 768 && vw > vh);
+
+        const imgW = isDesktop ? 1024 : 576;
+        const imgH = isDesktop ? 576 : 1024;
+        // Exact phone coordinates in original image space
+        const targetXRatio = isDesktop ? 0.6658 : 0.7168;
+        const targetYRatio = isDesktop ? 0.8113 : 0.7548;
+
+        const scale = Math.max(vw / imgW, vh / imgH);
+        const renderedW = imgW * scale;
+        const renderedH = imgH * scale;
+
+        const offsetX = (vw - renderedW) / 2;
+        const offsetY = (vh - renderedH) / 2;
+
+        return {
+          x: Math.round(offsetX + (targetXRatio * renderedW)),
+          y: Math.round(offsetY + (targetYRatio * renderedH))
+        };
+      }
+
+      function updateLensFlashPosition() {
+        if (!lensFlashEl) return;
+        const coords = computePhoneCoordinates();
+        lensFlashEl.style.left = coords.x + 'px';
+        lensFlashEl.style.top = coords.y + 'px';
+      }
+
+      // Initial alignment & update on window resize
+      updateLensFlashPosition();
+      window.addEventListener('resize', updateLensFlashPosition);
 
       let exiting = false;
       function triggerCameraFlashAndEnter() {
         if (exiting) return;
         exiting = true;
+        clearTimeout(autoTimer);
 
-        // 1. Ignite the man's camera lens flash at the phone
+        // Mark visited immediately so splash NEVER appears again
+        sessionStorage.setItem('visited', 'true');
+        localStorage.setItem('parikrama_splash_seen', 'true');
+
+        // 1. Position flash right at the guy's phone & ignite
+        updateLensFlashPosition();
         if (lensFlashEl) {
           lensFlashEl.classList.remove('hidden');
         }
@@ -491,44 +533,48 @@
           try { navigator.vibrate([35, 25, 45]); } catch(e) {}
         }
 
-        // 2. The flash burst turns the entire page blinding white (after 100ms)
+        // 2. The flash burst turns the entire screen blinding white (after 100ms)
         setTimeout(() => {
           if (whiteoutEl) {
-            whiteoutEl.style.transition = 'opacity 0.16s ease-out';
+            whiteoutEl.style.transition = 'opacity 0.12s ease-out';
             whiteoutEl.style.opacity = '1';
           }
         }, 100);
 
-        // 3. While the screen is pure white, exit splash and pan map
+        // 3. While screen is 100% solid white, remove splash screen permanently and load landing page
         setTimeout(() => {
           if (splashEl) {
-            splashEl.classList.add('splash-exit');
-            if (typeof map !== 'undefined' && map && typeof map.panTo === 'function') {
-              const loc = (typeof userLocation !== 'undefined' && userLocation) 
-                ? userLocation 
-                : ((typeof currentUserCoords !== 'undefined' && currentUserCoords) ? currentUserCoords : { lat: 23.8315, lng: 91.2868 });
-              map.panTo(loc);
-              map.setZoom(15);
-            }
-          }
-          // Smoothly fade out the white flash to reveal the live landing map
-          if (whiteoutEl) {
-            whiteoutEl.style.transition = 'opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
-            whiteoutEl.style.opacity = '0';
-          }
-        }, 280);
-
-        // 4. Remove splash elements from DOM
-        setTimeout(() => {
-          if (splashEl) {
-            splashEl.style.pointerEvents = 'none';
+            splashEl.style.display = 'none';
             splashEl.remove();
           }
-        }, 750);
+          lensFlashEl?.remove();
+
+          // Initialize and pan map to landing coordinates
+          if (typeof map !== 'undefined' && map && typeof map.panTo === 'function') {
+            const loc = (typeof userLocation !== 'undefined' && userLocation) 
+              ? userLocation 
+              : ((typeof currentUserCoords !== 'undefined' && currentUserCoords) ? currentUserCoords : { lat: 23.8315, lng: 91.2868 });
+            map.panTo(loc);
+            map.setZoom(15);
+          }
+
+          // 4. Smoothly dissolve the pure white screen to reveal the live landing page
+          if (whiteoutEl) {
+            whiteoutEl.style.transition = 'opacity 0.45s ease-out';
+            whiteoutEl.style.opacity = '0';
+            setTimeout(() => {
+              whiteoutEl.remove();
+            }, 500);
+          }
+        }, 260);
       }
 
-      // Auto-trigger camera flash after 1.5 seconds
-      setTimeout(triggerCameraFlashAndEnter, 1500);
+      // Tap/click anywhere on splash screen to flash & enter immediately
+      splashEl.addEventListener('click', triggerCameraFlashAndEnter);
+      splashEl.addEventListener('touchstart', triggerCameraFlashAndEnter, { passive: true });
+
+      // Or auto-flash after 1.4 seconds
+      const autoTimer = setTimeout(triggerCameraFlashAndEnter, 1400);
     })();
   </script>
 

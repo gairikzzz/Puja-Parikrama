@@ -967,11 +967,11 @@ export default function App() {
   const [liveCount, setLiveCount] = useState(23)
 
   const [showSplash, setShowSplash] = useState(() => {
-    return sessionStorage.getItem('visited') !== 'true'
+    return sessionStorage.getItem('visited') !== 'true' && localStorage.getItem('parikrama_splash_seen') !== 'true'
   })
-  const [splashExiting, setSplashExiting] = useState(false)
   const [cameraFlashing, setCameraFlashing] = useState(false)
   const [screenWhiteout, setScreenWhiteout] = useState(false)
+  const [phonePos, setPhonePos] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
 
   const [user, setUser] = useState<AuthUser | null>(() => {
     const cached = localStorage.getItem('puja_parikrama_user')
@@ -1099,10 +1099,43 @@ export default function App() {
     // All toast prompts disabled per user request
   }, [])
 
-  const triggerCameraFlashAndEnter = useCallback(() => {
-    if (splashExiting) return
+  const computePhoneCoordinates = useCallback(() => {
+    if (typeof window === 'undefined') return { x: 0, y: 0 }
+    const vw = window.innerWidth
+    const vh = window.innerHeight
+    const isDesktop = vw >= 1024 || (vw >= 768 && vw > vh)
+    const imgW = isDesktop ? 1024 : 576
+    const imgH = isDesktop ? 576 : 1024
+    const targetXRatio = isDesktop ? 0.6658 : 0.7168
+    const targetYRatio = isDesktop ? 0.8113 : 0.7548
 
-    // 1. Ignite the man's camera lens flash at the phone
+    const scale = Math.max(vw / imgW, vh / imgH)
+    const renderedW = imgW * scale
+    const renderedH = imgH * scale
+    const offsetX = (vw - renderedW) / 2
+    const offsetY = (vh - renderedH) / 2
+
+    return {
+      x: Math.round(offsetX + targetXRatio * renderedW),
+      y: Math.round(offsetY + targetYRatio * renderedH)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!showSplash) return
+    const update = () => setPhonePos(computePhoneCoordinates())
+    update()
+    window.addEventListener('resize', update)
+    return () => window.removeEventListener('resize', update)
+  }, [showSplash, computePhoneCoordinates])
+
+  const triggerCameraFlashAndEnter = useCallback(() => {
+    // Mark visited immediately so splash NEVER shows again
+    sessionStorage.setItem('visited', 'true')
+    localStorage.setItem('parikrama_splash_seen', 'true')
+
+    // 1. Position flash right at the guy's phone & ignite
+    setPhonePos(computePhoneCoordinates())
     setCameraFlashing(true)
     if (navigator.vibrate) {
       try { navigator.vibrate([35, 25, 45]) } catch {}
@@ -1113,28 +1146,27 @@ export default function App() {
       setScreenWhiteout(true)
     }, 100)
 
-    // 3. While the screen is pure white, exit splash and pan map
+    // 3. While the screen is pure white, permanently dismiss splash and load landing page
     setTimeout(() => {
-      setSplashExiting(true)
+      setShowSplash(false)
       if (googleMapRef.current) {
         googleMapRef.current.panTo(currentUserCoords || AGARTALA_CENTER)
         googleMapRef.current.setZoom(15)
       }
-    }, 280)
+    }, 260)
 
     // 4. White flash dissipates, revealing the live landing map page
     setTimeout(() => {
-      setShowSplash(false)
-    }, 750)
-  }, [splashExiting, currentUserCoords])
+      setScreenWhiteout(false)
+    }, 450)
+  }, [currentUserCoords, computePhoneCoordinates])
 
-  // ── Parikrama Splash Screen Controller: auto-flash after 1.5 seconds ──
+  // ── Parikrama Splash Screen Controller: auto-flash after 1.4 seconds ──
   useEffect(() => {
     if (!showSplash) return
-    sessionStorage.setItem('visited', 'true')
     const timer = setTimeout(() => {
       triggerCameraFlashAndEnter()
-    }, 1500)
+    }, 1400)
     return () => {
       clearTimeout(timer)
     }
@@ -1502,12 +1534,11 @@ export default function App() {
       {showSplash && (
         <div
           id="splash-screen"
-          className={`fixed inset-0 z-[9999] bg-[#0a0a14] select-none pointer-events-auto cursor-default overflow-hidden transition-all duration-500 ease-out ${
-            splashExiting ? 'scale-[1.05] opacity-0 pointer-events-none' : 'scale-100 opacity-100'
-          }`}
+          onClick={triggerCameraFlashAndEnter}
+          className="fixed inset-0 z-[9999] bg-[#0a0a14] select-none pointer-events-auto cursor-pointer overflow-hidden"
         >
-          {/* Responsive Platform Splash Background: Mobile vs Laptop/Desktop (shifted 10px up on laptop) */}
-          <div className="absolute inset-0 w-full h-full pointer-events-none select-none md:-top-[10px] md:h-[calc(100%+20px)]">
+          {/* Responsive Platform Splash Background: Mobile vs Laptop/Desktop */}
+          <div className="absolute inset-0 w-full h-full pointer-events-none select-none">
             <picture className="w-full h-full">
               {/* Desktop / Laptop platforms (wide screens or landscape) */}
               <source media="(min-width: 1024px)" srcSet="/splash-desktop.jpg" />
@@ -1516,31 +1547,38 @@ export default function App() {
               <img
                 src="/splash-mobile.jpg"
                 alt="Puja Parikrama"
-                className="w-full h-full object-cover object-center md:object-top"
+                className="w-full h-full object-cover object-center"
               />
             </picture>
-
-            {/* Man's Camera Lens Flash Strobe & Flare (ignites at the phone: 71.7%/75.5% on mobile, 66.7%/81.4% on desktop) */}
-            {cameraFlashing && (
-              <div className="absolute left-[71.7%] top-[75.5%] md:left-[66.7%] md:top-[81.4%] -translate-x-1/2 -translate-y-1/2 pointer-events-none z-40">
-                {/* Intense central white strobe */}
-                <div className="w-8 h-8 rounded-full bg-white shadow-[0_0_60px_35px_rgba(255,255,255,1),0_0_140px_70px_rgba(255,245,200,0.95)] animate-ping" />
-                {/* Horizontal anamorphic lens flare streak */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[600px] h-[3px] bg-gradient-to-r from-transparent via-white to-transparent blur-[1px]" />
-                {/* Vertical sparkle streak */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[180px] sm:h-[300px] w-[2px] bg-gradient-to-b from-transparent via-white to-transparent blur-[1px]" />
-              </div>
-            )}
           </div>
-
-          {/* Full Screen Whiteout Flash: turns the entire page blinding white */}
-          <div
-            className={`fixed inset-0 pointer-events-none bg-white transition-opacity duration-300 z-50 ${
-              screenWhiteout ? 'opacity-100' : 'opacity-0'
-            }`}
-          />
         </div>
       )}
+
+      {/* Man's Camera Lens Flash Strobe & Flare (Dynamically positioned right on the man's smartphone) */}
+      {showSplash && cameraFlashing && (
+        <div
+          id="camera-lens-flash"
+          style={{ left: `${phonePos.x}px`, top: `${phonePos.y}px` }}
+          className="fixed -translate-x-1/2 -translate-y-1/2 pointer-events-none z-[10001]"
+        >
+          {/* Central super-bright white-hot core */}
+          <div className="w-10 h-10 rounded-full bg-white shadow-[0_0_80px_45px_rgba(255,255,255,1),0_0_160px_90px_rgba(255,245,210,0.95)] animate-ping" />
+          {/* Anamorphic lens flare streak */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] sm:w-[700px] h-[3.5px] bg-gradient-to-r from-transparent via-white to-transparent blur-[0.5px]" />
+          {/* Cross star flare streak */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[220px] sm:h-[350px] w-[2.5px] bg-gradient-to-b from-transparent via-white to-transparent blur-[0.5px]" />
+          {/* Diagonal glare streak */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[240px] sm:w-[380px] h-[2px] rotate-45 bg-gradient-to-r from-transparent via-white/80 to-transparent blur-[0.5px]" />
+        </div>
+      )}
+
+      {/* Full Screen Whiteout Flash: turns the entire screen blinding white and dissolves into landing page */}
+      <div
+        id="splash-whiteout-flash"
+        className={`fixed inset-0 pointer-events-none bg-white transition-opacity duration-300 z-[10002] ${
+          screenWhiteout ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+      />
 
       {/* ── 2. NEW FLOATING BRANDING BAR & EMBEDDED SEARCH ("PUJA PARIKRAMA") ── */}
       {mapReady && (
