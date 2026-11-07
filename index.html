@@ -3733,7 +3733,11 @@
       try {
         const data = ytPlayer.getVideoData();
         if (data && data.title) {
-          if (elTrackTitle) elTrackTitle.textContent = data.title;
+          let cleanTitle = data.title;
+          if (cleanTitle.includes('|')) {
+            cleanTitle = cleanTitle.split('|')[0].trim();
+          }
+          if (elTrackTitle) elTrackTitle.textContent = cleanTitle;
           let author = data.author ? data.author.replace(/\s*-\s*Topic$/i, '').trim() : '';
           author = author.replace(/\s*·\s*YouTube(\s*Music)?/gi, '').trim();
           author = author.replace(/\s*YouTube(\s*Music)?/gi, '').trim();
