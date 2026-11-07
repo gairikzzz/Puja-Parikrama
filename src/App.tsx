@@ -815,29 +815,7 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
             </div>
           </div>
 
-          {/* User ID card / Guest */}
-          <div className="glass-card rounded-xl p-2.5 flex items-center justify-between border border-white/10">
-            <div className="flex items-center gap-2 min-w-0">
-              {currentUser?.photoURL ? (
-                <img src={currentUser.photoURL} alt={currentUser.displayName} className="w-7 h-7 rounded-full border border-saffron object-cover" />
-              ) : (
-                <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-amber-500 via-amber-300 to-amber-100 p-[1px] flex items-center justify-center flex-shrink-0">
-                  <div className="w-full h-full rounded-full bg-[#1c0a2b] flex items-center justify-center">
-                    <svg className="w-4 h-4 text-amber-300" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                </div>
-              )}
-              <div className="min-w-0">
-                <span className="text-[9px] text-white/50 uppercase tracking-wider block">Posting as</span>
-                <span className="text-white text-xs font-bold block truncate">{currentUser?.displayName || 'Guest Devotee'}</span>
-              </div>
-            </div>
-            <span className="text-[9px] font-semibold text-amber-300 bg-amber-500/20 border border-amber-500/30 px-2 py-0.5 rounded-full">
-              {currentUser ? 'Devotee' : 'Guest'}
-            </span>
-          </div>
+
 
           {/* Submit button & Moderation info */}
           <div className="pt-2 pb-6 space-y-2">
