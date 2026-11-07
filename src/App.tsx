@@ -680,7 +680,7 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
                 {pandalName.trim() ? 'Add Photos of This Pandal' : 'Add a Pandal'}
               </h2>
               <p className="text-[#E9B83E]/80 text-[10px] sm:text-[11px] font-medium leading-tight">
-                {pandalName.trim() ? 'Take a new photo or select photos from your gallery' : 'Capture and share your favourite pandal with the Puja Porikroma community'}
+                {pandalName.trim() ? 'Take a new photo or select photos from your gallery' : 'Share your favourite pandal with the Puja Porikroma community'}
               </p>
             </div>
           </div>
@@ -702,11 +702,11 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
         />
 
         {/* Main Content (Non-scrollable, compact layout) */}
-        <div className="space-y-2 sm:space-y-2.5 flex flex-col">
+        <div className="space-y-2.5 sm:space-y-3 flex flex-col">
           {/* Media Preview Box (Tap to choose or change image) */}
           <div
             onClick={() => document.getElementById('snap-file-input')?.click()}
-            className="w-full h-28 sm:h-32 rounded-xl border-2 border-dashed border-[#E9B83E]/40 hover:border-[#E9B83E] bg-[#211329]/50 flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer transition-all shadow-[0_4px_16px_rgba(13,12,27,0.5)]"
+            className="w-full h-28 sm:h-32 rounded-xl border border-dashed border-[#E9B83E]/40 hover:border-[#E9B83E] bg-[#211329]/50 flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer transition-all shadow-[0_4px_16px_rgba(13,12,27,0.5)]"
           >
             {preview ? (
               <>
@@ -730,8 +730,8 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
           </div>
 
           {/* Pandal Name & Dropdown (Styled like Search Bar & Landing Page Year) */}
-          <div className="relative">
-            <label className="block text-[11px] sm:text-xs font-semibold text-[#F5E5B7] mb-1">
+          <div className="space-y-1.5">
+            <label className="block text-[11px] sm:text-xs font-semibold text-[#F5E5B7]">
               <span>Pandal Name</span> <span className="text-red-500 font-bold">*</span>
             </label>
             <div className="relative flex items-center rounded-full bg-[#211329]/75 hover:bg-[#211329]/85 border border-[#E9B83E]/40 hover:border-[#E9B83E] focus-within:border-[#E9B83E] shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.15)] backdrop-blur-md transition-all">
@@ -808,8 +808,8 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
           </div>
 
           {/* Interactive Mini-Map Preview Card (Confirmation) with Floating Top Search Bar */}
-          <div className="space-y-1">
-            <label className="block text-[11px] sm:text-xs font-semibold text-[#F5E5B7] mb-1">
+          <div className="space-y-1.5">
+            <label className="block text-[11px] sm:text-xs font-semibold text-[#F5E5B7]">
               <span>Confirm Pandal Location</span> <span className="text-red-500 font-bold">*</span>
             </label>
             <div
