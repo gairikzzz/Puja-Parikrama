@@ -999,6 +999,7 @@ export default function App() {
   const autoPlayStarted = useRef(false)
   const [isPlaying, setIsPlaying] = useState(false)
   const isMutedRef = useRef(false)
+  const userInteracted = useRef(false)
   const [isMuted, setIsMuted] = useState(false)
   const [trackTitle, setTrackTitle] = useState('Durga Ma Asche')
   const [trackArtist, setTrackArtist] = useState('Infra')
@@ -1008,6 +1009,7 @@ export default function App() {
   const dhakEngineRef = useRef<DhakAudioEngine | null>(null)
 
   const unlockAndPlayAudio = useCallback(() => {
+    userInteracted.current = true
     if (userExplicitlyPaused.current) return
     if (ytPlayerRef.current && ytPlayerReady.current) {
       try {
@@ -1045,9 +1047,17 @@ export default function App() {
       events.forEach(evt => window.removeEventListener(evt, onGesture))
     }
     const onGesture = () => {
+      userInteracted.current = true
       removeListeners()
       if (!userExplicitlyPaused.current && !isMutedRef.current) {
-        unlockAndPlayAudio()
+        if (ytPlayerRef.current && ytPlayerReady.current) {
+          try {
+            ytPlayerRef.current.seekTo(0, true)
+            ytPlayerRef.current.unMute()
+            ytPlayerRef.current.setVolume(100)
+            ytPlayerRef.current.playVideo()
+          } catch(e) {}
+        }
       }
     }
     events.forEach(evt => window.addEventListener(evt, onGesture, { passive: true }))
@@ -1099,17 +1109,21 @@ export default function App() {
                 }
               } catch (e) {
                 try {
-                  event.target.mute()
-                  event.target.playVideo()
+                  event.target.pauseVideo()
+                  event.target.seekTo(0, true)
                 } catch(err) {}
+                setCurrentTimeSec(0)
+                setIsPlaying(false)
               }
               updateYTTrackInfo()
             },
             onAutoplayBlocked: (event: any) => {
               try {
-                event.target.mute()
-                event.target.playVideo()
+                event.target.pauseVideo()
+                event.target.seekTo(0, true)
               } catch(e) {}
+              setCurrentTimeSec(0)
+              setIsPlaying(false)
             },
             onStateChange: (e: any) => {
               handleYTStateChange(e.data)
@@ -1154,6 +1168,15 @@ export default function App() {
     const handleYTStateChange = (state: number) => {
       const YT = (window as any).YT
       if (YT && state === YT.PlayerState.PLAYING) {
+        if (!isMutedRef.current && ytPlayerRef.current && typeof ytPlayerRef.current.isMuted === 'function' && ytPlayerRef.current.isMuted() && !userInteracted.current) {
+          try {
+            ytPlayerRef.current.pauseVideo()
+            ytPlayerRef.current.seekTo(0, true)
+          } catch(e) {}
+          setIsPlaying(false)
+          setCurrentTimeSec(0)
+          return
+        }
         setIsPlaying(true)
         autoPlayStarted.current = true
         if (isMutedRef.current && ytPlayerRef.current && typeof ytPlayerRef.current.mute === 'function') {

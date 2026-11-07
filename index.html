@@ -445,6 +445,11 @@
         <!-- Mobile / Portrait platforms -->
         <img src="splash-mobile.jpg" alt="Puja Parikrama" class="w-full h-full object-cover object-center">
       </picture>
+    <!-- Visual prompt to encourage user tap (gives browser user-gesture for instant unmuted audio) -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 pointer-events-none px-4 py-2 rounded-full backdrop-blur-md bg-black/60 border border-[#E9B83E]/50 text-[#F5E5B7] text-xs font-semibold flex items-center gap-2 shadow-lg animate-pulse">
+      <span>🪔</span>
+      <span>Tap anywhere to enter Parikrama</span>
+      <span>🎵</span>
     </div>
   </div>
 
@@ -576,12 +581,16 @@
         }, 260);
       }
 
+      function onSplashUserAction() {
+        window.userHasInteractedWithPage = true;
+        triggerCameraFlashAndEnter();
+      }
       // Tap/click anywhere on splash screen to flash & enter immediately
-      splashEl.addEventListener('click', triggerCameraFlashAndEnter);
-      splashEl.addEventListener('touchstart', triggerCameraFlashAndEnter, { passive: true });
+      splashEl.addEventListener('click', onSplashUserAction);
+      splashEl.addEventListener('touchstart', onSplashUserAction, { passive: true });
 
-      // Or auto-flash after 1.4 seconds
-      const autoTimer = setTimeout(triggerCameraFlashAndEnter, 1400);
+      // Or auto-flash after 3.5 seconds
+      const autoTimer = setTimeout(triggerCameraFlashAndEnter, 3500);
     })();
   </script>
 
@@ -3573,6 +3582,8 @@
     let currentTrackDuration = 0;
     let ytProgressInterval = null;
 
+    let userInteracted = window.userHasInteractedWithPage || false;
+
     // Listen on first user gesture anywhere to unlock unmuted audio playback if autoplay was deferred
     const gestureEvents = ['click', 'touchstart', 'touchend', 'pointerdown', 'pointerup', 'keydown', 'mousedown'];
     let gestureCleanedUp = false;
@@ -3583,6 +3594,7 @@
     }
 
     function unlockAndPlayAudio() {
+      userInteracted = true;
       if (userExplicitlyPaused) return;
       if (ytPlayer && ytPlayerReady) {
         try {
@@ -3604,9 +3616,17 @@
     window.tryStartParikramaMusic = unlockAndPlayAudio;
 
     function onFirstUserGesture() {
+      userInteracted = true;
       cleanupGestureListeners();
       if (!userExplicitlyPaused && !isAudioMuted) {
-        unlockAndPlayAudio();
+        if (ytPlayer && ytPlayerReady) {
+          try {
+            ytPlayer.seekTo(0, true);
+            ytPlayer.unMute();
+            ytPlayer.setVolume(100);
+            ytPlayer.playVideo();
+          } catch(e) {}
+        }
       }
     }
     gestureEvents.forEach(evt => window.addEventListener(evt, onFirstUserGesture, { passive: true }));
@@ -3794,6 +3814,20 @@
 
     function handleYTStateChange(state) {
       if (window.YT && state === window.YT.PlayerState.PLAYING) {
+        // If the browser forced muted playback without user interaction and user hasn't chosen to mute:
+        if (!isAudioMuted && ytPlayer && typeof ytPlayer.isMuted === 'function' && ytPlayer.isMuted() && !userInteracted) {
+          try {
+            ytPlayer.pauseVideo();
+            ytPlayer.seekTo(0, true);
+          } catch(e) {}
+          isTrackPlaying = false;
+          currentTrackElapsed = 0;
+          if (elTimeCurrent) elTimeCurrent.textContent = '0:00';
+          if (elScrubberFill) elScrubberFill.style.width = '0%';
+          updatePlayPauseButtonUI(false);
+          return;
+        }
+
         isTrackPlaying = true;
         autoPlayStarted = true;
         cleanupGestureListeners();
@@ -3836,7 +3870,6 @@
           events: {
             onReady: (event) => {
               ytPlayerReady = true;
-              cleanupGestureListeners();
               try {
                 if (!isAudioMuted) {
                   event.target.unMute();
@@ -3851,17 +3884,27 @@
                 }
               } catch (e) {
                 try {
-                  event.target.mute();
-                  event.target.playVideo();
+                  event.target.pauseVideo();
+                  event.target.seekTo(0, true);
                 } catch(err) {}
+                currentTrackElapsed = 0;
+                if (elTimeCurrent) elTimeCurrent.textContent = '0:00';
+                if (elScrubberFill) elScrubberFill.style.width = '0%';
+                updatePlayPauseButtonUI(false);
               }
               updateYTTrackInfo();
             },
             onAutoplayBlocked: (event) => {
+              // Browser blocked unmuted autoplay on cold load.
+              // Do NOT play silently in the background! Pause and reset to 0:00 so user hears song from 0:00.
               try {
-                event.target.mute();
-                event.target.playVideo();
+                event.target.pauseVideo();
+                event.target.seekTo(0, true);
               } catch(e) {}
+              currentTrackElapsed = 0;
+              if (elTimeCurrent) elTimeCurrent.textContent = '0:00';
+              if (elScrubberFill) elScrubberFill.style.width = '0%';
+              updatePlayPauseButtonUI(false);
             },
             onStateChange: (e) => {
               handleYTStateChange(e.data);
