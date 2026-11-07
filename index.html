@@ -3416,38 +3416,110 @@
       btnSubmitSnap.innerHTML = `<span>🪔</span> Submit Snap for Moderation`;
     });
 
-    /* ── Recenter Map Button (Pans & Focuses to Live User Location at zoom 16) ── */
+    /* ── Smooth Cinematic Flight & Moving Transition Helper ── */
+    let currentMapFlightId = null;
+    function smoothMoveMapTo(targetLoc, targetZoom = 16, duration = 850) {
+      if (!map || !window.google || !google.maps) return;
+
+      if (currentMapFlightId) {
+        cancelAnimationFrame(currentMapFlightId);
+        currentMapFlightId = null;
+      }
+
+      const center = map.getCenter();
+      if (!center) {
+        map.setCenter(new google.maps.LatLng(targetLoc.lat, targetLoc.lng));
+        map.setZoom(targetZoom);
+        return;
+      }
+
+      const startLat = center.lat();
+      const startLng = center.lng();
+      const destLat = targetLoc.lat;
+      const destLng = targetLoc.lng;
+
+      const dLat = destLat - startLat;
+      const dLng = destLng - startLng;
+      const dist = Math.sqrt(dLat * dLat + dLng * dLng);
+
+      // If already within ~5 meters of location, gently ensure target zoom
+      if (dist < 0.00005) {
+        if (map.getZoom() !== targetZoom) {
+          map.setZoom(targetZoom);
+        }
+        return;
+      }
+
+      // Quartic easeInOut for silky smooth camera glide (gentle start, cruising glide, soft landing)
+      function easeInOutQuart(t) {
+        return t < 0.5 ? 8 * t * t * t * t : 1 - Math.pow(-2 * t + 2, 4) / 2;
+      }
+
+      const startTime = performance.now();
+      const flyDuration = dist > 0.06 ? 1150 : duration;
+
+      function animate(time) {
+        const elapsed = time - startTime;
+        const progress = Math.min(1, elapsed / flyDuration);
+        const ease = easeInOutQuart(progress);
+
+        const lat = startLat + dLat * ease;
+        const lng = startLng + dLng * ease;
+
+        map.setCenter(new google.maps.LatLng(lat, lng));
+
+        if (progress < 1) {
+          currentMapFlightId = requestAnimationFrame(animate);
+        } else {
+          currentMapFlightId = null;
+          map.setCenter(new google.maps.LatLng(destLat, destLng));
+          if (map.getZoom() !== targetZoom) {
+            map.setZoom(targetZoom);
+          }
+        }
+      }
+
+      currentMapFlightId = requestAnimationFrame(animate);
+    }
+
+    /* ── Recenter Map Button (Smooth Moving Transition to Live User Location at zoom 16) ── */
     window.recenterMap = function() {
       const btnRecenter = document.getElementById('btn-recenter');
       btnRecenter?.classList.add('animate-pulse');
 
-      function applyLocation(loc) {
+      let hasAnimatedFlight = false;
+
+      function applyLocation(loc, isRefinement = false) {
         userLocation = loc;
         currentUserCoords = loc;
         try {
           localStorage.setItem('parikrama_user_location', JSON.stringify(loc));
         } catch (e) {}
 
-        if (map && window.google && google.maps) {
-          const latLng = new google.maps.LatLng(loc.lat, loc.lng);
-          map.panTo(latLng);
-          map.setZoom(16);
-
-          if (window.UserLocationOverlay) {
-            if (userLiveMarker) {
-              userLiveMarker.setPosition(latLng);
-            } else {
-              userLiveMarker = new window.UserLocationOverlay(latLng, map);
-            }
+        const latLng = new google.maps.LatLng(loc.lat, loc.lng);
+        if (window.UserLocationOverlay) {
+          if (userLiveMarker) {
+            userLiveMarker.setPosition(latLng);
+          } else if (map) {
+            userLiveMarker = new window.UserLocationOverlay(latLng, map);
           }
         }
+
+        if (!hasAnimatedFlight) {
+          hasAnimatedFlight = true;
+          smoothMoveMapTo(loc, 16);
+        } else if (isRefinement && map && typeof map.panTo === 'function') {
+          // Subtle GPS refinement after smooth flight
+          map.panTo(latLng);
+        }
+
         if (typeof updateNearbyList === 'function') {
           updateNearbyList();
         }
         btnRecenter?.classList.remove('animate-pulse');
       }
 
-      // Fast path: if we already have a detected location, jump there immediately
+      // 1. If we have a cached / known location, glide there smoothly immediately!
       let existingLoc = null;
       if (userLocation && (userLocation.lat !== 23.8315 || userLocation.lng !== 91.2868)) {
         existingLoc = userLocation;
@@ -3461,36 +3533,38 @@
       }
 
       if (existingLoc) {
-        applyLocation(existingLoc);
+        applyLocation(existingLoc, false);
       }
 
-      // Query browser geolocation: first attempt high accuracy with 60s cache allowed, fallback to standard Wi-Fi/cell accuracy
+      // 2. Query browser geolocation for accurate live fix
       if ('geolocation' in navigator) {
         navigator.geolocation.getCurrentPosition(
           (pos) => {
-            applyLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+            applyLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }, true);
           },
           (err) => {
             console.warn('High-accuracy GPS failed/timed out, attempting standard accuracy fallback...', err);
             navigator.geolocation.getCurrentPosition(
               (posFallback) => {
-                applyLocation({ lat: posFallback.coords.latitude, lng: posFallback.coords.longitude });
+                applyLocation({ lat: posFallback.coords.latitude, lng: posFallback.coords.longitude }, true);
               },
               (errFallback) => {
                 console.warn('Standard geolocation failed:', errFallback);
                 btnRecenter?.classList.remove('animate-pulse');
                 if (!existingLoc && map) {
-                  map.panTo(new google.maps.LatLng(23.8315, 91.2868));
-                  map.setZoom(16);
+                  smoothMoveMapTo({ lat: 23.8315, lng: 91.2868 }, 16);
                 }
               },
-              { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
+              { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 }
             );
           },
           { enableHighAccuracy: true, timeout: 6000, maximumAge: 60000 }
         );
       } else {
         btnRecenter?.classList.remove('animate-pulse');
+        if (!existingLoc && map) {
+          smoothMoveMapTo({ lat: 23.8315, lng: 91.2868 }, 16);
+        }
       }
     };
 

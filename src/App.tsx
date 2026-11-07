@@ -1605,14 +1605,83 @@ export default function App() {
     }
   }, [showToast])
 
+  const currentMapFlightIdRef = useRef<number | null>(null)
+
+  const smoothMoveMapTo = useCallback((coords: { lat: number; lng: number }, targetZoom = 16, duration = 850) => {
+    if (!googleMapRef.current || !window.google?.maps) return
+
+    if (currentMapFlightIdRef.current) {
+      cancelAnimationFrame(currentMapFlightIdRef.current)
+      currentMapFlightIdRef.current = null
+    }
+
+    const center = googleMapRef.current.getCenter()
+    if (!center) {
+      googleMapRef.current.setCenter(coords)
+      googleMapRef.current.setZoom(targetZoom)
+      return
+    }
+
+    const startLat = center.lat()
+    const startLng = center.lng()
+    const destLat = coords.lat
+    const destLng = coords.lng
+
+    const dLat = destLat - startLat
+    const dLng = destLng - startLng
+    const dist = Math.sqrt(dLat * dLat + dLng * dLng)
+
+    if (dist < 0.00005) {
+      if (googleMapRef.current.getZoom() !== targetZoom) {
+        googleMapRef.current.setZoom(targetZoom)
+      }
+      return
+    }
+
+    const easeInOutQuart = (t: number) => {
+      return t < 0.5 ? 8 * t * t * t * t : 1 - Math.pow(-2 * t + 2, 4) / 2
+    }
+
+    const startTime = performance.now()
+    const flyDuration = dist > 0.06 ? 1150 : duration
+
+    const animate = (time: number) => {
+      const elapsed = time - startTime
+      const progress = Math.min(1, elapsed / flyDuration)
+      const ease = easeInOutQuart(progress)
+
+      const lat = startLat + dLat * ease
+      const lng = startLng + dLng * ease
+
+      googleMapRef.current?.setCenter(new window.google.maps.LatLng(lat, lng))
+
+      if (progress < 1) {
+        currentMapFlightIdRef.current = requestAnimationFrame(animate)
+      } else {
+        currentMapFlightIdRef.current = null
+        googleMapRef.current?.setCenter(new window.google.maps.LatLng(destLat, destLng))
+        if (googleMapRef.current && googleMapRef.current.getZoom() !== targetZoom) {
+          googleMapRef.current.setZoom(targetZoom)
+        }
+      }
+    }
+
+    currentMapFlightIdRef.current = requestAnimationFrame(animate)
+  }, [])
+
   const handleLocateMe = () => {
     showToast('📍 Locating position...')
 
-    const updateMapToCoords = (coords: { lat: number; lng: number }) => {
-      if (googleMapRef.current) {
+    let hasAnimatedFlight = false
+
+    const updateMapToCoords = (coords: { lat: number; lng: number }, isRefinement = false) => {
+      if (!hasAnimatedFlight) {
+        hasAnimatedFlight = true
+        smoothMoveMapTo(coords, 16)
+      } else if (isRefinement && googleMapRef.current && typeof googleMapRef.current.panTo === 'function') {
         googleMapRef.current.panTo(coords)
-        googleMapRef.current.setZoom(16)
       }
+
       if (googleMapRef.current && window.google?.maps) {
         if (!userMarkerRef.current) {
           const dot = document.createElement('div')
@@ -1650,7 +1719,7 @@ export default function App() {
       }
     }
 
-    // 1. Pan immediately to known/saved location if available
+    // 1. Smoothly glide immediately to known/saved location if available
     let target = currentUserCoords
     if (!target || (target.lat === AGARTALA_CENTER.lat && target.lng === AGARTALA_CENTER.lng)) {
       try {
@@ -1659,7 +1728,7 @@ export default function App() {
       } catch {}
     }
     if (target && (target.lat !== AGARTALA_CENTER.lat || target.lng !== AGARTALA_CENTER.lng)) {
-      updateMapToCoords(target)
+      updateMapToCoords(target, false)
     }
 
     // 2. Fetch fresh live GPS: first attempt high accuracy with 60s cache allowed, fallback to standard accuracy
@@ -1671,7 +1740,7 @@ export default function App() {
           try {
             localStorage.setItem('parikrama_user_location', JSON.stringify(freshCoords))
           } catch {}
-          updateMapToCoords(freshCoords)
+          updateMapToCoords(freshCoords, true)
         },
         err => {
           console.warn('High-accuracy geolocation failed, falling back to standard accuracy:', err)
@@ -1682,21 +1751,21 @@ export default function App() {
               try {
                 localStorage.setItem('parikrama_user_location', JSON.stringify(fallbackCoords))
               } catch {}
-              updateMapToCoords(fallbackCoords)
+              updateMapToCoords(fallbackCoords, true)
             },
             errFallback => {
               console.warn('Standard geolocation failed:', errFallback)
               if (!target) {
-                updateMapToCoords(AGARTALA_CENTER)
+                updateMapToCoords(AGARTALA_CENTER, false)
               }
             },
-            { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
+            { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 }
           )
         },
         { enableHighAccuracy: true, timeout: 6000, maximumAge: 60000 }
       )
     } else if (target) {
-      updateMapToCoords(target)
+      updateMapToCoords(target, false)
     }
   }
 
