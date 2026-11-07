@@ -825,7 +825,7 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
                 setLocationSource('custom')
                 setSourceBadge({ text: '🎯 Custom Pinned', cls: 'bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/30' })
               }}
-              className="relative w-full h-32 sm:h-36 rounded-xl overflow-hidden border border-white/15 bg-[#0a0a14] cursor-crosshair flex flex-col items-center justify-center text-center p-2 pt-9 shadow-inner group"
+              className="relative w-full h-44 sm:h-52 rounded-xl overflow-hidden border border-white/15 bg-[#0a0a14] cursor-crosshair flex flex-col items-center justify-center text-center p-2 pt-9 shadow-inner group"
             >
               {/* Map Search Bar Floating Over Top of Map */}
               <div 
@@ -833,23 +833,22 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
                 onClick={e => e.stopPropagation()}
               >
                 <div className="relative flex items-center">
-                  <svg className="w-3 h-3 text-[#E9B83E] absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                  </svg>
                   <input 
                     type="text" 
                     value={mapSearchQuery}
                     onChange={e => { setMapSearchQuery(e.target.value); setShowMapSearch(true); }}
                     onFocus={() => setShowMapSearch(true)}
-                    placeholder="Search place or pandal on map..." 
-                    className="w-full bg-[#121224]/85 hover:bg-[#121224]/95 focus:bg-[#121224] backdrop-blur-md border border-[#E9B83E]/45 focus:border-[#E9B83E] rounded-full pl-7 pr-7 py-1 text-[11px] text-[#F5E5B7] placeholder-[#F5E5B7]/50 focus:placeholder-transparent shadow-[0_2px_10px_rgba(0,0,0,0.6)] outline-none transition"
+                    className="w-full bg-[#121224]/85 hover:bg-[#121224]/95 focus:bg-[#121224] backdrop-blur-md border border-[#E9B83E]/45 focus:border-[#E9B83E] rounded-full pl-8.5 pr-8 py-1.5 text-[11px] text-[#F5E5B7] shadow-[0_2px_10px_rgba(0,0,0,0.6)] outline-none transition"
                   />
+                  <svg className="w-3.5 h-3.5 text-[#E9B83E] absolute left-3 top-1/2 -translate-y-1/2 z-10 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
                   {mapSearchQuery && (
                     <button 
                       type="button" 
                       onClick={() => { setMapSearchQuery(''); setShowMapSearch(false); }}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-white/15 hover:bg-white/25 text-white/70 hover:text-white flex items-center justify-center text-[9px] transition cursor-pointer"
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-white/15 hover:bg-white/25 text-white/70 hover:text-white flex items-center justify-center text-[9px] transition cursor-pointer z-10"
                       title="Clear"
                     >
                       ✕
