@@ -790,7 +790,6 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
                 <span>📍 Confirm Pin on Map</span>
                 <span className="text-[9px] text-emerald-400 font-normal lowercase">(draggable)</span>
               </label>
-              <span className="text-[9px] text-amber-200/70">Drag pin or tap map</span>
             </div>
             <div
               onClick={(e) => {
