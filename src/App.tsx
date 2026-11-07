@@ -1676,7 +1676,7 @@ export default function App() {
 
       {/* ── 1. SPOTIFY MUSIC PLAYER (Elongated Single Row Layout matching Snap CTA diameter) ── */}
       {mapReady && (
-        <div className="fixed left-[calc(25%-14px)] -translate-x-1/2 bottom-4 sm:bottom-5 z-30 w-[calc(50%-24px)] max-w-[560px] min-w-[320px] pointer-events-auto select-none flex flex-col gap-2">
+        <div className="fixed left-[calc(25%-14px)] -translate-x-1/2 bottom-4 sm:bottom-5 z-30 w-[calc(50%-72px)] max-w-[360px] sm:max-w-[370px] min-w-[260px] pointer-events-auto select-none flex flex-col gap-2">
           {/* Spotify Official Interactive Playlist Embed Popup */}
           {spotifyEmbedVisible && (
             <div className="w-full bg-[#211329]/75 border border-[#E9B83E]/40 rounded-2xl p-2.5 shadow-[0_12px_32px_rgba(13,12,27,0.65),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-xl animate-in fade-in slide-in-from-bottom-2 duration-200">
@@ -1722,7 +1722,7 @@ export default function App() {
           {/* Main Custom Styled Music Player Pill Bar - SINGLE ROW LAYOUT MATCHING SNAP CTA DIAMETER */}
           <div
             id="spotify-music-player-bar"
-            className="w-full h-13 sm:h-14 overflow-hidden backdrop-blur-lg bg-[#211329]/55 hover:bg-[#211329]/75 border border-[#E9B83E]/40 hover:border-[#E9B83E] rounded-full px-2.5 sm:px-3.5 flex items-center justify-between gap-2 sm:gap-3 shadow-[0_4px_24px_rgba(13,12,27,0.45),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_10px_rgba(233,184,62,0.20)] hover:shadow-[0_4px_24px_rgba(13,12,27,0.50),0_0_16px_rgba(233,184,62,0.40)] hover:scale-[1.004] duration-200 transition-all"
+            className="w-full h-13 sm:h-14 overflow-hidden backdrop-blur-lg bg-[#211329]/55 hover:bg-[#211329]/75 border border-[#E9B83E]/40 hover:border-[#E9B83E] rounded-full px-2 sm:px-3 flex items-center justify-between gap-1.5 sm:gap-2 shadow-[0_4px_24px_rgba(13,12,27,0.45),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_10px_rgba(233,184,62,0.20)] hover:shadow-[0_4px_24px_rgba(13,12,27,0.50),0_0_16px_rgba(233,184,62,0.40)] hover:scale-[1.004] duration-200 transition-all"
           >
             {/* Left: Album Cover + Title + Artist (Clean cover without badge, full un-truncated title) */}
             <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-shrink-0">
@@ -1755,7 +1755,7 @@ export default function App() {
             </div>
 
             {/* Middle: Scrubber Track with Left & Right Timestamps */}
-            <div className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-[50px] text-[9px] sm:text-[10px] font-mono text-[#F5E5B7]/50">
+            <div className="flex items-center gap-1 sm:gap-1.5 flex-1 min-w-[36px] text-[9px] sm:text-[10px] font-mono text-[#F5E5B7]/50">
               <span className="text-left flex-shrink-0">{formatSongTime(currentTimeSec)}</span>
               <div
                 onClick={handleScrubberClick}
@@ -1770,7 +1770,7 @@ export default function App() {
             </div>
 
             {/* Right: Playback Controls Row (Prev, Play, Next, Mute in White / Crossed) */}
-            <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+            <div className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
               <button
                 type="button"
                 onClick={handlePrevTrack}
@@ -1853,7 +1853,7 @@ export default function App() {
       {mapReady && (
         <div
           id="pandal-filter-group"
-          className="fixed left-[calc(75%+10px)] -translate-x-1/2 bottom-4 sm:bottom-5 z-30 w-[calc(43%-20px)] max-w-[475px] min-w-[270px] pointer-events-auto select-none flex items-center justify-between gap-1.5 sm:gap-2 h-[52px] sm:h-[58px]"
+          className="fixed left-[calc(75%+14px)] -translate-x-1/2 bottom-4 sm:bottom-5 z-30 w-[calc(50%-72px)] max-w-[360px] sm:max-w-[370px] min-w-[260px] pointer-events-auto select-none flex items-center justify-between gap-1.5 sm:gap-2 h-13 sm:h-14"
         >
           {/* Latest Filter */}
           <button
