@@ -1286,28 +1286,30 @@
           </div>
         </div>
 
-        <!-- Pandal Name & Dropdown (Styled like Year Selector on Landing Page) -->
+        <!-- Pandal Name & Dropdown (Styled like Search Bar & Landing Page Year) -->
         <div class="relative" id="pandal-selector-container">
-          <label class="block text-xs font-semibold text-white/60 uppercase tracking-wider mb-1.5 flex items-center justify-between">
-            <span>Pandal Name *</span>
-            <span class="text-[10px] text-[#E9B83E]/80 font-normal">Select known club or enter name</span>
+          <label class="block text-xs sm:text-sm font-semibold text-[#F5E5B7] mb-1.5">
+            <span>Pandal Name</span> <span class="text-red-500 font-bold">*</span>
           </label>
-          <div class="relative flex items-center rounded-2xl bg-[#211329]/80 border border-[#E9B83E]/40 hover:border-[#E9B83E] focus-within:border-[#E9B83E] shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-md transition-all">
-            <span class="pl-3.5 text-[#F5E5B7] text-xs font-bold flex-shrink-0 select-none">Pandal</span>
+          <div class="relative flex items-center rounded-full bg-[#211329]/75 hover:bg-[#211329]/85 border border-[#E9B83E]/40 hover:border-[#E9B83E] focus-within:border-[#E9B83E] shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.15)] backdrop-blur-md transition-all">
+            <svg class="w-4 h-4 text-[#E9B83E] flex-shrink-0 ml-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
             <input 
               id="input-pandal-name" 
               type="text" 
-              placeholder="Select or enter pandal..." 
+              placeholder="Select or Enter Pandal Name" 
               autocomplete="off"
-              class="w-full bg-transparent pl-2.5 pr-9 py-3 text-white font-semibold text-xs sm:text-sm focus:outline-none placeholder-white/35"
+              class="w-full bg-transparent pl-2.5 pr-10 py-3 text-[#F5E5B7] font-semibold text-xs sm:text-sm focus:outline-none placeholder-[#F5E5B7]/50"
             >
             <button 
               type="button" 
               id="btn-toggle-pandal-dropdown" 
-              class="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-lg bg-white/5 hover:bg-[#E9B83E]/20 flex items-center justify-center transition cursor-pointer"
+              class="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-[#E9B83E] hover:text-[#F5E5B7] flex items-center justify-center transition cursor-pointer"
               title="Select pandal"
             >
-              <svg id="pandal-chevron" class="w-3.5 h-3.5 text-[#E9B83E] transition-transform duration-200" viewBox="0 0 20 20" fill="currentColor">
+              <svg id="pandal-chevron" class="w-4 h-4 text-[#E9B83E] transition-transform duration-200" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
               </svg>
             </button>

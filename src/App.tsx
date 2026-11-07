@@ -674,30 +674,32 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
             )}
           </div>
 
-          {/* Pandal Name & Dropdown (Styled like Year Selector on Landing Page) */}
+          {/* Pandal Name & Dropdown (Styled like Search Bar & Landing Page Year) */}
           <div className="relative">
-            <label className="text-white/60 text-xs font-semibold uppercase tracking-wider mb-1.5 flex items-center justify-between">
-              <span>Pandal Name *</span>
-              <span className="text-[10px] text-[#E9B83E]/80 font-normal">Select known club or enter name</span>
+            <label className="block text-xs sm:text-sm font-semibold text-[#F5E5B7] mb-1.5">
+              <span>Pandal Name</span> <span className="text-red-500 font-bold">*</span>
             </label>
-            <div className="relative flex items-center rounded-2xl bg-[#211329]/80 border border-[#E9B83E]/40 hover:border-[#E9B83E] focus-within:border-[#E9B83E] shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-md transition-all">
-              <span className="pl-3.5 text-[#F5E5B7] text-xs font-bold flex-shrink-0 select-none">Pandal</span>
+            <div className="relative flex items-center rounded-full bg-[#211329]/75 hover:bg-[#211329]/85 border border-[#E9B83E]/40 hover:border-[#E9B83E] focus-within:border-[#E9B83E] shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.15)] backdrop-blur-md transition-all">
+              <svg className="w-4 h-4 text-[#E9B83E] flex-shrink-0 ml-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
               <input
                 id="pandal-name-input"
                 type="text"
                 value={pandalName}
                 onFocus={() => setShowDropdown(true)}
                 onChange={e => { setPandalName(e.target.value); setSearchFilter(e.target.value); setShowDropdown(true); }}
-                placeholder="Select or enter pandal..."
-                className="w-full bg-transparent pl-2.5 pr-9 py-3 text-white font-semibold text-xs sm:text-sm focus:outline-none placeholder-white/35"
+                placeholder="Select or Enter Pandal Name"
+                className="w-full bg-transparent pl-2.5 pr-10 py-3 text-[#F5E5B7] font-semibold text-xs sm:text-sm focus:outline-none placeholder-[#F5E5B7]/50"
               />
               <button
                 type="button"
                 onClick={() => setShowDropdown(!showDropdown)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-lg bg-white/5 hover:bg-[#E9B83E]/20 flex items-center justify-center transition cursor-pointer"
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-[#E9B83E] hover:text-[#F5E5B7] flex items-center justify-center transition cursor-pointer"
                 title="Select pandal"
               >
-                <svg className={`w-3.5 h-3.5 text-[#E9B83E] transition-transform duration-200 ${showDropdown ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
+                <svg className={`w-4 h-4 text-[#E9B83E] transition-transform duration-200 ${showDropdown ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                 </svg>
               </button>
