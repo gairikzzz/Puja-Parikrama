@@ -633,7 +633,7 @@
         </div>
 
         <!-- Search Autocomplete Dropdown (Starts just below search bar) -->
-        <div id="top-search-dropdown" class="hidden absolute top-full mt-1 left-0 right-0 bg-[#211329]/95 border border-[#E9B83E]/35 rounded-2xl p-1.5 shadow-[0_12px_32px_rgba(13,12,27,0.75),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-xl z-50 max-h-60 overflow-y-auto space-y-0.5">
+        <div id="top-search-dropdown" class="hidden absolute top-full mt-1.5 left-0 right-0 bg-[#211329]/95 border border-[#E9B83E]/35 rounded-2xl p-1 shadow-[0_12px_32px_rgba(13,12,27,0.75),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-xl z-50 max-h-60 overflow-y-auto">
         </div>
       </div>
 
@@ -1370,7 +1370,7 @@
               <!-- Search Results Dropdown -->
               <div 
                 id="mini-map-search-results" 
-                class="hidden mt-1 bg-[#121224]/95 backdrop-blur-xl border border-[#E9B83E]/40 rounded-xl shadow-2xl max-h-32 overflow-y-auto hide-scrollbar p-1 space-y-0.5 text-left"
+                class="hidden mt-1 bg-[#121224]/95 backdrop-blur-xl border border-[#E9B83E]/40 rounded-xl shadow-2xl max-h-32 overflow-y-auto hide-scrollbar p-1 text-left"
               >
               </div>
             </div>
@@ -3384,15 +3384,12 @@
       miniSearchResults.innerHTML = '';
       matches.slice(0, 5).forEach(p => {
         const item = document.createElement('div');
-        item.className = 'px-2.5 py-1.5 rounded-lg text-left text-xs font-semibold flex items-center justify-between transition cursor-pointer text-[#F5E5B7]/90 hover:bg-[#E9B83E]/20 hover:text-[#E9B83E] active:scale-[0.99]';
+        item.className = 'px-3 py-2 text-left text-xs font-semibold transition cursor-pointer text-[#F5E5B7]/90 hover:bg-[#E9B83E]/20 hover:text-[#E9B83E] active:scale-[0.99] border-b border-[#E9B83E]/20 last:border-b-0 first:rounded-t-lg last:rounded-b-lg';
         item.innerHTML = `
-          <div class="flex items-center gap-1.5 min-w-0">
-            <span class="text-xs flex-shrink-0">${p.emoji || '🪔'}</span>
-            <span class="text-[11px] font-bold truncate">${p.name}</span>
+          <div class="truncate">
+            <span class="text-[11px] font-bold truncate block text-white">${p.name}</span>
+            <span class="text-[9px] text-[#F5E5B7]/70 truncate mt-0.5 block">${p.neighborhood || 'Agartala'}, Agartala</span>
           </div>
-          <span class="text-[9px] text-[#E9B83E] bg-[#E9B83E]/15 border border-[#E9B83E]/30 px-1.5 py-0.5 rounded-full flex-shrink-0 ml-1">
-            ${p.neighborhood || 'Agartala'}
-          </span>
         `;
         item.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -3738,17 +3735,11 @@
       }
 
       topSearchDropdown.innerHTML = results.map(p => `
-        <div data-lat="${p.lat}" data-lng="${p.lng}" data-name="${p.name}" class="top-search-item flex items-center justify-between px-3 py-2 rounded-xl hover:bg-[#E9B83E]/15 hover:text-[#E9B83E] text-white/90 cursor-pointer transition text-left group">
-          <div class="flex items-center gap-2.5 min-w-0">
-            <span class="text-base flex-shrink-0">${p.emoji || '🪔'}</span>
-            <div class="truncate">
-              <p class="text-xs font-semibold text-white group-hover:text-[#E9B83E] truncate leading-tight">${p.name}</p>
-              <p class="text-[10px] text-[#F5E5B7]/70 truncate mt-0.5 leading-tight">${p.neighborhood || 'Agartala'}, Agartala</p>
-            </div>
+        <div data-lat="${p.lat}" data-lng="${p.lng}" data-name="${p.name}" class="top-search-item px-3.5 py-2.5 hover:bg-[#E9B83E]/15 hover:text-[#E9B83E] text-white/90 cursor-pointer transition text-left group border-b border-[#E9B83E]/20 last:border-b-0 first:rounded-t-xl last:rounded-b-xl">
+          <div class="truncate">
+            <p class="text-xs font-semibold text-white group-hover:text-[#E9B83E] truncate leading-tight">${p.name}</p>
+            <p class="text-[10px] text-[#F5E5B7]/70 truncate mt-0.5 leading-tight">${p.neighborhood || 'Agartala'}, Agartala</p>
           </div>
-          <span class="text-[9px] text-[#E9B83E] bg-[#E9B83E]/15 border border-[#E9B83E]/30 px-2 py-0.5 rounded-full whitespace-nowrap ml-2 flex-shrink-0">
-            ${p.neighborhood || 'Agartala'}
-          </span>
         </div>
       `).join('');
       topSearchDropdown.classList.remove('hidden');

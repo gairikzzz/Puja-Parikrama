@@ -858,7 +858,7 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
 
                 {/* Autocomplete Dropdown */}
                 {showMapSearch && filteredMapPandals.length > 0 && (
-                  <div className="mt-1 bg-[#121224]/95 backdrop-blur-xl border border-[#E9B83E]/40 rounded-xl shadow-2xl max-h-32 overflow-y-auto no-scrollbar p-1 space-y-0.5 text-left">
+                  <div className="mt-1 bg-[#121224]/95 backdrop-blur-xl border border-[#E9B83E]/40 rounded-xl shadow-2xl max-h-32 overflow-y-auto no-scrollbar p-1 text-left">
                     {filteredMapPandals.map(p => (
                       <div
                         key={p.name}
@@ -871,15 +871,12 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
                           setMapSearchQuery(p.name);
                           setShowMapSearch(false);
                         }}
-                        className="px-2.5 py-1.5 rounded-lg text-left text-xs font-semibold flex items-center justify-between transition cursor-pointer text-[#F5E5B7]/90 hover:bg-[#E9B83E]/20 hover:text-[#E9B83E]"
+                        className="px-3 py-2 text-left text-xs font-semibold transition cursor-pointer text-[#F5E5B7]/90 hover:bg-[#E9B83E]/20 hover:text-[#E9B83E] border-b border-[#E9B83E]/20 last:border-b-0 first:rounded-t-lg last:rounded-b-lg"
                       >
-                        <div className="flex items-center gap-1.5 min-w-0">
-                          <span className="text-xs">{p.emoji || '🪔'}</span>
-                          <span className="text-[11px] font-bold truncate">{p.name}</span>
+                        <div className="truncate">
+                          <span className="text-[11px] font-bold truncate block text-white">{p.name}</span>
+                          <span className="text-[9px] text-[#F5E5B7]/70 truncate mt-0.5 block">{p.neighborhood || 'Agartala'}, Agartala</span>
                         </div>
-                        <span className="text-[9px] text-[#E9B83E] bg-[#E9B83E]/15 border border-[#E9B83E]/30 px-1.5 py-0.5 rounded-full flex-shrink-0 ml-1">
-                          {p.neighborhood}
-                        </span>
                       </div>
                     ))}
                   </div>
@@ -2020,7 +2017,7 @@ export default function App() {
 
               {/* Search Autocomplete Dropdown (Starts just below search bar) */}
               {topSearchResults.length > 0 && (
-                <div className="absolute top-full mt-1 left-0 right-0 bg-[#211329]/95 border border-[#E9B83E]/35 rounded-2xl p-1.5 shadow-[0_12px_32px_rgba(13,12,27,0.75),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-xl z-50 max-h-60 overflow-y-auto space-y-0.5">
+                <div className="absolute top-full mt-1.5 left-0 right-0 bg-[#211329]/95 border border-[#E9B83E]/35 rounded-2xl p-1 shadow-[0_12px_32px_rgba(13,12,27,0.75),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-xl z-50 max-h-60 overflow-y-auto">
                   {topSearchResults.map(pandal => (
                     <div
                       key={pandal.name}
@@ -2030,18 +2027,12 @@ export default function App() {
                         setTopSearchQuery('')
                         showToast(`📍 Showing ${pandal.name}`)
                       }}
-                      className="flex items-center justify-between px-3 py-2 rounded-xl hover:bg-[#E9B83E]/15 hover:text-[#E9B83E] text-white/90 cursor-pointer transition text-left group"
+                      className="px-3.5 py-2.5 hover:bg-[#E9B83E]/15 hover:text-[#E9B83E] text-white/90 cursor-pointer transition text-left group border-b border-[#E9B83E]/20 last:border-b-0 first:rounded-t-xl last:rounded-b-xl"
                     >
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <span className="text-base flex-shrink-0">{pandal.emoji || '🪔'}</span>
-                        <div className="truncate">
-                          <p className="text-xs font-semibold text-white group-hover:text-[#E9B83E] truncate leading-tight">{pandal.name}</p>
-                          <p className="text-[10px] text-[#F5E5B7]/70 truncate mt-0.5 leading-tight">{pandal.neighborhood}, Agartala</p>
-                        </div>
+                      <div className="truncate">
+                        <p className="text-xs font-semibold text-white group-hover:text-[#E9B83E] truncate leading-tight">{pandal.name}</p>
+                        <p className="text-[10px] text-[#F5E5B7]/70 truncate mt-0.5 leading-tight">{pandal.neighborhood}, Agartala</p>
                       </div>
-                      <span className="text-[9px] text-[#E9B83E] bg-[#E9B83E]/15 border border-[#E9B83E]/30 px-2 py-0.5 rounded-full whitespace-nowrap ml-2 flex-shrink-0 font-medium">
-                        {pandal.neighborhood}
-                      </span>
                     </div>
                   ))}
                 </div>
