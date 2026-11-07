@@ -652,8 +652,8 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
               <img src="/durga-emblem.png" alt="Puja Parikrama" className="w-full h-full rounded-full object-cover" />
             </div>
             <div>
-              <h2 className="text-white font-bold text-sm sm:text-base leading-tight">
-                {pandalName.trim() ? 'Add Photos of This Pandal' : 'Share Pandal Photos'}
+              <h2 className="text-[#F5E5B7] font-bold text-sm sm:text-base leading-tight">
+                {pandalName.trim() ? 'Add Photos of This Pandal' : 'Add a Pandal'}
               </h2>
               <p className="text-[#E9B83E]/80 text-[10px] sm:text-[11px] font-medium leading-tight">
                 {pandalName.trim() ? 'Take a new photo or select photos from your gallery' : 'Capture and share your favourite pandal with the Puja Porikroma community'}
@@ -699,7 +699,7 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
                     <circle cx="12" cy="13" r="3" fill="white"/>
                   </svg>
                 </div>
-                <p className="text-white font-semibold text-xs leading-tight">Add Photos of This Pandal</p>
+                <p className="text-[#F5E5B7] font-semibold text-xs leading-tight">Add Photos of This Pandal</p>
                 <p className="text-[#E9B83E]/80 text-[10px] mt-0.5 leading-tight">Take a new photo or select photos from your gallery</p>
               </div>
             )}
