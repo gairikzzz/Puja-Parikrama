@@ -3734,7 +3734,7 @@
         const data = ytPlayer.getVideoData();
         if (data && data.title) {
           let cleanTitle = data.title;
-          const separatorIdx = cleanTitle.search(/[|(\[\-(–—]/);
+          const separatorIdx = cleanTitle.search(/[|(\[\-(–—।॥•~/]|\s[Il]\s/);
           if (separatorIdx !== -1) {
             const cut = cleanTitle.slice(0, separatorIdx).trim();
             if (cut) cleanTitle = cut;
