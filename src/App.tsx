@@ -1588,7 +1588,7 @@ export default function App() {
                   title="Select Puja Year"
                   className="h-7 sm:h-7.5 px-2.5 sm:px-3 rounded-xl backdrop-blur-md bg-[#211329]/70 hover:bg-[#211329]/85 border border-[#E9B83E]/40 hover:border-[#E9B83E] flex items-center gap-1.5 text-[#F5E5B7] font-semibold text-[11px] sm:text-xs shadow-[0_0_8px_rgba(233,184,62,0.22),inset_0_1px_1px_rgba(255,255,255,0.10)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] hover:scale-[1.02] active:scale-95 transition-all cursor-pointer"
                 >
-                  <span className="text-[#F5E5B7] text-[10px] sm:text-[11px] font-bold tracking-wide mr-2.5 sm:mr-3">Year</span>
+                  <span className="text-[#F5E5B7] text-[10px] sm:text-[11px] font-bold tracking-wide mr-1">Year</span>
                   <span className="text-[#E9B83E] font-bold">{selectedYear}</span>
                   <svg className={`w-3 h-3 text-[#E9B83E] transition-transform duration-200 ${yearDropdownOpen ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
