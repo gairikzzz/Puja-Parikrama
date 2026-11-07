@@ -20,6 +20,7 @@ export const supabase = isSupabaseConfigured()
 
 export interface SubmissionPayload {
   selectedFile: File
+  selectedFiles?: File[]
   pandalName: string
   neighborhood: string
   coords: { lat: number; lng: number }
@@ -72,6 +73,12 @@ export async function submitPhotoToN8n(payload: SubmissionPayload): Promise<{ ok
   try {
     const formData = new FormData()
     formData.append('photo', payload.selectedFile, payload.selectedFile.name || 'pandal-snap.jpg')
+    if (payload.selectedFiles && payload.selectedFiles.length > 0) {
+      payload.selectedFiles.forEach((file, idx) => {
+        formData.append('photos', file, file.name || `photo-${idx}.jpg`)
+      })
+      formData.append('photoCount', String(payload.selectedFiles.length))
+    }
     formData.append('pandalName', payload.pandalName)
     formData.append('neighborhood', payload.neighborhood || 'Agartala')
     formData.append('userName', payload.userName || 'Devotee')

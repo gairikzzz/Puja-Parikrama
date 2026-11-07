@@ -489,9 +489,9 @@ interface UploadModalProps {
 }
 
 function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClose, onSubmit }: UploadModalProps) {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([])
   const [mediaSource, setMediaSource] = useState<'camera' | 'gallery'>('gallery')
-  const [preview, setPreview] = useState<string | null>(null)
+  const [previews, setPreviews] = useState<string[]>([])
   const [pandalName, setPandalName] = useState('')
   const [neighborhood, setNeighborhood] = useState('')
   const [coords, setCoords] = useState<{ lat: number; lng: number }>(AGARTALA_CENTER)
@@ -517,8 +517,8 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
   const [submitting, setSubmitting] = useState(false)
 
   const reset = () => {
-    setSelectedFile(null)
-    setPreview(null)
+    setSelectedFiles([])
+    setPreviews([])
     setPandalName('')
     setNeighborhood('')
     setCoords(AGARTALA_CENTER)
@@ -532,36 +532,44 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
 
   const handleClose = () => { reset(); onClose() }
 
-  // Strategy 4 Waterfall: EXIF -> Live GPS -> City Center (Images only)
-  const processFileWaterfall = async (file: File, source: 'camera' | 'gallery') => {
-    if (file.type && !file.type.startsWith('image/')) {
+  // Strategy 4 Waterfall: EXIF -> Live GPS -> City Center (Images only, Multiple Photos supported)
+  const processFilesWaterfall = async (files: File[], source: 'camera' | 'gallery') => {
+    const imageFiles = files.filter(f => f.type && f.type.startsWith('image/'))
+    if (imageFiles.length === 0) {
       alert('⚠️ Only photos can be submitted for Durga Puja pandal moderation. Videos are not accepted by our AI review pipeline.')
       return
     }
 
-    setSelectedFile(file)
+    setSelectedFiles(imageFiles)
     setMediaSource(source)
 
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      setPreview(e.target?.result as string)
-    }
-    reader.readAsDataURL(file)
+    // Load previews for all files
+    const loadedPreviews = await Promise.all(
+      imageFiles.map(file => new Promise<string>((resolve) => {
+        const reader = new FileReader()
+        reader.onload = (e) => resolve(e.target?.result as string)
+        reader.readAsDataURL(file)
+      }))
+    )
+    setPreviews(loadedPreviews)
     setStep('details')
 
     let detectedCoords: { lat: number; lng: number } | null = null
     let detectedSource: 'exif' | 'live_gps' | 'city_center' = 'live_gps'
 
-    // Step 1: EXIF Metadata (for photos)
+    // Step 1: EXIF Metadata (try across uploaded photos)
     if (window.exifr) {
-      try {
-        const gps = await window.exifr.gps(file)
-        if (gps && typeof gps.latitude === 'number' && typeof gps.longitude === 'number' && gps.latitude !== 0) {
-          detectedCoords = { lat: gps.latitude, lng: gps.longitude }
-          detectedSource = 'exif'
+      for (const file of imageFiles) {
+        try {
+          const gps = await window.exifr.gps(file)
+          if (gps && typeof gps.latitude === 'number' && typeof gps.longitude === 'number' && gps.latitude !== 0) {
+            detectedCoords = { lat: gps.latitude, lng: gps.longitude }
+            detectedSource = 'exif'
+            break
+          }
+        } catch (e) {
+          console.warn('EXIF extraction skipped:', e)
         }
-      } catch (e) {
-        console.warn('EXIF extraction skipped:', e)
       }
     }
 
@@ -641,10 +649,11 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
   }, [mapSearchQuery])
 
   const handleSubmit = async () => {
-    if (!selectedFile || !pandalName.trim()) return
+    if (selectedFiles.length === 0 || !pandalName.trim()) return
     setSubmitting(true)
     const success = await onSubmit({
-      selectedFile,
+      selectedFile: selectedFiles[0],
+      selectedFiles: selectedFiles,
       pandalName: pandalName.trim(),
       neighborhood: neighborhood.trim() || 'Agartala',
       coords,
@@ -689,33 +698,27 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
           </button>
         </div>
 
-        {/* Hidden File Input */}
+        {/* Hidden File Input (Multiple photos allowed) */}
         <input
           id="snap-file-input"
           type="file"
           accept="image/*"
+          multiple
           style={{ display: 'none' }}
           onChange={e => {
-            const file = e.target.files?.[0]
-            if (file) processFileWaterfall(file, 'gallery')
+            const files = Array.from(e.target.files || [])
+            if (files.length > 0) processFilesWaterfall(files, 'gallery')
           }}
         />
 
         {/* Main Content (Non-scrollable, compact layout) */}
         <div className="space-y-2.5 sm:space-y-3 flex flex-col">
-          {/* Media Preview Box (Tap to choose or change image) */}
+          {/* Media Preview Box (Tap to choose or change images) */}
           <div
             onClick={() => document.getElementById('snap-file-input')?.click()}
             className="w-full h-32 sm:h-36 rounded-xl border border-dashed border-[#E9B83E]/40 hover:border-[#E9B83E] bg-[#211329]/50 flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer transition-all shadow-[0_4px_16px_rgba(13,12,27,0.5)]"
           >
-            {preview ? (
-              <>
-                <img src={preview} alt="preview" className="w-full h-full object-cover" />
-                <div className="absolute top-2 right-2 bg-black/65 backdrop-blur-md px-2 py-0.5 rounded-full text-[9px] text-white/90 border border-white/20 flex items-center gap-1 shadow-md">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Tap to change
-                </div>
-              </>
-            ) : (
+            {previews.length === 0 ? (
               <div className="w-full h-full flex flex-col items-center justify-center p-3 text-center">
                 <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gradient-to-tr from-saffron to-puja-gold flex items-center justify-center mb-3 shadow-md shadow-saffron/30 group-hover:scale-105 transition-transform flex-shrink-0">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
@@ -725,6 +728,42 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
                 </div>
                 <p className="text-[#F5E5B7] font-semibold text-xs leading-tight">Add Photos of This Pandal</p>
                 <p className="text-[#E9B83E]/80 text-[10px] mt-1.5 leading-tight">Take a new photo or select photos from your gallery</p>
+              </div>
+            ) : previews.length === 1 ? (
+              <img src={previews[0]} alt="preview" className="w-full h-full object-cover" />
+            ) : previews.length === 2 ? (
+              <div className="relative flex items-center justify-center w-full h-full p-2 overflow-hidden">
+                {/* Back card */}
+                <div className="absolute w-20 sm:w-24 h-26 sm:h-30 rounded-lg overflow-hidden shadow-xl border border-white/20 transform -rotate-6 -translate-x-2.5 transition-all duration-300 group-hover:-rotate-10 group-hover:-translate-x-4">
+                  <img src={previews[0]} alt="pandal 1" className="w-full h-full object-cover" />
+                </div>
+                {/* Front card */}
+                <div className="relative z-10 w-20 sm:w-24 h-26 sm:h-30 rounded-lg overflow-hidden shadow-2xl border-2 border-[#E9B83E]/70 transform rotate-3 translate-x-2.5 transition-all duration-300 group-hover:rotate-6 group-hover:translate-x-4">
+                  <img src={previews[1]} alt="pandal 2" className="w-full h-full object-cover" />
+                </div>
+                {/* Photo count pill */}
+                <div className="absolute bottom-2 right-2 bg-[#211329]/90 backdrop-blur-md border border-[#E9B83E]/50 px-2 py-0.5 rounded-full text-[9px] text-[#F5E5B7] font-bold shadow-md z-20 flex items-center gap-1">
+                  <span>📸</span> 2 photos
+                </div>
+              </div>
+            ) : (
+              <div className="relative flex items-center justify-center w-full h-full p-2 overflow-hidden">
+                {/* Bottom card */}
+                <div className="absolute w-18 sm:w-22 h-24 sm:h-28 rounded-lg overflow-hidden shadow-lg border border-white/15 transform -rotate-10 -translate-x-4 scale-95 transition-all duration-300 group-hover:-rotate-14 group-hover:-translate-x-6">
+                  <img src={previews[0]} alt="pandal 1" className="w-full h-full object-cover" />
+                </div>
+                {/* Middle card */}
+                <div className="absolute w-19 sm:w-23 h-25 sm:h-29 rounded-lg overflow-hidden shadow-xl border border-white/25 transform rotate-6 translate-x-3 scale-[0.98] transition-all duration-300 group-hover:rotate-10 group-hover:translate-x-5">
+                  <img src={previews[1]} alt="pandal 2" className="w-full h-full object-cover" />
+                </div>
+                {/* Top card */}
+                <div className="relative z-10 w-20 sm:w-24 h-26 sm:h-30 rounded-lg overflow-hidden shadow-2xl border-2 border-[#E9B83E]/80 transform -rotate-1 transition-all duration-300 group-hover:scale-105">
+                  <img src={previews[2]} alt="pandal 3" className="w-full h-full object-cover" />
+                </div>
+                {/* Photo count pill */}
+                <div className="absolute bottom-2 right-2 bg-[#211329]/90 backdrop-blur-md border border-[#E9B83E]/50 px-2 py-0.5 rounded-full text-[9px] text-[#F5E5B7] font-bold shadow-md z-20 flex items-center gap-1">
+                  <span>📸</span> {previews.length} photos
+                </div>
               </div>
             )}
           </div>
@@ -908,7 +947,7 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
             <button
               id="submit-snap-btn"
               onClick={handleSubmit}
-              disabled={!pandalName.trim() || !selectedFile || submitting}
+              disabled={!pandalName.trim() || selectedFiles.length === 0 || submitting}
               className="w-full py-2.5 sm:py-3 rounded-full bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] text-[#211329] font-black text-xs sm:text-sm tracking-wider flex items-center justify-center border-2 border-[#E9B83E] shadow-[0_0_14px_rgba(233,184,62,0.30),0_4px_16px_rgba(13,12,27,0.55)] hover:shadow-[0_0_20px_rgba(233,184,62,0.50)] hover:scale-[1.01] active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:shadow-none transition-all flex-shrink-0 cursor-pointer"
             >
               {submitting ? 'Submitting...' : 'Submit'}

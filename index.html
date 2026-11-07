@@ -1265,8 +1265,8 @@
       <!-- Main Content (Non-scrollable, perfectly fitted) -->
       <div class="space-y-2.5 sm:space-y-3 flex flex-col">
         <!-- Hidden file inputs (Images only for moderation) -->
-        <input type="file" id="camera-input" accept="image/*" capture="environment" class="hidden">
-        <input type="file" id="gallery-input" accept="image/*" class="hidden">
+        <input type="file" id="camera-input" accept="image/*" capture="environment" multiple class="hidden">
+        <input type="file" id="gallery-input" accept="image/*" multiple class="hidden">
 
         <!-- 1. Media Preview Area (Tap to choose from Camera or Gallery) -->
         <div id="preview-box" class="w-full h-32 sm:h-36 rounded-xl border border-dashed border-[#E9B83E]/40 hover:border-[#E9B83E] bg-[#211329]/50 flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer transition-all shadow-[0_4px_16px_rgba(13,12,27,0.5)]">
@@ -1282,11 +1282,7 @@
           </div>
           <img id="upload-preview-img" src="" alt="Upload Preview" class="hidden absolute inset-0 w-full h-full object-cover">
           <video id="upload-preview-video" class="hidden absolute inset-0 w-full h-full object-cover" playsinline autoplay loop muted></video>
-          
-          <!-- Media Change Badge -->
-          <div id="media-change-badge" class="hidden absolute top-2 right-2 bg-black/65 backdrop-blur-md px-2 py-0.5 rounded-full text-[9px] text-white/90 border border-white/20 flex items-center gap-1 shadow-md">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Tap to change
-          </div>
+          <div id="stacked-photos-container" class="hidden relative flex items-center justify-center w-full h-full p-2 overflow-hidden"></div>
         </div>
 
         <!-- Pandal Name & Dropdown (Styled like Search Bar & Landing Page Year) -->
@@ -2323,6 +2319,7 @@
 
     let capturedMediaData = null;
     let selectedMediaBlobFile = null;
+    let selectedMediaBlobFiles = [];
     let capturedMediaType = 'image';
     let currentUser = null;
 
@@ -2583,7 +2580,13 @@
       try {
         console.log('📡 Dispatching multipart/form-data to Parikrama n8n webhook:', PARIKRAMA_WEBHOOK_URL);
         const formData = new FormData();
-        if (selectedMediaBlobFile) {
+        if (selectedMediaBlobFiles && selectedMediaBlobFiles.length > 0) {
+          selectedMediaBlobFiles.forEach((file, idx) => {
+            formData.append('photos', file, file.name || `photo-${idx}.jpg`);
+          });
+          formData.append('photoCount', String(selectedMediaBlobFiles.length));
+          formData.append('photo', selectedMediaBlobFiles[0], selectedMediaBlobFiles[0].name || 'pandal-snap.jpg');
+        } else if (selectedMediaBlobFile) {
           formData.append('photo', selectedMediaBlobFile, selectedMediaBlobFile.name || 'pandal-snap.jpg');
         }
         formData.append('pandalName', snapData.pandalName);
@@ -3170,40 +3173,91 @@
       return getCityCenterFallback();
     }
 
-    /* ── Photo / Video Selection Processing ── */
-    async function processPhotoSelection(file, source) {
-      if (!file) return;
+    /* ── Photo Selection Processing (Multiple Photos Supported) ── */
+    async function processMultiplePhotos(fileList, source) {
+      if (!fileList || fileList.length === 0) return;
+      const files = Array.from(fileList).filter(f => f.type && f.type.startsWith('image/'));
+      if (files.length === 0) {
+        alert('⚠️ Only photos can be submitted for Durga Puja pandal moderation. Videos are not accepted by our AI review pipeline.');
+        return;
+      }
 
-      selectedMediaBlobFile = file;
-      const isVideo = file.type.startsWith('video');
-      capturedMediaType = isVideo ? 'video' : 'image';
+      selectedMediaBlobFiles = files;
+      selectedMediaBlobFile = files[0];
+      capturedMediaType = 'image';
 
-      // 1. Read preview image or video
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        capturedMediaData = e.target.result;
-        if (isVideo && uploadPreviewVideo) {
-          uploadPreviewVideo.src = capturedMediaData;
-          uploadPreviewVideo.classList.remove('hidden');
-          uploadPreviewImg.classList.add('hidden');
-        } else {
-          uploadPreviewImg.src = capturedMediaData;
-          uploadPreviewImg.classList.remove('hidden');
-          if (uploadPreviewVideo) uploadPreviewVideo.classList.add('hidden');
+      const stackedContainer = document.getElementById('stacked-photos-container');
+
+      // 1. Read preview images
+      const previews = await Promise.all(files.map(file => new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = e => resolve(e.target.result);
+        reader.readAsDataURL(file);
+      })));
+
+      capturedMediaData = previews[0];
+      placeholderContent.classList.add('hidden');
+      if (uploadPreviewVideo) uploadPreviewVideo.classList.add('hidden');
+
+      if (previews.length === 1) {
+        if (stackedContainer) stackedContainer.classList.add('hidden');
+        uploadPreviewImg.src = previews[0];
+        uploadPreviewImg.classList.remove('hidden');
+      } else if (previews.length === 2) {
+        uploadPreviewImg.classList.add('hidden');
+        if (stackedContainer) {
+          stackedContainer.innerHTML = `
+            <div class="absolute w-20 sm:w-24 h-26 sm:h-30 rounded-lg overflow-hidden shadow-xl border border-white/20 transform -rotate-6 -translate-x-2.5 transition-all duration-300 group-hover:-rotate-10 group-hover:-translate-x-4">
+              <img src="${previews[0]}" alt="pandal 1" class="w-full h-full object-cover">
+            </div>
+            <div class="relative z-10 w-20 sm:w-24 h-26 sm:h-30 rounded-lg overflow-hidden shadow-2xl border-2 border-[#E9B83E]/70 transform rotate-3 translate-x-2.5 transition-all duration-300 group-hover:rotate-6 group-hover:translate-x-4">
+              <img src="${previews[1]}" alt="pandal 2" class="w-full h-full object-cover">
+            </div>
+            <div class="absolute bottom-2 right-2 bg-[#211329]/90 backdrop-blur-md border border-[#E9B83E]/50 px-2 py-0.5 rounded-full text-[9px] text-[#F5E5B7] font-bold shadow-md z-20 flex items-center gap-1">
+              <span>📸</span> 2 photos
+            </div>
+          `;
+          stackedContainer.classList.remove('hidden');
         }
-        placeholderContent.classList.add('hidden');
-        document.getElementById('media-change-badge')?.classList.remove('hidden');
-        validateUploadForm();
-      };
-      reader.readAsDataURL(file);
+      } else {
+        uploadPreviewImg.classList.add('hidden');
+        if (stackedContainer) {
+          stackedContainer.innerHTML = `
+            <div class="absolute w-18 sm:w-22 h-24 sm:h-28 rounded-lg overflow-hidden shadow-lg border border-white/15 transform -rotate-10 -translate-x-4 scale-95 transition-all duration-300 group-hover:-rotate-14 group-hover:-translate-x-6">
+              <img src="${previews[0]}" alt="pandal 1" class="w-full h-full object-cover">
+            </div>
+            <div class="absolute w-19 sm:w-23 h-25 sm:h-29 rounded-lg overflow-hidden shadow-xl border border-white/25 transform rotate-6 translate-x-3 scale-[0.98] transition-all duration-300 group-hover:rotate-10 group-hover:translate-x-5">
+              <img src="${previews[1]}" alt="pandal 2" class="w-full h-full object-cover">
+            </div>
+            <div class="relative z-10 w-20 sm:w-24 h-26 sm:h-30 rounded-lg overflow-hidden shadow-2xl border-2 border-[#E9B83E]/80 transform -rotate-1 transition-all duration-300 group-hover:scale-105">
+              <img src="${previews[2]}" alt="pandal 3" class="w-full h-full object-cover">
+            </div>
+            <div class="absolute bottom-2 right-2 bg-[#211329]/90 backdrop-blur-md border border-[#E9B83E]/50 px-2 py-0.5 rounded-full text-[9px] text-[#F5E5B7] font-bold shadow-md z-20 flex items-center gap-1">
+              <span>📸</span> ${previews.length} photos
+            </div>
+          `;
+          stackedContainer.classList.remove('hidden');
+        }
+      }
 
-      // 2. Update status card (if present)
-      if (gpsStatusText) gpsStatusText.textContent = isVideo ? 'Resolving GPS for Video...' : 'Extracting EXIF GPS...';
-      if (gpsMethodDesc) gpsMethodDesc.textContent = isVideo ? 'Checking device background GPS...' : 'Analyzing EXIF tags from media file...';
+      validateUploadForm();
+
+      // 2. Update status card
+      if (gpsStatusText) gpsStatusText.textContent = 'Extracting EXIF GPS...';
+      if (gpsMethodDesc) gpsMethodDesc.textContent = 'Analyzing EXIF tags from media files...';
       if (gpsStatusDot) gpsStatusDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping flex-shrink-0';
 
-      // 3. Execute Waterfall Strategy 4
-      const locResult = await resolveHybridLocationWaterfall(file, source === 'camera');
+      // 3. Execute Waterfall Strategy 4 across files
+      let locResult = null;
+      for (const file of files) {
+        try {
+          const res = await extractExifGps(file);
+          if (res) { locResult = res; break; }
+        } catch {}
+      }
+      if (!locResult) {
+        locResult = await resolveHybridLocationWaterfall(files[0], source === 'camera');
+      }
 
       onCoordinatesUpdated(
         { lat: locResult.lat, lng: locResult.lng },
@@ -3226,6 +3280,11 @@
       } else {
         showToast('📍 Using Agartala Center Fallback');
       }
+    }
+
+    function processPhotoSelection(file, source) {
+      if (!file) return;
+      processMultiplePhotos([file], source);
     }
 
     /* ── Wire Modal Triggers & Controls ── */
@@ -3297,8 +3356,8 @@
       galleryInput?.click();
     });
 
-    cameraInput.addEventListener('change', (e) => processPhotoSelection(e.target.files[0], 'camera'));
-    galleryInput.addEventListener('change', (e) => processPhotoSelection(e.target.files[0], 'gallery'));
+    cameraInput.addEventListener('change', (e) => processMultiplePhotos(e.target.files, 'camera'));
+    galleryInput.addEventListener('change', (e) => processMultiplePhotos(e.target.files, 'gallery'));
 
     // Dropdown toggle
     const btnToggleDropdown = document.getElementById('btn-toggle-pandal-dropdown');
@@ -3449,7 +3508,7 @@
     });
 
     function validateUploadForm() {
-      const hasMedia = !!capturedMediaData;
+      const hasMedia = !!capturedMediaData || (selectedMediaBlobFiles && selectedMediaBlobFiles.length > 0);
       const hasName = inputPandalName && inputPandalName.value.trim().length > 0;
       btnSubmitSnap.disabled = !(hasMedia && hasName);
     }
@@ -3536,15 +3595,19 @@
       if (inputNeighborhood) inputNeighborhood.value = '';
       capturedMediaData = null;
       selectedMediaBlobFile = null;
-      capturedMediaType = 'image';
+      selectedMediaBlobFiles = [];
       uploadPreviewImg.src = '';
       uploadPreviewImg.classList.add('hidden');
       if (uploadPreviewVideo) {
         uploadPreviewVideo.src = '';
         uploadPreviewVideo.classList.add('hidden');
       }
+      const stackedContainer = document.getElementById('stacked-photos-container');
+      if (stackedContainer) {
+        stackedContainer.innerHTML = '';
+        stackedContainer.classList.add('hidden');
+      }
       placeholderContent.classList.remove('hidden');
-      document.getElementById('media-change-badge')?.classList.add('hidden');
       btnSubmitSnap.disabled = true;
       btnSubmitSnap.textContent = 'Submit';
     });
