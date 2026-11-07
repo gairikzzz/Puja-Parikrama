@@ -1341,7 +1341,7 @@ export default function App() {
     const renderedW = imgW * scale
     const renderedH = imgH * scale
     const offsetX = (vw - renderedW) / 2
-    const offsetY = 0 // Starts from top so logo is not cut
+    const offsetY = -5 // Shifted up by 5px per user request
 
     return {
       x: Math.round(offsetX + targetXRatio * renderedW),
@@ -1871,8 +1871,8 @@ export default function App() {
           onClick={triggerCameraFlashAndEnter}
           className="fixed inset-0 z-[9999] bg-[#0a0a14] select-none pointer-events-auto cursor-pointer overflow-hidden"
         >
-          {/* Splash Artwork: starts from top so logo is not cut */}
-          <div className="absolute inset-0 w-full h-full pointer-events-none select-none">
+          {/* Splash Artwork: moved up by 5px per user request */}
+          <div className="absolute -top-[5px] inset-x-0 -bottom-[5px] w-full pointer-events-none select-none">
             <img
               src="/splash.jpg"
               alt="Puja Parikrama"
