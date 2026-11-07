@@ -1722,7 +1722,7 @@ export default function App() {
           {/* Main Custom Styled Music Player Pill Bar - SINGLE ROW LAYOUT MATCHING SNAP CTA DIAMETER */}
           <div
             id="spotify-music-player-bar"
-            className="w-full h-13 sm:h-14 overflow-hidden backdrop-blur-lg bg-[#211329]/55 hover:bg-[#211329]/75 border border-[#E9B83E]/40 hover:border-[#E9B83E] rounded-full px-2 sm:px-3 flex items-center justify-between gap-1.5 sm:gap-2 shadow-[0_4px_24px_rgba(13,12,27,0.45),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_10px_rgba(233,184,62,0.20)] hover:shadow-[0_4px_24px_rgba(13,12,27,0.50),0_0_16px_rgba(233,184,62,0.40)] hover:scale-[1.004] duration-200 transition-all"
+            className="w-full h-[52px] sm:h-14 overflow-hidden backdrop-blur-lg bg-[#211329]/55 hover:bg-[#211329]/75 border border-[#E9B83E]/40 hover:border-[#E9B83E] rounded-full px-2 sm:px-3 flex items-center justify-between gap-1.5 sm:gap-2 shadow-[0_4px_24px_rgba(13,12,27,0.45),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_10px_rgba(233,184,62,0.20)] hover:shadow-[0_4px_24px_rgba(13,12,27,0.50),0_0_16px_rgba(233,184,62,0.40)] hover:scale-[1.004] duration-200 transition-all"
           >
             {/* Left: Album Cover + Title + Artist (Clean cover without badge, full un-truncated title) */}
             <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-shrink-0">
@@ -1853,23 +1853,24 @@ export default function App() {
       {mapReady && (
         <div
           id="pandal-filter-group"
-          className="fixed left-[calc(75%+14px)] -translate-x-1/2 bottom-4 sm:bottom-5 z-30 w-[calc(50%-72px)] max-w-[360px] sm:max-w-[370px] min-w-[260px] pointer-events-auto select-none flex items-center justify-between gap-1.5 sm:gap-2 h-13 sm:h-14"
+          className="fixed left-[calc(75%+14px)] -translate-x-1/2 bottom-4 sm:bottom-5 z-30 w-[calc(50%-72px)] max-w-[360px] sm:max-w-[370px] min-w-[260px] pointer-events-auto select-none flex items-center justify-between gap-1.5 sm:gap-2 h-[52px] sm:h-14"
         >
           {/* Latest Filter */}
           <button
             type="button"
             id="filter-btn-latest"
             onClick={() => handleToggleFilter('latest')}
+            style={{ touchAction: 'manipulation' }}
             title="Filter by Latest Pandals"
             className={`flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-95 ${
               activeFilter === 'latest' ? 'pandal-filter-active' : 'pandal-filter-inactive'
             }`}
           >
-            <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg className="pointer-events-none w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="10" />
               <polyline points="12 6 12 12 16 14" />
             </svg>
-            <span className="text-[10px] sm:text-xs leading-tight tracking-wide">Latest</span>
+            <span className="pointer-events-none text-[10px] sm:text-xs leading-tight tracking-wide">Latest</span>
           </button>
 
           {/* Trending Filter */}
@@ -1877,16 +1878,17 @@ export default function App() {
             type="button"
             id="filter-btn-trending"
             onClick={() => handleToggleFilter('trending')}
+            style={{ touchAction: 'manipulation' }}
             title="Filter by Trending Pandals"
             className={`flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-95 ${
               activeFilter === 'trending' ? 'pandal-filter-active' : 'pandal-filter-inactive'
             }`}
           >
-            <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg className="pointer-events-none w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
               <polyline points="17 6 23 6 23 12" />
             </svg>
-            <span className="text-[10px] sm:text-xs leading-tight tracking-wide">Trending</span>
+            <span className="pointer-events-none text-[10px] sm:text-xs leading-tight tracking-wide">Trending</span>
           </button>
 
           {/* Nearby Filter */}
@@ -1894,16 +1896,17 @@ export default function App() {
             type="button"
             id="filter-btn-nearby"
             onClick={() => handleToggleFilter('nearby')}
+            style={{ touchAction: 'manipulation' }}
             title="Filter by Nearby Pandals"
             className={`flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-95 ${
               activeFilter === 'nearby' ? 'pandal-filter-active' : 'pandal-filter-inactive'
             }`}
           >
-            <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg className="pointer-events-none w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
               <circle cx="12" cy="13" r="4" />
             </svg>
-            <span className="text-[10px] sm:text-xs leading-tight tracking-wide">Nearby</span>
+            <span className="pointer-events-none text-[10px] sm:text-xs leading-tight tracking-wide">Nearby</span>
           </button>
         </div>
       )}

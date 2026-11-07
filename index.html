@@ -501,7 +501,7 @@
         setTimeout(() => {
           if (splashEl) {
             splashEl.classList.add('splash-exit');
-            if (typeof map !== 'undefined' && map) {
+            if (typeof map !== 'undefined' && map && typeof map.panTo === 'function') {
               const loc = (typeof userLocation !== 'undefined' && userLocation) 
                 ? userLocation 
                 : ((typeof currentUserCoords !== 'undefined' && currentUserCoords) ? currentUserCoords : { lat: 23.8315, lng: 91.2868 });
@@ -807,7 +807,7 @@
     <!-- Main Custom Styled Music Player Pill Bar - SINGLE ROW MATCHING SNAP CTA DIAMETER -->
     <div
       id="spotify-music-player-bar"
-      class="w-full h-13 sm:h-14 overflow-hidden backdrop-blur-lg bg-[#211329]/55 hover:bg-[#211329]/75 border border-[#E9B83E]/40 hover:border-[#E9B83E] rounded-full px-2 sm:px-3 flex items-center justify-between gap-1.5 sm:gap-2 shadow-[0_4px_24px_rgba(13,12,27,0.45),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_10px_rgba(233,184,62,0.20)] hover:shadow-[0_4px_24px_rgba(13,12,27,0.50),0_0_16px_rgba(233,184,62,0.40)] hover:scale-[1.004] duration-200 transition-all"
+      class="w-full h-[52px] sm:h-14 overflow-hidden backdrop-blur-lg bg-[#211329]/55 hover:bg-[#211329]/75 border border-[#E9B83E]/40 hover:border-[#E9B83E] rounded-full px-2 sm:px-3 flex items-center justify-between gap-1.5 sm:gap-2 shadow-[0_4px_24px_rgba(13,12,27,0.45),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_10px_rgba(233,184,62,0.20)] hover:shadow-[0_4px_24px_rgba(13,12,27,0.50),0_0_16px_rgba(233,184,62,0.40)] hover:scale-[1.004] duration-200 transition-all"
     >
       <!-- Left: Album Cover + Title + Artist (Clean cover without badge, full un-truncated title) -->
       <div class="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-shrink-0">
@@ -922,21 +922,22 @@
   <!-- ── 3. PANDAL FILTERS (Right Hand Side of CTA: Latest / Trending / Nearby, Sleek & Compact) ── -->
   <div
     id="pandal-filter-group"
-    class="fixed left-[calc(75%+14px)] -translate-x-1/2 bottom-4 sm:bottom-5 z-30 w-[calc(50%-72px)] max-w-[360px] sm:max-w-[370px] min-w-[260px] pointer-events-auto select-none flex items-center justify-between gap-1.5 sm:gap-2 h-13 sm:h-14"
+    class="fixed left-[calc(75%+14px)] -translate-x-1/2 bottom-4 sm:bottom-5 z-30 w-[calc(50%-72px)] max-w-[360px] sm:max-w-[370px] min-w-[260px] pointer-events-auto select-none flex items-center justify-between gap-1.5 sm:gap-2 h-[52px] sm:h-14"
   >
     <!-- Latest Filter -->
     <button
       type="button"
       id="filter-btn-latest"
       onclick="window.togglePandalFilter('latest')"
+      style="touch-action: manipulation;"
       title="Filter by Latest Pandals"
       class="pandal-filter-inactive flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-95"
     >
-      <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg class="pointer-events-none w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="10" />
         <polyline points="12 6 12 12 16 14" />
       </svg>
-      <span class="text-[10px] sm:text-xs leading-tight tracking-wide">Latest</span>
+      <span class="pointer-events-none text-[10px] sm:text-xs leading-tight tracking-wide">Latest</span>
     </button>
 
     <!-- Trending Filter -->
@@ -944,14 +945,15 @@
       type="button"
       id="filter-btn-trending"
       onclick="window.togglePandalFilter('trending')"
+      style="touch-action: manipulation;"
       title="Filter by Trending Pandals"
       class="pandal-filter-inactive flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-95"
     >
-      <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg class="pointer-events-none w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
         <polyline points="17 6 23 6 23 12" />
       </svg>
-      <span class="text-[10px] sm:text-xs leading-tight tracking-wide">Trending</span>
+      <span class="pointer-events-none text-[10px] sm:text-xs leading-tight tracking-wide">Trending</span>
     </button>
 
     <!-- Nearby Filter -->
@@ -959,14 +961,15 @@
       type="button"
       id="filter-btn-nearby"
       onclick="window.togglePandalFilter('nearby')"
+      style="touch-action: manipulation;"
       title="Filter by Nearby Pandals"
       class="pandal-filter-inactive flex-1 h-full rounded-full flex flex-col items-center justify-center py-1 sm:py-1.5 transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-95"
     >
-      <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg class="pointer-events-none w-3.5 h-3.5 sm:w-4 sm:h-4 mb-0.5 sm:mb-1 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
         <circle cx="12" cy="13" r="4" />
       </svg>
-      <span class="text-[10px] sm:text-xs leading-tight tracking-wide">Nearby</span>
+      <span class="pointer-events-none text-[10px] sm:text-xs leading-tight tracking-wide">Nearby</span>
     </button>
   </div>
 
@@ -1259,6 +1262,38 @@
       } else {
         window._pendingInitMap = true;
       }
+    };
+
+    // Synchronous Pandal Filter State & Handler
+    window.activePandalFilter = null;
+    window.togglePandalFilter = function(filter) {
+      if (filter === 'recent') filter = 'latest';
+      if (window.activePandalFilter === filter) {
+        window.activePandalFilter = null;
+      } else {
+        window.activePandalFilter = filter;
+      }
+      window.updateFilterButtonsUI();
+
+      if (typeof window._handleFilterMapAction === 'function') {
+        window._handleFilterMapAction(window.activePandalFilter);
+      }
+    };
+
+    window.updateFilterButtonsUI = function() {
+      const filters = ['latest', 'trending', 'nearby'];
+      filters.forEach(function(f) {
+        const btn = document.getElementById('filter-btn-' + f);
+        if (!btn) return;
+        const isActive = window.activePandalFilter === f;
+        if (isActive) {
+          btn.classList.add('pandal-filter-active');
+          btn.classList.remove('pandal-filter-inactive');
+        } else {
+          btn.classList.remove('pandal-filter-active');
+          btn.classList.add('pandal-filter-inactive');
+        }
+      });
     };
   </script>
 
@@ -1707,25 +1742,25 @@
     function switchDrawerTab(tab) {
       activeDrawerTab = tab;
       if (tab === 'recent') {
-        tabBtnRecent.className = 'flex-1 py-2 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all bg-saffron text-white shadow-lg shadow-saffron/25 active:scale-98';
-        tabBtnNearby.className = 'flex-1 py-2 px-3 rounded-xl font-semibold text-xs flex items-center justify-center gap-1.5 transition-all glass-card text-white/70 hover:text-white active:scale-98';
-        recentSnapsList.classList.remove('hidden');
-        nearbySnapsList.classList.add('hidden');
-        drawerTitle.textContent = 'Recent Agartala Snaps';
-        drawerSubtitle.innerHTML = `<span id="pandal-count">${snapsData.length}</span> pandals registered`;
+        if (tabBtnRecent) tabBtnRecent.className = 'flex-1 py-2 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all bg-saffron text-white shadow-lg shadow-saffron/25 active:scale-98';
+        if (tabBtnNearby) tabBtnNearby.className = 'flex-1 py-2 px-3 rounded-xl font-semibold text-xs flex items-center justify-center gap-1.5 transition-all glass-card text-white/70 hover:text-white active:scale-98';
+        recentSnapsList?.classList.remove('hidden');
+        nearbySnapsList?.classList.add('hidden');
+        if (drawerTitle) drawerTitle.textContent = 'Recent Agartala Snaps';
+        if (drawerSubtitle) drawerSubtitle.innerHTML = `<span id="pandal-count">${snapsData.length}</span> pandals registered`;
       } else {
-        tabBtnNearby.className = 'flex-1 py-2 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all bg-saffron text-white shadow-lg shadow-saffron/25 active:scale-98';
-        tabBtnRecent.className = 'flex-1 py-2 px-3 rounded-xl font-semibold text-xs flex items-center justify-center gap-1.5 transition-all glass-card text-white/70 hover:text-white active:scale-98';
-        nearbySnapsList.classList.remove('hidden');
-        recentSnapsList.classList.add('hidden');
-        drawerTitle.textContent = 'Nearby Pandals';
-        drawerSubtitle.textContent = 'Top 10 · Sorted by popularity 🔥';
+        if (tabBtnNearby) tabBtnNearby.className = 'flex-1 py-2 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all bg-saffron text-white shadow-lg shadow-saffron/25 active:scale-98';
+        if (tabBtnRecent) tabBtnRecent.className = 'flex-1 py-2 px-3 rounded-xl font-semibold text-xs flex items-center justify-center gap-1.5 transition-all glass-card text-white/70 hover:text-white active:scale-98';
+        nearbySnapsList?.classList.remove('hidden');
+        recentSnapsList?.classList.add('hidden');
+        if (drawerTitle) drawerTitle.textContent = 'Nearby Pandals';
+        if (drawerSubtitle) drawerSubtitle.textContent = 'Top 10 · Sorted by popularity 🔥';
         updateNearbyList();
       }
     }
 
-    tabBtnRecent.addEventListener('click', () => switchDrawerTab('recent'));
-    tabBtnNearby.addEventListener('click', () => switchDrawerTab('nearby'));
+    tabBtnRecent?.addEventListener('click', () => switchDrawerTab('recent'));
+    tabBtnNearby?.addEventListener('click', () => switchDrawerTab('nearby'));
 
     /* ── 1. Render Recent Snaps (Chronological) ── */
     function renderRecentSnapsList() {
@@ -1913,8 +1948,8 @@
             map.setZoom(16);
           }
           openStoryModal(snap);
-          bottomSheet.classList.remove('expanded');
-          btnToggleDrawer.textContent = 'Expand ↑';
+          bottomSheet?.classList.remove('expanded');
+          if (btnToggleDrawer) btnToggleDrawer.textContent = 'Expand ↑';
           showToast(`🎯 Centered on ${snap.pandal} (${distStr})`);
         };
 
@@ -3569,55 +3604,32 @@
     });
 
     /* ── PANDAL FILTERS (Recent / Trending / Nearby Activate/Deactivate) ── */
-    let activePandalFilter = null;
-    let lastFilterToggleTime = 0;
-
-    window.togglePandalFilter = function(filter) {
-      const now = Date.now();
-      if (now - lastFilterToggleTime < 250) return;
-      lastFilterToggleTime = now;
-
-      if (filter === 'recent') filter = 'latest';
-      if (activePandalFilter === filter) {
-        activePandalFilter = null;
-      } else {
-        activePandalFilter = filter;
-        if (filter === 'latest') {
-          if (snapsData && snapsData.length > 0) {
-            const sorted = [...snapsData].sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
-            if (map && sorted[0]) map.panTo({ lat: sorted[0].lat, lng: sorted[0].lng });
+    window._handleFilterMapAction = function(filter) {
+      if (!filter) return;
+      if (filter === 'latest') {
+        if (snapsData && snapsData.length > 0) {
+          const sorted = [...snapsData].sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
+          if (map && typeof map.panTo === 'function' && sorted[0]) {
+            map.panTo({ lat: sorted[0].lat, lng: sorted[0].lng });
+            map.setZoom(16);
           }
-        } else if (filter === 'trending') {
-          if (snapsData && snapsData.length > 0) {
-            const sorted = [...snapsData].sort((a, b) => (Number(b.likesCount || 0)*4 + Number(b.viewsCount || 0)) - (Number(a.likesCount || 0)*4 + Number(a.viewsCount || 0)));
-            if (map && sorted[0]) map.panTo({ lat: sorted[0].lat, lng: sorted[0].lng });
+        }
+      } else if (filter === 'trending') {
+        if (snapsData && snapsData.length > 0) {
+          const sorted = [...snapsData].sort((a, b) => (Number(b.likesCount || 0)*4 + Number(b.viewsCount || 0)) - (Number(a.likesCount || 0)*4 + Number(a.viewsCount || 0)));
+          if (map && typeof map.panTo === 'function' && sorted[0]) {
+            map.panTo({ lat: sorted[0].lat, lng: sorted[0].lng });
+            map.setZoom(16);
           }
-        } else if (filter === 'nearby') {
-          if (typeof window.recenterMap === 'function') {
-            window.recenterMap();
-          } else {
-            document.getElementById('btn-recenter')?.click();
-          }
+        }
+      } else if (filter === 'nearby') {
+        if (typeof window.recenterMap === 'function') {
+          window.recenterMap();
+        } else {
+          document.getElementById('btn-recenter')?.click();
         }
       }
-      updateFilterButtonsUI();
     };
-
-    function updateFilterButtonsUI() {
-      const filters = ['latest', 'trending', 'nearby'];
-      filters.forEach(f => {
-        const btn = document.getElementById(`filter-btn-${f}`) || (f === 'latest' ? document.getElementById('filter-btn-recent') : null);
-        if (!btn) return;
-        const isActive = activePandalFilter === f;
-        if (isActive) {
-          btn.classList.add('pandal-filter-active');
-          btn.classList.remove('pandal-filter-inactive');
-        } else {
-          btn.classList.remove('pandal-filter-active');
-          btn.classList.add('pandal-filter-inactive');
-        }
-      });
-    }
 
     /* ── YEAR SELECTOR DROPDOWN ── */
     let selectedPujaYear = 2026;
