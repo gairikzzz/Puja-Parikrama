@@ -995,6 +995,8 @@ export default function App() {
   const YOUTUBE_PLAYLIST_ID = 'PLBFyKHpeq9js'
   const ytPlayerRef = useRef<any>(null)
   const ytPlayerReady = useRef(false)
+  const userExplicitlyPaused = useRef(false)
+  const autoPlayStarted = useRef(false)
   const [isPlaying, setIsPlaying] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
   const [trackTitle, setTrackTitle] = useState('Durga Ma Asche')
@@ -1004,6 +1006,16 @@ export default function App() {
   const [totalDurationSec, setTotalDurationSec] = useState(213) // 3:33 default from screenshot
   const dhakEngineRef = useRef<DhakAudioEngine | null>(null)
 
+  const tryStartMusic = useCallback(() => {
+    if (userExplicitlyPaused.current || autoPlayStarted.current) return
+    if (ytPlayerRef.current && ytPlayerReady.current && typeof ytPlayerRef.current.playVideo === 'function') {
+      try {
+        ytPlayerRef.current.playVideo()
+        autoPlayStarted.current = true
+      } catch (e) {}
+    }
+  }, [])
+
   // Initialize Dhak Audio Engine
   useEffect(() => {
     dhakEngineRef.current = new DhakAudioEngine()
@@ -1011,6 +1023,20 @@ export default function App() {
       dhakEngineRef.current?.stop()
     }
   }, [])
+
+  // Global user interaction listener to start music on first touch/click if unmuted autoplay is deferred by browser
+  useEffect(() => {
+    const onGesture = () => {
+      if (!userExplicitlyPaused.current && !autoPlayStarted.current) {
+        tryStartMusic()
+      }
+    }
+    const events = ['click', 'touchstart', 'pointerdown', 'keydown']
+    events.forEach(evt => window.addEventListener(evt, onGesture, { passive: true }))
+    return () => {
+      events.forEach(evt => window.removeEventListener(evt, onGesture))
+    }
+  }, [tryStartMusic])
 
   // Initialize YouTube IFrame API
   useEffect(() => {
@@ -1032,7 +1058,7 @@ export default function App() {
           playerVars: {
             listType: 'playlist',
             list: YOUTUBE_PLAYLIST_ID,
-            autoplay: 0,
+            autoplay: 1,
             controls: 1,
             playsinline: 1,
             rel: 0,
@@ -1044,6 +1070,12 @@ export default function App() {
             onReady: () => {
               ytPlayerReady.current = true
               updateYTTrackInfo()
+              if (!userExplicitlyPaused.current) {
+                try {
+                  ytPlayerRef.current?.playVideo()
+                  autoPlayStarted.current = true
+                } catch (e) {}
+              }
             },
             onStateChange: (e: any) => {
               handleYTStateChange(e.data)
@@ -1083,6 +1115,7 @@ export default function App() {
       const YT = (window as any).YT
       if (YT && state === YT.PlayerState.PLAYING) {
         setIsPlaying(true)
+        autoPlayStarted.current = true
         updateYTTrackInfo()
       } else if (YT && (state === YT.PlayerState.PAUSED || state === YT.PlayerState.ENDED)) {
         setIsPlaying(false)
@@ -1159,19 +1192,26 @@ export default function App() {
       const YT = (window as any).YT
       const state = ytPlayerRef.current.getPlayerState()
       if (state === YT?.PlayerState.PLAYING) {
+        userExplicitlyPaused.current = true
         ytPlayerRef.current.pauseVideo()
       } else {
+        userExplicitlyPaused.current = false
         ytPlayerRef.current.playVideo()
       }
     } else {
-      setIsPlaying(p => !p)
-      if (!isPlaying) {
-        dhakEngineRef.current?.play()
-      } else {
-        dhakEngineRef.current?.stop()
-      }
+      setIsPlaying(p => {
+        const next = !p
+        if (!next) {
+          userExplicitlyPaused.current = true
+          dhakEngineRef.current?.stop()
+        } else {
+          userExplicitlyPaused.current = false
+          dhakEngineRef.current?.play()
+        }
+        return next
+      })
     }
-  }, [isPlaying])
+  }, [])
 
   const handleNextTrack = useCallback(() => {
     if (ytPlayerRef.current && ytPlayerReady.current && typeof ytPlayerRef.current.nextVideo === 'function') {
@@ -1239,6 +1279,9 @@ export default function App() {
   }, [showSplash, computePhoneCoordinates])
 
   const triggerCameraFlashAndEnter = useCallback(() => {
+    // Start music on user entering from splash screen
+    tryStartMusic()
+
     // Mark visited immediately so splash NEVER shows again
     sessionStorage.setItem('visited', 'true')
     localStorage.setItem('parikrama_splash_seen', 'true')
@@ -1268,7 +1311,7 @@ export default function App() {
     setTimeout(() => {
       setScreenWhiteout(false)
     }, 450)
-  }, [currentUserCoords, computePhoneCoordinates])
+  }, [currentUserCoords, computePhoneCoordinates, tryStartMusic])
 
   // ── Parikrama Splash Screen Controller: auto-flash after 1.4 seconds ──
   useEffect(() => {

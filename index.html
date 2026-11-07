@@ -522,6 +522,11 @@
         exiting = true;
         clearTimeout(autoTimer);
 
+        // Start playback as user enters from splash
+        if (typeof window.tryStartParikramaMusic === 'function') {
+          try { window.tryStartParikramaMusic(); } catch(e) {}
+        }
+
         // Mark visited immediately so splash NEVER appears again
         sessionStorage.setItem('visited', 'true');
         localStorage.setItem('parikrama_splash_seen', 'true');
@@ -3562,9 +3567,31 @@
     let ytPlayerReady = false;
     let isTrackPlaying = false;
     let isAudioMuted = false;
+    let userExplicitlyPaused = false;
+    let autoPlayStarted = false;
     let currentTrackElapsed = 45; // 0:45 default from screenshot
     let currentTrackDuration = 213; // 3:33 default from screenshot
     let ytProgressInterval = null;
+
+    function tryStartMusic() {
+      if (userExplicitlyPaused || autoPlayStarted) return;
+      if (ytPlayer && ytPlayerReady && typeof ytPlayer.playVideo === 'function') {
+        try {
+          ytPlayer.playVideo();
+          autoPlayStarted = true;
+        } catch (e) {}
+      }
+    }
+    window.tryStartParikramaMusic = tryStartMusic;
+
+    // Listen on first user gesture anywhere to unlock unmuted audio playback if autoplay was deferred
+    const gestureEvents = ['click', 'touchstart', 'pointerdown', 'keydown'];
+    function onFirstUserGesture() {
+      if (!userExplicitlyPaused && !autoPlayStarted) {
+        tryStartMusic();
+      }
+    }
+    gestureEvents.forEach(evt => window.addEventListener(evt, onFirstUserGesture, { passive: true }));
 
     function formatSec(sec) {
       const m = Math.floor(sec / 60);
@@ -3744,6 +3771,7 @@
     function handleYTStateChange(state) {
       if (window.YT && state === window.YT.PlayerState.PLAYING) {
         isTrackPlaying = true;
+        autoPlayStarted = true;
         updatePlayPauseButtonUI(true);
         startYTProgressTracker();
         updateYTTrackInfo();
@@ -3766,7 +3794,7 @@
           playerVars: {
             listType: 'playlist',
             list: YOUTUBE_PLAYLIST_ID,
-            autoplay: 0,
+            autoplay: 1,
             controls: 1,
             playsinline: 1,
             rel: 0,
@@ -3778,6 +3806,9 @@
             onReady: () => {
               ytPlayerReady = true;
               updateYTTrackInfo();
+              if (!userExplicitlyPaused) {
+                tryStartMusic();
+              }
             },
             onStateChange: (e) => {
               handleYTStateChange(e.data);
@@ -3806,15 +3837,19 @@
       if (ytPlayer && ytPlayerReady && typeof ytPlayer.getPlayerState === 'function') {
         const state = ytPlayer.getPlayerState();
         if (state === window.YT.PlayerState.PLAYING) {
+          userExplicitlyPaused = true;
           ytPlayer.pauseVideo();
         } else {
+          userExplicitlyPaused = false;
           ytPlayer.playVideo();
         }
       } else {
         isTrackPlaying = !isTrackPlaying;
         if (isTrackPlaying) {
+          userExplicitlyPaused = false;
           dhakEngine.play();
         } else {
+          userExplicitlyPaused = true;
           dhakEngine.stop();
         }
         updatePlayPauseButtonUI(isTrackPlaying);
