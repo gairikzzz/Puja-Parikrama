@@ -780,7 +780,6 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
               </div>
               <span className="text-white text-xs font-bold">{pandalName || 'Selected Location'}</span>
               <span className="font-mono text-amber-300 text-[10px] mt-0.5">{coords.lat.toFixed(4)}° N, {coords.lng.toFixed(4)}° E</span>
-              <span className="text-white/40 text-[9px] mt-1">Tap box to micro-adjust pin position</span>
             </div>
           </div>
 
