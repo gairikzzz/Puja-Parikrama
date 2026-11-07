@@ -611,25 +611,25 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
   return (
     <div
       id="upload-modal"
-      className={`snap-modal-backdrop fixed inset-0 z-[120] flex flex-col justify-end sm:justify-center p-2 sm:p-4 bg-black/40 backdrop-blur-[2px] ${
+      className={`snap-modal-backdrop fixed inset-0 z-[120] flex items-center justify-center p-2.5 sm:p-4 bg-black/40 backdrop-blur-[2px] ${
         visible ? 'active visible' : 'hidden'
       }`}
     >
-      <div className="snap-modal-content w-full sm:max-w-lg mx-auto bg-[#121224]/95 backdrop-blur-xl rounded-[24px] sm:rounded-[28px] border border-[#E9B83E]/30 p-5 sm:p-6 flex flex-col max-h-[92vh] overflow-y-auto hide-scrollbar shadow-[0_24px_60px_rgba(0,0,0,0.85),0_0_24px_rgba(233,184,62,0.15)]">
+      <div className="snap-modal-content w-full sm:max-w-md mx-auto bg-[#121224]/95 backdrop-blur-xl rounded-[22px] sm:rounded-[26px] border border-[#E9B83E]/30 p-3.5 sm:p-4.5 flex flex-col overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.85),0_0_24px_rgba(233,184,62,0.15)]">
         {/* Header */}
-        <div className="flex items-center justify-between pb-3.5 border-b border-[#E9B83E]/20 mb-4 flex-shrink-0">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full p-0.5 bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] flex items-center justify-center overflow-hidden flex-shrink-0 shadow-[0_0_10px_rgba(233,184,62,0.35)]">
+        <div className="flex items-center justify-between pb-2 border-b border-[#E9B83E]/20 mb-2.5 flex-shrink-0">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full p-0.5 bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] flex items-center justify-center overflow-hidden flex-shrink-0 shadow-[0_0_8px_rgba(233,184,62,0.35)]">
               <img src="/durga-emblem.png" alt="Puja Parikrama" className="w-full h-full rounded-full object-cover" />
             </div>
             <div>
-              <h2 className="text-white font-bold text-base leading-tight">
+              <h2 className="text-white font-bold text-sm sm:text-base leading-tight">
                 Add a Pandal
               </h2>
-              <p className="text-[#E9B83E]/80 text-[11px] font-medium">Share a pandal with the Puja Porikroma community</p>
+              <p className="text-[#E9B83E]/80 text-[10px] sm:text-[11px] font-medium leading-tight">Share a pandal with the Puja Porikroma community</p>
             </div>
           </div>
-          <button id="upload-back-btn" onClick={handleClose} className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition active:scale-95 cursor-pointer">
+          <button id="upload-back-btn" onClick={handleClose} className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition active:scale-95 cursor-pointer text-xs">
             ✕
           </button>
         </div>
@@ -646,41 +646,41 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
           }}
         />
 
-        {/* Details & Pandal Tagging Confirmation */}
-        <div className="flex-1 overflow-y-auto no-scrollbar px-5 py-4 space-y-4">
+        {/* Main Content (Non-scrollable, compact layout) */}
+        <div className="space-y-2 sm:space-y-2.5 flex flex-col">
           {/* Media Preview Box (Tap to choose or change image) */}
           <div
             onClick={() => document.getElementById('snap-file-input')?.click()}
-            className="w-full h-44 sm:h-48 rounded-2xl border-2 border-dashed border-[#E9B83E]/40 hover:border-[#E9B83E] bg-[#211329]/50 flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer transition-all shadow-[0_4px_16px_rgba(13,12,27,0.5)]"
+            className="w-full h-28 sm:h-32 rounded-xl border-2 border-dashed border-[#E9B83E]/40 hover:border-[#E9B83E] bg-[#211329]/50 flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer transition-all shadow-[0_4px_16px_rgba(13,12,27,0.5)]"
           >
             {preview ? (
               <>
                 <img src={preview} alt="preview" className="w-full h-full object-cover" />
-                <div className="absolute top-2 right-2 bg-black/65 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] text-white/90 border border-white/20 flex items-center gap-1.5 shadow-md">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Tap to change photo
+                <div className="absolute top-2 right-2 bg-black/65 backdrop-blur-md px-2 py-0.5 rounded-full text-[9px] text-white/90 border border-white/20 flex items-center gap-1 shadow-md">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Tap to change
                 </div>
               </>
             ) : (
-              <div className="text-center p-4">
-                <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-saffron to-puja-gold mx-auto flex items-center justify-center mb-2.5 shadow-lg shadow-saffron/30 group-hover:scale-105 transition-transform">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+              <div className="text-center p-2.5">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-tr from-saffron to-puja-gold mx-auto flex items-center justify-center mb-1.5 shadow-md shadow-saffron/30 group-hover:scale-105 transition-transform">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
                     <path d="M9 3L7.17 5H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2h-3.17L15 3H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
                     <circle cx="12" cy="13" r="3" fill="white"/>
                   </svg>
                 </div>
-                <p className="text-white font-semibold text-xs sm:text-sm">Tap to capture or select pandal photo</p>
-                <p className="text-[#E9B83E]/80 text-[11px] mt-0.5">Camera or Gallery · EXIF GPS extracted automatically</p>
+                <p className="text-white font-semibold text-xs leading-tight">Tap to capture or select pandal photo</p>
+                <p className="text-[#E9B83E]/80 text-[10px] mt-0.5 leading-tight">Camera or Gallery · EXIF GPS extracted automatically</p>
               </div>
             )}
           </div>
 
           {/* Pandal Name & Dropdown (Styled like Search Bar & Landing Page Year) */}
           <div className="relative">
-            <label className="block text-xs sm:text-sm font-semibold text-[#F5E5B7] mb-1.5">
+            <label className="block text-[11px] sm:text-xs font-semibold text-[#F5E5B7] mb-1">
               <span>Pandal Name</span> <span className="text-red-500 font-bold">*</span>
             </label>
             <div className="relative flex items-center rounded-full bg-[#211329]/75 hover:bg-[#211329]/85 border border-[#E9B83E]/40 hover:border-[#E9B83E] focus-within:border-[#E9B83E] shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.15)] backdrop-blur-md transition-all">
-              <svg className="w-4 h-4 text-[#E9B83E] flex-shrink-0 ml-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg className="w-3.5 h-3.5 text-[#E9B83E] flex-shrink-0 ml-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="11" cy="11" r="8"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
               </svg>
@@ -691,15 +691,15 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
                 onFocus={() => setShowDropdown(true)}
                 onChange={e => { setPandalName(e.target.value); setSearchFilter(e.target.value); setShowDropdown(true); }}
                 placeholder="Select or Enter Pandal Name"
-                className="w-full bg-transparent pl-2.5 pr-10 py-3 text-[#F5E5B7] font-semibold text-xs sm:text-sm focus:outline-none placeholder-[#F5E5B7]/50"
+                className="w-full bg-transparent pl-2 pr-9 py-2 text-[#F5E5B7] font-semibold text-xs sm:text-[13px] focus:outline-none placeholder-[#F5E5B7]/50"
               />
               <button
                 type="button"
                 onClick={() => setShowDropdown(!showDropdown)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-[#E9B83E] hover:text-[#F5E5B7] flex items-center justify-center transition cursor-pointer"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-[#E9B83E] hover:text-[#F5E5B7] flex items-center justify-center transition cursor-pointer"
                 title="Select pandal"
               >
-                <svg className={`w-4 h-4 text-[#E9B83E] transition-transform duration-200 ${showDropdown ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
+                <svg className={`w-3.5 h-3.5 text-[#E9B83E] transition-transform duration-200 ${showDropdown ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                 </svg>
               </button>
@@ -707,8 +707,8 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
 
             {/* Proximity Dropdown (Styled like Year dropdown) */}
             {showDropdown && (
-              <div className="absolute left-0 right-0 top-full mt-2 z-50 bg-[#211329]/95 border border-[#E9B83E]/35 rounded-2xl shadow-[0_12px_32px_rgba(13,12,27,0.85),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_12px_rgba(233,184,62,0.15)] backdrop-blur-2xl max-h-56 overflow-y-auto no-scrollbar p-2 space-y-1">
-                <div className="px-2.5 py-1 text-[10px] font-bold text-[#E9B83E] uppercase tracking-wider flex items-center justify-between border-b border-[#E9B83E]/20 mb-1">
+              <div className="absolute left-0 right-0 top-full mt-1.5 z-50 bg-[#211329]/95 border border-[#E9B83E]/35 rounded-2xl shadow-[0_12px_32px_rgba(13,12,27,0.85),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_12px_rgba(233,184,62,0.15)] backdrop-blur-2xl max-h-48 overflow-y-auto no-scrollbar p-1.5 space-y-1">
+                <div className="px-2 py-0.5 text-[9px] font-bold text-[#E9B83E] uppercase tracking-wider flex items-center justify-between border-b border-[#E9B83E]/20 mb-1">
                   <span>Known Agartala Pandals</span>
                   <span>Distance</span>
                 </div>
@@ -726,7 +726,7 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
                           setSourceBadge({ text: '🏛️ Pandal Coordinates', cls: 'bg-amber-500/20 text-amber-300 border-amber-500/30' })
                           setShowDropdown(false)
                         }}
-                        className={`px-3 py-2.5 rounded-xl text-left text-xs font-semibold flex items-center justify-between transition cursor-pointer ${
+                        className={`px-3 py-2 rounded-xl text-left text-xs font-semibold flex items-center justify-between transition cursor-pointer ${
                           isSelected
                             ? 'bg-[#E9B83E]/20 text-[#E9B83E] font-bold border border-[#E9B83E]/30 shadow-sm'
                             : 'text-[#F5E5B7]/90 hover:bg-[#E9B83E]/20 hover:text-[#E9B83E] active:scale-[0.99] border border-transparent'
@@ -753,12 +753,13 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
           </div>
 
           {/* Interactive Mini-Map Preview Card (Confirmation) */}
-          <div className="space-y-1.5">
+          <div className="space-y-1">
             <div className="flex items-center justify-between">
-              <label className="text-white/50 text-xs font-semibold uppercase tracking-widest block">
-                Confirm Location Pin
+              <label className="text-[11px] sm:text-xs font-semibold text-white/60 uppercase tracking-wider flex items-center gap-1.5">
+                <span>📍 Confirm Pin on Map</span>
+                <span className="text-[9px] text-emerald-400 font-normal lowercase">(draggable)</span>
               </label>
-              <span className="text-[10px] text-amber-300">Tap to fine-tune coords</span>
+              <span className="text-[9px] text-amber-200/70">Drag pin or tap map</span>
             </div>
             <div
               onClick={(e) => {
@@ -773,31 +774,25 @@ function UploadModal({ visible, currentUser, onRequireAuth, onClose, onSubmit }:
                 setLocationSource('custom')
                 setSourceBadge({ text: '🎯 Custom Pinned', cls: 'bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/30' })
               }}
-              className="relative w-full h-36 rounded-2xl overflow-hidden border border-white/15 bg-[#0d0d1a] cursor-crosshair flex flex-col items-center justify-center text-center p-3"
+              className="relative w-full h-28 sm:h-32 rounded-xl overflow-hidden border border-white/15 bg-[#0a0a14] cursor-crosshair flex flex-col items-center justify-center text-center p-2 shadow-inner"
             >
-              <div className="w-9 h-9 rounded-full bg-saffron/20 border border-saffron flex items-center justify-center text-base mb-1 animate-bounce">
+              <div className="w-8 h-8 rounded-full bg-saffron/20 border border-saffron flex items-center justify-center text-sm mb-1 animate-bounce">
                 📍
               </div>
-              <span className="text-white text-xs font-bold">{pandalName || 'Selected Location'}</span>
-              <span className="font-mono text-amber-300 text-[10px] mt-0.5">{coords.lat.toFixed(4)}° N, {coords.lng.toFixed(4)}° E</span>
+              <span className="text-white text-xs font-bold truncate max-w-[90%]">{pandalName || 'Selected Location'}</span>
+              <span className="font-mono text-amber-300 text-[9px] mt-0.5">{coords.lat.toFixed(4)}° N, {coords.lng.toFixed(4)}° E</span>
             </div>
           </div>
 
-
-
-          {/* Submit button & Moderation info */}
-          <div className="pt-2 pb-6 space-y-2">
+          {/* Submit button (Add snap yellow colors, border, text: Submit) */}
+          <div className="pt-0.5">
             <button
               id="submit-snap-btn"
               onClick={handleSubmit}
               disabled={!pandalName.trim() || !selectedFile || submitting}
-              className="w-full py-3.5 rounded-2xl text-white font-extrabold text-sm transition-all active:scale-95 disabled:opacity-40"
-              style={{
-                background: (!pandalName.trim() || !selectedFile || submitting) ? 'rgba(255,107,0,0.3)' : 'linear-gradient(135deg, #FF6B00, #C0392B)',
-                boxShadow: (!pandalName.trim() || !selectedFile || submitting) ? 'none' : '0 8px 32px rgba(255,107,0,0.4)',
-              }}
+              className="w-full py-2.5 sm:py-3 rounded-full bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] text-[#211329] font-black text-xs sm:text-sm tracking-wider flex items-center justify-center border-2 border-[#E9B83E] shadow-[0_0_14px_rgba(233,184,62,0.30),0_4px_16px_rgba(13,12,27,0.55)] hover:shadow-[0_0_20px_rgba(233,184,62,0.50)] hover:scale-[1.01] active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:shadow-none transition-all flex-shrink-0 cursor-pointer"
             >
-              {submitting ? 'Submitting to AI Moderation...' : '🪔 Submit Snap for Moderation'}
+              {submitting ? 'Submitting...' : 'Submit'}
             </button>
           </div>
         </div>
