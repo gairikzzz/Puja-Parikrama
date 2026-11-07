@@ -1819,7 +1819,7 @@ export default function App() {
           id="camera-btn"
           onClick={() => setUploadVisible(true)}
           title="Snap Pandal"
-          className="fixed bottom-4 sm:bottom-5 left-1/2 -translate-x-1/2 z-30 w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] flex items-center justify-center border-2 sm:border-[2.5px] border-[#211329] shadow-[0_0_14px_rgba(233,184,62,0.30),0_4px_16px_rgba(13,12,27,0.55)] hover:shadow-[0_0_20px_rgba(233,184,62,0.45),0_4px_18px_rgba(13,12,27,0.60)] active:scale-95 transition-all pointer-events-auto flex-shrink-0 cursor-pointer"
+          className="fixed bottom-4 sm:bottom-5 left-1/2 -translate-x-1/2 z-40 w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] flex items-center justify-center border-2 sm:border-[2.5px] border-[#211329] shadow-[0_0_14px_rgba(233,184,62,0.30),0_4px_16px_rgba(13,12,27,0.55)] hover:shadow-[0_0_20px_rgba(233,184,62,0.50),0_4px_18px_rgba(13,12,27,0.60)] hover:scale-[1.02] active:scale-95 duration-200 transition-all pointer-events-auto flex-shrink-0 cursor-pointer"
         >
           <svg className="w-5 h-5 sm:w-6 sm:h-6 text-[#211329]" viewBox="0 0 24 24" fill="currentColor">
             <path d="M9 3L7.17 5H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2h-3.17L15 3H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z" />
