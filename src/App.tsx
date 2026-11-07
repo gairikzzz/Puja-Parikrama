@@ -2099,20 +2099,20 @@ export default function App() {
         </div>
       )}
 
-      {/* ── 4. MAP FLOATING CONTROLS (Compass + Combined Zoom Capsule + Focus Button on Right-Hand Side Center) ── */}
+      {/* ── 4. MAP FLOATING CONTROLS (Combined Zoom Capsule + Focus Button, Compass on Mobile Only) ── */}
       {mapReady && (
         <div
           id="map-floating-controls"
-          className="fixed right-3.5 sm:right-6 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-2.5 sm:gap-3 pointer-events-auto select-none"
+          className="fixed right-3.5 sm:right-6 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center justify-center gap-2.5 sm:gap-3 pointer-events-auto select-none"
         >
-          {/* 1. Compass Button (North Arrow + 'N') */}
+          {/* 1. Compass Button (North Arrow + 'N' - Mobile only, hidden on laptop) */}
           <button
             id="btn-compass"
             onClick={handleResetNorth}
             title="Reset Bearing to North"
             aria-label="Compass"
             style={{ touchAction: 'manipulation' }}
-            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#211329]/75 hover:bg-[#211329]/90 border border-[#E9B83E]/40 hover:border-[#E9B83E] text-[#E9B83E] flex flex-col items-center justify-center shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.22)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] backdrop-blur-md transition-all active:scale-90 hover:scale-[1.05] pointer-events-auto flex-shrink-0 cursor-pointer"
+            className="flex md:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#211329]/75 hover:bg-[#E9B83E]/15 border border-[#E9B83E]/40 hover:border-[#E9B83E] text-[#E9B83E] flex-col items-center justify-center shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.22)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] backdrop-blur-md transition-all active:scale-90 hover:scale-[1.05] pointer-events-auto flex-shrink-0 cursor-pointer"
           >
             <div id="compass-needle-icon" className="flex flex-col items-center transition-transform duration-300 pointer-events-none">
               <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#E9B83E]" viewBox="0 0 24 24" fill="currentColor">
@@ -2167,7 +2167,7 @@ export default function App() {
             title="Locate My Position"
             aria-label="Locate My Position"
             style={{ touchAction: 'manipulation' }}
-            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#211329]/75 hover:bg-[#211329]/90 border border-[#E9B83E]/40 hover:border-[#E9B83E] text-[#E9B83E] flex items-center justify-center shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.22)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] backdrop-blur-md transition-all active:scale-90 hover:scale-[1.05] pointer-events-auto flex-shrink-0 cursor-pointer"
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#211329]/75 hover:bg-[#E9B83E]/15 border border-[#E9B83E]/40 hover:border-[#E9B83E] text-[#E9B83E] flex items-center justify-center shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.22)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] backdrop-blur-md transition-all active:scale-90 hover:scale-[1.05] pointer-events-auto flex-shrink-0 cursor-pointer"
           >
             <svg className="pointer-events-none w-4.5 h-4.5 sm:w-5 sm:h-5 text-[#E9B83E]" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
