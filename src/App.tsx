@@ -706,7 +706,7 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
           {/* Media Preview Box (Tap to choose or change image) */}
           <div
             onClick={() => document.getElementById('snap-file-input')?.click()}
-            className="w-full h-28 sm:h-32 rounded-xl border border-dashed border-[#E9B83E]/40 hover:border-[#E9B83E] bg-[#211329]/50 flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer transition-all shadow-[0_4px_16px_rgba(13,12,27,0.5)]"
+            className="w-full h-32 sm:h-36 rounded-xl border border-dashed border-[#E9B83E]/40 hover:border-[#E9B83E] bg-[#211329]/50 flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer transition-all shadow-[0_4px_16px_rgba(13,12,27,0.5)]"
           >
             {preview ? (
               <>
@@ -716,15 +716,15 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
                 </div>
               </>
             ) : (
-              <div className="text-center p-2.5">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-tr from-saffron to-puja-gold mx-auto flex items-center justify-center mb-1.5 shadow-md shadow-saffron/30 group-hover:scale-105 transition-transform">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+              <div className="w-full h-full flex flex-col items-center justify-center p-3 text-center">
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gradient-to-tr from-saffron to-puja-gold flex items-center justify-center mb-3 shadow-md shadow-saffron/30 group-hover:scale-105 transition-transform flex-shrink-0">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
                     <path d="M9 3L7.17 5H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2h-3.17L15 3H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
                     <circle cx="12" cy="13" r="3" fill="white"/>
                   </svg>
                 </div>
                 <p className="text-[#F5E5B7] font-semibold text-xs leading-tight">Add Photos of This Pandal</p>
-                <p className="text-[#E9B83E]/80 text-[10px] mt-0.5 leading-tight">Take a new photo or select photos from your gallery</p>
+                <p className="text-[#E9B83E]/80 text-[10px] mt-1.5 leading-tight">Take a new photo or select photos from your gallery</p>
               </div>
             )}
           </div>
