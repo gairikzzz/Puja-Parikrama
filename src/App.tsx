@@ -960,8 +960,19 @@ export default function App() {
 
   const [posts, setPosts] = useState<SnapPost[]>(SEED_POSTS)
   const [selectedPost, setSelectedPost] = useState<SnapPost | null>(null)
-  const [currentUserCoords, setCurrentUserCoords] = useState<{ lat: number; lng: number }>(AGARTALA_CENTER)
   const [uploadVisible, setUploadVisible] = useState(false)
+  const [currentUserCoords, setCurrentUserCoords] = useState<{ lat: number; lng: number }>(() => {
+    try {
+      const cached = localStorage.getItem('parikrama_user_location')
+      if (cached) {
+        const parsed = JSON.parse(cached)
+        if (parsed && typeof parsed.lat === 'number' && typeof parsed.lng === 'number') {
+          return parsed
+        }
+      }
+    } catch {}
+    return AGARTALA_CENTER
+  })
   const [mapReady, setMapReady] = useState(false)
   const [toast, setToast] = useState<{ msg: string; visible: boolean }>({ msg: '', visible: false })
   const [liveCount, setLiveCount] = useState(23)
@@ -1366,8 +1377,17 @@ export default function App() {
     setTimeout(() => {
       setShowSplash(false)
       if (googleMapRef.current) {
-        googleMapRef.current.panTo(currentUserCoords || AGARTALA_CENTER)
-        googleMapRef.current.setZoom(15)
+        let loc = currentUserCoords
+        if (!loc || (loc.lat === AGARTALA_CENTER.lat && loc.lng === AGARTALA_CENTER.lng)) {
+          try {
+            const saved = localStorage.getItem('parikrama_user_location')
+            if (saved) loc = JSON.parse(saved)
+          } catch {}
+        }
+        if (loc) {
+          googleMapRef.current.panTo(loc)
+          googleMapRef.current.setZoom(16)
+        }
       }
     }, 260)
 
@@ -1435,9 +1455,22 @@ export default function App() {
 
   function initMap() {
     if (!mapRef.current) return
+    let initialCenter = AGARTALA_CENTER
+    let initialZoom = 14
+    try {
+      const cached = localStorage.getItem('parikrama_user_location')
+      if (cached) {
+        const parsed = JSON.parse(cached)
+        if (parsed && typeof parsed.lat === 'number' && typeof parsed.lng === 'number') {
+          initialCenter = parsed
+          initialZoom = 16
+        }
+      }
+    } catch {}
+
     const map = new window.google.maps.Map(mapRef.current, {
-      center: AGARTALA_CENTER,
-      zoom: 14,
+      center: initialCenter,
+      zoom: initialZoom,
       styles: DARK_MAP_STYLE,
       disableDefaultUI: true,
       gestureHandling: 'greedy',
@@ -1449,33 +1482,38 @@ export default function App() {
     googleMapRef.current = map
     setMapReady(true)
 
-    // Auto-detect location & zoom on startup
+    const applyCoords = (coords: { lat: number; lng: number }) => {
+      setCurrentUserCoords(coords)
+      try {
+        localStorage.setItem('parikrama_user_location', JSON.stringify(coords))
+      } catch {}
+      map.setCenter(coords)
+      map.setZoom(16)
+    }
+
+    // Auto-detect location & zoom on startup (dual-tier GPS)
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          const coords = { lat: pos.coords.latitude, lng: pos.coords.longitude }
-          setCurrentUserCoords(coords)
-          try {
-            localStorage.setItem('parikrama_user_location', JSON.stringify(coords))
-          } catch {}
-          map.setCenter(coords)
-          map.setZoom(16)
+          applyCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude })
         },
-        () => {
-          try {
-            const saved = localStorage.getItem('parikrama_user_location')
-            if (saved) {
-              const coords = JSON.parse(saved)
-              setCurrentUserCoords(coords)
-              map.setCenter(coords)
-              map.setZoom(16)
-              return
-            }
-          } catch {}
-          map.setCenter(AGARTALA_CENTER)
-          map.setZoom(14)
+        (err) => {
+          console.warn('High-accuracy geolocation failed on startup, trying standard accuracy:', err)
+          navigator.geolocation.getCurrentPosition(
+            (posFallback) => {
+              applyCoords({ lat: posFallback.coords.latitude, lng: posFallback.coords.longitude })
+            },
+            (errFallback) => {
+              console.warn('Standard geolocation failed on startup:', errFallback)
+              if (initialCenter === AGARTALA_CENTER) {
+                map.setCenter(AGARTALA_CENTER)
+                map.setZoom(14)
+              }
+            },
+            { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
+          )
         },
-        { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 }
+        { enableHighAccuracy: true, timeout: 5000, maximumAge: 60000 }
       )
     }
   }
