@@ -3218,30 +3218,7 @@ export default function App() {
               </svg>
             </button>
 
-            {/* Bottom CTA Banner */}
-            <button
-              type="button"
-              onClick={() => {
-                setProfileModalVisible(false)
-                setUploadVisible(true)
-              }}
-              className="w-full p-2.5 sm:p-3 rounded-2xl bg-gradient-to-r from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] text-[#211329] flex items-center justify-between shadow-[0_4px_16px_rgba(233,184,62,0.35)] hover:shadow-[0_0_20px_rgba(233,184,62,0.5)] hover:scale-[1.01] active:scale-98 transition cursor-pointer"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#211329]/15 flex items-center justify-center flex-shrink-0">
-                  <svg className="w-5 h-5 text-[#211329]" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/>
-                  </svg>
-                </div>
-                <div className="text-left">
-                  <p className="font-bold text-xs sm:text-sm text-[#211329] leading-tight">Share Pandal Photos</p>
-                  <p className="text-[10px] sm:text-[11px] text-[#211329]/80 font-medium leading-tight mt-0.5">Add more photos and keep exploring!</p>
-                </div>
-              </div>
-              <svg className="w-5 h-5 text-[#211329] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
+
           </div>
         </div>
       )}
