@@ -543,6 +543,48 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
 
   const handleClose = () => { reset(); onClose() }
 
+  const handleLocateMeInMiniMap = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    const btn = document.getElementById('btn-mini-map-locate')
+    btn?.classList.add('animate-pulse')
+
+    const applyLoc = (loc: { lat: number; lng: number }) => {
+      setCoords(loc)
+      setLocationSource('live_gps')
+      setSourceBadge({ text: '📡 Live Device GPS', cls: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' })
+      btn?.classList.remove('animate-pulse')
+    }
+
+    let existingLoc: { lat: number; lng: number } | null = null
+    try {
+      const saved = localStorage.getItem('parikrama_user_location')
+      if (saved) existingLoc = JSON.parse(saved)
+    } catch (err) {}
+
+    if (existingLoc) {
+      applyLoc(existingLoc)
+    }
+
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const freshLoc = { lat: pos.coords.latitude, lng: pos.coords.longitude }
+          try {
+            localStorage.setItem('parikrama_user_location', JSON.stringify(freshLoc))
+          } catch (err) {}
+          applyLoc(freshLoc)
+        },
+        (err) => {
+          btn?.classList.remove('animate-pulse')
+          console.warn('Geolocation error in mini map:', err)
+        },
+        { enableHighAccuracy: true, timeout: 6000 }
+      )
+    } else {
+      btn?.classList.remove('animate-pulse')
+    }
+  }
+
   // Strategy 4 Waterfall: EXIF -> Live GPS -> City Center (Images only, Multiple Photos supported)
   const processFilesWaterfall = async (files: File[], source: 'camera' | 'gallery') => {
     const imageFiles = files.filter(f => f.type && f.type.startsWith('image/'))
@@ -1002,6 +1044,21 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
               </div>
               <span className="text-white text-xs font-bold truncate max-w-[90%]">{pandalName || 'Selected Location'}</span>
               <span className="font-mono text-amber-300 text-[9px] mt-0.5">{coords.lat.toFixed(4)}° N, {coords.lng.toFixed(4)}° E</span>
+
+              {/* Locate Me Button in bottom right corner */}
+              <button
+                type="button"
+                id="btn-mini-map-locate"
+                onClick={handleLocateMeInMiniMap}
+                title="Locate My Position"
+                aria-label="Locate My Position"
+                style={{ touchAction: 'manipulation' }}
+                className="absolute bottom-2.5 right-2.5 z-20 w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full bg-[#211329]/80 hover:bg-[#211329] border border-[#E9B83E]/45 hover:border-[#E9B83E] text-[#E9B83E] hover:text-[#F5E5B7] flex items-center justify-center shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.22)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] backdrop-blur-md transition-all active:scale-90 hover:scale-[1.05] pointer-events-auto cursor-pointer"
+              >
+                <svg className="pointer-events-none w-4 h-4 text-[#E9B83E] hover:text-[#F5E5B7] transition-colors" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
+                </svg>
+              </button>
             </div>
           </div>
 
