@@ -1240,9 +1240,9 @@
         <div class="relative flex-shrink-0">
           <img
             id="player-track-cover"
-            src="https://i.ytimg.com/vi/LLer3VPOcxg/hqdefault.jpg"
+            src="https://i.ytimg.com/vi/SFJeglBF5cg/hqdefault.jpg"
             onerror="this.src='/dugga-ma-asche.png'"
-            alt="Durga Ma Asche"
+            alt="Dugga Elo"
             class="w-8 h-8 sm:w-9 sm:h-9 rounded-[8px] object-cover border border-[#E9B83E]/20 shadow"
           />
         </div>
@@ -1252,13 +1252,13 @@
             id="player-track-title"
             class="text-left text-xs sm:text-[13px] font-bold text-[#F5E5B7] whitespace-nowrap leading-tight"
           >
-            Durga Ma Asche
+            Dugga Elo
           </span>
           <span
             id="player-track-artist"
             class="text-[10px] sm:text-[11px] text-[#F5E5B7]/60 whitespace-nowrap leading-tight mt-0.5"
           >
-            Infra
+            Monali Thakur
           </span>
         </div>
       </div>
@@ -1276,7 +1276,7 @@
             style="width: 0%;"
           ></div>
         </div>
-        <span id="player-time-total" class="text-right flex-shrink-0">3:34</span>
+        <span id="player-time-total" class="text-right flex-shrink-0">2:26</span>
       </div>
 
       <!-- Right: Playback Controls Row (Prev, Play, Next, Mute in White / Crossed) -->
@@ -4316,7 +4316,7 @@
       { id: 'Blh3d0RBV1M', title: 'Asadoma Sadgamayo', artist: 'Arijit Singh', durationSec: 317, cover: 'https://i.ytimg.com/vi/Blh3d0RBV1M/hqdefault.jpg' },
       { id: 'J8xdJtUK6PY', title: 'Maa Go Tumi Sarbojonin', artist: 'Shreya Ghoshal', durationSec: 207, cover: 'https://i.ytimg.com/vi/J8xdJtUK6PY/hqdefault.jpg' },
     ];
-    let currentTrackIndex = 1;
+    let currentTrackIndex = 0;
     let ytPlayer = null;
     let ytPlayerReady = false;
     let isTrackPlaying = false;
@@ -4325,7 +4325,7 @@
     let keepPausedOnTrackChange = false;
     let autoPlayStarted = false;
     let currentTrackElapsed = 0;
-    let currentTrackDuration = 214;
+    let currentTrackDuration = 146;
     let ytProgressInterval = null;
 
     let userInteracted = window.userHasInteractedWithPage || false;
@@ -4341,7 +4341,7 @@
           } else {
             if (typeof ytPlayer.mute === 'function') ytPlayer.mute();
           }
-          if (typeof ytPlayer.playVideoAt === 'function' && !autoPlayStarted) {
+          if (typeof ytPlayer.playVideoAt === 'function' && !autoPlayStarted && currentTrackIndex !== 0) {
             ytPlayer.playVideoAt(currentTrackIndex);
           } else if (typeof ytPlayer.playVideo === 'function') {
             ytPlayer.playVideo();
@@ -4694,7 +4694,7 @@
                 } else {
                   event.target.mute();
                 }
-                if (typeof event.target.playVideoAt === 'function') {
+                if (currentTrackIndex !== 0 && typeof event.target.playVideoAt === 'function') {
                   event.target.playVideoAt(currentTrackIndex);
                 } else if (typeof event.target.playVideo === 'function') {
                   event.target.playVideo();
@@ -4766,7 +4766,10 @@
               ytPlayer.mute();
             }
           } catch(e) {}
-          if (typeof ytPlayer.getPlaylistIndex === 'function' && ytPlayer.getPlaylistIndex() !== currentTrackIndex) {
+          const pIdx = typeof ytPlayer.getPlaylistIndex === 'function' ? ytPlayer.getPlaylistIndex() : -1;
+          if (pIdx >= 0 && pIdx !== currentTrackIndex) {
+            ytPlayer.playVideoAt(currentTrackIndex);
+          } else if (pIdx === -1 && currentTrackIndex > 0) {
             ytPlayer.playVideoAt(currentTrackIndex);
           } else {
             ytPlayer.playVideo();

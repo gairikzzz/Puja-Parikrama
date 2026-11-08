@@ -1251,13 +1251,13 @@ export default function App() {
   const isMutedRef = useRef(false)
   const userInteracted = useRef(false)
   const [isMuted, setIsMuted] = useState(false)
-  const [currentTrackIndex, setCurrentTrackIndex] = useState(1)
-  const currentTrackIndexRef = useRef(1)
-  const [trackTitle, setTrackTitle] = useState(YOUTUBE_DURGA_TRACKS[1].title)
-  const [trackArtist, setTrackArtist] = useState(YOUTUBE_DURGA_TRACKS[1].artist)
-  const [trackCover, setTrackCover] = useState(YOUTUBE_DURGA_TRACKS[1].cover)
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(0)
+  const currentTrackIndexRef = useRef(0)
+  const [trackTitle, setTrackTitle] = useState(YOUTUBE_DURGA_TRACKS[0].title)
+  const [trackArtist, setTrackArtist] = useState(YOUTUBE_DURGA_TRACKS[0].artist)
+  const [trackCover, setTrackCover] = useState(YOUTUBE_DURGA_TRACKS[0].cover)
   const [currentTimeSec, setCurrentTimeSec] = useState(0)
-  const [totalDurationSec, setTotalDurationSec] = useState(YOUTUBE_DURGA_TRACKS[1].durationSec)
+  const [totalDurationSec, setTotalDurationSec] = useState(YOUTUBE_DURGA_TRACKS[0].durationSec)
   const dhakEngineRef = useRef<DhakAudioEngine | null>(null)
 
   const unlockAndPlayAudio = useCallback(() => {
@@ -1271,7 +1271,7 @@ export default function App() {
         } else {
           if (typeof ytPlayerRef.current.mute === 'function') ytPlayerRef.current.mute()
         }
-        if (typeof ytPlayerRef.current.playVideoAt === 'function' && !autoPlayStarted.current) {
+        if (typeof ytPlayerRef.current.playVideoAt === 'function' && !autoPlayStarted.current && currentTrackIndexRef.current !== 0) {
           ytPlayerRef.current.playVideoAt(currentTrackIndexRef.current)
         } else if (typeof ytPlayerRef.current.playVideo === 'function') {
           ytPlayerRef.current.playVideo()
@@ -1399,7 +1399,7 @@ export default function App() {
                 } else {
                   event.target.mute()
                 }
-                if (typeof event.target.playVideoAt === 'function') {
+                if (currentTrackIndexRef.current !== 0 && typeof event.target.playVideoAt === 'function') {
                   event.target.playVideoAt(currentTrackIndexRef.current)
                 } else if (typeof event.target.playVideo === 'function') {
                   event.target.playVideo()
@@ -1594,7 +1594,10 @@ export default function App() {
             ytPlayerRef.current.mute()
           }
         } catch(e) {}
-        if (typeof ytPlayerRef.current.getPlaylistIndex === 'function' && ytPlayerRef.current.getPlaylistIndex() !== currentTrackIndexRef.current) {
+        const pIdx = typeof ytPlayerRef.current.getPlaylistIndex === 'function' ? ytPlayerRef.current.getPlaylistIndex() : -1
+        if (pIdx >= 0 && pIdx !== currentTrackIndexRef.current) {
+          ytPlayerRef.current.playVideoAt(currentTrackIndexRef.current)
+        } else if (pIdx === -1 && currentTrackIndexRef.current > 0) {
           ytPlayerRef.current.playVideoAt(currentTrackIndexRef.current)
         } else {
           ytPlayerRef.current.playVideo()
