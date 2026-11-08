@@ -2080,7 +2080,12 @@ export default function App() {
           <div className="relative overflow-visible backdrop-blur-lg bg-[#211329]/50 border border-[#E9B83E]/40 rounded-full px-3 sm:px-4 py-1 h-10 sm:h-11 flex items-center justify-between w-full pointer-events-auto shadow-[0_4px_24px_rgba(13,12,27,0.45),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.18)] transition-all">
 
             {/* Left Section: Transparent Glowing Durga Emblem & Bengali Typography */}
-            <div className="relative flex items-center gap-1 sm:gap-1.5 min-w-0 z-10 flex-shrink-0 pr-1 sm:pr-2">
+            <div
+              id="btn-header-home"
+              onClick={() => window.location.reload()}
+              title="Reload Page"
+              className="relative flex items-center gap-1 sm:gap-1.5 min-w-0 z-10 flex-shrink-0 pr-1 sm:pr-2 cursor-pointer hover:opacity-85 active:scale-95 transition-all select-none"
+            >
               <img
                 src="/durga-emblem.png"
                 alt="Maa Durga"
