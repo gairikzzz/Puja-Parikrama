@@ -3059,8 +3059,8 @@ export default function App() {
                   <h3 className="text-white font-extrabold text-base sm:text-lg leading-tight truncate">
                     {user?.displayName || 'Moumita D.'}
                   </h3>
-                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border border-[#E9B83E]/80 bg-[#E9B83E]/15 text-[#F5E5B7] text-[10px] sm:text-[11px] font-bold mt-1.5 shadow-[0_0_10px_rgba(233,184,62,0.25)]">
-                    <span>🪔</span> Top Contributor
+                  <div className="inline-flex items-center px-2.5 py-0.5 rounded-full border border-[#E9B83E]/80 bg-[#E9B83E]/15 text-[#F5E5B7] text-[10px] sm:text-[11px] font-bold mt-1.5 shadow-[0_0_10px_rgba(233,184,62,0.25)]">
+                    #2 Top Contributor
                   </div>
                   <p className="text-white/60 text-[10px] sm:text-[11px] font-medium mt-1 flex items-center gap-1.5">
                     <span>📅</span> Member since Sep 2024
