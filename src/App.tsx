@@ -815,7 +815,7 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
                   setSearchFilter(e.target.value)
                   setShowDropdown(true)
                 }}
-                placeholder="Select or Enter Pandal Name..."
+                placeholder="Select or enter pandal name..."
                 className="w-full bg-transparent pl-2.5 pr-9 py-2 text-[#F5E5B7] font-normal placeholder:font-normal text-xs sm:text-[13px] placeholder-[#F5E5B7]/45 focus:placeholder-transparent focus:outline-none"
               />
               <button
@@ -938,7 +938,7 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
                     autoComplete="off"
                     onChange={e => { setMapSearchQuery(e.target.value); setShowMapSearch(true); }}
                     onFocus={() => setShowMapSearch(true)}
-                    placeholder="Search location or pandal..."
+                    placeholder="Search for a location or pandal..."
                     className="w-full bg-transparent pl-2.5 pr-8 py-1.5 text-[11px] text-[#F5E5B7] placeholder-[#F5E5B7]/40 outline-none"
                   />
                   {mapSearchQuery && (
