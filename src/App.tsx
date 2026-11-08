@@ -2935,8 +2935,6 @@ export default function App() {
                   </div>
                 </div>
               </div>
-              {/* Podium Base Accent */}
-              <div className="w-full h-1.5 rounded-full bg-gradient-to-r from-transparent via-[#E9B83E]/40 to-transparent shadow-[0_0_12px_rgba(233,184,62,0.3)] mb-3" />
             </div>
 
             {/* Filter Tabs (Two Tabs: This Puja with Calendar, All Time with Bar-Chart) */}
