@@ -1212,6 +1212,7 @@ export default function App() {
   })
   const [authModalVisible, setAuthModalVisible] = useState(false)
   const [leaderboardModalVisible, setLeaderboardModalVisible] = useState(false)
+  const [leaderboardTab, setLeaderboardTab] = useState<'this_puja' | 'all_time' | 'friends'>('this_puja')
   const [profileModalVisible, setProfileModalVisible] = useState(false)
   const [topSearchQuery, setTopSearchQuery] = useState('')
   const [isSearchFocused, setIsSearchFocused] = useState(false)
@@ -2681,212 +2682,471 @@ export default function App() {
         </div>
       )}
 
-      {/* ── LEADERBOARD MODAL (Translucent floating layer above landing map) ── */}
+      {/* ── COMMUNITY LEADERBOARD MODAL ── */}
       {leaderboardModalVisible && (
         <div
           id="leaderboard-modal"
           onClick={(e) => {
             if (e.target === e.currentTarget) setLeaderboardModalVisible(false)
           }}
-          className="snap-modal-backdrop active fixed inset-0 z-[150] bg-black/40 backdrop-blur-[2px] flex items-center justify-center p-3 sm:p-4"
+          className="snap-modal-backdrop active fixed inset-0 z-[150] bg-black/40 backdrop-blur-[2px] flex items-center justify-center p-2.5 sm:p-4"
         >
-          <div className="snap-modal-content w-full sm:max-w-md mx-auto bg-[#121224]/95 backdrop-blur-xl rounded-[24px] sm:rounded-[28px] border border-[#E9B83E]/30 p-5 sm:p-6 flex flex-col max-h-[90vh] overflow-y-auto hide-scrollbar shadow-[0_24px_60px_rgba(0,0,0,0.85),0_0_24px_rgba(233,184,62,0.15)] relative">
+          <div className="snap-modal-content w-full sm:max-w-md mx-auto bg-[#211329]/50 backdrop-blur-2xl rounded-[22px] sm:rounded-[26px] border border-[#E9B83E]/40 p-4 sm:p-5 flex flex-col shadow-[0_24px_60px_rgba(13,12,27,0.7),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_24px_rgba(233,184,62,0.18)] max-h-[90vh] overflow-y-auto hide-scrollbar relative">
             {/* Modal Header */}
-            <div className="flex items-center justify-between pb-3.5 border-b border-[#E9B83E]/20 mb-4 flex-shrink-0">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full p-0.5 bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] flex items-center justify-center overflow-hidden flex-shrink-0 shadow-[0_0_12px_rgba(233,184,62,0.4)]">
-                  <svg className="w-4 h-4 text-[#211329]" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0 0 11 15.9V19H7v2h10v-2h-4v-3.1c1.8-.46 3.17-1.87 3.61-3.66C19.08 11.63 21 9.55 21 7V5c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z" />
-                  </svg>
+            <div className="flex items-center justify-between pb-2.5 border-b border-[#E9B83E]/20 mb-3 flex-shrink-0">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full p-0.5 bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] flex items-center justify-center overflow-hidden flex-shrink-0 aspect-square shadow-[0_0_8px_rgba(233,184,62,0.35)]">
+                  <img src="/durga-emblem.png?v=c2" alt="Puja Parikrama" className="w-full h-full rounded-full object-contain object-center" />
                 </div>
                 <div>
-                  <h2 className="text-white font-bold text-base leading-tight">Parikrama Leaderboard</h2>
-                  <p className="text-[#E9B83E] text-[11px] font-medium">Top Devotees &amp; Pandal Explorers</p>
+                  <h2 className="text-[#F5E5B7] font-bold text-sm sm:text-base leading-tight">
+                    Community Leaderboard
+                  </h2>
+                  <p className="text-[#E9B83E]/80 text-[10px] sm:text-[11px] font-medium leading-tight">
+                    Top contributors to Puja Porikroma
+                  </p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setLeaderboardModalVisible(false)}
-                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white/70 hover:text-white flex items-center justify-center transition cursor-pointer"
+                className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition active:scale-95 cursor-pointer text-xs"
               >
                 ✕
               </button>
             </div>
 
-            {/* Top 3 Podium Highlights */}
-            <div className="grid grid-cols-3 gap-2 mb-4">
-              <div className="p-2.5 rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center text-center">
-                <span className="text-xl mb-0.5">🥈</span>
-                <span className="text-xs font-bold text-white truncate max-w-full">Ankita S.</span>
-                <span className="text-[10px] text-white/50">15 Pandals</span>
-                <span className="text-[11px] font-mono font-bold text-[#E9B83E] mt-1">810 pts</span>
-              </div>
-              <div className="p-2.5 rounded-2xl bg-gradient-to-b from-[#E9B83E]/20 to-[#211329]/80 border border-[#E9B83E]/50 flex flex-col items-center text-center shadow-[0_0_16px_rgba(233,184,62,0.2)]">
-                <span className="text-2xl mb-0.5">👑</span>
-                <span className="text-xs font-black text-[#F5E5B7] truncate max-w-full">Debasish R.</span>
-                <span className="text-[10px] text-white/60">18 Pandals</span>
-                <span className="text-xs font-mono font-black text-[#E9B83E] mt-1">940 pts</span>
-              </div>
-              <div className="p-2.5 rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center text-center">
-                <span className="text-xl mb-0.5">🥉</span>
-                <span className="text-xs font-bold text-white truncate max-w-full">Suman P.</span>
-                <span className="text-[10px] text-white/50">13 Pandals</span>
-                <span className="text-[11px] font-mono font-bold text-[#E9B83E] mt-1">720 pts</span>
-              </div>
-            </div>
-
-            {/* Ranked List */}
-            <div className="space-y-2 text-left max-h-56 overflow-y-auto pr-1">
-              {[
-                { rank: '4', name: 'Pooja Debbarma', area: 'College Tilla', pandals: 11, pts: '610 pts' },
-                { rank: '5', name: 'Rohan Bhowmik', area: 'Banamalipur', pandals: 9, pts: '500 pts' },
-                { rank: '6', name: 'Shreya Chakraborty', area: 'Ramnagar', pandals: 8, pts: '460 pts' },
-              ].map((item, idx) => (
-                <div key={idx} className="flex items-center justify-between p-2.5 rounded-xl bg-white/5 border border-white/5 hover:border-[#E9B83E]/30 transition">
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-6 h-6 rounded-full bg-white/10 text-white/70 font-bold text-xs flex items-center justify-center">{item.rank}</span>
-                    <div>
-                      <p className="text-xs font-bold text-white">{item.name}</p>
-                      <p className="text-[10px] text-white/50">{item.pandals} pandals visited • {item.area}</p>
+            {/* Top 3 Podium Area */}
+            <div className="pt-2 pb-1 px-1">
+              <div className="grid grid-cols-3 gap-2 items-end">
+                {/* 2nd Place: Moumita D. */}
+                <div className="flex flex-col items-center">
+                  <div className="relative mb-1 flex flex-col items-center">
+                    {/* Silver Laurel Wreath SVG */}
+                    <div className="relative w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center">
+                      <svg className="absolute -inset-2 w-[calc(100%+16px)] h-[calc(100%+16px)] text-slate-300/80 pointer-events-none drop-shadow" viewBox="0 0 100 100" fill="none">
+                        <path d="M 28 80 C 12 58 14 34 32 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                        <path d="M 22 70 C 14 68 12 60 18 56 C 22 62 23 66 22 70 Z" fill="currentColor" />
+                        <path d="M 17 56 C 9 52 10 44 17 42 C 19 48 19 52 17 56 Z" fill="currentColor" />
+                        <path d="M 16 42 C 10 36 13 28 20 28 C 21 34 19 38 16 42 Z" fill="currentColor" />
+                        <path d="M 22 28 C 18 20 25 14 31 16 C 30 22 27 26 22 28 Z" fill="currentColor" />
+                        <path d="M 32 18 C 30 10 39 8 43 13 C 40 18 36 19 32 18 Z" fill="currentColor" />
+                        <path d="M 72 80 C 88 58 86 34 68 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                        <path d="M 78 70 C 86 68 88 60 82 56 C 78 62 77 66 78 70 Z" fill="currentColor" />
+                        <path d="M 83 56 C 91 52 90 44 83 42 C 81 48 81 52 83 56 Z" fill="currentColor" />
+                        <path d="M 84 42 C 90 36 87 28 80 28 C 79 34 81 38 84 42 Z" fill="currentColor" />
+                        <path d="M 78 28 C 82 20 75 14 69 16 C 70 22 73 26 78 28 Z" fill="currentColor" />
+                        <path d="M 68 18 C 70 10 61 8 57 13 C 60 18 64 19 68 18 Z" fill="currentColor" />
+                      </svg>
+                      <img
+                        src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
+                        alt="Moumita D."
+                        className="w-12 h-12 sm:w-13 sm:h-13 rounded-full object-cover border-2 border-slate-300 shadow-[0_0_12px_rgba(200,215,240,0.4)]"
+                      />
+                    </div>
+                    {/* Rank Badge */}
+                    <div className="w-5 h-5 rounded-full bg-[#3d384d] border border-slate-300 text-slate-100 font-bold text-[10px] flex items-center justify-center -mt-2.5 z-10 shadow">
+                      2
                     </div>
                   </div>
-                  <span className="text-xs font-mono font-bold text-[#E9B83E]">{item.pts}</span>
+                  {/* Step Pedestal */}
+                  <div className="w-full bg-[#261533]/80 border-t border-x border-slate-400/40 rounded-t-xl pt-2 pb-2.5 px-1 text-center shadow-[0_0_12px_rgba(180,195,220,0.12)]">
+                    <p className="text-white font-bold text-[11px] sm:text-xs truncate">Moumita D.</p>
+                    <p className="text-slate-300 text-[9px] sm:text-[10px] flex items-center justify-center gap-0.5 mt-0.5">
+                      <span>🖼️</span> <span>247 photos</span>
+                    </p>
+                  </div>
+                </div>
+
+                {/* 1st Place: Arindam S. (Taller & Glowing Gold) */}
+                <div className="flex flex-col items-center">
+                  <div className="relative mb-1 flex flex-col items-center">
+                    {/* Golden Crown */}
+                    <svg className="w-6 h-6 text-[#E9B83E] drop-shadow-[0_0_10px_rgba(233,184,62,0.8)] fill-current mb-0.5" viewBox="0 0 24 24">
+                      <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/>
+                    </svg>
+                    {/* Golden Laurel Wreath SVG */}
+                    <div className="relative w-16 h-16 sm:w-18 sm:h-18 flex items-center justify-center">
+                      <svg className="absolute -inset-2.5 w-[calc(100%+20px)] h-[calc(100%+20px)] text-[#E9B83E] pointer-events-none drop-shadow-[0_0_8px_rgba(233,184,62,0.6)]" viewBox="0 0 100 100" fill="none">
+                        <path d="M 28 80 C 12 58 14 34 32 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                        <path d="M 22 70 C 14 68 12 60 18 56 C 22 62 23 66 22 70 Z" fill="currentColor" />
+                        <path d="M 17 56 C 9 52 10 44 17 42 C 19 48 19 52 17 56 Z" fill="currentColor" />
+                        <path d="M 16 42 C 10 36 13 28 20 28 C 21 34 19 38 16 42 Z" fill="currentColor" />
+                        <path d="M 22 28 C 18 20 25 14 31 16 C 30 22 27 26 22 28 Z" fill="currentColor" />
+                        <path d="M 32 18 C 30 10 39 8 43 13 C 40 18 36 19 32 18 Z" fill="currentColor" />
+                        <path d="M 72 80 C 88 58 86 34 68 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                        <path d="M 78 70 C 86 68 88 60 82 56 C 78 62 77 66 78 70 Z" fill="currentColor" />
+                        <path d="M 83 56 C 91 52 90 44 83 42 C 81 48 81 52 83 56 Z" fill="currentColor" />
+                        <path d="M 84 42 C 90 36 87 28 80 28 C 79 34 81 38 84 42 Z" fill="currentColor" />
+                        <path d="M 78 28 C 82 20 75 14 69 16 C 70 22 73 26 78 28 Z" fill="currentColor" />
+                        <path d="M 68 18 C 70 10 61 8 57 13 C 60 18 64 19 68 18 Z" fill="currentColor" />
+                      </svg>
+                      <img
+                        src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80"
+                        alt="Arindam S."
+                        className="w-13 h-13 sm:w-15 sm:h-15 rounded-full object-cover border-2 border-[#E9B83E] shadow-[0_0_18px_rgba(233,184,62,0.7)]"
+                      />
+                    </div>
+                    {/* Rank Badge */}
+                    <div className="w-5 h-5 rounded-full bg-[#E9B83E] text-[#211329] font-black text-xs flex items-center justify-center -mt-2.5 z-10 shadow-[0_0_8px_rgba(233,184,62,0.7)]">
+                      1
+                    </div>
+                  </div>
+                  {/* Step Pedestal */}
+                  <div className="w-full bg-gradient-to-b from-[#E9B83E]/30 via-[#2d1839]/95 to-[#211329] border-t-2 border-x border-[#E9B83E]/70 rounded-t-xl pt-2 pb-3 px-1 text-center shadow-[0_0_20px_rgba(233,184,62,0.25)]">
+                    <p className="text-[#F5E5B7] font-black text-xs sm:text-sm truncate">Arindam S.</p>
+                    <p className="text-[#E9B83E] text-[10px] sm:text-[11px] font-semibold flex items-center justify-center gap-0.5 mt-0.5">
+                      <span>🖼️</span> <span>328 photos</span>
+                    </p>
+                  </div>
+                </div>
+
+                {/* 3rd Place: Sourav K. */}
+                <div className="flex flex-col items-center">
+                  <div className="relative mb-1 flex flex-col items-center">
+                    {/* Bronze Laurel Wreath SVG */}
+                    <div className="relative w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center">
+                      <svg className="absolute -inset-2 w-[calc(100%+16px)] h-[calc(100%+16px)] text-amber-500/80 pointer-events-none drop-shadow" viewBox="0 0 100 100" fill="none">
+                        <path d="M 28 80 C 12 58 14 34 32 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                        <path d="M 22 70 C 14 68 12 60 18 56 C 22 62 23 66 22 70 Z" fill="currentColor" />
+                        <path d="M 17 56 C 9 52 10 44 17 42 C 19 48 19 52 17 56 Z" fill="currentColor" />
+                        <path d="M 16 42 C 10 36 13 28 20 28 C 21 34 19 38 16 42 Z" fill="currentColor" />
+                        <path d="M 22 28 C 18 20 25 14 31 16 C 30 22 27 26 22 28 Z" fill="currentColor" />
+                        <path d="M 32 18 C 30 10 39 8 43 13 C 40 18 36 19 32 18 Z" fill="currentColor" />
+                        <path d="M 72 80 C 88 58 86 34 68 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                        <path d="M 78 70 C 86 68 88 60 82 56 C 78 62 77 66 78 70 Z" fill="currentColor" />
+                        <path d="M 83 56 C 91 52 90 44 83 42 C 81 48 81 52 83 56 Z" fill="currentColor" />
+                        <path d="M 84 42 C 90 36 87 28 80 28 C 79 34 81 38 84 42 Z" fill="currentColor" />
+                        <path d="M 78 28 C 82 20 75 14 69 16 C 70 22 73 26 78 28 Z" fill="currentColor" />
+                        <path d="M 68 18 C 70 10 61 8 57 13 C 60 18 64 19 68 18 Z" fill="currentColor" />
+                      </svg>
+                      <img
+                        src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80"
+                        alt="Sourav K."
+                        className="w-12 h-12 sm:w-13 sm:h-13 rounded-full object-cover border-2 border-amber-600 shadow-[0_0_12px_rgba(217,119,6,0.4)]"
+                      />
+                    </div>
+                    {/* Rank Badge */}
+                    <div className="w-5 h-5 rounded-full bg-[#3b2b24] border border-amber-600 text-amber-200 font-bold text-[10px] flex items-center justify-center -mt-2.5 z-10 shadow">
+                      3
+                    </div>
+                  </div>
+                  {/* Step Pedestal */}
+                  <div className="w-full bg-[#261533]/80 border-t border-x border-amber-600/40 rounded-t-xl pt-2 pb-2 px-1 text-center shadow-[0_0_12px_rgba(217,119,6,0.12)]">
+                    <p className="text-white font-bold text-[11px] sm:text-xs truncate">Sourav K.</p>
+                    <p className="text-amber-200/80 text-[9px] sm:text-[10px] flex items-center justify-center gap-0.5 mt-0.5">
+                      <span>🖼️</span> <span>196 photos</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              {/* Podium Base Accent */}
+              <div className="w-full h-1.5 rounded-full bg-gradient-to-r from-transparent via-[#E9B83E]/40 to-transparent shadow-[0_0_12px_rgba(233,184,62,0.3)] mb-3" />
+            </div>
+
+            {/* Filter Tabs */}
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <button
+                type="button"
+                onClick={() => setLeaderboardTab('this_puja')}
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition cursor-pointer ${
+                  leaderboardTab === 'this_puja'
+                    ? 'border border-[#E9B83E] bg-[#E9B83E]/15 text-[#F5E5B7] shadow-[0_0_12px_rgba(233,184,62,0.25)]'
+                    : 'text-white/60 hover:text-white border border-transparent'
+                }`}
+              >
+                <span>🪔</span> This Puja
+              </button>
+              <button
+                type="button"
+                onClick={() => setLeaderboardTab('all_time')}
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition cursor-pointer ${
+                  leaderboardTab === 'all_time'
+                    ? 'border border-[#E9B83E] bg-[#E9B83E]/15 text-[#F5E5B7] shadow-[0_0_12px_rgba(233,184,62,0.25)]'
+                    : 'text-white/60 hover:text-white border border-transparent'
+                }`}
+              >
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/>
+                </svg>
+                All Time
+              </button>
+              <button
+                type="button"
+                onClick={() => setLeaderboardTab('friends')}
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition cursor-pointer ${
+                  leaderboardTab === 'friends'
+                    ? 'border border-[#E9B83E] bg-[#E9B83E]/15 text-[#F5E5B7] shadow-[0_0_12px_rgba(233,184,62,0.25)]'
+                    : 'text-white/60 hover:text-white border border-transparent'
+                }`}
+              >
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                </svg>
+                Friends
+              </button>
+            </div>
+
+            {/* Ranked List (#4 to #8) */}
+            <div className="bg-[#211329]/70 border border-[#E9B83E]/25 rounded-2xl p-1 sm:p-1.5 divide-y divide-[#E9B83E]/15 mb-3 shadow-inner">
+              {[
+                { rank: '4', name: 'Anwesha R.', photos: '182 photos', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&q=80' },
+                { rank: '5', name: 'Ritam G.', photos: '160 photos', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=120&q=80' },
+                { rank: '6', name: 'Debolina M.', photos: '149 photos', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=120&q=80' },
+                { rank: '7', name: 'Subhojit P.', photos: '141 photos', avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=120&q=80' },
+                { rank: '8', name: 'Ishita B.', photos: '128 photos', avatar: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=120&q=80' },
+              ].map((item) => (
+                <div key={item.rank} className="flex items-center justify-between p-2 hover:bg-white/5 rounded-xl transition">
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-6 h-6 rounded-full bg-[#211329] border border-[#E9B83E]/30 text-[#F5E5B7] font-bold text-xs flex items-center justify-center flex-shrink-0">
+                      {item.rank}
+                    </span>
+                    <img src={item.avatar} alt={item.name} className="w-8 h-8 rounded-full object-cover border border-[#E9B83E]/40 flex-shrink-0" />
+                    <span className="text-white font-medium text-xs">{item.name}</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-[#F5E5B7]/80 text-xs font-medium">
+                    <span>🖼️</span> <span>{item.photos}</span>
+                  </div>
                 </div>
               ))}
             </div>
 
-            {/* Action Button */}
+            {/* Bottom CTA Banner */}
             <button
               type="button"
               onClick={() => {
                 setLeaderboardModalVisible(false)
                 setUploadVisible(true)
               }}
-              className="mt-4 w-full py-3 rounded-2xl bg-gradient-to-r from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] text-[#211329] font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-[#E9B83E]/20 hover:scale-[1.01] active:scale-98 transition cursor-pointer"
+              className="w-full p-2.5 sm:p-3 rounded-2xl bg-gradient-to-r from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] text-[#211329] flex items-center justify-between shadow-[0_4px_16px_rgba(233,184,62,0.35)] hover:shadow-[0_0_20px_rgba(233,184,62,0.5)] hover:scale-[1.01] active:scale-98 transition cursor-pointer"
             >
-              <span>📸</span> Snap Pandal to Climb Rank
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#211329]/15 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-[#211329]" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/>
+                  </svg>
+                </div>
+                <div className="text-left">
+                  <p className="font-bold text-xs sm:text-sm text-[#211329] leading-tight">Share Pandal Photos</p>
+                  <p className="text-[10px] sm:text-[11px] text-[#211329]/80 font-medium leading-tight mt-0.5">Contribute photos and climb the leaderboard!</p>
+                </div>
+              </div>
+              <svg className="w-5 h-5 text-[#211329] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
             </button>
           </div>
         </div>
       )}
 
-      {/* ── DEVOTEE PROFILE MODAL (Translucent floating layer above landing map) ── */}
+      {/* ── MY PROFILE MODAL ── */}
       {profileModalVisible && (
         <div
           id="profile-modal"
           onClick={(e) => {
             if (e.target === e.currentTarget) setProfileModalVisible(false)
           }}
-          className="snap-modal-backdrop active fixed inset-0 z-[150] bg-black/40 backdrop-blur-[2px] flex items-center justify-center p-3 sm:p-4"
+          className="snap-modal-backdrop active fixed inset-0 z-[150] bg-black/40 backdrop-blur-[2px] flex items-center justify-center p-2.5 sm:p-4"
         >
-          <div className="snap-modal-content w-full sm:max-w-md mx-auto bg-[#121224]/95 backdrop-blur-xl rounded-[24px] sm:rounded-[28px] border border-[#E9B83E]/30 p-5 sm:p-6 flex flex-col max-h-[90vh] overflow-y-auto hide-scrollbar shadow-[0_24px_60px_rgba(0,0,0,0.85),0_0_24px_rgba(233,184,62,0.15)] relative">
+          <div className="snap-modal-content w-full sm:max-w-md mx-auto bg-[#211329]/50 backdrop-blur-2xl rounded-[22px] sm:rounded-[26px] border border-[#E9B83E]/40 p-4 sm:p-5 flex flex-col shadow-[0_24px_60px_rgba(13,12,27,0.7),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_24px_rgba(233,184,62,0.18)] max-h-[90vh] overflow-y-auto hide-scrollbar relative">
             {/* Modal Header */}
-            <div className="flex items-center justify-between pb-3.5 border-b border-[#E9B83E]/20 mb-4 flex-shrink-0">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full p-0.5 bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] flex items-center justify-center overflow-hidden flex-shrink-0 shadow-[0_0_12px_rgba(233,184,62,0.4)]">
-                  <img src="/durga-emblem.png" alt="Devotee" className="w-full h-full rounded-full object-cover" />
+            <div className="flex items-center justify-between pb-2.5 border-b border-[#E9B83E]/20 mb-3 flex-shrink-0">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full p-0.5 bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] flex items-center justify-center overflow-hidden flex-shrink-0 aspect-square shadow-[0_0_8px_rgba(233,184,62,0.35)]">
+                  <img src="/durga-emblem.png?v=c2" alt="Puja Parikrama" className="w-full h-full rounded-full object-contain object-center" />
                 </div>
                 <div>
-                  <h2 className="text-white font-bold text-base leading-tight">Devotee Profile</h2>
-                  <p className="text-[#E9B83E] text-[11px] font-medium">Puja Journey &amp; Contributions</p>
+                  <h2 className="text-[#F5E5B7] font-bold text-sm sm:text-base leading-tight">
+                    My Profile
+                  </h2>
+                  <p className="text-[#E9B83E]/80 text-[10px] sm:text-[11px] font-medium leading-tight">
+                    Your Puja Porikroma journey
+                  </p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setProfileModalVisible(false)}
-                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white/70 hover:text-white flex items-center justify-center transition cursor-pointer"
+                className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition active:scale-95 cursor-pointer text-xs"
               >
                 ✕
               </button>
             </div>
 
-            {/* Devotee Identity Card */}
-            <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-between gap-3 mb-4">
-              <div className="flex items-center gap-3 min-w-0">
+            {/* Profile Identity Card with Durga Silhouette Line Art */}
+            <div className="relative overflow-hidden p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-[#211329]/90 via-[#2d1838]/90 to-[#211329]/90 border border-[#E9B83E]/30 flex items-center justify-between gap-3 shadow-md mb-3">
+              <div className="flex items-center gap-3 min-w-0 z-10">
                 <div className="relative flex-shrink-0">
                   <img
-                    src={user?.photoURL || '/durga-emblem.png'}
-                    alt="Profile Avatar"
-                    className="w-12 h-12 rounded-full border-2 border-[#E9B83E] object-cover shadow-md"
+                    src={user?.photoURL || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80'}
+                    alt="Devotee"
+                    className="w-16 h-16 sm:w-18 sm:h-18 rounded-full object-cover border-2 border-[#E9B83E] shadow-[0_0_16px_rgba(233,184,62,0.4)]"
                   />
-                  <span className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-[#121224] flex items-center justify-center text-[8px] text-white">✓</span>
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-white font-bold text-sm truncate">{user?.displayName || 'Guest Devotee'}</h3>
-                  <p className="text-white/50 text-[11px] truncate">{user?.email || 'Signed In Explorer'}</p>
-                  <span className="inline-flex items-center gap-1 text-[9px] text-[#E9B83E] bg-[#E9B83E]/10 border border-[#E9B83E]/30 px-2 py-0.5 rounded-full mt-1">
-                    ✨ Agartala Puja Parikrama 2026
-                  </span>
+                  <h3 className="text-white font-extrabold text-base sm:text-lg leading-tight truncate">
+                    {user?.displayName || 'Moumita D.'}
+                  </h3>
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border border-[#E9B83E]/70 bg-[#E9B83E]/15 text-[#F5E5B7] text-[10px] sm:text-[11px] font-bold mt-1.5 shadow-[0_0_8px_rgba(233,184,62,0.2)]">
+                    <span>🪔</span> Top Contributor
+                  </div>
+                  <p className="text-white/60 text-[10px] sm:text-[11px] font-medium mt-1 flex items-center gap-1.5">
+                    <span>📅</span> Member since Sep 2024
+                  </p>
                 </div>
+              </div>
+
+              {/* Glowing Golden Maa Durga & Mandir Line Art SVG */}
+              <div className="absolute right-0 top-0 bottom-0 flex items-center justify-end pointer-events-none opacity-85 pr-1">
+                <svg className="w-32 h-32 sm:w-36 sm:h-36 text-[#E9B83E] drop-shadow-[0_0_12px_rgba(233,184,62,0.35)]" viewBox="0 0 160 140" fill="none" stroke="currentColor">
+                  {/* Mandir Spires Silhouettes at base */}
+                  <path d="M10 135 L10 115 L20 100 L20 85 L25 75 L30 85 L30 100 L40 115 L40 135" strokeWidth="1.2" strokeLinejoin="round" opacity="0.6"/>
+                  <path d="M35 135 L35 105 L45 88 L50 70 L55 88 L65 105 L65 135" strokeWidth="1.2" strokeLinejoin="round" opacity="0.7"/>
+                  <path d="M95 135 L95 105 L105 88 L110 70 L115 88 L125 105 L125 135" strokeWidth="1.2" strokeLinejoin="round" opacity="0.7"/>
+                  <path d="M120 135 L120 115 L130 100 L130 85 L135 75 L140 85 L140 100 L150 115 L150 135" strokeWidth="1.2" strokeLinejoin="round" opacity="0.6"/>
+                  <line x1="5" y1="135" x2="155" y2="135" strokeWidth="1.5" opacity="0.8"/>
+                  <line x1="15" y1="125" x2="145" y2="125" strokeWidth="1" strokeDasharray="2 3" opacity="0.5"/>
+                  <path d="M25 75 L25 68 M23 70 L27 70" strokeWidth="1.2"/>
+                  <path d="M50 70 L50 62 M48 64 L52 64" strokeWidth="1.2"/>
+                  <path d="M110 70 L110 62 M108 64 L112 64" strokeWidth="1.2"/>
+                  <path d="M135 75 L135 68 M133 70 L137 70" strokeWidth="1.2"/>
+                  {/* Base Diya Glow */}
+                  <path d="M68 128 Q80 138 92 128 Q80 122 68 128 Z" fill="currentColor" fillOpacity="0.4" strokeWidth="1"/>
+                  <path d="M78 123 Q80 112 82 123 Z" fill="#F5E5B7" strokeWidth="0.8"/>
+                  {/* Maa Durga Mukut (Crown) */}
+                  <path d="M58 45 C58 20 80 8 80 8 C80 8 102 20 102 45 Z" strokeWidth="1.4" fill="currentColor" fillOpacity="0.08"/>
+                  <path d="M65 42 C65 26 80 15 80 15 C80 15 95 26 95 42" strokeWidth="1.2"/>
+                  <circle cx="80" cy="22" r="2.5" fill="currentColor"/>
+                  <circle cx="73" cy="28" r="1.8" fill="currentColor"/>
+                  <circle cx="87" cy="28" r="1.8" fill="currentColor"/>
+                  <path d="M54 48 Q46 32 58 24 Q58 36 62 44" strokeWidth="1.2"/>
+                  <path d="M106 48 Q114 32 102 24 Q102 36 98 44" strokeWidth="1.2"/>
+                  <path d="M50 20 Q80 0 110 20" strokeWidth="1" strokeDasharray="2 3" opacity="0.6"/>
+                  {/* Face Outline & Chin */}
+                  <path d="M64 45 C62 62 70 82 80 84 C90 82 98 62 96 45" strokeWidth="1.4" fill="currentColor" fillOpacity="0.05"/>
+                  {/* Third Eye (Trinetra) */}
+                  <path d="M80 36 C77 42 77 46 80 50 C83 46 83 42 80 36 Z" fill="currentColor" strokeWidth="0.8"/>
+                  <circle cx="80" cy="43" r="1" fill="#211329"/>
+                  {/* Eyebrows & Eyes */}
+                  <path d="M66 52 Q72 49 76 53" strokeWidth="1.3" strokeLinecap="round"/>
+                  <path d="M94 52 Q88 49 84 53" strokeWidth="1.3" strokeLinecap="round"/>
+                  <path d="M66 56 C69 53 74 53 77 57 C74 59 69 59 66 56 Z" strokeWidth="1.2" fill="currentColor" fillOpacity="0.15"/>
+                  <circle cx="72" cy="56" r="1.5" fill="currentColor"/>
+                  <path d="M94 56 C91 53 86 53 83 57 C86 59 91 59 94 56 Z" strokeWidth="1.2" fill="currentColor" fillOpacity="0.15"/>
+                  <circle cx="88" cy="56" r="1.5" fill="currentColor"/>
+                  {/* Nose & Nath */}
+                  <path d="M80 52 L80 64 L82 65" strokeWidth="1.1" strokeLinecap="round"/>
+                  <circle cx="84" cy="65" r="3" strokeWidth="1" strokeDasharray="1 1"/>
+                  <path d="M87 65 C92 65 96 61 97 58" strokeWidth="0.8" strokeDasharray="1 1.5"/>
+                  {/* Lips */}
+                  <path d="M75 72 Q80 75 85 72" strokeWidth="1.2" strokeLinecap="round"/>
+                  <path d="M76 72 Q80 70 84 72" strokeWidth="1" strokeLinecap="round"/>
+                  {/* Earrings */}
+                  <path d="M60 56 Q56 62 60 68 L63 68 Q61 62 60 56 Z" strokeWidth="1" fill="currentColor" fillOpacity="0.2"/>
+                  <path d="M100 56 Q104 62 100 68 L97 68 Q99 62 100 56 Z" strokeWidth="1" fill="currentColor" fillOpacity="0.2"/>
+                </svg>
               </div>
             </div>
 
             {/* Stats Grid (3 Tiles) */}
-            <div className="grid grid-cols-3 gap-2 mb-4">
-              <div className="p-3 rounded-2xl bg-white/5 border border-white/10 text-center flex flex-col items-center">
-                <span className="text-lg mb-1">🪔</span>
-                <span className="text-xs font-semibold text-white/60">Pandals</span>
-                <span className="text-base font-mono font-bold text-[#F5E5B7]">12</span>
+            <div className="grid grid-cols-3 divide-x divide-[#E9B83E]/20 rounded-2xl bg-[#211329]/70 border border-[#E9B83E]/30 p-3 mb-3 shadow-inner">
+              <div className="text-center flex flex-col items-center px-1">
+                <span className="text-base sm:text-lg mb-0.5">🖼️</span>
+                <span className="text-base sm:text-lg font-black text-white">247</span>
+                <span className="text-[10px] sm:text-[11px] font-medium text-white/60 mt-0.5">Photos Shared</span>
               </div>
-              <div className="p-3 rounded-2xl bg-white/5 border border-white/10 text-center flex flex-col items-center">
-                <span className="text-lg mb-1">📸</span>
-                <span className="text-xs font-semibold text-white/60">Snaps</span>
-                <span className="text-base font-mono font-bold text-[#E9B83E]">5</span>
+              <div className="text-center flex flex-col items-center px-1">
+                <span className="text-base sm:text-lg mb-0.5">📍</span>
+                <span className="text-base sm:text-lg font-black text-white">86</span>
+                <span className="text-[10px] sm:text-[11px] font-medium text-white/60 mt-0.5">Pandals Covered</span>
               </div>
-              <div className="p-3 rounded-2xl bg-white/5 border border-white/10 text-center flex flex-col items-center">
-                <span className="text-lg mb-1">🏆</span>
-                <span className="text-xs font-semibold text-white/60">Rank</span>
-                <span className="text-base font-mono font-bold text-amber-300">#7</span>
-              </div>
-            </div>
-
-            {/* Puja Passport Badges */}
-            <div className="p-3 rounded-2xl bg-white/5 border border-white/10 mb-4">
-              <span className="text-[10px] uppercase font-bold text-white/50 tracking-wider block mb-2">Puja Badges Unlocked</span>
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="px-2.5 py-1 rounded-xl bg-[#E9B83E]/15 border border-[#E9B83E]/30 text-[#F5E5B7] text-xs font-medium flex items-center gap-1">
-                  🪔 Pandal Hopper
-                </span>
-                <span className="px-2.5 py-1 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-medium flex items-center gap-1">
-                  📍 GPS Explorer
-                </span>
-                <span className="px-2.5 py-1 rounded-xl bg-purple-500/15 border border-purple-500/30 text-purple-200 text-xs font-medium flex items-center gap-1">
-                  🥁 Dhak Fan
-                </span>
+              <div className="text-center flex flex-col items-center px-1">
+                <span className="text-base sm:text-lg mb-0.5">🏆</span>
+                <span className="text-base sm:text-lg font-black text-[#E9B83E]">#2</span>
+                <span className="text-[10px] sm:text-[11px] font-medium text-white/60 mt-0.5">This Puja Rank</span>
               </div>
             </div>
 
-            {/* Auth Actions */}
-            <div className="space-y-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setProfileModalVisible(false)
-                  setAuthModalVisible(true)
-                }}
-                className="w-full py-2.5 rounded-xl bg-white hover:bg-gray-100 text-gray-900 font-bold text-xs flex items-center justify-center gap-2.5 shadow transition active:scale-98 cursor-pointer"
-              >
-                <svg className="w-4 h-4" viewBox="0 0 24 24">
-                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-                </svg>
-                <span>{user ? 'Manage Google Account' : 'Connect with Google'}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  if (navigator.clipboard) {
-                    navigator.clipboard.writeText(window.location.href)
-                  }
-                }}
-                className="w-full py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white/90 font-semibold text-xs flex items-center justify-center gap-2 border border-white/10 transition active:scale-98 cursor-pointer"
-              >
-                <span>🔗</span> Share Devotee Passport
-              </button>
+            {/* My Contributions Section */}
+            <div className="rounded-2xl bg-[#211329]/60 border border-[#E9B83E]/25 p-3 mb-3 shadow-inner">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-1.5 text-white font-bold text-xs sm:text-sm">
+                  <span>🖼️</span> My Contributions
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setProfileModalVisible(false)
+                    setUploadVisible(true)
+                  }}
+                  className="text-[#E9B83E] hover:text-[#F5E5B7] text-xs font-semibold cursor-pointer transition flex items-center gap-1"
+                >
+                  View All →
+                </button>
+              </div>
+              <div className="grid grid-cols-4 gap-2">
+                {[
+                  { img: 'https://images.unsplash.com/photo-1567157577867-05ccb1388e66?auto=format&fit=crop&w=300&q=80', title: 'Golden Temple Pandal' },
+                  { img: 'https://images.unsplash.com/photo-1601055283742-8b27e81b5553?auto=format&fit=crop&w=300&q=80', title: 'Maa Durga Cyan' },
+                  { img: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=300&q=80', title: 'Red Toron Arch' },
+                  { img: 'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=300&q=80', title: 'White Temple Pandal' },
+                ].map((item, idx) => (
+                  <div key={idx} className="aspect-square rounded-xl overflow-hidden border border-[#E9B83E]/30 hover:border-[#E9B83E] transition shadow cursor-pointer group">
+                    <img src={item.img} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition duration-300" />
+                  </div>
+                ))}
+              </div>
             </div>
+
+            {/* Edit Profile Action */}
+            <button
+              type="button"
+              onClick={() => {
+                setProfileModalVisible(false)
+                setAuthModalVisible(true)
+              }}
+              className="w-full p-2.5 sm:p-3 rounded-2xl bg-[#211329]/70 border border-[#E9B83E]/25 hover:border-[#E9B83E]/45 flex items-center justify-between mb-3 transition cursor-pointer active:scale-98"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-[#E9B83E]/15 border border-[#E9B83E]/30 text-[#E9B83E] flex items-center justify-center flex-shrink-0">
+                  <svg className="w-4 h-4 text-[#E9B83E]" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                  </svg>
+                </div>
+                <div className="text-left">
+                  <p className="text-white font-bold text-xs sm:text-sm leading-tight">Edit Profile</p>
+                  <p className="text-white/50 text-[10px] sm:text-[11px] leading-tight mt-0.5">Update your name, photo and details</p>
+                </div>
+              </div>
+              <svg className="w-4 h-4 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+
+            {/* Bottom CTA Banner */}
+            <button
+              type="button"
+              onClick={() => {
+                setProfileModalVisible(false)
+                setUploadVisible(true)
+              }}
+              className="w-full p-2.5 sm:p-3 rounded-2xl bg-gradient-to-r from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] text-[#211329] flex items-center justify-between shadow-[0_4px_16px_rgba(233,184,62,0.35)] hover:shadow-[0_0_20px_rgba(233,184,62,0.5)] hover:scale-[1.01] active:scale-98 transition cursor-pointer"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#211329]/15 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-[#211329]" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/>
+                  </svg>
+                </div>
+                <div className="text-left">
+                  <p className="font-bold text-xs sm:text-sm text-[#211329] leading-tight">Share Pandal Photos</p>
+                  <p className="text-[10px] sm:text-[11px] text-[#211329]/80 font-medium leading-tight mt-0.5">Add more photos and keep exploring!</p>
+                </div>
+              </div>
+              <svg className="w-5 h-5 text-[#211329] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
           </div>
         </div>
       )}
