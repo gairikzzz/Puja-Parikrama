@@ -1228,7 +1228,7 @@ export default function App() {
   })
   const [authModalVisible, setAuthModalVisible] = useState(false)
   const [leaderboardModalVisible, setLeaderboardModalVisible] = useState(false)
-  const [leaderboardTab, setLeaderboardTab] = useState<'this_puja' | 'all_time' | 'friends'>('this_puja')
+  const [leaderboardTab, setLeaderboardTab] = useState<'this_puja' | 'all_time'>('this_puja')
   const [profileModalVisible, setProfileModalVisible] = useState(false)
   const [topSearchQuery, setTopSearchQuery] = useState('')
   const [isSearchFocused, setIsSearchFocused] = useState(false)
@@ -2939,46 +2939,40 @@ export default function App() {
               <div className="w-full h-1.5 rounded-full bg-gradient-to-r from-transparent via-[#E9B83E]/40 to-transparent shadow-[0_0_12px_rgba(233,184,62,0.3)] mb-3" />
             </div>
 
-            {/* Filter Tabs */}
-            <div className="flex items-center justify-center gap-2 mb-3">
+            {/* Filter Tabs (Two Tabs: This Puja with Calendar, All Time with Bar-Chart) */}
+            <div className="flex items-center justify-center gap-2.5 mb-3">
               <button
                 type="button"
                 onClick={() => setLeaderboardTab('this_puja')}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition cursor-pointer ${
+                className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold transition cursor-pointer ${
                   leaderboardTab === 'this_puja'
                     ? 'border border-[#E9B83E] bg-[#E9B83E]/15 text-[#F5E5B7] shadow-[0_0_12px_rgba(233,184,62,0.25)]'
                     : 'text-white/60 hover:text-white border border-transparent'
                 }`}
               >
-                <span>🪔</span> This Puja
+                <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect width="18" height="18" x="3" y="4" rx="2" />
+                  <path d="M16 2v4" />
+                  <path d="M8 2v4" />
+                  <path d="M3 10h18" />
+                </svg>
+                <span>This Puja</span>
               </button>
               <button
                 type="button"
                 onClick={() => setLeaderboardTab('all_time')}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition cursor-pointer ${
+                className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition cursor-pointer ${
                   leaderboardTab === 'all_time'
                     ? 'border border-[#E9B83E] bg-[#E9B83E]/15 text-[#F5E5B7] shadow-[0_0_12px_rgba(233,184,62,0.25)]'
                     : 'text-white/60 hover:text-white border border-transparent'
                 }`}
               >
-                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/>
+                <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 20V10" />
+                  <path d="M12 20V4" />
+                  <path d="M6 20v-6" />
                 </svg>
-                All Time
-              </button>
-              <button
-                type="button"
-                onClick={() => setLeaderboardTab('friends')}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition cursor-pointer ${
-                  leaderboardTab === 'friends'
-                    ? 'border border-[#E9B83E] bg-[#E9B83E]/15 text-[#F5E5B7] shadow-[0_0_12px_rgba(233,184,62,0.25)]'
-                    : 'text-white/60 hover:text-white border border-transparent'
-                }`}
-              >
-                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
-                </svg>
-                Friends
+                <span>All Time</span>
               </button>
             </div>
 
