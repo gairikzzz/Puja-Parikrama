@@ -1019,7 +1019,6 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
                       <div
                         key={p.name}
                         onClick={() => {
-                          setPandalName(p.name);
                           setNeighborhood(p.neighborhood || 'Agartala');
                           setCoords({ lat: p.lat, lng: p.lng });
                           setLocationSource('custom');
