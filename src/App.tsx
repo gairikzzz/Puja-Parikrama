@@ -2973,21 +2973,21 @@ export default function App() {
               </button>
             </div>
 
-            {/* Profile Identity Card with Durga Silhouette Line Art */}
-            <div className="relative overflow-hidden p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-[#211329]/90 via-[#2d1838]/90 to-[#211329]/90 border border-[#E9B83E]/30 flex items-center justify-between gap-3 shadow-md mb-3">
-              <div className="flex items-center gap-3 min-w-0 z-10">
+            {/* Profile Identity Section with Durga Silhouette Line Art */}
+            <div className="relative flex items-center justify-between pb-3 pt-1 px-1 mb-1">
+              <div className="flex items-center gap-3.5 min-w-0 z-10">
                 <div className="relative flex-shrink-0">
                   <img
                     src={user?.photoURL || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80'}
                     alt="Devotee"
-                    className="w-16 h-16 sm:w-18 sm:h-18 rounded-full object-cover border-2 border-[#E9B83E] shadow-[0_0_16px_rgba(233,184,62,0.4)]"
+                    className="w-16 h-16 sm:w-18 sm:h-18 rounded-full object-cover border-2 border-[#E9B83E] shadow-[0_0_20px_rgba(233,184,62,0.5)]"
                   />
                 </div>
                 <div className="min-w-0">
                   <h3 className="text-white font-extrabold text-base sm:text-lg leading-tight truncate">
                     {user?.displayName || 'Moumita D.'}
                   </h3>
-                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border border-[#E9B83E]/70 bg-[#E9B83E]/15 text-[#F5E5B7] text-[10px] sm:text-[11px] font-bold mt-1.5 shadow-[0_0_8px_rgba(233,184,62,0.2)]">
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border border-[#E9B83E]/80 bg-[#E9B83E]/15 text-[#F5E5B7] text-[10px] sm:text-[11px] font-bold mt-1.5 shadow-[0_0_10px_rgba(233,184,62,0.25)]">
                     <span>🪔</span> Top Contributor
                   </div>
                   <p className="text-white/60 text-[10px] sm:text-[11px] font-medium mt-1 flex items-center gap-1.5">
@@ -2997,8 +2997,8 @@ export default function App() {
               </div>
 
               {/* Glowing Golden Maa Durga & Mandir Line Art SVG */}
-              <div className="absolute right-0 top-0 bottom-0 flex items-center justify-end pointer-events-none opacity-85 pr-1">
-                <svg className="w-32 h-32 sm:w-36 sm:h-36 text-[#E9B83E] drop-shadow-[0_0_12px_rgba(233,184,62,0.35)]" viewBox="0 0 160 140" fill="none" stroke="currentColor">
+              <div className="absolute right-0 top-0 bottom-0 flex items-center justify-end pointer-events-none opacity-85 pr-0.5">
+                <svg className="w-32 h-32 sm:w-36 sm:h-36 text-[#E9B83E] drop-shadow-[0_0_14px_rgba(233,184,62,0.4)]" viewBox="0 0 160 140" fill="none" stroke="currentColor">
                   {/* Mandir Spires Silhouettes at base */}
                   <path d="M10 135 L10 115 L20 100 L20 85 L25 75 L30 85 L30 100 L40 115 L40 135" strokeWidth="1.2" strokeLinejoin="round" opacity="0.6"/>
                   <path d="M35 135 L35 105 L45 88 L50 70 L55 88 L65 105 L65 135" strokeWidth="1.2" strokeLinejoin="round" opacity="0.7"/>
@@ -3048,30 +3048,52 @@ export default function App() {
               </div>
             </div>
 
-            {/* Stats Grid (3 Tiles) */}
-            <div className="grid grid-cols-3 divide-x divide-[#E9B83E]/20 rounded-2xl bg-[#211329]/70 border border-[#E9B83E]/30 p-3 mb-3 shadow-inner">
-              <div className="text-center flex flex-col items-center px-1">
-                <span className="text-base sm:text-lg mb-0.5">🖼️</span>
-                <span className="text-base sm:text-lg font-black text-white">247</span>
-                <span className="text-[10px] sm:text-[11px] font-medium text-white/60 mt-0.5">Photos Shared</span>
+            {/* Stats Grid (3 Tiles in Card with Glowing Bottom Rim) */}
+            <div className="relative">
+              <div className="grid grid-cols-3 divide-x divide-[#E9B83E]/20 rounded-2xl bg-[#211329]/70 border border-[#E9B83E]/30 p-3 shadow-inner">
+                <div className="text-center flex flex-col items-center px-1">
+                  <svg className="w-5 h-5 text-[#E9B83E] mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                  </svg>
+                  <span className="text-base sm:text-lg font-black text-white">247</span>
+                  <span className="text-[10px] sm:text-[11px] font-medium text-white/60 mt-0.5">Photos Shared</span>
+                </div>
+                <div className="text-center flex flex-col items-center px-1">
+                  <svg className="w-5 h-5 text-[#E9B83E] mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                  </svg>
+                  <span className="text-base sm:text-lg font-black text-white">86</span>
+                  <span className="text-[10px] sm:text-[11px] font-medium text-white/60 mt-0.5">Pandals Covered</span>
+                </div>
+                <div className="text-center flex flex-col items-center px-1">
+                  <svg className="w-5 h-5 text-[#E9B83E] mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"/>
+                    <path d="M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"/>
+                    <path d="M4 4h16v6a8 8 0 0 1-16 0V4z"/>
+                    <path d="M12 18v4"/>
+                    <path d="M8 22h8"/>
+                  </svg>
+                  <span className="text-base sm:text-lg font-black text-[#E9B83E]">#2</span>
+                  <span className="text-[10px] sm:text-[11px] font-medium text-white/60 mt-0.5">This Puja Rank</span>
+                </div>
               </div>
-              <div className="text-center flex flex-col items-center px-1">
-                <span className="text-base sm:text-lg mb-0.5">📍</span>
-                <span className="text-base sm:text-lg font-black text-white">86</span>
-                <span className="text-[10px] sm:text-[11px] font-medium text-white/60 mt-0.5">Pandals Covered</span>
-              </div>
-              <div className="text-center flex flex-col items-center px-1">
-                <span className="text-base sm:text-lg mb-0.5">🏆</span>
-                <span className="text-base sm:text-lg font-black text-[#E9B83E]">#2</span>
-                <span className="text-[10px] sm:text-[11px] font-medium text-white/60 mt-0.5">This Puja Rank</span>
-              </div>
+              {/* Glowing Bottom Accent Line */}
+              <div className="w-3/4 mx-auto h-[1.5px] bg-gradient-to-r from-transparent via-[#E9B83E]/80 to-transparent shadow-[0_0_12px_rgba(233,184,62,0.8)] mb-3 mt-0.5" />
             </div>
 
             {/* My Contributions Section */}
             <div className="rounded-2xl bg-[#211329]/60 border border-[#E9B83E]/25 p-3 mb-3 shadow-inner">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-1.5 text-white font-bold text-xs sm:text-sm">
-                  <span>🖼️</span> My Contributions
+                  <svg className="w-4 h-4 text-[#E9B83E]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                  </svg>
+                  My Contributions
                 </div>
                 <button
                   type="button"
@@ -3111,6 +3133,7 @@ export default function App() {
                 <div className="w-8 h-8 rounded-full bg-[#E9B83E]/15 border border-[#E9B83E]/30 text-[#E9B83E] flex items-center justify-center flex-shrink-0">
                   <svg className="w-4 h-4 text-[#E9B83E]" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    <path d="M19.7 13c-.1 0-.2.1-.2.1l-.8.8 1.2 1.2.8-.8c.1-.1.1-.3 0-.4l-.8-.8c-.1-.1-.2-.1-.2-.1zm-1.4 1.3L15 17.6V19h1.4l3.3-3.3-1.4-1.4z"/>
                   </svg>
                 </div>
                 <div className="text-left">
