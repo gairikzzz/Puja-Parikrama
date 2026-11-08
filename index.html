@@ -1152,40 +1152,58 @@
         </div>
       </div>
 
-      <!-- Stats Grid (3 Tiles in Card with Glowing Bottom Rim) -->
-      <div class="relative">
-        <div class="grid grid-cols-3 divide-x divide-[#E9B83E]/20 rounded-2xl bg-[#211329]/70 border border-[#E9B83E]/30 p-3 shadow-inner">
-          <div class="text-center flex flex-col items-center px-1">
-            <svg class="w-5 h-5 text-[#E9B83E] mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-              <circle cx="8.5" cy="8.5" r="1.5"/>
-              <polyline points="21 15 16 10 5 21"/>
-            </svg>
-            <span id="profile-stats-photos" class="text-base sm:text-lg font-black text-white">247</span>
-            <span class="text-[10px] sm:text-[11px] font-medium text-white/60 mt-0.5">Photos Shared</span>
+      <!-- Stats Card (Horizontal icon + number, label below, glowing bottom rim) -->
+      <div class="relative mb-3.5">
+        <div class="relative rounded-2xl sm:rounded-3xl bg-[#211329]/80 border border-white/10 py-4 px-2 sm:px-3 shadow-[0_8px_30px_rgba(0,0,0,0.5)] overflow-hidden">
+          <div class="grid grid-cols-3 items-center">
+            <!-- Column 1: Photos Shared -->
+            <div class="text-center flex flex-col items-center px-1">
+              <div class="flex items-center justify-center gap-2 mb-1">
+                <svg class="w-5 h-5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="3"/>
+                  <circle cx="15.5" cy="8.5" r="1.5" fill="currentColor"/>
+                  <path d="M4 19l6-7 5 6 3-3 3 4"/>
+                </svg>
+                <span id="profile-stats-photos" class="text-xl sm:text-2xl font-black text-white leading-none">247</span>
+              </div>
+              <span class="text-xs sm:text-[13px] font-normal text-white/80 leading-tight">Photos Shared</span>
+            </div>
+
+            <!-- Column 2: Pandals Covered -->
+            <div class="text-center flex flex-col items-center px-1 border-x border-white/10">
+              <div class="flex items-center justify-center gap-2 mb-1">
+                <svg class="w-5 h-5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                  <circle cx="12" cy="9" r="2.5"/>
+                  <circle cx="12" cy="9" r="1" fill="currentColor"/>
+                </svg>
+                <span id="profile-stats-pandals" class="text-xl sm:text-2xl font-black text-white leading-none">86</span>
+              </div>
+              <span class="text-xs sm:text-[13px] font-normal text-white/80 leading-tight">Pandals Covered</span>
+            </div>
+
+            <!-- Column 3: This Puja Rank -->
+            <div class="text-center flex flex-col items-center px-1">
+              <div class="flex items-center justify-center gap-2 mb-1">
+                <svg class="w-5 h-5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+                  <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+                  <path d="M4 4h16v5a8 8 0 0 1-16 0V4z"/>
+                  <path d="M12 17v4"/>
+                  <path d="M8 21h8"/>
+                </svg>
+                <span id="profile-stats-rank" class="text-xl sm:text-2xl font-black text-white leading-none">#2</span>
+              </div>
+              <span class="text-xs sm:text-[13px] font-normal text-white/80 leading-tight">This Puja Rank</span>
+            </div>
           </div>
-          <div class="text-center flex flex-col items-center px-1">
-            <svg class="w-5 h-5 text-[#E9B83E] mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-              <circle cx="12" cy="10" r="3"/>
-            </svg>
-            <span id="profile-stats-pandals" class="text-base sm:text-lg font-black text-white">86</span>
-            <span class="text-[10px] sm:text-[11px] font-medium text-white/60 mt-0.5">Pandals Covered</span>
-          </div>
-          <div class="text-center flex flex-col items-center px-1">
-            <svg class="w-5 h-5 text-[#E9B83E] mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"/>
-              <path d="M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"/>
-              <path d="M4 4h16v6a8 8 0 0 1-16 0V4z"/>
-              <path d="M12 18v4"/>
-              <path d="M8 22h8"/>
-            </svg>
-            <span id="profile-stats-rank" class="text-base sm:text-lg font-black text-white">#2</span>
-            <span class="text-[10px] sm:text-[11px] font-medium text-white/60 mt-0.5">This Puja Rank</span>
-          </div>
+
+          <!-- Glowing Bottom Accent Line directly on card rim -->
+          <div class="absolute bottom-0 inset-x-4 h-[2px] bg-gradient-to-r from-transparent via-[#E9B83E] to-transparent shadow-[0_0_12px_#E9B83E]"></div>
         </div>
-        <!-- Glowing Bottom Accent Line -->
-        <div class="w-3/4 mx-auto h-[1.5px] bg-gradient-to-r from-transparent via-[#E9B83E]/80 to-transparent shadow-[0_0_12px_rgba(233,184,62,0.8)] mb-3 mt-0.5"></div>
+
+        <!-- Ambient underglow beneath card -->
+        <div class="w-4/5 mx-auto h-2 bg-[#E9B83E]/20 blur-md -mt-1 rounded-full pointer-events-none"></div>
       </div>
 
       <!-- My Contributions Section -->
