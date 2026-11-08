@@ -2109,7 +2109,7 @@ export default function App() {
                     if (topSearchQuery.trim()) setShowTopSearchDropdown(true)
                   }}
                   onBlur={() => setIsSearchFocused(false)}
-                  placeholder={isSearchFocused ? '' : 'Search Pandals...'}
+                  placeholder={isSearchFocused ? '' : 'Search for a location or pandal...'}
                   className="w-full bg-[#0D0C1B]/60 hover:bg-[#0D0C1B]/80 focus:bg-[#0D0C1B]/95 border border-[#E9B83E]/35 hover:border-[#E9B83E]/60 focus:border-[#E9B83E] rounded-full pl-3 sm:pl-3.5 pr-8 py-1 h-7 sm:h-7.5 text-[11px] sm:text-xs text-[#F5E5B7] placeholder-[#F5E5B7]/45 focus:placeholder-transparent backdrop-blur-md shadow-inner outline-none transition"
                 />
                 <button
