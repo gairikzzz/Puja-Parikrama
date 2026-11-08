@@ -700,10 +700,10 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
             </div>
             <div>
               <h2 className="text-[#F5E5B7] font-bold text-sm sm:text-base leading-tight">
-                {pandalName.trim() ? 'Add Photos of This Pandal' : 'Add a Pandal'}
+                Share Pandal Photos
               </h2>
               <p className="text-[#E9B83E]/80 text-[10px] sm:text-[11px] font-medium leading-tight">
-                {pandalName.trim() ? 'Take a new photo or select photos from your gallery' : 'Share your favourite pandal with the Puja Porikroma community'}
+                Showcase your favourite pandals with the community
               </p>
             </div>
           </div>
@@ -740,7 +740,7 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
                     <circle cx="12" cy="13" r="3" fill="white"/>
                   </svg>
                 </div>
-                <p className="text-[#F5E5B7] font-semibold text-xs leading-tight">Add Photos of This Pandal</p>
+                <p className="text-[#F5E5B7] font-semibold text-xs leading-tight">Upload Your Pandal Photos</p>
                 <p className="text-[#E9B83E]/80 text-[10px] mt-1.5 leading-tight">Take a new photo or select photos from your gallery</p>
               </div>
             ) : previews.length === 1 ? (
@@ -897,7 +897,7 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
           {/* Interactive Mini-Map Preview Card (Confirmation) with Floating Top Search Bar */}
           <div className="space-y-1.5">
             <label className="block text-[11px] sm:text-xs font-semibold text-[#F5E5B7]">
-              <span>Confirm Pandal Location</span> <span className="text-red-500 font-bold">*</span>
+              <span>Pandal Location</span> <span className="text-red-500 font-bold">*</span>
             </label>
             <div
               onClick={(e) => {
