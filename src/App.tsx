@@ -2833,7 +2833,7 @@ export default function App() {
                   {/* Step Pedestal */}
                   <div className="w-full bg-[#261533]/80 border-t border-x border-slate-400/40 rounded-t-xl pt-2 pb-2.5 px-1 text-center shadow-[0_0_12px_rgba(180,195,220,0.12)]">
                     <p className="text-white font-bold text-[11px] sm:text-xs truncate">Moumita</p>
-                    <p className="text-slate-300 text-[9px] sm:text-[10px] flex items-center justify-center gap-1 mt-0.5">
+                    <p className="text-[#E9B83E] text-[10px] sm:text-[11px] font-semibold flex items-center justify-center gap-1 mt-0.5">
                       <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <rect width="15" height="15" x="3" y="3" rx="2.5" />
                         <circle cx="12.5" cy="8.5" r="1.5" />
@@ -2845,7 +2845,7 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* 1st Place: Arindam (Taller & Glowing Gold) */}
+                {/* 1st Place: Arindam (Taller) */}
                 <div className="flex flex-col items-center">
                   <div className="relative mb-1 flex flex-col items-center">
                     {/* Golden Laurel Wreath SVG */}
@@ -2876,8 +2876,8 @@ export default function App() {
                     </div>
                   </div>
                   {/* Step Pedestal */}
-                  <div className="w-full bg-gradient-to-b from-[#E9B83E]/30 via-[#2d1839]/95 to-[#211329] border-t-2 border-x border-[#E9B83E]/70 rounded-t-xl pt-2 pb-3 px-1 text-center shadow-[0_0_20px_rgba(233,184,62,0.25)]">
-                    <p className="text-[#F5E5B7] font-black text-xs sm:text-sm truncate">Arindam</p>
+                  <div className="w-full bg-[#261533]/80 border-t border-x border-[#E9B83E]/50 rounded-t-xl pt-2 pb-3 px-1 text-center shadow-[0_0_12px_rgba(233,184,62,0.15)]">
+                    <p className="text-white font-bold text-[11px] sm:text-xs truncate">Arindam</p>
                     <p className="text-[#E9B83E] text-[10px] sm:text-[11px] font-semibold flex items-center justify-center gap-1 mt-0.5">
                       <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <rect width="15" height="15" x="3" y="3" rx="2.5" />
@@ -2923,7 +2923,7 @@ export default function App() {
                   {/* Step Pedestal */}
                   <div className="w-full bg-[#261533]/80 border-t border-x border-amber-600/40 rounded-t-xl pt-2 pb-2 px-1 text-center shadow-[0_0_12px_rgba(217,119,6,0.12)]">
                     <p className="text-white font-bold text-[11px] sm:text-xs truncate">Sourav</p>
-                    <p className="text-amber-200/80 text-[9px] sm:text-[10px] flex items-center justify-center gap-1 mt-0.5">
+                    <p className="text-[#E9B83E] text-[10px] sm:text-[11px] font-semibold flex items-center justify-center gap-1 mt-0.5">
                       <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <rect width="15" height="15" x="3" y="3" rx="2.5" />
                         <circle cx="12.5" cy="8.5" r="1.5" />
