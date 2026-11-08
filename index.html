@@ -580,6 +580,51 @@
       // Or auto-flash after 1.5 seconds
       const autoTimer = setTimeout(triggerCameraFlashAndEnter, 1500);
     })();
+
+    // ── Global Modal Controllers (Active immediately on boot) ──
+    window.openLeaderboardModal = function() {
+      const modal = document.getElementById('leaderboard-modal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => {
+          modal.classList.add('active');
+        });
+      }
+    };
+    window.closeLeaderboardModal = function() {
+      const modal = document.getElementById('leaderboard-modal');
+      if (modal) {
+        modal.classList.remove('active');
+        setTimeout(() => {
+          if (!modal.classList.contains('active')) {
+            modal.classList.add('hidden');
+          }
+        }, 280);
+      }
+    };
+    window.openProfileModal = function() {
+      const modal = document.getElementById('profile-modal');
+      if (modal) {
+        if (typeof window.updateProfileModalUI === 'function') {
+          try { window.updateProfileModalUI(window.currentUser); } catch(e) {}
+        }
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => {
+          modal.classList.add('active');
+        });
+      }
+    };
+    window.closeProfileModal = function() {
+      const modal = document.getElementById('profile-modal');
+      if (modal) {
+        modal.classList.remove('active');
+        setTimeout(() => {
+          if (!modal.classList.contains('active')) {
+            modal.classList.add('hidden');
+          }
+        }, 280);
+      }
+    };
   </script>
 
   <!-- ── 1. MAP VIEWPORT CANVAS ── -->
@@ -683,6 +728,7 @@
         <button
           id="btn-leaderboard"
           type="button"
+          onclick="openLeaderboardModal()"
           title="Pandal Devotee Leaderboard"
           class="h-7 sm:h-7.5 px-2.5 sm:px-3 rounded-xl bg-gradient-to-r from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] flex items-center gap-1.5 text-[#211329] font-bold text-[11px] sm:text-xs border border-[#211329]/30 shadow-[0_0_8px_rgba(233,184,62,0.22)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] hover:scale-[1.02] active:scale-95 transition-all flex-shrink-0 cursor-pointer"
         >
@@ -696,6 +742,7 @@
         <button
           id="guest-avatar-chip"
           type="button"
+          onclick="openProfileModal()"
           title="Guest Devotee Profile"
           class="h-7 sm:h-7.5 px-2.5 sm:px-3 rounded-xl backdrop-blur-md bg-[#211329]/70 hover:bg-[#211329]/85 border border-[#E9B83E]/40 hover:border-[#E9B83E] flex items-center gap-1.5 text-[#F5E5B7] font-semibold text-[11px] sm:text-xs shadow-[0_0_8px_rgba(233,184,62,0.22),inset_0_1px_1px_rgba(255,255,255,0.10)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] hover:scale-[1.02] active:scale-95 transition-all flex-shrink-0 cursor-pointer"
         >
@@ -709,9 +756,9 @@
   </header>
 
   <!-- ── GOOGLE SIGN-IN PROMPT MODAL ── -->
-  <div id="google-auth-modal" class="snap-modal-backdrop hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-[2px] flex items-center justify-center p-4">
+  <div id="google-auth-modal" onclick="if (event.target === this) closeGoogleAuthModal()" class="snap-modal-backdrop hidden fixed inset-0 z-[160] bg-black/40 backdrop-blur-[2px] flex items-center justify-center p-4">
     <div class="snap-modal-content w-full max-w-sm bg-[#121224] rounded-3xl border border-white/10 p-6 flex flex-col text-center shadow-2xl relative">
-      <button id="btn-close-auth-modal" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:text-white transition">
+      <button id="btn-close-auth-modal" onclick="closeGoogleAuthModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:text-white transition cursor-pointer">
         ✕
       </button>
       <div class="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 mx-auto flex items-center justify-center mb-4 shadow-xl">
@@ -744,7 +791,7 @@
   </div>
 
   <!-- ── COMMUNITY LEADERBOARD MODAL ── -->
-  <div id="leaderboard-modal" class="snap-modal-backdrop hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-[2px] flex items-center justify-center p-2.5 sm:p-4">
+  <div id="leaderboard-modal" onclick="if (event.target === this) closeLeaderboardModal()" class="snap-modal-backdrop hidden fixed inset-0 z-[150] bg-black/40 backdrop-blur-[2px] flex items-center justify-center p-2.5 sm:p-4">
     <div class="snap-modal-content w-full sm:max-w-md mx-auto bg-[#211329]/50 backdrop-blur-2xl rounded-[22px] sm:rounded-[26px] border border-[#E9B83E]/40 p-4 sm:p-5 flex flex-col shadow-[0_24px_60px_rgba(13,12,27,0.7),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_24px_rgba(233,184,62,0.18)] max-h-[90vh] overflow-y-auto hide-scrollbar relative">
       
       <!-- Modal Header -->
@@ -762,7 +809,7 @@
             </p>
           </div>
         </div>
-        <button id="btn-close-leaderboard-modal" type="button" class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition active:scale-95 cursor-pointer text-xs">
+        <button id="btn-close-leaderboard-modal" onclick="closeLeaderboardModal()" type="button" class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition active:scale-95 cursor-pointer text-xs">
           ✕
         </button>
       </div>
@@ -1013,7 +1060,7 @@
   </div>
 
   <!-- ── MY PROFILE MODAL ── -->
-  <div id="profile-modal" class="snap-modal-backdrop hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-[2px] flex items-center justify-center p-2.5 sm:p-4">
+  <div id="profile-modal" onclick="if (event.target === this) closeProfileModal()" class="snap-modal-backdrop hidden fixed inset-0 z-[150] bg-black/40 backdrop-blur-[2px] flex items-center justify-center p-2.5 sm:p-4">
     <div class="snap-modal-content w-full sm:max-w-md mx-auto bg-[#211329]/50 backdrop-blur-2xl rounded-[22px] sm:rounded-[26px] border border-[#E9B83E]/40 p-4 sm:p-5 flex flex-col shadow-[0_24px_60px_rgba(13,12,27,0.7),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_24px_rgba(233,184,62,0.18)] max-h-[90vh] overflow-y-auto hide-scrollbar relative">
       
       <!-- Modal Header -->
@@ -1031,7 +1078,7 @@
             </p>
           </div>
         </div>
-        <button id="btn-close-profile-modal" type="button" class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition active:scale-95 cursor-pointer text-xs">
+        <button id="btn-close-profile-modal" onclick="closeProfileModal()" type="button" class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition active:scale-95 cursor-pointer text-xs">
           ✕
         </button>
       </div>
@@ -2712,13 +2759,23 @@
       if (reason && reasonEl) {
         reasonEl.textContent = reason;
       }
-      if (modal) modal.classList.add('active');
+      if (modal) {
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => modal.classList.add('active'));
+      }
     }
+    window.openGoogleAuthModal = openGoogleAuthModal;
 
     function closeGoogleAuthModal() {
       const modal = document.getElementById('google-auth-modal');
-      if (modal) modal.classList.remove('active');
+      if (modal) {
+        modal.classList.remove('active');
+        setTimeout(() => {
+          if (!modal.classList.contains('active')) modal.classList.add('hidden');
+        }, 280);
+      }
     }
+    window.closeGoogleAuthModal = closeGoogleAuthModal;
 
     async function handleGoogleSignIn() {
       if (isRealFirebaseConfig && firebaseAuth && googleProvider) {
@@ -2818,18 +2875,37 @@
     });
 
     // Wire Leaderboard modal buttons
+    window.openLeaderboardModal = function() {
+      const modal = document.getElementById('leaderboard-modal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => modal.classList.add('active'));
+      }
+    };
+    window.closeLeaderboardModal = function() {
+      const modal = document.getElementById('leaderboard-modal');
+      if (modal) {
+        modal.classList.remove('active');
+        setTimeout(() => {
+          if (!modal.classList.contains('active')) modal.classList.add('hidden');
+        }, 280);
+      }
+    };
+
     const leaderboardModal = document.getElementById('leaderboard-modal');
-    document.getElementById('btn-leaderboard')?.addEventListener('click', () => {
-      leaderboardModal?.classList.remove('hidden');
+    document.getElementById('btn-leaderboard')?.addEventListener('click', (e) => {
+      e?.preventDefault();
+      window.openLeaderboardModal();
     });
-    document.getElementById('btn-close-leaderboard-modal')?.addEventListener('click', () => {
-      leaderboardModal?.classList.add('hidden');
+    document.getElementById('btn-close-leaderboard-modal')?.addEventListener('click', (e) => {
+      e?.preventDefault();
+      window.closeLeaderboardModal();
     });
     leaderboardModal?.addEventListener('click', (e) => {
-      if (e.target === leaderboardModal) leaderboardModal.classList.add('hidden');
+      if (e.target === leaderboardModal) window.closeLeaderboardModal();
     });
     document.getElementById('btn-leaderboard-snap-cta')?.addEventListener('click', () => {
-      leaderboardModal?.classList.add('hidden');
+      window.closeLeaderboardModal();
       if (typeof window.openSnapUploadModal === 'function') {
         window.openSnapUploadModal();
       } else {
@@ -2874,22 +2950,42 @@
         if (googleBtnText) googleBtnText.textContent = 'Connect with Google';
       }
     }
+    window.updateProfileModalUI = updateProfileModalUI;
 
-    document.getElementById('guest-avatar-chip')?.addEventListener('click', () => {
-      updateProfileModalUI(currentUser);
-      profileModal?.classList.remove('hidden');
+    window.openProfileModal = function() {
+      const modal = document.getElementById('profile-modal');
+      if (modal) {
+        updateProfileModalUI(currentUser);
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => modal.classList.add('active'));
+      }
+    };
+    window.closeProfileModal = function() {
+      const modal = document.getElementById('profile-modal');
+      if (modal) {
+        modal.classList.remove('active');
+        setTimeout(() => {
+          if (!modal.classList.contains('active')) modal.classList.add('hidden');
+        }, 280);
+      }
+    };
+
+    document.getElementById('guest-avatar-chip')?.addEventListener('click', (e) => {
+      e?.preventDefault();
+      window.openProfileModal();
     });
-    document.getElementById('btn-close-profile-modal')?.addEventListener('click', () => {
-      profileModal?.classList.add('hidden');
+    document.getElementById('btn-close-profile-modal')?.addEventListener('click', (e) => {
+      e?.preventDefault();
+      window.closeProfileModal();
     });
     profileModal?.addEventListener('click', (e) => {
-      if (e.target === profileModal) profileModal.classList.add('hidden');
+      if (e.target === profileModal) window.closeProfileModal();
     });
     document.getElementById('btn-edit-profile')?.addEventListener('click', () => {
       openGoogleAuthModal('Update your devotee profile and sync your pandal memories');
     });
     document.getElementById('btn-profile-view-all')?.addEventListener('click', () => {
-      profileModal?.classList.add('hidden');
+      window.closeProfileModal();
       if (typeof window.openSnapUploadModal === 'function') {
         window.openSnapUploadModal();
       } else {
@@ -2897,7 +2993,7 @@
       }
     });
     document.getElementById('btn-profile-snap-cta')?.addEventListener('click', () => {
-      profileModal?.classList.add('hidden');
+      window.closeProfileModal();
       if (typeof window.openSnapUploadModal === 'function') {
         window.openSnapUploadModal();
       } else {
