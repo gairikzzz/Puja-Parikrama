@@ -2832,14 +2832,20 @@ export default function App() {
                   </div>
                   {/* Step Pedestal */}
                   <div className="w-full bg-[#261533]/80 border-t border-x border-slate-400/40 rounded-t-xl pt-2 pb-2.5 px-1 text-center shadow-[0_0_12px_rgba(180,195,220,0.12)]">
-                    <p className="text-white font-bold text-[11px] sm:text-xs truncate">Moumita D.</p>
-                    <p className="text-slate-300 text-[9px] sm:text-[10px] flex items-center justify-center gap-0.5 mt-0.5">
-                      <span>🖼️</span> <span>247 photos</span>
+                    <p className="text-white font-bold text-[11px] sm:text-xs truncate">Moumita</p>
+                    <p className="text-slate-300 text-[9px] sm:text-[10px] flex items-center justify-center gap-1 mt-0.5">
+                      <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect width="15" height="15" x="3" y="3" rx="2.5" />
+                        <circle cx="12.5" cy="8.5" r="1.5" />
+                        <path d="m3.5 15 4-4a1.5 1.5 0 0 1 2.1 0L14 15" />
+                        <path d="M21 7v11a2 2 0 0 1-2 2H8" />
+                      </svg>
+                      <span>247 photos</span>
                     </p>
                   </div>
                 </div>
 
-                {/* 1st Place: Arindam S. (Taller & Glowing Gold) */}
+                {/* 1st Place: Arindam (Taller & Glowing Gold) */}
                 <div className="flex flex-col items-center">
                   <div className="relative mb-1 flex flex-col items-center">
                     {/* Golden Laurel Wreath SVG */}
@@ -2860,7 +2866,7 @@ export default function App() {
                       </svg>
                       <img
                         src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80"
-                        alt="Arindam S."
+                        alt="Arindam"
                         className="w-12 h-12 sm:w-13 sm:h-13 rounded-full object-cover border-2 border-[#E9B83E] shadow-[0_0_16px_rgba(233,184,62,0.7)]"
                       />
                     </div>
@@ -2871,14 +2877,20 @@ export default function App() {
                   </div>
                   {/* Step Pedestal */}
                   <div className="w-full bg-gradient-to-b from-[#E9B83E]/30 via-[#2d1839]/95 to-[#211329] border-t-2 border-x border-[#E9B83E]/70 rounded-t-xl pt-2 pb-3 px-1 text-center shadow-[0_0_20px_rgba(233,184,62,0.25)]">
-                    <p className="text-[#F5E5B7] font-black text-xs sm:text-sm truncate">Arindam S.</p>
-                    <p className="text-[#E9B83E] text-[10px] sm:text-[11px] font-semibold flex items-center justify-center gap-0.5 mt-0.5">
-                      <span>🖼️</span> <span>328 photos</span>
+                    <p className="text-[#F5E5B7] font-black text-xs sm:text-sm truncate">Arindam</p>
+                    <p className="text-[#E9B83E] text-[10px] sm:text-[11px] font-semibold flex items-center justify-center gap-1 mt-0.5">
+                      <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect width="15" height="15" x="3" y="3" rx="2.5" />
+                        <circle cx="12.5" cy="8.5" r="1.5" />
+                        <path d="m3.5 15 4-4a1.5 1.5 0 0 1 2.1 0L14 15" />
+                        <path d="M21 7v11a2 2 0 0 1-2 2H8" />
+                      </svg>
+                      <span>328 photos</span>
                     </p>
                   </div>
                 </div>
 
-                {/* 3rd Place: Sourav K. */}
+                {/* 3rd Place: Sourav */}
                 <div className="flex flex-col items-center">
                   <div className="relative mb-1 flex flex-col items-center">
                     {/* Bronze Laurel Wreath SVG */}
@@ -2899,7 +2911,7 @@ export default function App() {
                       </svg>
                       <img
                         src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80"
-                        alt="Sourav K."
+                        alt="Sourav"
                         className="w-12 h-12 sm:w-13 sm:h-13 rounded-full object-cover border-2 border-amber-600 shadow-[0_0_12px_rgba(217,119,6,0.4)]"
                       />
                     </div>
@@ -2910,9 +2922,15 @@ export default function App() {
                   </div>
                   {/* Step Pedestal */}
                   <div className="w-full bg-[#261533]/80 border-t border-x border-amber-600/40 rounded-t-xl pt-2 pb-2 px-1 text-center shadow-[0_0_12px_rgba(217,119,6,0.12)]">
-                    <p className="text-white font-bold text-[11px] sm:text-xs truncate">Sourav K.</p>
-                    <p className="text-amber-200/80 text-[9px] sm:text-[10px] flex items-center justify-center gap-0.5 mt-0.5">
-                      <span>🖼️</span> <span>196 photos</span>
+                    <p className="text-white font-bold text-[11px] sm:text-xs truncate">Sourav</p>
+                    <p className="text-amber-200/80 text-[9px] sm:text-[10px] flex items-center justify-center gap-1 mt-0.5">
+                      <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect width="15" height="15" x="3" y="3" rx="2.5" />
+                        <circle cx="12.5" cy="8.5" r="1.5" />
+                        <path d="m3.5 15 4-4a1.5 1.5 0 0 1 2.1 0L14 15" />
+                        <path d="M21 7v11a2 2 0 0 1-2 2H8" />
+                      </svg>
+                      <span>196 photos</span>
                     </p>
                   </div>
                 </div>
@@ -2967,11 +2985,11 @@ export default function App() {
             {/* Ranked List (#4 to #8) */}
             <div className="bg-[#211329]/70 border border-[#E9B83E]/25 rounded-2xl p-1 sm:p-1.5 divide-y divide-[#E9B83E]/15 mb-3 shadow-inner">
               {[
-                { rank: '4', name: 'Anwesha R.', photos: '182 photos', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&q=80' },
-                { rank: '5', name: 'Ritam G.', photos: '160 photos', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=120&q=80' },
-                { rank: '6', name: 'Debolina M.', photos: '149 photos', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=120&q=80' },
-                { rank: '7', name: 'Subhojit P.', photos: '141 photos', avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=120&q=80' },
-                { rank: '8', name: 'Ishita B.', photos: '128 photos', avatar: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=120&q=80' },
+                { rank: '4', name: 'Anwesha', photos: '182 photos', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&q=80' },
+                { rank: '5', name: 'Ritam', photos: '160 photos', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=120&q=80' },
+                { rank: '6', name: 'Debolina', photos: '149 photos', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=120&q=80' },
+                { rank: '7', name: 'Subhojit', photos: '141 photos', avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=120&q=80' },
+                { rank: '8', name: 'Ishita', photos: '128 photos', avatar: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=120&q=80' },
               ].map((item) => (
                 <div key={item.rank} className="flex items-center justify-between p-2 hover:bg-white/5 rounded-xl transition">
                   <div className="flex items-center gap-2.5">
@@ -2981,8 +2999,14 @@ export default function App() {
                     <img src={item.avatar} alt={item.name} className="w-8 h-8 rounded-full object-cover border border-[#E9B83E]/40 flex-shrink-0" />
                     <span className="text-white font-medium text-xs">{item.name}</span>
                   </div>
-                  <div className="flex items-center gap-1 text-[#F5E5B7]/80 text-xs font-medium">
-                    <span>🖼️</span> <span>{item.photos}</span>
+                  <div className="flex items-center gap-1.5 text-[#F5E5B7]/80 text-xs font-medium">
+                    <svg className="w-3.5 h-3.5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect width="15" height="15" x="3" y="3" rx="2.5" />
+                      <circle cx="12.5" cy="8.5" r="1.5" />
+                      <path d="m3.5 15 4-4a1.5 1.5 0 0 1 2.1 0L14 15" />
+                      <path d="M21 7v11a2 2 0 0 1-2 2H8" />
+                    </svg>
+                    <span>{item.photos}</span>
                   </div>
                 </div>
               ))}
