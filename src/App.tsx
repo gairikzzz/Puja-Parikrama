@@ -212,6 +212,23 @@ export const SPOTIFY_DURGA_TRACKS: SpotifyTrack[] = [
   },
 ]
 
+export const YOUTUBE_DURGA_TRACKS = [
+  { id: 'SFJeglBF5cg', title: 'Dugga Elo', artist: 'Monali Thakur', durationSec: 146, cover: 'https://i.ytimg.com/vi/SFJeglBF5cg/hqdefault.jpg' },
+  { id: 'LLer3VPOcxg', title: 'Dugga Ma Asche', artist: 'Infra', durationSec: 214, cover: 'https://i.ytimg.com/vi/LLer3VPOcxg/hqdefault.jpg' },
+  { id: 'UCPKItLtvZw', title: 'Dugga Ma', artist: 'Arijit Singh', durationSec: 270, cover: 'https://i.ytimg.com/vi/UCPKItLtvZw/hqdefault.jpg' },
+  { id: '3WJMdKoCp70', title: 'Ebar Jeno Onno Rokom Pujo', artist: 'SVF', durationSec: 219, cover: 'https://i.ytimg.com/vi/3WJMdKoCp70/hqdefault.jpg' },
+  { id: 'XiAO-XjeHdI', title: 'Ashtami Te Tomar Paray', artist: 'Chirkut', durationSec: 234, cover: 'https://i.ytimg.com/vi/XiAO-XjeHdI/hqdefault.jpg' },
+  { id: 'tRUAYLIEIbc', title: 'Dhaker Taley', artist: 'Abhijeet Bhattacharya', durationSec: 282, cover: 'https://i.ytimg.com/vi/tRUAYLIEIbc/hqdefault.jpg' },
+  { id: 'p_hqO0sJh-I', title: 'Ailo Uma Barite', artist: 'Antara Nandy', durationSec: 232, cover: 'https://i.ytimg.com/vi/p_hqO0sJh-I/hqdefault.jpg' },
+  { id: 'x_Nar1eYzBM', title: 'Uma Ashe Notun Saje', artist: 'Ankita Bhattacharyya', durationSec: 185, cover: 'https://i.ytimg.com/vi/x_Nar1eYzBM/hqdefault.jpg' },
+  { id: '7uzjfZ423Kc', title: 'Dhak Baja Kashor Baja', artist: 'Shreya Ghoshal', durationSec: 265, cover: 'https://i.ytimg.com/vi/7uzjfZ423Kc/hqdefault.jpg' },
+  { id: 'FH-p9rnBbU4', title: 'Abar Elo Maa', artist: 'Ankita Bhattacharyya', durationSec: 219, cover: 'https://i.ytimg.com/vi/FH-p9rnBbU4/hqdefault.jpg' },
+  { id: 'OVIN6Iz687o', title: 'Jago Durga Dashapraharanadharinee', artist: 'Dwijen Mukherjee', durationSec: 107, cover: 'https://i.ytimg.com/vi/OVIN6Iz687o/hqdefault.jpg' },
+  { id: '4ZWQYdzS_WY', title: 'Shubho Shubho', artist: 'Altamash Faridi, Amit Trivedi', durationSec: 175, cover: 'https://i.ytimg.com/vi/4ZWQYdzS_WY/hqdefault.jpg' },
+  { id: 'Blh3d0RBV1M', title: 'Asadoma Sadgamayo', artist: 'Arijit Singh', durationSec: 317, cover: 'https://i.ytimg.com/vi/Blh3d0RBV1M/hqdefault.jpg' },
+  { id: 'J8xdJtUK6PY', title: 'Maa Go Tumi Sarbojonin', artist: 'Shreya Ghoshal', durationSec: 207, cover: 'https://i.ytimg.com/vi/J8xdJtUK6PY/hqdefault.jpg' },
+]
+
 function formatSongTime(sec: number): string {
   const m = Math.floor(sec / 60)
   const s = Math.floor(sec % 60)
@@ -1235,11 +1252,13 @@ export default function App() {
   const isMutedRef = useRef(false)
   const userInteracted = useRef(false)
   const [isMuted, setIsMuted] = useState(false)
-  const [trackTitle, setTrackTitle] = useState('Durga Ma Asche')
-  const [trackArtist, setTrackArtist] = useState('Infra')
-  const [trackCover, setTrackCover] = useState('https://i.ytimg.com/vi/LLer3VPOcxg/hqdefault.jpg')
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(1)
+  const currentTrackIndexRef = useRef(1)
+  const [trackTitle, setTrackTitle] = useState(YOUTUBE_DURGA_TRACKS[1].title)
+  const [trackArtist, setTrackArtist] = useState(YOUTUBE_DURGA_TRACKS[1].artist)
+  const [trackCover, setTrackCover] = useState(YOUTUBE_DURGA_TRACKS[1].cover)
   const [currentTimeSec, setCurrentTimeSec] = useState(0)
-  const [totalDurationSec, setTotalDurationSec] = useState(0)
+  const [totalDurationSec, setTotalDurationSec] = useState(YOUTUBE_DURGA_TRACKS[1].durationSec)
   const dhakEngineRef = useRef<DhakAudioEngine | null>(null)
 
   const unlockAndPlayAudio = useCallback(() => {
@@ -1254,7 +1273,7 @@ export default function App() {
           if (typeof ytPlayerRef.current.mute === 'function') ytPlayerRef.current.mute()
         }
         if (typeof ytPlayerRef.current.playVideoAt === 'function' && !autoPlayStarted.current) {
-          ytPlayerRef.current.playVideoAt(0)
+          ytPlayerRef.current.playVideoAt(currentTrackIndexRef.current)
         } else if (typeof ytPlayerRef.current.playVideo === 'function') {
           ytPlayerRef.current.playVideo()
         }
@@ -1271,8 +1290,52 @@ export default function App() {
     }
   }, [])
 
+  const changeTrack = useCallback((index: number, shouldPlay: boolean) => {
+    const safeIdx = ((index % YOUTUBE_DURGA_TRACKS.length) + YOUTUBE_DURGA_TRACKS.length) % YOUTUBE_DURGA_TRACKS.length
+    currentTrackIndexRef.current = safeIdx
+    setCurrentTrackIndex(safeIdx)
+
+    const track = YOUTUBE_DURGA_TRACKS[safeIdx]
+    setTrackTitle(track.title)
+    setTrackArtist(track.artist)
+    setTrackCover(track.cover)
+    setTotalDurationSec(track.durationSec)
+    setCurrentTimeSec(0)
+
+    if (shouldPlay) {
+      keepPausedOnTrackChange.current = false
+      userExplicitlyPaused.current = false
+      setIsPlaying(true)
+      if (ytPlayerRef.current && ytPlayerReady.current) {
+        try {
+          if (!isMutedRef.current) {
+            ytPlayerRef.current.unMute()
+            ytPlayerRef.current.setVolume(100)
+          } else {
+            ytPlayerRef.current.mute()
+          }
+          if (typeof ytPlayerRef.current.playVideoAt === 'function') {
+            ytPlayerRef.current.playVideoAt(safeIdx)
+          }
+        } catch (e) {}
+      }
+    } else {
+      keepPausedOnTrackChange.current = true
+      userExplicitlyPaused.current = true
+      setIsPlaying(false)
+      if (ytPlayerRef.current && ytPlayerReady.current) {
+        try {
+          ytPlayerRef.current.mute()
+          if (typeof ytPlayerRef.current.playVideoAt === 'function') {
+            ytPlayerRef.current.playVideoAt(safeIdx)
+          }
+        } catch (e) {}
+      }
+    }
+  }, [])
 
   const updateYTTrackInfo = useCallback(() => {
+    if (keepPausedOnTrackChange.current) return
     if (!ytPlayerRef.current || typeof ytPlayerRef.current.getVideoData !== 'function') return
     try {
       const data = ytPlayerRef.current.getVideoData()
@@ -1338,7 +1401,7 @@ export default function App() {
                   event.target.mute()
                 }
                 if (typeof event.target.playVideoAt === 'function') {
-                  event.target.playVideoAt(0)
+                  event.target.playVideoAt(currentTrackIndexRef.current)
                 } else if (typeof event.target.playVideo === 'function') {
                   event.target.playVideo()
                 }
@@ -1391,12 +1454,14 @@ export default function App() {
           }
           setIsPlaying(false)
           setCurrentTimeSec(0)
-          updateYTTrackInfo()
-          setTimeout(updateYTTrackInfo, 300)
-          setTimeout(updateYTTrackInfo, 800)
-          if (state === YT.PlayerState.PLAYING || state === YT.PlayerState.PAUSED) {
+          if (state === YT.PlayerState.PAUSED) {
             keepPausedOnTrackChange.current = false
           }
+          return
+        }
+        if (state === YT.PlayerState.PAUSED) {
+          keepPausedOnTrackChange.current = false
+          setIsPlaying(false)
           return
         }
       }
@@ -1415,6 +1480,18 @@ export default function App() {
         autoPlayStarted.current = true
         if (isMutedRef.current && ytPlayerRef.current && typeof ytPlayerRef.current.mute === 'function') {
           ytPlayerRef.current.mute()
+        }
+        if (typeof ytPlayerRef.current?.getPlaylistIndex === 'function') {
+          const pIdx = ytPlayerRef.current.getPlaylistIndex()
+          if (typeof pIdx === 'number' && pIdx >= 0 && pIdx < YOUTUBE_DURGA_TRACKS.length && pIdx !== currentTrackIndexRef.current) {
+            currentTrackIndexRef.current = pIdx
+            setCurrentTrackIndex(pIdx)
+            const t = YOUTUBE_DURGA_TRACKS[pIdx]
+            setTrackTitle(t.title)
+            setTrackArtist(t.artist)
+            setTrackCover(t.cover)
+            setTotalDurationSec(t.durationSec)
+          }
         }
         updateYTTrackInfo()
       } else if (state === YT.PlayerState.PAUSED || state === YT.PlayerState.ENDED) {
@@ -1506,6 +1583,7 @@ export default function App() {
         userExplicitlyPaused.current = true
         keepPausedOnTrackChange.current = false
         ytPlayerRef.current.pauseVideo()
+        setIsPlaying(false)
       } else {
         userExplicitlyPaused.current = false
         keepPausedOnTrackChange.current = false
@@ -1517,7 +1595,12 @@ export default function App() {
             ytPlayerRef.current.mute()
           }
         } catch(e) {}
-        ytPlayerRef.current.playVideo()
+        if (typeof ytPlayerRef.current.getPlaylistIndex === 'function' && ytPlayerRef.current.getPlaylistIndex() !== currentTrackIndexRef.current) {
+          ytPlayerRef.current.playVideoAt(currentTrackIndexRef.current)
+        } else {
+          ytPlayerRef.current.playVideo()
+        }
+        setIsPlaying(true)
       }
     } else {
       setIsPlaying(p => {
@@ -1538,55 +1621,21 @@ export default function App() {
 
   const handleNextTrack = useCallback((e?: React.MouseEvent) => {
     e?.stopPropagation()
-    if (ytPlayerRef.current && ytPlayerReady.current && typeof ytPlayerRef.current.nextVideo === 'function') {
-      const YT = (window as any).YT
-      const currentState = typeof ytPlayerRef.current.getPlayerState === 'function' ? ytPlayerRef.current.getPlayerState() : -1
-      const isCurrentlyPlaying = isPlaying || currentState === YT?.PlayerState.PLAYING
-
-      if (!isCurrentlyPlaying) {
-        keepPausedOnTrackChange.current = true
-        userExplicitlyPaused.current = true
-        try {
-          ytPlayerRef.current.mute()
-        } catch (err) {}
-      } else {
-        keepPausedOnTrackChange.current = false
-      }
-
-      ytPlayerRef.current.nextVideo()
-      if (isMutedRef.current && typeof ytPlayerRef.current.mute === 'function') {
-        ytPlayerRef.current.mute()
-      }
-      setTimeout(updateYTTrackInfo, 300)
-      setTimeout(updateYTTrackInfo, 800)
-    }
-  }, [isPlaying, updateYTTrackInfo])
+    const currentState = (ytPlayerRef.current && ytPlayerReady.current && typeof ytPlayerRef.current.getPlayerState === 'function')
+      ? ytPlayerRef.current.getPlayerState()
+      : -1
+    const isCurrentlyPlaying = isPlaying || currentState === 1 // YT.PlayerState.PLAYING
+    changeTrack(currentTrackIndexRef.current + 1, isCurrentlyPlaying)
+  }, [isPlaying, changeTrack])
 
   const handlePrevTrack = useCallback((e?: React.MouseEvent) => {
     e?.stopPropagation()
-    if (ytPlayerRef.current && ytPlayerReady.current && typeof ytPlayerRef.current.previousVideo === 'function') {
-      const YT = (window as any).YT
-      const currentState = typeof ytPlayerRef.current.getPlayerState === 'function' ? ytPlayerRef.current.getPlayerState() : -1
-      const isCurrentlyPlaying = isPlaying || currentState === YT?.PlayerState.PLAYING
-
-      if (!isCurrentlyPlaying) {
-        keepPausedOnTrackChange.current = true
-        userExplicitlyPaused.current = true
-        try {
-          ytPlayerRef.current.mute()
-        } catch (err) {}
-      } else {
-        keepPausedOnTrackChange.current = false
-      }
-
-      ytPlayerRef.current.previousVideo()
-      if (isMutedRef.current && typeof ytPlayerRef.current.mute === 'function') {
-        ytPlayerRef.current.mute()
-      }
-      setTimeout(updateYTTrackInfo, 300)
-      setTimeout(updateYTTrackInfo, 800)
-    }
-  }, [isPlaying, updateYTTrackInfo])
+    const currentState = (ytPlayerRef.current && ytPlayerReady.current && typeof ytPlayerRef.current.getPlayerState === 'function')
+      ? ytPlayerRef.current.getPlayerState()
+      : -1
+    const isCurrentlyPlaying = isPlaying || currentState === 1 // YT.PlayerState.PLAYING
+    changeTrack(currentTrackIndexRef.current - 1, isCurrentlyPlaying)
+  }, [isPlaying, changeTrack])
 
   const handleScrubberClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect()

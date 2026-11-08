@@ -1276,7 +1276,7 @@
             style="width: 0%;"
           ></div>
         </div>
-        <span id="player-time-total" class="text-right flex-shrink-0">0:00</span>
+        <span id="player-time-total" class="text-right flex-shrink-0">3:34</span>
       </div>
 
       <!-- Right: Playback Controls Row (Prev, Play, Next, Mute in White / Crossed) -->
@@ -4293,6 +4293,23 @@
 
     /* ── YouTube Music Player & Playlist Engine (YouTube IFrame Player API) ── */
     const YOUTUBE_PLAYLIST_ID = 'PLBFyKHpeq9js';
+    const YOUTUBE_DURGA_TRACKS = [
+      { id: 'SFJeglBF5cg', title: 'Dugga Elo', artist: 'Monali Thakur', durationSec: 146, cover: 'https://i.ytimg.com/vi/SFJeglBF5cg/hqdefault.jpg' },
+      { id: 'LLer3VPOcxg', title: 'Dugga Ma Asche', artist: 'Infra', durationSec: 214, cover: 'https://i.ytimg.com/vi/LLer3VPOcxg/hqdefault.jpg' },
+      { id: 'UCPKItLtvZw', title: 'Dugga Ma', artist: 'Arijit Singh', durationSec: 270, cover: 'https://i.ytimg.com/vi/UCPKItLtvZw/hqdefault.jpg' },
+      { id: '3WJMdKoCp70', title: 'Ebar Jeno Onno Rokom Pujo', artist: 'SVF', durationSec: 219, cover: 'https://i.ytimg.com/vi/3WJMdKoCp70/hqdefault.jpg' },
+      { id: 'XiAO-XjeHdI', title: 'Ashtami Te Tomar Paray', artist: 'Chirkut', durationSec: 234, cover: 'https://i.ytimg.com/vi/XiAO-XjeHdI/hqdefault.jpg' },
+      { id: 'tRUAYLIEIbc', title: 'Dhaker Taley', artist: 'Abhijeet Bhattacharya', durationSec: 282, cover: 'https://i.ytimg.com/vi/tRUAYLIEIbc/hqdefault.jpg' },
+      { id: 'p_hqO0sJh-I', title: 'Ailo Uma Barite', artist: 'Antara Nandy', durationSec: 232, cover: 'https://i.ytimg.com/vi/p_hqO0sJh-I/hqdefault.jpg' },
+      { id: 'x_Nar1eYzBM', title: 'Uma Ashe Notun Saje', artist: 'Ankita Bhattacharyya', durationSec: 185, cover: 'https://i.ytimg.com/vi/x_Nar1eYzBM/hqdefault.jpg' },
+      { id: '7uzjfZ423Kc', title: 'Dhak Baja Kashor Baja', artist: 'Shreya Ghoshal', durationSec: 265, cover: 'https://i.ytimg.com/vi/7uzjfZ423Kc/hqdefault.jpg' },
+      { id: 'FH-p9rnBbU4', title: 'Abar Elo Maa', artist: 'Ankita Bhattacharyya', durationSec: 219, cover: 'https://i.ytimg.com/vi/FH-p9rnBbU4/hqdefault.jpg' },
+      { id: 'OVIN6Iz687o', title: 'Jago Durga Dashapraharanadharinee', artist: 'Dwijen Mukherjee', durationSec: 107, cover: 'https://i.ytimg.com/vi/OVIN6Iz687o/hqdefault.jpg' },
+      { id: '4ZWQYdzS_WY', title: 'Shubho Shubho', artist: 'Altamash Faridi, Amit Trivedi', durationSec: 175, cover: 'https://i.ytimg.com/vi/4ZWQYdzS_WY/hqdefault.jpg' },
+      { id: 'Blh3d0RBV1M', title: 'Asadoma Sadgamayo', artist: 'Arijit Singh', durationSec: 317, cover: 'https://i.ytimg.com/vi/Blh3d0RBV1M/hqdefault.jpg' },
+      { id: 'J8xdJtUK6PY', title: 'Maa Go Tumi Sarbojonin', artist: 'Shreya Ghoshal', durationSec: 207, cover: 'https://i.ytimg.com/vi/J8xdJtUK6PY/hqdefault.jpg' },
+    ];
+    let currentTrackIndex = 1;
     let ytPlayer = null;
     let ytPlayerReady = false;
     let isTrackPlaying = false;
@@ -4301,7 +4318,7 @@
     let keepPausedOnTrackChange = false;
     let autoPlayStarted = false;
     let currentTrackElapsed = 0;
-    let currentTrackDuration = 0;
+    let currentTrackDuration = 214;
     let ytProgressInterval = null;
 
     let userInteracted = window.userHasInteractedWithPage || false;
@@ -4318,7 +4335,7 @@
             if (typeof ytPlayer.mute === 'function') ytPlayer.mute();
           }
           if (typeof ytPlayer.playVideoAt === 'function' && !autoPlayStarted) {
-            ytPlayer.playVideoAt(0);
+            ytPlayer.playVideoAt(currentTrackIndex);
           } else if (typeof ytPlayer.playVideo === 'function') {
             ytPlayer.playVideo();
           }
@@ -4456,7 +4473,58 @@
       }
     }
 
+    function changeTrack(index, shouldPlay) {
+      const safeIdx = ((index % YOUTUBE_DURGA_TRACKS.length) + YOUTUBE_DURGA_TRACKS.length) % YOUTUBE_DURGA_TRACKS.length;
+      currentTrackIndex = safeIdx;
+      const track = YOUTUBE_DURGA_TRACKS[safeIdx];
+
+      if (elTrackTitle) elTrackTitle.textContent = track.title;
+      if (elTrackArtist) elTrackArtist.textContent = track.artist;
+      if (elTrackCover) elTrackCover.src = track.cover;
+      currentTrackDuration = track.durationSec;
+      currentTrackElapsed = 0;
+      if (elTimeCurrent) elTimeCurrent.textContent = '0:00';
+      if (elTimeTotal) elTimeTotal.textContent = formatSec(track.durationSec);
+      if (elScrubberFill) elScrubberFill.style.width = '0%';
+      if (elScrubberFillMobile) elScrubberFillMobile.style.width = '0%';
+
+      if (shouldPlay) {
+        keepPausedOnTrackChange = false;
+        userExplicitlyPaused = false;
+        isTrackPlaying = true;
+        updatePlayPauseButtonUI(true);
+        if (ytPlayer && ytPlayerReady) {
+          try {
+            if (!isAudioMuted) {
+              ytPlayer.unMute();
+              ytPlayer.setVolume(100);
+            } else {
+              ytPlayer.mute();
+            }
+            if (typeof ytPlayer.playVideoAt === 'function') {
+              ytPlayer.playVideoAt(safeIdx);
+            }
+          } catch (e) {}
+        }
+      } else {
+        keepPausedOnTrackChange = true;
+        userExplicitlyPaused = true;
+        isTrackPlaying = false;
+        updatePlayPauseButtonUI(false);
+        stopYTProgressTracker();
+        if (ytPlayer && ytPlayerReady) {
+          try {
+            ytPlayer.mute();
+            if (typeof ytPlayer.playVideoAt === 'function') {
+              ytPlayer.playVideoAt(safeIdx);
+            }
+          } catch (e) {}
+        }
+      }
+    }
+
     function updateYTTrackInfo() {
+      if (keepPausedOnTrackChange) return;
       if (!ytPlayer || typeof ytPlayer.getVideoData !== 'function') return;
       try {
         const data = ytPlayer.getVideoData();
@@ -4531,12 +4599,15 @@
           if (elScrubberFillMobile) elScrubberFillMobile.style.width = '0%';
           updatePlayPauseButtonUI(false);
           stopYTProgressTracker();
-          updateYTTrackInfo();
-          setTimeout(updateYTTrackInfo, 300);
-          setTimeout(updateYTTrackInfo, 800);
-          if (state === window.YT.PlayerState.PLAYING || state === window.YT.PlayerState.PAUSED) {
+          if (state === window.YT.PlayerState.PAUSED) {
             keepPausedOnTrackChange = false;
           }
+          return;
+        }
+        if (state === window.YT.PlayerState.PAUSED) {
+          keepPausedOnTrackChange = false;
+          isTrackPlaying = false;
+          updatePlayPauseButtonUI(false);
           return;
         }
       }
@@ -4563,6 +4634,18 @@
         }
         updatePlayPauseButtonUI(true);
         startYTProgressTracker();
+        if (typeof ytPlayer.getPlaylistIndex === 'function') {
+          const pIdx = ytPlayer.getPlaylistIndex();
+          if (typeof pIdx === 'number' && pIdx >= 0 && pIdx < YOUTUBE_DURGA_TRACKS.length && pIdx !== currentTrackIndex) {
+            currentTrackIndex = pIdx;
+            const t = YOUTUBE_DURGA_TRACKS[pIdx];
+            if (elTrackTitle) elTrackTitle.textContent = t.title;
+            if (elTrackArtist) elTrackArtist.textContent = t.artist;
+            if (elTrackCover) elTrackCover.src = t.cover;
+            currentTrackDuration = t.durationSec;
+            if (elTimeTotal) elTimeTotal.textContent = formatSec(t.durationSec);
+          }
+        }
         updateYTTrackInfo();
       } else if (state === window.YT.PlayerState.PAUSED || state === window.YT.PlayerState.ENDED) {
         isTrackPlaying = false;
@@ -4605,7 +4688,7 @@
                   event.target.mute();
                 }
                 if (typeof event.target.playVideoAt === 'function') {
-                  event.target.playVideoAt(0);
+                  event.target.playVideoAt(currentTrackIndex);
                 } else if (typeof event.target.playVideo === 'function') {
                   event.target.playVideo();
                 }
@@ -4663,6 +4746,8 @@
           userExplicitlyPaused = true;
           keepPausedOnTrackChange = false;
           ytPlayer.pauseVideo();
+          isTrackPlaying = false;
+          updatePlayPauseButtonUI(false);
         } else {
           userExplicitlyPaused = false;
           keepPausedOnTrackChange = false;
@@ -4674,7 +4759,13 @@
               ytPlayer.mute();
             }
           } catch(e) {}
-          ytPlayer.playVideo();
+          if (typeof ytPlayer.getPlaylistIndex === 'function' && ytPlayer.getPlaylistIndex() !== currentTrackIndex) {
+            ytPlayer.playVideoAt(currentTrackIndex);
+          } else {
+            ytPlayer.playVideo();
+          }
+          isTrackPlaying = true;
+          updatePlayPauseButtonUI(true);
         }
       } else {
         isTrackPlaying = !isTrackPlaying;
@@ -4696,52 +4787,16 @@
 
     btnPlayerNext?.addEventListener('click', (e) => {
       e?.stopPropagation();
-      if (ytPlayer && ytPlayerReady && typeof ytPlayer.nextVideo === 'function') {
-        const currentState = typeof ytPlayer.getPlayerState === 'function' ? ytPlayer.getPlayerState() : -1;
-        const isCurrentlyPlaying = isTrackPlaying || (currentState === window.YT?.PlayerState.PLAYING);
-
-        if (!isCurrentlyPlaying) {
-          keepPausedOnTrackChange = true;
-          userExplicitlyPaused = true;
-          try {
-            ytPlayer.mute();
-          } catch(err) {}
-        } else {
-          keepPausedOnTrackChange = false;
-        }
-
-        ytPlayer.nextVideo();
-        if (isAudioMuted && typeof ytPlayer.mute === 'function') {
-          ytPlayer.mute();
-        }
-        setTimeout(updateYTTrackInfo, 300);
-        setTimeout(updateYTTrackInfo, 800);
-      }
+      const currentState = (ytPlayer && ytPlayerReady && typeof ytPlayer.getPlayerState === 'function') ? ytPlayer.getPlayerState() : -1;
+      const isCurrentlyPlaying = isTrackPlaying || (currentState === window.YT?.PlayerState.PLAYING);
+      changeTrack(currentTrackIndex + 1, isCurrentlyPlaying);
     });
 
     btnPlayerPrev?.addEventListener('click', (e) => {
       e?.stopPropagation();
-      if (ytPlayer && ytPlayerReady && typeof ytPlayer.previousVideo === 'function') {
-        const currentState = typeof ytPlayer.getPlayerState === 'function' ? ytPlayer.getPlayerState() : -1;
-        const isCurrentlyPlaying = isTrackPlaying || (currentState === window.YT?.PlayerState.PLAYING);
-
-        if (!isCurrentlyPlaying) {
-          keepPausedOnTrackChange = true;
-          userExplicitlyPaused = true;
-          try {
-            ytPlayer.mute();
-          } catch(err) {}
-        } else {
-          keepPausedOnTrackChange = false;
-        }
-
-        ytPlayer.previousVideo();
-        if (isAudioMuted && typeof ytPlayer.mute === 'function') {
-          ytPlayer.mute();
-        }
-        setTimeout(updateYTTrackInfo, 300);
-        setTimeout(updateYTTrackInfo, 800);
-      }
+      const currentState = (ytPlayer && ytPlayerReady && typeof ytPlayer.getPlayerState === 'function') ? ytPlayer.getPlayerState() : -1;
+      const isCurrentlyPlaying = isTrackPlaying || (currentState === window.YT?.PlayerState.PLAYING);
+      changeTrack(currentTrackIndex - 1, isCurrentlyPlaying);
     });
 
     function updateMuteButtonUI(muted) {
