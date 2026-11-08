@@ -2842,13 +2842,9 @@ export default function App() {
                 {/* 1st Place: Arindam S. (Taller & Glowing Gold) */}
                 <div className="flex flex-col items-center">
                   <div className="relative mb-1 flex flex-col items-center">
-                    {/* Golden Crown */}
-                    <svg className="w-6 h-6 text-[#E9B83E] drop-shadow-[0_0_10px_rgba(233,184,62,0.8)] fill-current mb-0.5" viewBox="0 0 24 24">
-                      <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/>
-                    </svg>
                     {/* Golden Laurel Wreath SVG */}
-                    <div className="relative w-16 h-16 sm:w-18 sm:h-18 flex items-center justify-center">
-                      <svg className="absolute -inset-2.5 w-[calc(100%+20px)] h-[calc(100%+20px)] text-[#E9B83E] pointer-events-none drop-shadow-[0_0_8px_rgba(233,184,62,0.6)]" viewBox="0 0 100 100" fill="none">
+                    <div className="relative w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center">
+                      <svg className="absolute -inset-2 w-[calc(100%+16px)] h-[calc(100%+16px)] text-[#E9B83E] pointer-events-none drop-shadow-[0_0_10px_rgba(233,184,62,0.7)]" viewBox="0 0 100 100" fill="none">
                         <path d="M 28 80 C 12 58 14 34 32 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
                         <path d="M 22 70 C 14 68 12 60 18 56 C 22 62 23 66 22 70 Z" fill="currentColor" />
                         <path d="M 17 56 C 9 52 10 44 17 42 C 19 48 19 52 17 56 Z" fill="currentColor" />
@@ -2865,7 +2861,7 @@ export default function App() {
                       <img
                         src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80"
                         alt="Arindam S."
-                        className="w-13 h-13 sm:w-15 sm:h-15 rounded-full object-cover border-2 border-[#E9B83E] shadow-[0_0_18px_rgba(233,184,62,0.7)]"
+                        className="w-12 h-12 sm:w-13 sm:h-13 rounded-full object-cover border-2 border-[#E9B83E] shadow-[0_0_16px_rgba(233,184,62,0.7)]"
                       />
                     </div>
                     {/* Rank Badge */}
