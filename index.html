@@ -654,22 +654,22 @@
             </svg>
           </button>
           <!-- Dropdown Menu -->
-          <div id="year-dropdown-menu" class="hidden absolute top-full mt-2 right-0 bg-[#211329]/75 border border-[#E9B83E]/30 rounded-2xl p-1 shadow-[0_12px_32px_rgba(13,12,27,0.65),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-xl z-50 flex flex-col min-w-[120px]">
+          <div id="year-dropdown-menu" class="hidden absolute top-full mt-1.5 left-0 right-0 w-full bg-[#211329]/95 border border-[#E9B83E]/30 rounded-xl p-1 shadow-[0_12px_32px_rgba(13,12,27,0.75),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-xl z-50 flex flex-col">
             <button
               type="button"
               onclick="selectPujaYear(2026)"
-              class="year-option px-3.5 py-2.5 text-left text-xs font-semibold flex items-center transition cursor-pointer text-[#E9B83E] font-bold bg-[#E9B83E]/15 border-b border-[#E9B83E]/20 last:border-b-0 first:rounded-t-xl last:rounded-b-xl"
+              class="year-option py-2 text-center justify-center text-xs font-semibold flex items-center transition cursor-pointer text-[#E9B83E] font-bold bg-[#E9B83E]/15 border-b border-[#E9B83E]/20 last:border-b-0 first:rounded-t-lg last:rounded-b-lg"
               data-year="2026"
             >
-              <span>2026</span>
+              <span class="w-full text-center">2026</span>
             </button>
             <button
               type="button"
               onclick="selectPujaYear(2025)"
-              class="year-option px-3.5 py-2.5 text-left text-xs font-semibold flex items-center transition cursor-pointer text-[#F5E5B7]/80 hover:bg-[#E9B83E]/15 hover:text-[#E9B83E] border-b border-[#E9B83E]/20 last:border-b-0 first:rounded-t-xl last:rounded-b-xl"
+              class="year-option py-2 text-center justify-center text-xs font-semibold flex items-center transition cursor-pointer text-[#F5E5B7]/80 hover:bg-[#E9B83E]/15 hover:text-[#E9B83E] border-b border-[#E9B83E]/20 last:border-b-0 first:rounded-t-lg last:rounded-b-lg"
               data-year="2025"
             >
-              <span>2025</span>
+              <span class="w-full text-center">2025</span>
             </button>
           </div>
         </div>
@@ -4366,9 +4366,9 @@
       document.querySelectorAll('.year-option').forEach(el => {
         const isCurrent = Number(el.getAttribute('data-year')) === year;
         if (isCurrent) {
-          el.className = 'year-option px-3.5 py-2.5 text-left text-xs font-semibold flex items-center transition cursor-pointer text-[#E9B83E] font-bold bg-[#E9B83E]/15 border-b border-[#E9B83E]/20 last:border-b-0 first:rounded-t-xl last:rounded-b-xl';
+          el.className = 'year-option py-2 text-center justify-center text-xs font-semibold flex items-center transition cursor-pointer text-[#E9B83E] font-bold bg-[#E9B83E]/15 border-b border-[#E9B83E]/20 last:border-b-0 first:rounded-t-lg last:rounded-b-lg';
         } else {
-          el.className = 'year-option px-3.5 py-2.5 text-left text-xs font-semibold flex items-center transition cursor-pointer text-[#F5E5B7]/80 hover:bg-[#E9B83E]/15 hover:text-[#E9B83E] border-b border-[#E9B83E]/20 last:border-b-0 first:rounded-t-xl last:rounded-b-xl';
+          el.className = 'year-option py-2 text-center justify-center text-xs font-semibold flex items-center transition cursor-pointer text-[#F5E5B7]/80 hover:bg-[#E9B83E]/15 hover:text-[#E9B83E] border-b border-[#E9B83E]/20 last:border-b-0 first:rounded-t-lg last:rounded-b-lg';
         }
       });
       yearDropdownMenu?.classList.add('hidden');

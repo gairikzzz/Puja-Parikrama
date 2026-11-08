@@ -2176,7 +2176,7 @@ export default function App() {
                 </button>
 
                 {yearDropdownOpen && (
-                  <div className="absolute top-full mt-2 right-0 bg-[#211329]/75 border border-[#E9B83E]/30 rounded-2xl p-1 shadow-[0_12px_32px_rgba(13,12,27,0.65),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-xl z-50 flex flex-col min-w-[120px] animate-in fade-in zoom-in-95 duration-150">
+                  <div className="absolute top-full mt-1.5 left-0 right-0 w-full bg-[#211329]/95 border border-[#E9B83E]/30 rounded-xl p-1 shadow-[0_12px_32px_rgba(13,12,27,0.75),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-xl z-50 flex flex-col animate-in fade-in zoom-in-95 duration-150">
                     {[2026, 2025].map(year => (
                       <button
                         key={year}
@@ -2185,13 +2185,13 @@ export default function App() {
                           setSelectedYear(year)
                           setYearDropdownOpen(false)
                         }}
-                        className={`px-3.5 py-2.5 text-left text-xs font-semibold flex items-center transition cursor-pointer border-b border-[#E9B83E]/20 last:border-b-0 first:rounded-t-xl last:rounded-b-xl ${
+                        className={`py-2 text-center justify-center text-xs font-semibold flex items-center transition cursor-pointer border-b border-[#E9B83E]/20 last:border-b-0 first:rounded-t-lg last:rounded-b-lg ${
                           selectedYear === year
                             ? 'bg-[#E9B83E]/15 text-[#E9B83E] font-bold'
                             : 'text-[#F5E5B7]/80 hover:bg-[#E9B83E]/15 hover:text-[#E9B83E]'
                         }`}
                       >
-                        <span>{year}</span>
+                        <span className="w-full text-center">{year}</span>
                       </button>
                     ))}
                   </div>
