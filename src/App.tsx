@@ -1499,7 +1499,7 @@ export default function App() {
     const renderedW = imgW * scale
     const renderedH = imgH * scale
     const offsetX = (vw - renderedW) / 2
-    const offsetY = -7 // Shifted up by 7px per user request
+    const offsetY = -9 // Shifted up by 2px further (total -9px) per user request
 
     return {
       x: Math.round(offsetX + targetXRatio * renderedW),
