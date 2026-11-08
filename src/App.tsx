@@ -3068,55 +3068,14 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Glowing Golden Maa Durga & Mandir Line Art SVG */}
-              <div className="absolute right-0 top-0 bottom-0 flex items-center justify-end pointer-events-none opacity-85 pr-0.5">
-                <svg className="w-32 h-32 sm:w-36 sm:h-36 text-[#E9B83E] drop-shadow-[0_0_14px_rgba(233,184,62,0.4)]" viewBox="0 0 160 140" fill="none" stroke="currentColor">
-                  {/* Mandir Spires Silhouettes at base */}
-                  <path d="M10 135 L10 115 L20 100 L20 85 L25 75 L30 85 L30 100 L40 115 L40 135" strokeWidth="1.2" strokeLinejoin="round" opacity="0.6"/>
-                  <path d="M35 135 L35 105 L45 88 L50 70 L55 88 L65 105 L65 135" strokeWidth="1.2" strokeLinejoin="round" opacity="0.7"/>
-                  <path d="M95 135 L95 105 L105 88 L110 70 L115 88 L125 105 L125 135" strokeWidth="1.2" strokeLinejoin="round" opacity="0.7"/>
-                  <path d="M120 135 L120 115 L130 100 L130 85 L135 75 L140 85 L140 100 L150 115 L150 135" strokeWidth="1.2" strokeLinejoin="round" opacity="0.6"/>
-                  <line x1="5" y1="135" x2="155" y2="135" strokeWidth="1.5" opacity="0.8"/>
-                  <line x1="15" y1="125" x2="145" y2="125" strokeWidth="1" strokeDasharray="2 3" opacity="0.5"/>
-                  <path d="M25 75 L25 68 M23 70 L27 70" strokeWidth="1.2"/>
-                  <path d="M50 70 L50 62 M48 64 L52 64" strokeWidth="1.2"/>
-                  <path d="M110 70 L110 62 M108 64 L112 64" strokeWidth="1.2"/>
-                  <path d="M135 75 L135 68 M133 70 L137 70" strokeWidth="1.2"/>
-                  {/* Base Diya Glow */}
-                  <path d="M68 128 Q80 138 92 128 Q80 122 68 128 Z" fill="currentColor" fillOpacity="0.4" strokeWidth="1"/>
-                  <path d="M78 123 Q80 112 82 123 Z" fill="#F5E5B7" strokeWidth="0.8"/>
-                  {/* Maa Durga Mukut (Crown) */}
-                  <path d="M58 45 C58 20 80 8 80 8 C80 8 102 20 102 45 Z" strokeWidth="1.4" fill="currentColor" fillOpacity="0.08"/>
-                  <path d="M65 42 C65 26 80 15 80 15 C80 15 95 26 95 42" strokeWidth="1.2"/>
-                  <circle cx="80" cy="22" r="2.5" fill="currentColor"/>
-                  <circle cx="73" cy="28" r="1.8" fill="currentColor"/>
-                  <circle cx="87" cy="28" r="1.8" fill="currentColor"/>
-                  <path d="M54 48 Q46 32 58 24 Q58 36 62 44" strokeWidth="1.2"/>
-                  <path d="M106 48 Q114 32 102 24 Q102 36 98 44" strokeWidth="1.2"/>
-                  <path d="M50 20 Q80 0 110 20" strokeWidth="1" strokeDasharray="2 3" opacity="0.6"/>
-                  {/* Face Outline & Chin */}
-                  <path d="M64 45 C62 62 70 82 80 84 C90 82 98 62 96 45" strokeWidth="1.4" fill="currentColor" fillOpacity="0.05"/>
-                  {/* Third Eye (Trinetra) */}
-                  <path d="M80 36 C77 42 77 46 80 50 C83 46 83 42 80 36 Z" fill="currentColor" strokeWidth="0.8"/>
-                  <circle cx="80" cy="43" r="1" fill="#211329"/>
-                  {/* Eyebrows & Eyes */}
-                  <path d="M66 52 Q72 49 76 53" strokeWidth="1.3" strokeLinecap="round"/>
-                  <path d="M94 52 Q88 49 84 53" strokeWidth="1.3" strokeLinecap="round"/>
-                  <path d="M66 56 C69 53 74 53 77 57 C74 59 69 59 66 56 Z" strokeWidth="1.2" fill="currentColor" fillOpacity="0.15"/>
-                  <circle cx="72" cy="56" r="1.5" fill="currentColor"/>
-                  <path d="M94 56 C91 53 86 53 83 57 C86 59 91 59 94 56 Z" strokeWidth="1.2" fill="currentColor" fillOpacity="0.15"/>
-                  <circle cx="88" cy="56" r="1.5" fill="currentColor"/>
-                  {/* Nose & Nath */}
-                  <path d="M80 52 L80 64 L82 65" strokeWidth="1.1" strokeLinecap="round"/>
-                  <circle cx="84" cy="65" r="3" strokeWidth="1" strokeDasharray="1 1"/>
-                  <path d="M87 65 C92 65 96 61 97 58" strokeWidth="0.8" strokeDasharray="1 1.5"/>
-                  {/* Lips */}
-                  <path d="M75 72 Q80 75 85 72" strokeWidth="1.2" strokeLinecap="round"/>
-                  <path d="M76 72 Q80 70 84 72" strokeWidth="1" strokeLinecap="round"/>
-                  {/* Earrings */}
-                  <path d="M60 56 Q56 62 60 68 L63 68 Q61 62 60 56 Z" strokeWidth="1" fill="currentColor" fillOpacity="0.2"/>
-                  <path d="M100 56 Q104 62 100 68 L97 68 Q99 62 100 56 Z" strokeWidth="1" fill="currentColor" fillOpacity="0.2"/>
-                </svg>
+              {/* Glowing Golden Maa Durga Artwork Image */}
+              <div className="absolute right-0 -top-2 -bottom-2 w-48 sm:w-56 flex items-center justify-end pointer-events-none select-none overflow-hidden">
+                <img
+                  src="/profile-durga-bg.png"
+                  alt="Maa Durga"
+                  className="h-full w-auto max-w-none object-contain object-right drop-shadow-[0_0_16px_rgba(233,184,62,0.4)] opacity-95 [mask-image:linear-gradient(to_left,black_75%,transparent)]"
+                  style={{ WebkitMaskImage: 'linear-gradient(to left, black 75%, transparent)' }}
+                />
               </div>
             </div>
 
@@ -3148,7 +3107,7 @@ export default function App() {
                     <path d="M12 18v4"/>
                     <path d="M8 22h8"/>
                   </svg>
-                  <span className="text-base sm:text-lg font-black text-[#E9B83E]">#2</span>
+                  <span className="text-base sm:text-lg font-black text-white">#2</span>
                   <span className="text-[10px] sm:text-[11px] font-medium text-white/60 mt-0.5">This Puja Rank</span>
                 </div>
               </div>
