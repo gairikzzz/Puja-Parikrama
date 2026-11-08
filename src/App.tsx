@@ -662,8 +662,15 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
     }).slice(0, 5)
   }, [mapSearchQuery])
 
+  const isFormValid = useMemo(() => {
+    const hasPhotos = selectedFiles.length > 0
+    const hasName = pandalName.trim().length > 0
+    const hasLocation = Boolean(coords && typeof coords.lat === 'number' && typeof coords.lng === 'number' && !isNaN(coords.lat) && !isNaN(coords.lng))
+    return hasPhotos && hasName && hasLocation
+  }, [selectedFiles, pandalName, coords])
+
   const handleSubmit = async () => {
-    if (selectedFiles.length === 0 || !pandalName.trim()) return
+    if (!isFormValid || submitting) return
     setSubmitting(true)
     const success = await onSubmit({
       selectedFile: selectedFiles[0],
@@ -785,7 +792,7 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
           {/* Pandal Name & Dropdown (Styled like Search Bar & Landing Page Year) */}
           <div ref={pandalContainerRef} className="space-y-1.5 relative">
             <label className="block text-[11px] sm:text-xs font-semibold text-[#F5E5B7]">
-              <span>Pandal Name</span> <span className="text-red-500 font-bold">*</span>
+              <span>Pandal Name</span>
             </label>
             <div className="relative flex items-center rounded-full bg-[#211329]/75 hover:bg-[#211329]/85 border border-[#E9B83E]/40 hover:border-[#E9B83E] focus-within:border-[#E9B83E] shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.15)] backdrop-blur-md transition-all">
               <svg className="w-3.5 h-3.5 text-[#E9B83E] flex-shrink-0 ml-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -897,7 +904,7 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
           {/* Interactive Mini-Map Preview Card (Confirmation) with Floating Top Search Bar */}
           <div className="space-y-1.5">
             <label className="block text-[11px] sm:text-xs font-semibold text-[#F5E5B7]">
-              <span>Pandal Location</span> <span className="text-red-500 font-bold">*</span>
+              <span>Pandal Location</span>
             </label>
             <div
               onClick={(e) => {
@@ -1003,7 +1010,7 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
             <button
               id="submit-snap-btn"
               onClick={handleSubmit}
-              disabled={!pandalName.trim() || selectedFiles.length === 0 || submitting}
+              disabled={!isFormValid || submitting}
               className="w-full py-2.5 sm:py-3 rounded-full bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] text-[#211329] font-black text-xs sm:text-sm tracking-wider flex items-center justify-center border-2 border-[#E9B83E] shadow-[0_0_14px_rgba(233,184,62,0.30),0_4px_16px_rgba(13,12,27,0.55)] hover:shadow-[0_0_20px_rgba(233,184,62,0.50)] hover:scale-[1.01] active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:shadow-none transition-all flex-shrink-0 cursor-pointer"
             >
               {submitting ? 'Submitting...' : 'Submit'}
