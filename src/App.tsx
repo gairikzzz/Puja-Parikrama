@@ -1171,6 +1171,7 @@ export default function App() {
   const ytPlayerRef = useRef<any>(null)
   const ytPlayerReady = useRef(false)
   const userExplicitlyPaused = useRef(false)
+  const keepPausedOnTrackChange = useRef(false)
   const autoPlayStarted = useRef(false)
   const [isPlaying, setIsPlaying] = useState(false)
   const isMutedRef = useRef(false)
@@ -1212,6 +1213,33 @@ export default function App() {
     }
   }, [])
 
+
+  const updateYTTrackInfo = useCallback(() => {
+    if (!ytPlayerRef.current || typeof ytPlayerRef.current.getVideoData !== 'function') return
+    try {
+      const data = ytPlayerRef.current.getVideoData()
+      if (data && data.title) {
+        let cleanTitle = data.title
+        const separatorIdx = cleanTitle.search(/[|(\[\-(–—।॥•~/]|\s[Il]\s/)
+        if (separatorIdx !== -1) {
+          const cut = cleanTitle.slice(0, separatorIdx).trim()
+          if (cut) cleanTitle = cut
+        }
+        setTrackTitle(cleanTitle)
+        let author = data.author ? data.author.replace(/\s*-\s*Topic$/i, '').trim() : ''
+        author = author.replace(/\s*·\s*YouTube(\s*Music)?/gi, '').trim()
+        author = author.replace(/\s*YouTube(\s*Music)?/gi, '').trim()
+        setTrackArtist(author || 'Infra')
+        if (data.video_id) {
+          setTrackCover(`https://i.ytimg.com/vi/${data.video_id}/hqdefault.jpg`)
+        }
+      }
+      const dur = ytPlayerRef.current.getDuration()
+      if (dur && dur > 0) {
+        setTotalDurationSec(Math.round(dur))
+      }
+    } catch (e) {}
+  }, [])
 
   // Initialize YouTube IFrame API
   useEffect(() => {
@@ -1287,36 +1315,35 @@ export default function App() {
       }
     }
 
-    const updateYTTrackInfo = () => {
-      if (!ytPlayerRef.current || typeof ytPlayerRef.current.getVideoData !== 'function') return
-      try {
-        const data = ytPlayerRef.current.getVideoData()
-        if (data && data.title) {
-          let cleanTitle = data.title
-          const separatorIdx = cleanTitle.search(/[|(\[\-(–—।॥•~/]|\s[Il]\s/)
-          if (separatorIdx !== -1) {
-            const cut = cleanTitle.slice(0, separatorIdx).trim()
-            if (cut) cleanTitle = cut
-          }
-          setTrackTitle(cleanTitle)
-          let author = data.author ? data.author.replace(/\s*-\s*Topic$/i, '').trim() : ''
-          author = author.replace(/\s*·\s*YouTube(\s*Music)?/gi, '').trim()
-          author = author.replace(/\s*YouTube(\s*Music)?/gi, '').trim()
-          setTrackArtist(author || 'Infra')
-          if (data.video_id) {
-            setTrackCover(`https://i.ytimg.com/vi/${data.video_id}/hqdefault.jpg`)
-          }
-        }
-        const dur = ytPlayerRef.current.getDuration()
-        if (dur && dur > 0) {
-          setTotalDurationSec(Math.round(dur))
-        }
-      } catch (e) {}
-    }
-
     const handleYTStateChange = (state: number) => {
       const YT = (window as any).YT
-      if (YT && state === YT.PlayerState.PLAYING) {
+      if (!YT) return
+
+      if (keepPausedOnTrackChange.current) {
+        if (state === YT.PlayerState.BUFFERING || state === YT.PlayerState.PLAYING || state === YT.PlayerState.CUED) {
+          try {
+            ytPlayerRef.current?.pauseVideo()
+            ytPlayerRef.current?.seekTo(0, true)
+          } catch(e) {}
+          if (!isMutedRef.current && ytPlayerRef.current) {
+            try {
+              ytPlayerRef.current.unMute()
+              ytPlayerRef.current.setVolume(100)
+            } catch(e) {}
+          }
+          setIsPlaying(false)
+          setCurrentTimeSec(0)
+          updateYTTrackInfo()
+          setTimeout(updateYTTrackInfo, 300)
+          setTimeout(updateYTTrackInfo, 800)
+          if (state === YT.PlayerState.PLAYING || state === YT.PlayerState.PAUSED) {
+            keepPausedOnTrackChange.current = false
+          }
+          return
+        }
+      }
+
+      if (state === YT.PlayerState.PLAYING) {
         if (!isMutedRef.current && ytPlayerRef.current && typeof ytPlayerRef.current.isMuted === 'function' && ytPlayerRef.current.isMuted() && !userInteracted.current) {
           try {
             ytPlayerRef.current.pauseVideo()
@@ -1332,9 +1359,9 @@ export default function App() {
           ytPlayerRef.current.mute()
         }
         updateYTTrackInfo()
-      } else if (YT && (state === YT.PlayerState.PAUSED || state === YT.PlayerState.ENDED)) {
+      } else if (state === YT.PlayerState.PAUSED || state === YT.PlayerState.ENDED) {
         setIsPlaying(false)
-      } else if (YT && (state === YT.PlayerState.BUFFERING || state === YT.PlayerState.CUED)) {
+      } else if (state === YT.PlayerState.BUFFERING || state === YT.PlayerState.CUED) {
         if (isMutedRef.current && ytPlayerRef.current && typeof ytPlayerRef.current.mute === 'function') {
           ytPlayerRef.current.mute()
         }
@@ -1351,7 +1378,7 @@ export default function App() {
         initPlayer()
       }
     }
-  }, [])
+  }, [updateYTTrackInfo])
 
   useEffect(() => {
     document.title = 'Puja Parikrama'
@@ -1419,9 +1446,11 @@ export default function App() {
       const state = ytPlayerRef.current.getPlayerState()
       if (state === YT?.PlayerState.PLAYING) {
         userExplicitlyPaused.current = true
+        keepPausedOnTrackChange.current = false
         ytPlayerRef.current.pauseVideo()
       } else {
         userExplicitlyPaused.current = false
+        keepPausedOnTrackChange.current = false
         try {
           if (!isMutedRef.current) {
             ytPlayerRef.current.unMute()
@@ -1437,9 +1466,11 @@ export default function App() {
         const next = !p
         if (!next) {
           userExplicitlyPaused.current = true
+          keepPausedOnTrackChange.current = false
           dhakEngineRef.current?.stop()
         } else {
           userExplicitlyPaused.current = false
+          keepPausedOnTrackChange.current = false
           dhakEngineRef.current?.play()
         }
         return next
@@ -1450,22 +1481,54 @@ export default function App() {
   const handleNextTrack = useCallback((e?: React.MouseEvent) => {
     e?.stopPropagation()
     if (ytPlayerRef.current && ytPlayerReady.current && typeof ytPlayerRef.current.nextVideo === 'function') {
+      const YT = (window as any).YT
+      const currentState = typeof ytPlayerRef.current.getPlayerState === 'function' ? ytPlayerRef.current.getPlayerState() : -1
+      const isCurrentlyPlaying = isPlaying || currentState === YT?.PlayerState.PLAYING
+
+      if (!isCurrentlyPlaying) {
+        keepPausedOnTrackChange.current = true
+        userExplicitlyPaused.current = true
+        try {
+          ytPlayerRef.current.mute()
+        } catch (err) {}
+      } else {
+        keepPausedOnTrackChange.current = false
+      }
+
       ytPlayerRef.current.nextVideo()
       if (isMutedRef.current && typeof ytPlayerRef.current.mute === 'function') {
         ytPlayerRef.current.mute()
       }
+      setTimeout(updateYTTrackInfo, 300)
+      setTimeout(updateYTTrackInfo, 800)
     }
-  }, [])
+  }, [isPlaying, updateYTTrackInfo])
 
   const handlePrevTrack = useCallback((e?: React.MouseEvent) => {
     e?.stopPropagation()
     if (ytPlayerRef.current && ytPlayerReady.current && typeof ytPlayerRef.current.previousVideo === 'function') {
+      const YT = (window as any).YT
+      const currentState = typeof ytPlayerRef.current.getPlayerState === 'function' ? ytPlayerRef.current.getPlayerState() : -1
+      const isCurrentlyPlaying = isPlaying || currentState === YT?.PlayerState.PLAYING
+
+      if (!isCurrentlyPlaying) {
+        keepPausedOnTrackChange.current = true
+        userExplicitlyPaused.current = true
+        try {
+          ytPlayerRef.current.mute()
+        } catch (err) {}
+      } else {
+        keepPausedOnTrackChange.current = false
+      }
+
       ytPlayerRef.current.previousVideo()
       if (isMutedRef.current && typeof ytPlayerRef.current.mute === 'function') {
         ytPlayerRef.current.mute()
       }
+      setTimeout(updateYTTrackInfo, 300)
+      setTimeout(updateYTTrackInfo, 800)
     }
-  }, [])
+  }, [isPlaying, updateYTTrackInfo])
 
   const handleScrubberClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect()

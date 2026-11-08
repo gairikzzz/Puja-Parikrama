@@ -3885,6 +3885,7 @@
     let isTrackPlaying = false;
     let isAudioMuted = false;
     let userExplicitlyPaused = false;
+    let keepPausedOnTrackChange = false;
     let autoPlayStarted = false;
     let currentTrackElapsed = 0;
     let currentTrackDuration = 0;
@@ -4096,7 +4097,38 @@
     }
 
     function handleYTStateChange(state) {
-      if (window.YT && state === window.YT.PlayerState.PLAYING) {
+      if (!window.YT) return;
+
+      if (keepPausedOnTrackChange) {
+        if (state === window.YT.PlayerState.BUFFERING || state === window.YT.PlayerState.PLAYING || state === window.YT.PlayerState.CUED) {
+          try {
+            ytPlayer.pauseVideo();
+            ytPlayer.seekTo(0, true);
+          } catch(e) {}
+          if (!isAudioMuted && ytPlayer) {
+            try {
+              ytPlayer.unMute();
+              ytPlayer.setVolume(100);
+            } catch(e) {}
+          }
+          isTrackPlaying = false;
+          currentTrackElapsed = 0;
+          if (elTimeCurrent) elTimeCurrent.textContent = '0:00';
+          if (elScrubberFill) elScrubberFill.style.width = '0%';
+          if (elScrubberFillMobile) elScrubberFillMobile.style.width = '0%';
+          updatePlayPauseButtonUI(false);
+          stopYTProgressTracker();
+          updateYTTrackInfo();
+          setTimeout(updateYTTrackInfo, 300);
+          setTimeout(updateYTTrackInfo, 800);
+          if (state === window.YT.PlayerState.PLAYING || state === window.YT.PlayerState.PAUSED) {
+            keepPausedOnTrackChange = false;
+          }
+          return;
+        }
+      }
+
+      if (state === window.YT.PlayerState.PLAYING) {
         // If the browser forced muted playback without user interaction and user hasn't chosen to mute:
         if (!isAudioMuted && ytPlayer && typeof ytPlayer.isMuted === 'function' && ytPlayer.isMuted() && !userInteracted) {
           try {
@@ -4119,11 +4151,11 @@
         updatePlayPauseButtonUI(true);
         startYTProgressTracker();
         updateYTTrackInfo();
-      } else if (window.YT && (state === window.YT.PlayerState.PAUSED || state === window.YT.PlayerState.ENDED)) {
+      } else if (state === window.YT.PlayerState.PAUSED || state === window.YT.PlayerState.ENDED) {
         isTrackPlaying = false;
         updatePlayPauseButtonUI(false);
         stopYTProgressTracker();
-      } else if (window.YT && (state === window.YT.PlayerState.BUFFERING || state === window.YT.PlayerState.CUED)) {
+      } else if (state === window.YT.PlayerState.BUFFERING || state === window.YT.PlayerState.CUED) {
         if (isAudioMuted && ytPlayer && typeof ytPlayer.mute === 'function') {
           ytPlayer.mute();
         }
@@ -4216,9 +4248,11 @@
         const state = ytPlayer.getPlayerState();
         if (state === window.YT.PlayerState.PLAYING) {
           userExplicitlyPaused = true;
+          keepPausedOnTrackChange = false;
           ytPlayer.pauseVideo();
         } else {
           userExplicitlyPaused = false;
+          keepPausedOnTrackChange = false;
           try {
             if (!isAudioMuted) {
               ytPlayer.unMute();
@@ -4233,9 +4267,11 @@
         isTrackPlaying = !isTrackPlaying;
         if (isTrackPlaying) {
           userExplicitlyPaused = false;
+          keepPausedOnTrackChange = false;
           dhakEngine.play();
         } else {
           userExplicitlyPaused = true;
+          keepPausedOnTrackChange = false;
           dhakEngine.stop();
         }
         updatePlayPauseButtonUI(isTrackPlaying);
@@ -4248,20 +4284,50 @@
     btnPlayerNext?.addEventListener('click', (e) => {
       e?.stopPropagation();
       if (ytPlayer && ytPlayerReady && typeof ytPlayer.nextVideo === 'function') {
+        const currentState = typeof ytPlayer.getPlayerState === 'function' ? ytPlayer.getPlayerState() : -1;
+        const isCurrentlyPlaying = isTrackPlaying || (currentState === window.YT?.PlayerState.PLAYING);
+
+        if (!isCurrentlyPlaying) {
+          keepPausedOnTrackChange = true;
+          userExplicitlyPaused = true;
+          try {
+            ytPlayer.mute();
+          } catch(err) {}
+        } else {
+          keepPausedOnTrackChange = false;
+        }
+
         ytPlayer.nextVideo();
         if (isAudioMuted && typeof ytPlayer.mute === 'function') {
           ytPlayer.mute();
         }
+        setTimeout(updateYTTrackInfo, 300);
+        setTimeout(updateYTTrackInfo, 800);
       }
     });
 
     btnPlayerPrev?.addEventListener('click', (e) => {
       e?.stopPropagation();
       if (ytPlayer && ytPlayerReady && typeof ytPlayer.previousVideo === 'function') {
+        const currentState = typeof ytPlayer.getPlayerState === 'function' ? ytPlayer.getPlayerState() : -1;
+        const isCurrentlyPlaying = isTrackPlaying || (currentState === window.YT?.PlayerState.PLAYING);
+
+        if (!isCurrentlyPlaying) {
+          keepPausedOnTrackChange = true;
+          userExplicitlyPaused = true;
+          try {
+            ytPlayer.mute();
+          } catch(err) {}
+        } else {
+          keepPausedOnTrackChange = false;
+        }
+
         ytPlayer.previousVideo();
         if (isAudioMuted && typeof ytPlayer.mute === 'function') {
           ytPlayer.mute();
         }
+        setTimeout(updateYTTrackInfo, 300);
+        setTimeout(updateYTTrackInfo, 800);
       }
     });
 
