@@ -2454,7 +2454,7 @@ export default function App() {
               <div className="flex flex-col min-w-0 pr-1 flex-shrink-0">
                 <span
                   id="player-track-title"
-                  className="text-left text-xs sm:text-[13px] font-bold text-[#F5E5B7] whitespace-nowrap leading-tight"
+                  className="text-left text-xs sm:text-[13px] font-bold text-white whitespace-nowrap leading-tight"
                 >
                   {trackTitle}
                 </span>
