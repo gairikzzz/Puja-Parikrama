@@ -747,7 +747,7 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
                     <circle cx="12" cy="13" r="3" fill="#211329"/>
                   </svg>
                 </div>
-                <p className="text-[#F5E5B7] font-semibold text-xs leading-tight">Upload Your Pandal Photos</p>
+                <p className="text-[#F5E5B7] font-semibold text-xs leading-tight">Upload Pandal Photos</p>
                 <p className="text-[#E9B83E]/80 text-[10px] mt-1.5 leading-tight">Take a new photo or select photos from your gallery</p>
               </div>
             ) : previews.length === 1 ? (
