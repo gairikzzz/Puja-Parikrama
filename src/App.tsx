@@ -3079,58 +3079,50 @@ export default function App() {
               </div>
             </div>
 
-            {/* Stats Card (Horizontal icon + number, label below, glowing bottom rim) */}
-            <div className="relative mb-3.5">
-              <div className="relative rounded-2xl sm:rounded-3xl bg-[#211329]/80 border border-white/10 py-4 px-2 sm:px-3 shadow-[0_8px_30px_rgba(0,0,0,0.5)] overflow-hidden">
-                <div className="grid grid-cols-3 items-center">
-                  {/* Column 1: Photos Shared */}
-                  <div className="text-center flex flex-col items-center px-1">
-                    <div className="flex items-center justify-center gap-2 mb-1">
-                      <svg className="w-5 h-5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="3" y="3" width="18" height="18" rx="3"/>
-                        <circle cx="15.5" cy="8.5" r="1.5" fill="currentColor"/>
-                        <path d="M4 19l6-7 5 6 3-3 3 4"/>
-                      </svg>
-                      <span className="text-xl sm:text-2xl font-black text-white leading-none">247</span>
-                    </div>
-                    <span className="text-xs sm:text-[13px] font-normal text-white/80 leading-tight">Photos Shared</span>
+            {/* Stats Card */}
+            <div className="rounded-2xl bg-[#211329]/70 border border-white/10 p-3 sm:p-3.5 mb-3 shadow-inner">
+              <div className="grid grid-cols-3 divide-x divide-white/10 items-center">
+                {/* Column 1: Photos Shared */}
+                <div className="text-center flex flex-col items-center px-1">
+                  <div className="flex items-center justify-center gap-1.5 sm:gap-2">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="3" width="18" height="18" rx="3"/>
+                      <circle cx="16" cy="8.5" r="1.5" fill="currentColor"/>
+                      <path d="M4 19l6-7 5 6 3-3 3 4"/>
+                    </svg>
+                    <span className="text-base sm:text-lg font-bold text-white tracking-tight leading-none">247</span>
                   </div>
-
-                  {/* Column 2: Pandals Covered */}
-                  <div className="text-center flex flex-col items-center px-1 border-x border-white/10">
-                    <div className="flex items-center justify-center gap-2 mb-1">
-                      <svg className="w-5 h-5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
-                        <circle cx="12" cy="9" r="2.5"/>
-                        <circle cx="12" cy="9" r="1" fill="currentColor"/>
-                      </svg>
-                      <span className="text-xl sm:text-2xl font-black text-white leading-none">86</span>
-                    </div>
-                    <span className="text-xs sm:text-[13px] font-normal text-white/80 leading-tight">Pandals Covered</span>
-                  </div>
-
-                  {/* Column 3: This Puja Rank */}
-                  <div className="text-center flex flex-col items-center px-1">
-                    <div className="flex items-center justify-center gap-2 mb-1">
-                      <svg className="w-5 h-5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
-                        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
-                        <path d="M4 4h16v5a8 8 0 0 1-16 0V4z"/>
-                        <path d="M12 17v4"/>
-                        <path d="M8 21h8"/>
-                      </svg>
-                      <span className="text-xl sm:text-2xl font-black text-white leading-none">#2</span>
-                    </div>
-                    <span className="text-xs sm:text-[13px] font-normal text-white/80 leading-tight">This Puja Rank</span>
-                  </div>
+                  <span className="text-[10px] sm:text-[11px] font-normal text-white/70 mt-1 leading-tight">Photos Shared</span>
                 </div>
 
-                {/* Glowing Bottom Accent Line directly on card rim */}
-                <div className="absolute bottom-0 inset-x-4 h-[2px] bg-gradient-to-r from-transparent via-[#E9B83E] to-transparent shadow-[0_0_12px_#E9B83E]" />
-              </div>
+                {/* Column 2: Pandals Covered */}
+                <div className="text-center flex flex-col items-center px-1">
+                  <div className="flex items-center justify-center gap-1.5 sm:gap-2">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                      <circle cx="12" cy="9" r="2.5"/>
+                      <circle cx="12" cy="9" r="1" fill="currentColor"/>
+                    </svg>
+                    <span className="text-base sm:text-lg font-bold text-white tracking-tight leading-none">86</span>
+                  </div>
+                  <span className="text-[10px] sm:text-[11px] font-normal text-white/70 mt-1 leading-tight">Pandals Covered</span>
+                </div>
 
-              {/* Ambient underglow beneath card */}
-              <div className="w-4/5 mx-auto h-2 bg-[#E9B83E]/20 blur-md -mt-1 rounded-full pointer-events-none" />
+                {/* Column 3: This Puja Rank */}
+                <div className="text-center flex flex-col items-center px-1">
+                  <div className="flex items-center justify-center gap-1.5 sm:gap-2">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+                      <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+                      <path d="M4 4h16v5a8 8 0 0 1-16 0V4z"/>
+                      <path d="M12 17v4"/>
+                      <path d="M8 21h8"/>
+                    </svg>
+                    <span className="text-base sm:text-lg font-bold text-white tracking-tight leading-none">#2</span>
+                  </div>
+                  <span className="text-[10px] sm:text-[11px] font-normal text-white/70 mt-1 leading-tight">This Puja Rank</span>
+                </div>
+              </div>
             </div>
 
             {/* My Contributions Section */}
