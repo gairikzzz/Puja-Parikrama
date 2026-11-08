@@ -2781,7 +2781,7 @@ export default function App() {
                 </div>
                 <div>
                   <h2 className="text-[#F5E5B7] font-bold text-sm sm:text-base leading-tight">
-                    Leaderboard
+                    Community Leaderboard
                   </h2>
                   <p className="text-[#E9B83E]/80 text-[10px] sm:text-[11px] font-medium leading-tight">
                     Top contributors to the community
