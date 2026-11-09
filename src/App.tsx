@@ -2797,41 +2797,50 @@ export default function App() {
               </button>
             </div>
 
-            {/* Filter Tabs (Two Tabs: This Puja with Calendar, All Time with Bar-Chart) */}
-            <div className="flex items-center justify-center gap-2.5 mb-3">
-              <button
-                type="button"
-                onClick={() => setLeaderboardTab('this_puja')}
-                className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold transition cursor-pointer ${
-                  leaderboardTab === 'this_puja'
-                    ? 'border border-[#E9B83E] bg-[#E9B83E]/15 text-[#F5E5B7] shadow-[0_0_12px_rgba(233,184,62,0.25)]'
-                    : 'text-white/60 hover:text-white border border-transparent'
-                }`}
+            {/* Filter Tabs Capsule (Shared Pill Container like Zoom Controls) */}
+            <div className="flex items-center justify-center mb-3">
+              <div
+                id="leaderboard-tabs-capsule"
+                className="inline-flex items-center rounded-full bg-[#211329]/75 border border-[#E9B83E]/40 shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.22)] backdrop-blur-md overflow-hidden transition-all"
               >
-                <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect width="18" height="18" x="3" y="4" rx="2" />
-                  <path d="M16 2v4" />
-                  <path d="M8 2v4" />
-                  <path d="M3 10h18" />
-                </svg>
-                <span>This Puja</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setLeaderboardTab('all_time')}
-                className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition cursor-pointer ${
-                  leaderboardTab === 'all_time'
-                    ? 'border border-[#E9B83E] bg-[#E9B83E]/15 text-[#F5E5B7] shadow-[0_0_12px_rgba(233,184,62,0.25)]'
-                    : 'text-white/60 hover:text-white border border-transparent'
-                }`}
-              >
-                <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M18 20V10" />
-                  <path d="M12 20V4" />
-                  <path d="M6 20v-6" />
-                </svg>
-                <span>All Time</span>
-              </button>
+                <button
+                  type="button"
+                  onClick={() => setLeaderboardTab('this_puja')}
+                  className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 text-xs transition-all cursor-pointer ${
+                    leaderboardTab === 'this_puja'
+                      ? 'bg-[#E9B83E]/20 text-[#F5E5B7] font-bold shadow-[inset_0_0_10px_rgba(233,184,62,0.25)]'
+                      : 'text-white/60 hover:text-white hover:bg-white/5 font-medium'
+                  }`}
+                >
+                  <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect width="18" height="18" x="3" y="4" rx="2" />
+                    <path d="M16 2v4" />
+                    <path d="M8 2v4" />
+                    <path d="M3 10h18" />
+                  </svg>
+                  <span>This Puja</span>
+                </button>
+
+                {/* Thin Golden Divider Line */}
+                <div className="w-[1px] h-4 bg-[#E9B83E]/30 pointer-events-none flex-shrink-0"></div>
+
+                <button
+                  type="button"
+                  onClick={() => setLeaderboardTab('all_time')}
+                  className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 text-xs transition-all cursor-pointer ${
+                    leaderboardTab === 'all_time'
+                      ? 'bg-[#E9B83E]/20 text-[#F5E5B7] font-bold shadow-[inset_0_0_10px_rgba(233,184,62,0.25)]'
+                      : 'text-white/60 hover:text-white hover:bg-white/5 font-medium'
+                  }`}
+                >
+                  <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 20V10" />
+                    <path d="M12 20V4" />
+                    <path d="M6 20v-6" />
+                  </svg>
+                  <span>All Time</span>
+                </button>
+              </div>
             </div>
 
             {/* Top 3 Podium Area */}
