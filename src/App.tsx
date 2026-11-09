@@ -2825,6 +2825,9 @@ export default function App() {
                   <span>This Puja</span>
                 </button>
 
+                {/* Subtle Blended Golden Divider Line */}
+                <div className="w-px h-4 sm:h-4.5 bg-gradient-to-b from-transparent via-[#E9B83E]/40 to-transparent flex-shrink-0" aria-hidden="true" />
+
                 <button
                   type="button"
                   onClick={() => setLeaderboardTab('all_time')}
