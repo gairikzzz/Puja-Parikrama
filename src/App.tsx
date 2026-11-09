@@ -2701,13 +2701,13 @@ export default function App() {
         </div>
       )}
 
-      {/* ── 5. FOOTER ATTRIBUTION (Extreme Right Bottom Corner) ── */}
+      {/* ── 5. FOOTER ATTRIBUTION (Centrally Aligned Below Submit Snap CTA) ── */}
       {mapReady && (
         <div
           id="footer-attribution"
-          className="fixed bottom-1.5 right-2.5 sm:bottom-2 sm:right-3.5 z-20 pointer-events-none select-none text-[11px] sm:text-xs font-normal text-[#8D8E97] tracking-tight drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)]"
+          className="fixed bottom-0.5 sm:bottom-1 left-1/2 -translate-x-1/2 z-30 pointer-events-none select-none text-center whitespace-nowrap text-[10px] sm:text-[11px] font-medium text-[#E9B83E] tracking-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]"
         >
-          Crafted with <span className="inline-block mx-0.5">❤️</span> by Gairik.
+          Crafted with <span className="inline-block mx-0.5 text-red-500">❤️</span> by Gairik and Shatadru
         </div>
       )}
 
