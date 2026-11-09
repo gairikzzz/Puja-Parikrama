@@ -768,7 +768,7 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
               <h2 className="text-[#F5E5B7] font-bold text-sm sm:text-base leading-tight">
                 Share Pandal Photos
               </h2>
-              <p className="text-[#E9B83E]/80 text-[10px] sm:text-[11px] font-medium leading-tight">
+              <p className="text-[#E9B83E]/80 text-xs sm:text-[13px] font-medium leading-tight">
                 Showcase your favourite pandals with the community
               </p>
             </div>
@@ -806,8 +806,8 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
                     <circle cx="12" cy="13" r="3" fill="#211329"/>
                   </svg>
                 </div>
-                <p className="text-[#F5E5B7] font-semibold text-xs leading-tight">Upload Pandal Photos</p>
-                <p className="text-[#E9B83E]/80 text-[10px] mt-1.5 leading-tight">Take a new photo or select photos from your gallery</p>
+                <p className="text-[#F5E5B7] font-semibold text-xs sm:text-[13px] leading-tight">Upload Pandal Photos</p>
+                <p className="text-[#E9B83E]/80 text-xs sm:text-[13px] font-medium mt-1 leading-tight">Take a new photo or select photos from your gallery</p>
               </div>
             ) : previews.length === 1 ? (
               <img src={previews[0]} alt="preview" className="w-full h-full object-cover" />
@@ -850,7 +850,7 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
 
           {/* Pandal Name & Dropdown (Styled like Search Bar & Landing Page Year) */}
           <div ref={pandalContainerRef} className="space-y-1.5 relative">
-            <label className="block text-[11px] sm:text-xs font-semibold text-[#F5E5B7]">
+            <label className="block text-xs sm:text-[13px] font-semibold text-[#F5E5B7]">
               <span>Pandal Name</span>
             </label>
             <div className="relative flex items-center rounded-full bg-[#211329]/75 hover:bg-[#211329]/85 border border-[#E9B83E]/40 hover:border-[#E9B83E] focus-within:border-[#E9B83E] shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.15)] backdrop-blur-md transition-all">
@@ -962,7 +962,7 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
 
           {/* Interactive Mini-Map Preview Card (Confirmation) with Floating Top Search Bar */}
           <div className="space-y-1.5">
-            <label className="block text-[11px] sm:text-xs font-semibold text-[#F5E5B7]">
+            <label className="block text-xs sm:text-[13px] font-semibold text-[#F5E5B7]">
               <span>Pandal Location</span>
             </label>
             <div
@@ -2783,7 +2783,7 @@ export default function App() {
                   <h2 className="text-[#F5E5B7] font-bold text-sm sm:text-base leading-tight">
                     Community Leaderboard
                   </h2>
-                  <p className="text-[#E9B83E]/80 text-[10px] sm:text-[11px] font-medium leading-tight">
+                  <p className="text-[#E9B83E]/80 text-xs sm:text-[13px] font-medium leading-tight">
                     Top contributors to the community
                   </p>
                 </div>
@@ -2833,8 +2833,8 @@ export default function App() {
                   {/* Step Pedestal */}
                   <div className="w-full bg-[#261533]/80 border-t border-x border-slate-400/40 rounded-t-xl pt-2 pb-2.5 px-1 text-center shadow-[0_0_12px_rgba(180,195,220,0.12)]">
                     <p className="text-white font-bold text-[11px] sm:text-xs truncate">Moumita</p>
-                    <p className="text-[#E9B83E] text-[10px] sm:text-[11px] font-semibold flex items-center justify-center gap-1 mt-0.5">
-                      <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <p className="flex items-center justify-center gap-1 mt-0.5 text-[#F5E5B7]/80 text-xs font-medium">
+                      <svg className="w-3.5 h-3.5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <rect width="15" height="15" x="3" y="3" rx="2.5" />
                         <circle cx="12.5" cy="8.5" r="1.5" />
                         <path d="m3.5 15 4-4a1.5 1.5 0 0 1 2.1 0L14 15" />
@@ -2878,8 +2878,8 @@ export default function App() {
                   {/* Step Pedestal */}
                   <div className="w-full bg-[#261533]/80 border-t border-x border-[#E9B83E]/50 rounded-t-xl pt-2 pb-3 px-1 text-center shadow-[0_0_12px_rgba(233,184,62,0.15)]">
                     <p className="text-white font-bold text-[11px] sm:text-xs truncate">Arindam</p>
-                    <p className="text-[#E9B83E] text-[10px] sm:text-[11px] font-semibold flex items-center justify-center gap-1 mt-0.5">
-                      <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <p className="flex items-center justify-center gap-1 mt-0.5 text-[#F5E5B7]/80 text-xs font-medium">
+                      <svg className="w-3.5 h-3.5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <rect width="15" height="15" x="3" y="3" rx="2.5" />
                         <circle cx="12.5" cy="8.5" r="1.5" />
                         <path d="m3.5 15 4-4a1.5 1.5 0 0 1 2.1 0L14 15" />
@@ -2923,8 +2923,8 @@ export default function App() {
                   {/* Step Pedestal */}
                   <div className="w-full bg-[#261533]/80 border-t border-x border-amber-600/40 rounded-t-xl pt-2 pb-2 px-1 text-center shadow-[0_0_12px_rgba(217,119,6,0.12)]">
                     <p className="text-white font-bold text-[11px] sm:text-xs truncate">Sourav</p>
-                    <p className="text-[#E9B83E] text-[10px] sm:text-[11px] font-semibold flex items-center justify-center gap-1 mt-0.5">
-                      <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <p className="flex items-center justify-center gap-1 mt-0.5 text-[#F5E5B7]/80 text-xs font-medium">
+                      <svg className="w-3.5 h-3.5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <rect width="15" height="15" x="3" y="3" rx="2.5" />
                         <circle cx="12.5" cy="8.5" r="1.5" />
                         <path d="m3.5 15 4-4a1.5 1.5 0 0 1 2.1 0L14 15" />
@@ -3029,7 +3029,7 @@ export default function App() {
                   <h2 className="text-[#F5E5B7] font-bold text-sm sm:text-base leading-tight">
                     My Profile
                   </h2>
-                  <p className="text-[#E9B83E]/80 text-[10px] sm:text-[11px] font-medium leading-tight">
+                  <p className="text-[#E9B83E]/80 text-xs sm:text-[13px] font-medium leading-tight">
                     Your Puja Porikroma journey
                   </p>
                 </div>
