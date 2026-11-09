@@ -3054,13 +3054,13 @@ export default function App() {
                   />
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-white font-extrabold text-base sm:text-lg leading-tight truncate">
+                  <h3 className="text-[#F5E5B7] font-bold text-base sm:text-lg leading-tight truncate">
                     {user?.displayName || 'Moumita D.'}
                   </h3>
-                  <div className="inline-flex items-center px-2.5 py-0.5 rounded-full border border-[#E9B83E]/80 bg-[#E9B83E]/15 text-[#F5E5B7] text-[10px] sm:text-[11px] font-bold mt-1.5 shadow-[0_0_10px_rgba(233,184,62,0.25)]">
+                  <div className="inline-flex items-center px-2.5 py-0.5 rounded-full border border-[#E9B83E]/80 bg-[#E9B83E]/15 text-[#F5E5B7] text-xs sm:text-[13px] font-bold mt-1.5 shadow-[0_0_10px_rgba(233,184,62,0.25)]">
                     #2 Top Contributor
                   </div>
-                  <p className="text-white/60 text-[10px] sm:text-[11px] font-medium mt-1 flex items-center gap-1.5">
+                  <p className="text-[#E9B83E]/80 text-xs sm:text-[13px] font-medium mt-1.5 flex items-center gap-1.5">
                     <span>📅</span> Member since Sep 2024
                   </p>
                 </div>
@@ -3091,9 +3091,9 @@ export default function App() {
                       <circle cx="16" cy="8.5" r="1.5" fill="currentColor"/>
                       <path d="M4 19l6-7 5 6 3-3 3 4"/>
                     </svg>
-                    <span className="text-base sm:text-lg font-bold text-white tracking-tight leading-none">247</span>
+                    <span className="text-base sm:text-lg font-bold text-[#F5E5B7] tracking-tight leading-none">247</span>
                   </div>
-                  <span className="text-[10px] sm:text-[11px] font-normal text-white/70 mt-1 leading-tight">Photos Shared</span>
+                  <span className="text-xs sm:text-[13px] font-medium text-[#E9B83E]/80 mt-1 leading-tight">Photos Shared</span>
                 </div>
 
                 {/* Column 2: Pandals Covered */}
@@ -3104,9 +3104,9 @@ export default function App() {
                       <circle cx="12" cy="9" r="2.5"/>
                       <circle cx="12" cy="9" r="1" fill="currentColor"/>
                     </svg>
-                    <span className="text-base sm:text-lg font-bold text-white tracking-tight leading-none">86</span>
+                    <span className="text-base sm:text-lg font-bold text-[#F5E5B7] tracking-tight leading-none">86</span>
                   </div>
-                  <span className="text-[10px] sm:text-[11px] font-normal text-white/70 mt-1 leading-tight">Pandals Covered</span>
+                  <span className="text-xs sm:text-[13px] font-medium text-[#E9B83E]/80 mt-1 leading-tight">Pandals Covered</span>
                 </div>
 
                 {/* Column 3: This Puja Rank */}
@@ -3119,9 +3119,9 @@ export default function App() {
                       <path d="M12 17v4"/>
                       <path d="M8 21h8"/>
                     </svg>
-                    <span className="text-base sm:text-lg font-bold text-white tracking-tight leading-none">#2</span>
+                    <span className="text-base sm:text-lg font-bold text-[#F5E5B7] tracking-tight leading-none">#2</span>
                   </div>
-                  <span className="text-[10px] sm:text-[11px] font-normal text-white/70 mt-1 leading-tight">This Puja Rank</span>
+                  <span className="text-xs sm:text-[13px] font-medium text-[#E9B83E]/80 mt-1 leading-tight">This Puja Rank</span>
                 </div>
               </div>
             </div>
@@ -3129,7 +3129,7 @@ export default function App() {
             {/* My Contributions Section */}
             <div className="rounded-2xl bg-[#211329]/60 border border-[#E9B83E]/25 p-3 mb-3 shadow-inner">
               <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-1.5 text-white font-bold text-xs sm:text-sm">
+                <div className="flex items-center gap-1.5 text-[#F5E5B7] font-semibold text-xs sm:text-[13px]">
                   <svg className="w-4 h-4 text-[#E9B83E]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
                     <circle cx="8.5" cy="8.5" r="1.5"/>
@@ -3143,7 +3143,7 @@ export default function App() {
                     setProfileModalVisible(false)
                     setUploadVisible(true)
                   }}
-                  className="text-[#E9B83E] hover:text-[#F5E5B7] text-xs font-semibold cursor-pointer transition flex items-center gap-1"
+                  className="text-[#E9B83E] hover:text-[#F5E5B7] text-xs sm:text-[13px] font-semibold cursor-pointer transition flex items-center gap-1"
                 >
                   View All →
                 </button>
@@ -3169,7 +3169,7 @@ export default function App() {
                 setProfileModalVisible(false)
                 setAuthModalVisible(true)
               }}
-              className="w-full p-2.5 sm:p-3 rounded-2xl bg-[#211329]/70 border border-[#E9B83E]/25 hover:border-[#E9B83E]/45 flex items-center justify-between mb-3 transition cursor-pointer active:scale-98"
+              className="w-full p-2.5 sm:p-3 rounded-2xl bg-[#211329]/70 border border-[#E9B83E]/25 hover:border-[#E9B83E]/45 flex items-center justify-between mb-3 transition cursor-pointer active:scale-98 group"
             >
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-[#E9B83E]/15 border border-[#E9B83E]/30 text-[#E9B83E] flex items-center justify-center flex-shrink-0">
@@ -3179,11 +3179,11 @@ export default function App() {
                   </svg>
                 </div>
                 <div className="text-left">
-                  <p className="text-white font-bold text-xs sm:text-sm leading-tight">Edit Profile</p>
-                  <p className="text-white/50 text-[10px] sm:text-[11px] leading-tight mt-0.5">Update your name, photo and details</p>
+                  <p className="text-[#F5E5B7] font-semibold text-xs sm:text-[13px] leading-tight">Edit Profile</p>
+                  <p className="text-[#E9B83E]/80 text-xs sm:text-[13px] font-medium leading-tight mt-0.5">Update your name, photo and details</p>
                 </div>
               </div>
-              <svg className="w-4 h-4 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+              <svg className="w-4 h-4 text-[#E9B83E]/60 group-hover:text-[#E9B83E] transition" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
               </svg>
             </button>
