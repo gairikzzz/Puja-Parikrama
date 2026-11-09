@@ -2801,19 +2801,19 @@ export default function App() {
               </button>
             </div>
 
-            {/* Filter Tabs Capsule (Shared Pill Container like Zoom Controls) */}
+            {/* Filter Tabs Capsule (Shared Pill Container Styled like Year Selector) */}
             <div className="flex items-center justify-center mb-3">
               <div
                 id="leaderboard-tabs-capsule"
-                className="inline-flex items-center rounded-full bg-[#211329]/75 border border-[#E9B83E]/40 shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.22)] backdrop-blur-md overflow-hidden transition-all"
+                className="inline-flex items-center p-1 rounded-full bg-[#211329]/90 border border-[#E9B83E]/35 shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.18)] backdrop-blur-md transition-all gap-1"
               >
                 <button
                   type="button"
                   onClick={() => setLeaderboardTab('this_puja')}
-                  className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 text-xs transition-all cursor-pointer ${
+                  className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-full text-xs transition-all cursor-pointer ${
                     leaderboardTab === 'this_puja'
-                      ? 'bg-[#E9B83E]/20 text-[#F5E5B7] font-bold shadow-[inset_0_0_10px_rgba(233,184,62,0.25)]'
-                      : 'text-white/60 hover:text-white hover:bg-white/5 font-medium'
+                      ? 'bg-[#E9B83E]/15 text-[#E9B83E] font-bold shadow-[0_0_8px_rgba(233,184,62,0.22)]'
+                      : 'text-[#F5E5B7]/80 hover:bg-[#E9B83E]/15 hover:text-[#E9B83E] font-semibold'
                   }`}
                 >
                   <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -2825,16 +2825,13 @@ export default function App() {
                   <span>This Puja</span>
                 </button>
 
-                {/* Thin Golden Divider Line */}
-                <div className="w-[1px] h-4 bg-[#E9B83E]/30 pointer-events-none flex-shrink-0"></div>
-
                 <button
                   type="button"
                   onClick={() => setLeaderboardTab('all_time')}
-                  className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 text-xs transition-all cursor-pointer ${
+                  className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-full text-xs transition-all cursor-pointer ${
                     leaderboardTab === 'all_time'
-                      ? 'bg-[#E9B83E]/20 text-[#F5E5B7] font-bold shadow-[inset_0_0_10px_rgba(233,184,62,0.25)]'
-                      : 'text-white/60 hover:text-white hover:bg-white/5 font-medium'
+                      ? 'bg-[#E9B83E]/15 text-[#E9B83E] font-bold shadow-[0_0_8px_rgba(233,184,62,0.22)]'
+                      : 'text-[#F5E5B7]/80 hover:bg-[#E9B83E]/15 hover:text-[#E9B83E] font-semibold'
                   }`}
                 >
                   <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
