@@ -3054,7 +3054,7 @@ export default function App() {
                   />
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-[#F5E5B7] font-bold text-base sm:text-lg leading-tight truncate">
+                  <h3 className="text-white font-bold text-base sm:text-lg leading-tight truncate">
                     {user?.displayName || 'Moumita D.'}
                   </h3>
                   <div className="inline-flex items-center px-2.5 py-0.5 rounded-full border border-[#E9B83E]/80 bg-[#E9B83E]/15 text-[#F5E5B7] text-xs sm:text-[13px] font-bold mt-1.5 shadow-[0_0_10px_rgba(233,184,62,0.25)]">
