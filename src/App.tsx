@@ -3067,11 +3067,11 @@ export default function App() {
                   <h3 className="text-white font-bold text-sm sm:text-[15px] leading-tight truncate">
                     {user?.displayName || 'Moumita D.'}
                   </h3>
-                  <div className="inline-flex items-center px-2 py-0.5 rounded-full border border-[#E9B83E]/80 bg-[#E9B83E]/15 text-[#F5E5B7] text-[11px] sm:text-xs font-bold mt-1 shadow-[0_0_10px_rgba(233,184,62,0.25)]">
+                  <div className="inline-flex items-center px-2 py-0.5 rounded-full border border-[#E9B83E]/80 bg-[#E9B83E]/15 text-[#F5E5B7] text-[9.5px] sm:text-[10px] font-bold mt-1 shadow-[0_0_8px_rgba(233,184,62,0.20)]">
                     #2 Top Contributor
                   </div>
-                  <p className="text-[#E9B83E]/80 text-[11px] sm:text-xs font-medium mt-1 flex items-center gap-1.5">
-                    <span>📅</span> Member since Sep 2024
+                  <p className="text-[#E9B83E]/80 text-[9.5px] sm:text-[10px] font-medium mt-0.5 flex items-center gap-1.5">
+                    Member since Sep 2024
                   </p>
                 </div>
               </div>
