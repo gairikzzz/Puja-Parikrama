@@ -2223,41 +2223,21 @@ export default function App() {
         </div>
       )}
 
-      {/* Man's Camera Lens Flash Strobe & Flare (Dynamically positioned right on the man's smartphone, projecting purely upwards) */}
+      {/* Man's Camera Lens Flash Strobe & Flare (Dynamically positioned right on the man's smartphone) */}
       {showSplash && cameraFlashing && (
         <div
           id="camera-lens-flash"
-          style={{ left: `${phonePos.x}px`, top: `${phonePos.y}px`, width: 0, height: 0 }}
-          className="fixed pointer-events-none z-[10001]"
+          style={{ left: `${phonePos.x}px`, top: `${phonePos.y}px` }}
+          className="fixed -translate-x-1/2 -translate-y-1/2 pointer-events-none z-[10001]"
         >
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[180px] sm:w-[240px] h-[120px] sm:h-[160px] overflow-hidden pointer-events-none flex flex-col justify-end items-center">
-            {/* Upward Volumetric Light Beam Cone */}
-            <div
-              className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[130px] sm:w-[170px] h-[105px] sm:h-[145px]"
-              style={{
-                background: 'radial-gradient(ellipse at 50% 100%, rgba(255,255,255,0.95) 0%, rgba(255,248,220,0.7) 25%, rgba(255,235,170,0.3) 50%, rgba(255,255,255,0.08) 70%, transparent 85%)',
-                clipPath: 'polygon(50% 100%, 0% 0%, 100% 0%)',
-              }}
-            />
-            {/* Upward Vertical Flare Streak */}
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[90px] sm:h-[130px] w-[2px] bg-gradient-to-t from-white via-white/80 to-transparent blur-[0.3px]" />
-            {/* Upward Diagonal Flare Rays (Fanning up-left & up-right) */}
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 origin-bottom -rotate-[26deg] h-[75px] sm:h-[110px] w-[1.5px] bg-gradient-to-t from-white/90 via-white/40 to-transparent blur-[0.3px]" />
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 origin-bottom rotate-[26deg] h-[75px] sm:h-[110px] w-[1.5px] bg-gradient-to-t from-white/90 via-white/40 to-transparent blur-[0.3px]" />
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 origin-bottom -rotate-[50deg] h-[60px] sm:h-[85px] w-[1px] bg-gradient-to-t from-white/70 via-white/20 to-transparent blur-[0.3px]" />
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 origin-bottom rotate-[50deg] h-[60px] sm:h-[85px] w-[1px] bg-gradient-to-t from-white/70 via-white/20 to-transparent blur-[0.3px]" />
-            {/* Horizontal Phone-Top Glint Streak */}
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[85px] sm:w-[130px] h-[2px] bg-gradient-to-r from-transparent via-white to-transparent blur-[0.3px]" />
-            {/* Central Super-Bright White-Hot Core Dome (Upward glow only) */}
-            <div
-              className="absolute bottom-0 left-1/2 -translate-x-1/2 w-5 h-2.5 sm:w-6 sm:h-3 bg-white"
-              style={{
-                borderTopLeftRadius: '9999px',
-                borderTopRightRadius: '9999px',
-                boxShadow: '0 -4px 12px 6px rgba(255,255,255,1), 0 -8px 24px 10px rgba(255,245,210,0.85), 0 -14px 40px 14px rgba(255,230,160,0.5)',
-              }}
-            />
-          </div>
+          {/* Central super-bright white-hot core */}
+          <div className="w-10 h-10 rounded-full bg-white shadow-[0_0_80px_45px_rgba(255,255,255,1),0_0_160px_90px_rgba(255,245,210,0.95)] animate-ping" />
+          {/* Anamorphic lens flare streak */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] sm:w-[700px] h-[3.5px] bg-gradient-to-r from-transparent via-white to-transparent blur-[0.5px]" />
+          {/* Cross star flare streak */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[220px] sm:h-[350px] w-[2.5px] bg-gradient-to-b from-transparent via-white to-transparent blur-[0.5px]" />
+          {/* Diagonal glare streak */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[240px] sm:w-[380px] h-[2px] rotate-45 bg-gradient-to-r from-transparent via-white/80 to-transparent blur-[0.5px]" />
         </div>
       )}
 
