@@ -3050,17 +3050,17 @@ export default function App() {
                   <img
                     src={user?.photoURL || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80'}
                     alt="Devotee"
-                    className="w-16 h-16 sm:w-18 sm:h-18 rounded-full object-cover border-2 border-[#E9B83E] shadow-[0_0_20px_rgba(233,184,62,0.5)]"
+                    className="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover border-2 border-[#E9B83E] shadow-[0_0_16px_rgba(233,184,62,0.4)]"
                   />
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-white font-bold text-base sm:text-lg leading-tight truncate">
+                  <h3 className="text-white font-bold text-sm sm:text-[15px] leading-tight truncate">
                     {user?.displayName || 'Moumita D.'}
                   </h3>
-                  <div className="inline-flex items-center px-2.5 py-0.5 rounded-full border border-[#E9B83E]/80 bg-[#E9B83E]/15 text-[#F5E5B7] text-xs sm:text-[13px] font-bold mt-1.5 shadow-[0_0_10px_rgba(233,184,62,0.25)]">
+                  <div className="inline-flex items-center px-2 py-0.5 rounded-full border border-[#E9B83E]/80 bg-[#E9B83E]/15 text-[#F5E5B7] text-[11px] sm:text-xs font-bold mt-1 shadow-[0_0_10px_rgba(233,184,62,0.25)]">
                     #2 Top Contributor
                   </div>
-                  <p className="text-[#E9B83E]/80 text-xs sm:text-[13px] font-medium mt-1.5 flex items-center gap-1.5">
+                  <p className="text-[#E9B83E]/80 text-[11px] sm:text-xs font-medium mt-1 flex items-center gap-1.5">
                     <span>📅</span> Member since Sep 2024
                   </p>
                 </div>
@@ -3085,43 +3085,43 @@ export default function App() {
               <div className="grid grid-cols-3 divide-x divide-white/10 items-center">
                 {/* Column 1: Photos Shared */}
                 <div className="text-center flex flex-col items-center px-1">
-                  <div className="flex items-center justify-center gap-1.5 sm:gap-2">
-                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <div className="flex items-center justify-center gap-1.5">
+                    <svg className="w-4 h-4 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <rect x="3" y="3" width="18" height="18" rx="3"/>
                       <circle cx="16" cy="8.5" r="1.5" fill="currentColor"/>
                       <path d="M4 19l6-7 5 6 3-3 3 4"/>
                     </svg>
-                    <span className="text-base sm:text-lg font-bold text-[#F5E5B7] tracking-tight leading-none">247</span>
+                    <span className="text-sm sm:text-base font-bold text-[#F5E5B7] tracking-tight leading-none">247</span>
                   </div>
-                  <span className="text-xs sm:text-[13px] font-medium text-[#E9B83E]/80 mt-1 leading-tight">Photos Shared</span>
+                  <span className="text-[11px] sm:text-xs font-medium text-[#E9B83E]/80 mt-1 leading-tight">Photos Shared</span>
                 </div>
 
                 {/* Column 2: Pandals Covered */}
                 <div className="text-center flex flex-col items-center px-1">
-                  <div className="flex items-center justify-center gap-1.5 sm:gap-2">
-                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <div className="flex items-center justify-center gap-1.5">
+                    <svg className="w-4 h-4 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
                       <circle cx="12" cy="9" r="2.5"/>
                       <circle cx="12" cy="9" r="1" fill="currentColor"/>
                     </svg>
-                    <span className="text-base sm:text-lg font-bold text-[#F5E5B7] tracking-tight leading-none">86</span>
+                    <span className="text-sm sm:text-base font-bold text-[#F5E5B7] tracking-tight leading-none">86</span>
                   </div>
-                  <span className="text-xs sm:text-[13px] font-medium text-[#E9B83E]/80 mt-1 leading-tight">Pandals Covered</span>
+                  <span className="text-[11px] sm:text-xs font-medium text-[#E9B83E]/80 mt-1 leading-tight">Pandals Covered</span>
                 </div>
 
                 {/* Column 3: This Puja Rank */}
                 <div className="text-center flex flex-col items-center px-1">
-                  <div className="flex items-center justify-center gap-1.5 sm:gap-2">
-                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <div className="flex items-center justify-center gap-1.5">
+                    <svg className="w-4 h-4 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
                       <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
                       <path d="M4 4h16v5a8 8 0 0 1-16 0V4z"/>
                       <path d="M12 17v4"/>
                       <path d="M8 21h8"/>
                     </svg>
-                    <span className="text-base sm:text-lg font-bold text-[#F5E5B7] tracking-tight leading-none">#2</span>
+                    <span className="text-sm sm:text-base font-bold text-[#F5E5B7] tracking-tight leading-none">#2</span>
                   </div>
-                  <span className="text-xs sm:text-[13px] font-medium text-[#E9B83E]/80 mt-1 leading-tight">This Puja Rank</span>
+                  <span className="text-[11px] sm:text-xs font-medium text-[#E9B83E]/80 mt-1 leading-tight">This Puja Rank</span>
                 </div>
               </div>
             </div>
@@ -3143,7 +3143,7 @@ export default function App() {
                     setProfileModalVisible(false)
                     setUploadVisible(true)
                   }}
-                  className="text-[#E9B83E] hover:text-[#F5E5B7] text-xs sm:text-[13px] font-semibold cursor-pointer transition flex items-center gap-1"
+                  className="text-[#E9B83E] hover:text-[#F5E5B7] text-[11px] sm:text-xs font-semibold cursor-pointer transition flex items-center gap-1"
                 >
                   View All →
                 </button>
@@ -3180,7 +3180,7 @@ export default function App() {
                 </div>
                 <div className="text-left">
                   <p className="text-[#F5E5B7] font-semibold text-xs sm:text-[13px] leading-tight">Edit Profile</p>
-                  <p className="text-[#E9B83E]/80 text-xs sm:text-[13px] font-medium leading-tight mt-0.5">Update your name, photo and details</p>
+                  <p className="text-[#E9B83E]/75 text-[11px] sm:text-xs font-medium leading-tight mt-0.5">Update your name, photo and details</p>
                 </div>
               </div>
               <svg className="w-4 h-4 text-[#E9B83E]/60 group-hover:text-[#E9B83E] transition" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
