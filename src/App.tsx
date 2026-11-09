@@ -2805,12 +2805,12 @@ export default function App() {
             <div className="flex items-center justify-center mb-3">
               <div
                 id="leaderboard-tabs-capsule"
-                className="inline-flex items-center p-1 rounded-full bg-[#211329]/90 border border-[#E9B83E]/35 shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.18)] backdrop-blur-md transition-all gap-1"
+                className="inline-flex items-center p-1 rounded-full bg-[#211329]/90 border border-[#E9B83E]/35 shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.18)] backdrop-blur-md transition-all"
               >
                 <button
                   type="button"
                   onClick={() => setLeaderboardTab('this_puja')}
-                  className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-full text-xs transition-all cursor-pointer ${
+                  className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-l-full rounded-r-none border-r border-[#E9B83E]/25 text-xs transition-all cursor-pointer ${
                     leaderboardTab === 'this_puja'
                       ? 'bg-[#E9B83E]/15 text-[#E9B83E] font-bold shadow-[0_0_8px_rgba(233,184,62,0.22)]'
                       : 'text-[#F5E5B7]/80 hover:bg-[#E9B83E]/15 hover:text-[#E9B83E] font-semibold'
@@ -2825,13 +2825,10 @@ export default function App() {
                   <span>This Puja</span>
                 </button>
 
-                {/* Subtle Blended Golden Divider Line */}
-                <div className="w-px h-4 sm:h-4.5 bg-gradient-to-b from-transparent via-[#E9B83E]/40 to-transparent flex-shrink-0" aria-hidden="true" />
-
                 <button
                   type="button"
                   onClick={() => setLeaderboardTab('all_time')}
-                  className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-full text-xs transition-all cursor-pointer ${
+                  className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-r-full rounded-l-none text-xs transition-all cursor-pointer ${
                     leaderboardTab === 'all_time'
                       ? 'bg-[#E9B83E]/15 text-[#E9B83E] font-bold shadow-[0_0_8px_rgba(233,184,62,0.22)]'
                       : 'text-[#F5E5B7]/80 hover:bg-[#E9B83E]/15 hover:text-[#E9B83E] font-semibold'
