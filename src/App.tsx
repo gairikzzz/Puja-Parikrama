@@ -3067,12 +3067,15 @@ export default function App() {
               </div>
 
               {/* Glowing Golden Maa Durga Artwork Image */}
-              <div className="absolute right-0 -top-2 -bottom-2 w-48 sm:w-56 flex items-center justify-end pointer-events-none select-none overflow-hidden">
+              <div className="absolute right-0 -top-2 -bottom-2 w-48 sm:w-56 flex items-center justify-end pointer-events-none select-none">
                 <img
-                  src="/profile-durga-bg.png?v=t1"
+                  src="/profile-durga-bg.png?v=t2"
                   alt="Maa Durga"
-                  className="h-full w-auto max-w-none object-contain object-right drop-shadow-[0_0_16px_rgba(233,184,62,0.4)] opacity-95 mix-blend-screen [mask-image:linear-gradient(to_left,black_80%,transparent)]"
-                  style={{ WebkitMaskImage: 'linear-gradient(to left, black 80%, transparent)' }}
+                  className="h-full w-auto max-w-none object-contain object-right drop-shadow-[0_0_16px_rgba(233,184,62,0.4)] opacity-95 mix-blend-screen"
+                  style={{
+                    maskImage: 'radial-gradient(ellipse at 60% 50%, black 40%, transparent 75%)',
+                    WebkitMaskImage: 'radial-gradient(ellipse at 60% 50%, black 40%, transparent 75%)',
+                  }}
                 />
               </div>
             </div>
