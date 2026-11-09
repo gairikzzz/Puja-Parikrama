@@ -2871,7 +2871,7 @@ export default function App() {
                       />
                     </div>
                     {/* Rank Badge */}
-                    <div className="w-5 h-5 rounded-full bg-[#E9B83E] text-[#211329] font-black text-xs flex items-center justify-center -mt-2.5 z-10 shadow-[0_0_8px_rgba(233,184,62,0.7)]">
+                    <div className="w-5 h-5 rounded-full bg-[#3d3218] border border-[#E9B83E] text-[#E9B83E] font-bold text-[10px] flex items-center justify-center -mt-2.5 z-10 shadow">
                       1
                     </div>
                   </div>
