@@ -2035,7 +2035,37 @@ export default function App() {
         if (!userMarkerRef.current) {
           const dot = document.createElement('div')
           dot.className = 'user-gps-marker'
-          dot.innerHTML = '<div class="user-gps-halo"></div><div class="user-gps-dot"></div>'
+          dot.innerHTML = `
+            <div class="user-gps-halo user-gps-halo-1"></div>
+            <div class="user-gps-halo user-gps-halo-2"></div>
+            <div class="user-gps-rays-wrap">
+              <svg class="user-gps-rays-svg" viewBox="0 0 100 100" fill="none">
+                <defs>
+                  <radialGradient id="goldenRayGradReact" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#FFF3C4" stop-opacity="1" />
+                    <stop offset="30%" stop-color="#E9B83E" stop-opacity="0.85" />
+                    <stop offset="70%" stop-color="#E9B83E" stop-opacity="0.3" />
+                    <stop offset="100%" stop-color="#E9B83E" stop-opacity="0" />
+                  </radialGradient>
+                </defs>
+                <g stroke="url(#goldenRayGradReact)" stroke-linecap="round">
+                  <line x1="50" y1="50" x2="50" y2="4" stroke-width="2.5" />
+                  <line x1="50" y1="50" x2="73" y2="10" stroke-width="1.8" />
+                  <line x1="50" y1="50" x2="90" y2="27" stroke-width="2.2" />
+                  <line x1="50" y1="50" x2="96" y2="50" stroke-width="2.5" />
+                  <line x1="50" y1="50" x2="90" y2="73" stroke-width="1.8" />
+                  <line x1="50" y1="50" x2="73" y2="90" stroke-width="2.2" />
+                  <line x1="50" y1="50" x2="50" y2="96" stroke-width="2.5" />
+                  <line x1="50" y1="50" x2="27" y2="90" stroke-width="1.8" />
+                  <line x1="50" y1="50" x2="10" y2="73" stroke-width="2.2" />
+                  <line x1="50" y1="50" x2="4" y2="50" stroke-width="2.5" />
+                  <line x1="50" y1="50" x2="10" y2="27" stroke-width="1.8" />
+                  <line x1="50" y1="50" x2="27" y2="10" stroke-width="2.2" />
+                </g>
+              </svg>
+            </div>
+            <div class="user-gps-dot"></div>
+          `
           if (window.google.maps.marker?.AdvancedMarkerElement) {
             userMarkerRef.current = new window.google.maps.marker.AdvancedMarkerElement({
               map: googleMapRef.current,
@@ -2051,7 +2081,7 @@ export default function App() {
               icon: {
                 path: window.google.maps.SymbolPath.CIRCLE,
                 scale: 8,
-                fillColor: '#4285F4',
+                fillColor: '#E9B83E',
                 fillOpacity: 1,
                 strokeColor: '#FFFFFF',
                 strokeWeight: 2.5,
