@@ -1227,6 +1227,12 @@ export default function App() {
     return null
   })
   const [authModalVisible, setAuthModalVisible] = useState(false)
+  const [pendingUploadAfterAuth, setPendingUploadAfterAuth] = useState(false)
+  const [authEmailMode, setAuthEmailMode] = useState(false)
+  const [authEmail, setAuthEmail] = useState('')
+  const [authPassword, setAuthPassword] = useState('')
+  const [authIsSignUp, setAuthIsSignUp] = useState(false)
+  const [authError, setAuthError] = useState('')
   const [leaderboardModalVisible, setLeaderboardModalVisible] = useState(false)
   const [leaderboardTab, setLeaderboardTab] = useState<'this_puja' | 'all_time'>('this_puja')
   const [profileModalVisible, setProfileModalVisible] = useState(false)
@@ -1745,6 +1751,21 @@ export default function App() {
     }
   }, [showSplash, triggerCameraFlashAndEnter])
 
+  const completeAuth = (newUser: AuthUser, provider: string) => {
+    localStorage.setItem('puja_parikrama_user', JSON.stringify(newUser))
+    setUser(newUser)
+    setAuthModalVisible(false)
+    setAuthEmailMode(false)
+    setAuthEmail('')
+    setAuthPassword('')
+    setAuthError('')
+    showToast(`✅ Welcome, ${newUser.displayName}! (${provider})`)
+    if (pendingUploadAfterAuth) {
+      setPendingUploadAfterAuth(false)
+      setUploadVisible(true)
+    }
+  }
+
   const handleGoogleSignIn = () => {
     const simulatedNames = ['Shatadru Sarkar', 'Ananya Roy', 'Priya Saha', 'Saptarshi Sen']
     const chosenName = simulatedNames[Math.floor(Math.random() * simulatedNames.length)]
@@ -1754,16 +1775,48 @@ export default function App() {
       email: `${chosenName.toLowerCase().replace(' ', '.')}@gmail.com`,
       photoURL: `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(chosenName)}&backgroundColor=ffdfbf`
     }
-    localStorage.setItem('puja_parikrama_user', JSON.stringify(newUser))
-    setUser(newUser)
-    setAuthModalVisible(false)
-    showToast(`✅ Signed in as ${newUser.displayName}`)
+    completeAuth(newUser, 'Google')
+  }
+
+  const handleFacebookSignIn = () => {
+    const simulatedNames = ['Debasish Chakraborty', 'Riya Bhattacharya', 'Sourav Das', 'Moumita Deb']
+    const chosenName = simulatedNames[Math.floor(Math.random() * simulatedNames.length)]
+    const newUser: AuthUser = {
+      uid: 'fb-uid-' + Math.random().toString(36).substring(2, 10),
+      displayName: chosenName,
+      email: `${chosenName.toLowerCase().replace(' ', '.')}@facebook.com`,
+      photoURL: `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(chosenName)}&backgroundColor=b6e3f4`
+    }
+    completeAuth(newUser, 'Facebook')
+  }
+
+  const handleEmailAuthSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault()
+    setAuthError('')
+    const trimmedEmail = authEmail.trim()
+    if (!trimmedEmail || !trimmedEmail.includes('@') || !trimmedEmail.includes('.')) {
+      setAuthError('Please enter a valid email address')
+      return
+    }
+    if (!authPassword || authPassword.length < 6) {
+      setAuthError('Password must be at least 6 characters')
+      return
+    }
+    const namePart = trimmedEmail.split('@')[0].replace(/[._]/g, ' ')
+    const formattedName = namePart.replace(/\b\w/g, c => c.toUpperCase()) || 'Devotee'
+    const newUser: AuthUser = {
+      uid: 'email-uid-' + Math.random().toString(36).substring(2, 10),
+      displayName: formattedName,
+      email: trimmedEmail,
+      photoURL: `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(formattedName)}&backgroundColor=ffdfbf`
+    }
+    completeAuth(newUser, 'Email')
   }
 
   const handleSignOut = () => {
     localStorage.removeItem('puja_parikrama_user')
     setUser(null)
-    showToast('👋 Signed out from Google')
+    showToast('👋 Signed out of Puja Porikroma')
   }
 
   // ── increment live viewer count randomly ──
@@ -2535,7 +2588,14 @@ export default function App() {
       {mapReady && (
         <button
           id="camera-btn"
-          onClick={() => setUploadVisible(true)}
+          onClick={() => {
+            if (!user) {
+              setPendingUploadAfterAuth(true)
+              setAuthModalVisible(true)
+            } else {
+              setUploadVisible(true)
+            }
+          }}
           title="Snap Pandal"
           className="fixed bottom-4 sm:bottom-5 left-1/2 -translate-x-1/2 z-40 w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] flex items-center justify-center border-2 sm:border-[2.5px] border-[#211329] shadow-[0_0_14px_rgba(233,184,62,0.30),0_4px_16px_rgba(13,12,27,0.55)] hover:shadow-[0_0_20px_rgba(233,184,62,0.50),0_4px_18px_rgba(13,12,27,0.60)] hover:scale-[1.02] active:scale-95 duration-200 transition-all pointer-events-auto flex-shrink-0 cursor-pointer"
         >
@@ -2705,43 +2765,189 @@ export default function App() {
         }}
       />
 
-      {/* ── GOOGLE AUTH MODAL ── */}
+      {/* ── PUJA PORIKROMA REGISTRATION / SIGN-IN MODAL ── */}
       {authModalVisible && (
-        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(16px)' }}>
-          <div className="w-full max-w-sm rounded-3xl p-6 text-center relative border border-white/10 shadow-2xl" style={{ background: '#121224' }}>
+        <div
+          className="fixed inset-0 z-[160] flex items-center justify-center p-3 sm:p-4"
+          style={{ background: 'rgba(5, 5, 12, 0.78)', backdropFilter: 'blur(16px)' }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setAuthModalVisible(false)
+              setPendingUploadAfterAuth(false)
+              setAuthEmailMode(false)
+              setAuthError('')
+            }
+          }}
+        >
+          <div
+            className="w-full max-w-sm rounded-[28px] p-6 text-center relative border border-[#E9B83E]/35 shadow-[0_20px_60px_rgba(0,0,0,0.8),0_0_30px_rgba(233,184,62,0.15)] flex flex-col items-center"
+            style={{
+              background: 'radial-gradient(ellipse at top, #2b1836 0%, #150e20 60%, #0d0814 100%)'
+            }}
+          >
+            {/* Close Button */}
             <button
-              onClick={() => setAuthModalVisible(false)}
-              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:text-white"
+              onClick={() => {
+                setAuthModalVisible(false)
+                setPendingUploadAfterAuth(false)
+                setAuthEmailMode(false)
+                setAuthError('')
+              }}
+              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition active:scale-95 cursor-pointer text-sm"
+              title="Close"
             >
               ✕
             </button>
-            <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 mx-auto flex items-center justify-center mb-4 shadow-xl">
-              <svg className="w-9 h-9" viewBox="0 0 24 24">
-                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-              </svg>
+
+            {/* Circular Durga Maa Round Emblem */}
+            <div className="relative mb-3 flex items-center justify-center">
+              <div className="absolute inset-0 rounded-full bg-[#E9B83E]/25 blur-md" />
+              <img
+                src="/login-durga-emblem.png"
+                alt="Puja Porikroma Durga Emblem"
+                className="relative w-20 h-20 sm:w-22 sm:h-22 rounded-full object-cover border-2 border-[#E9B83E] shadow-[0_0_20px_rgba(233,184,62,0.45)]"
+              />
             </div>
-            <h3 className="text-white font-extrabold text-xl mb-1.5">Sign in with Google</h3>
-            <p className="text-white/60 text-xs leading-relaxed mb-6">
-              Sign in to Puja Parikrama to tag your pandal stories with your profile, anchor live GPS coordinates, and broadcast to the Agartala map.
+
+            {/* Title & Subtitle */}
+            <h3 className="text-[#F5E5B7] font-black text-xl sm:text-2xl tracking-tight mb-1">
+              Welcome to Puja Porikroma
+            </h3>
+            <p className="text-[#E9B83E]/85 text-xs sm:text-[13px] font-medium leading-relaxed mb-5">
+              Sign in to explore, share and celebrate.
             </p>
-            <button
-              id="google-modal-signin-btn"
-              onClick={handleGoogleSignIn}
-              className="w-full py-3.5 px-4 rounded-xl bg-white hover:bg-gray-100 text-gray-900 font-bold text-sm flex items-center justify-center gap-3 shadow-lg transition active:scale-98"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24">
-                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-              </svg>
-              <span>Continue with Google</span>
-            </button>
-            <p className="text-white/40 text-[11px] mt-4">
-              🔒 Powered by Firebase Auth • Popup & Session Cache
+
+            {!authEmailMode ? (
+              <div className="w-full flex flex-col gap-2.5">
+                {/* Continue with Google */}
+                <button
+                  id="google-modal-signin-btn"
+                  onClick={handleGoogleSignIn}
+                  className="w-full py-3 px-4 rounded-xl bg-white hover:bg-gray-100 text-gray-800 font-bold text-sm flex items-center justify-center gap-3 shadow-[0_4px_14px_rgba(0,0,0,0.3)] transition active:scale-98 cursor-pointer"
+                >
+                  <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                  </svg>
+                  <span>Continue with Google</span>
+                </button>
+
+                {/* Continue with Facebook */}
+                <button
+                  id="facebook-modal-signin-btn"
+                  onClick={handleFacebookSignIn}
+                  className="w-full py-3 px-4 rounded-xl bg-[#1877F2] hover:bg-[#166fe5] text-white font-bold text-sm flex items-center justify-center gap-3 shadow-[0_4px_14px_rgba(24,119,242,0.35)] transition active:scale-98 cursor-pointer"
+                >
+                  <svg className="w-5 h-5 flex-shrink-0 fill-current" viewBox="0 0 24 24">
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                  </svg>
+                  <span>Continue with Facebook</span>
+                </button>
+
+                {/* OR Divider */}
+                <div className="flex items-center my-1 px-2">
+                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#E9B83E]/30 to-[#E9B83E]/40" />
+                  <span className="px-3 text-[11px] font-bold text-[#F5E5B7]/60 tracking-widest uppercase">
+                    OR
+                  </span>
+                  <div className="flex-1 h-px bg-gradient-to-r from-[#E9B83E]/40 via-[#E9B83E]/30 to-transparent" />
+                </div>
+
+                {/* Continue with Email */}
+                <button
+                  id="email-modal-toggle-btn"
+                  onClick={() => {
+                    setAuthEmailMode(true)
+                    setAuthError('')
+                  }}
+                  className="w-full py-3 px-4 rounded-xl bg-[#211329]/90 hover:bg-[#2b1836] text-[#F5E5B7] font-semibold text-sm border border-[#E9B83E]/40 hover:border-[#E9B83E] flex items-center justify-center gap-2.5 shadow-md transition active:scale-98 cursor-pointer"
+                >
+                  <svg className="w-5 h-5 text-[#E9B83E] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                  </svg>
+                  <span>Continue with Email</span>
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleEmailAuthSubmit} className="w-full flex flex-col gap-3 text-left">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAuthEmailMode(false)
+                    setAuthError('')
+                  }}
+                  className="text-xs text-[#E9B83E]/80 hover:text-[#E9B83E] flex items-center gap-1 font-medium transition cursor-pointer mb-1"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                  </svg>
+                  <span>Back to all options</span>
+                </button>
+
+                <div>
+                  <label className="block text-[11px] font-semibold text-[#F5E5B7]/80 uppercase tracking-wider mb-1">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={authEmail}
+                    onChange={(e) => setAuthEmail(e.target.value)}
+                    placeholder="devotee@gmail.com"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-black/40 border border-[#E9B83E]/30 focus:border-[#E9B83E] focus:outline-none text-white text-xs sm:text-sm placeholder-white/30"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-semibold text-[#F5E5B7]/80 uppercase tracking-wider mb-1">
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    value={authPassword}
+                    onChange={(e) => setAuthPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-black/40 border border-[#E9B83E]/30 focus:border-[#E9B83E] focus:outline-none text-white text-xs sm:text-sm placeholder-white/30"
+                  />
+                </div>
+
+                {authError && (
+                  <p className="text-red-400 text-xs font-medium bg-red-950/40 border border-red-500/30 rounded-lg p-2 text-center">
+                    {authError}
+                  </p>
+                )}
+
+                <button
+                  type="submit"
+                  className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] text-[#211329] font-bold text-sm shadow-[0_0_15px_rgba(233,184,62,0.35)] hover:shadow-[0_0_20px_rgba(233,184,62,0.5)] transition active:scale-98 cursor-pointer mt-1"
+                >
+                  {authIsSignUp ? 'Create Account' : 'Sign In with Email'}
+                </button>
+
+                <div className="text-center mt-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAuthIsSignUp(!authIsSignUp)
+                      setAuthError('')
+                    }}
+                    className="text-xs text-[#E9B83E]/90 hover:text-[#E9B83E] font-medium transition cursor-pointer"
+                  >
+                    {authIsSignUp ? 'Already have an account? Sign In' : "Don't have an account? Create one"}
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {/* Footer Terms */}
+            <p className="text-white/40 text-[11px] leading-relaxed mt-5 max-w-[280px]">
+              By continuing, you agree to our{' '}
+              <span className="text-[#E9B83E]/70 underline decoration-[#E9B83E]/40 hover:text-[#E9B83E] cursor-pointer">Terms of Service</span>
+              {' '}and{' '}
+              <span className="text-[#E9B83E]/70 underline decoration-[#E9B83E]/40 hover:text-[#E9B83E] cursor-pointer">Privacy Policy</span>.
             </p>
           </div>
         </div>
