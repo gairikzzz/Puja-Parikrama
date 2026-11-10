@@ -3461,7 +3461,7 @@ export default function App() {
                 </div>
 
                 <p className="text-[#E9B83E]/90 text-xs leading-relaxed mb-4">
-                  Open your inbox and click the link to verify your email and continue to Puja Porikroma.
+                  Open your inbox and click the link to verify your email.
                 </p>
 
                 <div className="w-full pt-3 border-t border-[#E9B83E]/20 text-center">
