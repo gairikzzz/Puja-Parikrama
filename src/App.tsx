@@ -2783,62 +2783,59 @@ export default function App() {
       />
 
       {/* ── PUJA PORIKROMA EMAIL-ONLY AUTHENTICATION MODAL ── */}
+      {/* ── PUJA PORIKROMA EMAIL-ONLY AUTHENTICATION MODAL ── */}
       {authModalVisible && (
         <div
-          className="fixed inset-0 z-[160] flex items-center justify-center p-3 sm:p-4"
-          style={{ background: 'rgba(5, 5, 12, 0.70)', backdropFilter: 'blur(12px)' }}
+          className="snap-modal-backdrop fixed inset-0 z-[160] flex items-center justify-center p-2.5 sm:p-4 bg-black/40 backdrop-blur-[2px]"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               handleSkipAuth()
             }
           }}
         >
-          <div
-            className="w-full max-w-md rounded-[26px] sm:rounded-[30px] p-6 sm:p-8 text-center relative bg-white text-gray-900 shadow-[0_25px_60px_rgba(0,0,0,0.5)] border border-gray-100 flex flex-col items-center animate-in fade-in zoom-in-95 duration-200"
-          >
-            {/* Close Button */}
-            <button
-              onClick={handleSkipAuth}
-              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-400 hover:text-gray-700 transition active:scale-95 cursor-pointer text-sm font-semibold"
-              title="Close"
-            >
-              ✕
-            </button>
-
-            {/* Circular Durga Maa Emblem inside soft squircle frame */}
-            <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl bg-[#f7f4f1] border border-[#ece7e1] p-1 flex items-center justify-center mb-4 shadow-sm flex-shrink-0">
-              <img
-                src="/login-durga-emblem.png"
-                alt="Durga Maa Emblem"
-                className="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover"
-              />
+          <div className="snap-modal-content w-full sm:max-w-md mx-auto bg-[#211329]/90 backdrop-blur-2xl rounded-[22px] sm:rounded-[26px] border border-[#E9B83E]/40 p-4 sm:p-5 flex flex-col shadow-[0_24px_60px_rgba(13,12,27,0.7),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_24px_rgba(233,184,62,0.18)] relative animate-in fade-in zoom-in-95 duration-200">
+            {/* Header matching Submit Snap and Leaderboard modals */}
+            <div className="flex items-center justify-between pb-2.5 border-b border-[#E9B83E]/20 mb-3.5 flex-shrink-0">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full p-0.5 bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] flex items-center justify-center overflow-hidden flex-shrink-0 aspect-square shadow-[0_0_8px_rgba(233,184,62,0.35)]">
+                  <img src="/durga-emblem.png?v=c2" alt="Puja Parikrama" className="w-full h-full rounded-full object-contain object-center" />
+                </div>
+                <div>
+                  <h2 className="text-[#F5E5B7] font-bold text-sm sm:text-base leading-tight">
+                    {pendingUploadAfterAuth ? 'Create an Account' : 'Welcome to Puja Porikroma'}
+                  </h2>
+                  <p className="text-[#E9B83E]/80 text-xs sm:text-[13px] font-medium leading-tight">
+                    {pendingUploadAfterAuth
+                      ? 'Sign up with your email to upload and share pandal snaps'
+                      : 'Discover pandals. Capture memories. Celebrate together.'}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleSkipAuth}
+                className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition active:scale-95 cursor-pointer text-xs"
+                title="Close"
+              >
+                ✕
+              </button>
             </div>
-
-            {/* Title & Subtitle */}
-            <h3 className="text-gray-900 font-extrabold text-xl sm:text-2xl tracking-tight mb-1.5">
-              {pendingUploadAfterAuth ? 'Create an Account' : 'Welcome to Puja Porikroma'}
-            </h3>
-            <p className="text-[#DF9F28] font-medium text-xs sm:text-sm leading-relaxed mb-6">
-              {pendingUploadAfterAuth
-                ? 'Sign up with your email to upload and share pandal snaps.'
-                : 'Discover pandals. Capture memories. Celebrate together.'}
-            </p>
 
             {/* Mandatory Upload Indicator */}
             {pendingUploadAfterAuth && (
-              <div className="w-full mb-4 px-3.5 py-2 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-semibold text-center flex items-center justify-center gap-1.5">
+              <div className="w-full mb-3 px-3 py-2 rounded-xl bg-[#E9B83E]/10 border border-[#E9B83E]/30 text-[#F5E5B7] text-xs font-semibold text-center flex items-center justify-center gap-1.5">
                 <span>📸 Free account required to submit pandal snaps</span>
               </div>
             )}
 
             {/* Email Form */}
             <form onSubmit={handleEmailAuthSubmit} className="w-full text-left">
-              <label className="block text-gray-900 font-bold text-xs sm:text-sm mb-1.5">
+              <label className="block text-[#F5E5B7] font-semibold text-xs sm:text-[13px] mb-1.5">
                 Email Address
               </label>
 
               <div className="relative mb-3.5">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#E9B83E]/70">
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
@@ -2849,22 +2846,22 @@ export default function App() {
                   value={authEmail}
                   onChange={(e) => setAuthEmail(e.target.value)}
                   placeholder="Enter your email address"
-                  className="w-full pl-10 pr-3.5 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-[#E5A928] focus:ring-2 focus:ring-[#E5A928]/20 transition"
+                  className="w-full pl-10 pr-3.5 py-2.5 sm:py-3 rounded-xl bg-[#121224]/80 border border-[#E9B83E]/35 focus:border-[#E9B83E] text-[#F5E5B7] placeholder-[#F5E5B7]/40 text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-[#E9B83E]/50 transition"
                 />
               </div>
 
               {authError && (
-                <p className="text-red-500 text-xs font-medium bg-red-50 border border-red-200 rounded-lg p-2.5 mb-3 text-center">
+                <p className="text-red-300 text-xs font-medium bg-red-950/50 border border-red-500/30 rounded-xl p-2.5 mb-3 text-center">
                   {authError}
                 </p>
               )}
 
               {emailSentSuccess ? (
-                <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-center mb-3 animate-in fade-in duration-200">
-                  <p className="text-emerald-800 font-semibold text-xs sm:text-sm">
+                <div className="bg-[#211329]/80 border border-[#E9B83E]/40 rounded-xl p-3 text-center mb-3 animate-in fade-in duration-200">
+                  <p className="text-[#F5E5B7] font-bold text-xs sm:text-sm">
                     ✨ Secure sign-in link verified for {authEmail}!
                   </p>
-                  <p className="text-emerald-600 text-[11px] mt-0.5">
+                  <p className="text-[#E9B83E]/80 text-[11px] mt-0.5">
                     Signing you in to Puja Porikroma...
                   </p>
                 </div>
@@ -2872,36 +2869,23 @@ export default function App() {
                 <button
                   type="submit"
                   disabled={isSubmittingEmail}
-                  className="w-full py-3.5 px-4 rounded-xl bg-[#E5A928] hover:bg-[#d99d1f] active:scale-[0.99] text-[#1a1306] font-semibold text-sm transition-all shadow-sm flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-60"
+                  className="w-full py-2.5 sm:py-3 rounded-full bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] text-[#211329] font-black text-xs sm:text-sm tracking-wider flex items-center justify-center gap-1.5 border-2 border-[#E9B83E] shadow-[0_0_14px_rgba(233,184,62,0.30),0_4px_16px_rgba(13,12,27,0.55)] hover:shadow-[0_0_20px_rgba(233,184,62,0.50)] hover:scale-[1.01] active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
                 >
                   <span>{pendingUploadAfterAuth ? 'Create Account & Continue' : 'Continue with Email'}</span>
                   <span className="text-base font-bold">→</span>
                 </button>
               )}
 
-              <p className="text-gray-500 text-xs text-center mt-3 leading-relaxed">
+              <p className="text-[#E9B83E]/80 text-[11px] text-center mt-3 leading-relaxed">
                 We'll send you a secure sign-in link to verify your email.
               </p>
 
-              <p className="text-gray-400 text-[11px] text-center mt-2 leading-relaxed">
+              <p className="text-[#F5E5B7]/50 text-[10px] sm:text-[11px] text-center mt-1.5 leading-relaxed">
                 By continuing, you agree to our{' '}
-                <span className="underline hover:text-gray-600 cursor-pointer">Terms of Service</span>
+                <span className="underline hover:text-[#F5E5B7] cursor-pointer">Terms of Service</span>
                 {' '}and{' '}
-                <span className="underline hover:text-gray-600 cursor-pointer">Privacy Policy</span>.
+                <span className="underline hover:text-[#F5E5B7] cursor-pointer">Privacy Policy</span>.
               </p>
-
-              {/* Skip option for initial launch visitors (hidden when mandatory for camera upload) */}
-              {!pendingUploadAfterAuth && (
-                <div className="text-center mt-3 pt-1 border-t border-gray-100">
-                  <button
-                    type="button"
-                    onClick={handleSkipAuth}
-                    className="text-xs text-gray-400 hover:text-gray-600 underline font-medium cursor-pointer transition"
-                  >
-                    Skip for now and explore map
-                  </button>
-                </div>
-              )}
             </form>
           </div>
         </div>
