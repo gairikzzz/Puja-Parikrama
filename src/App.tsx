@@ -1878,12 +1878,13 @@ export default function App() {
     const handleReturningAuth = async () => {
       try {
         if (isSignInWithEmailLink(auth, window.location.href)) {
-          let email = localStorage.getItem('puja_parikrama_pending_email')
+          let email = window.localStorage.getItem('emailForSignIn') || localStorage.getItem('puja_parikrama_pending_email')
           if (!email) {
             email = window.prompt('Please provide your email for confirmation') || ''
           }
           if (email) {
             const res = await signInWithEmailLink(auth, email, window.location.href)
+            window.localStorage.removeItem('emailForSignIn')
             const fbUser = res.user
             setVerifiedUid(fbUser.uid)
             setAuthEmail(fbUser.email || email)
@@ -1999,20 +2000,24 @@ export default function App() {
     }
 
     setIsSubmittingEmail(true)
+    window.localStorage.setItem('emailForSignIn', trimmedEmail)
     localStorage.setItem('puja_parikrama_pending_email', trimmedEmail)
 
     // Trigger Firebase sendSignInLinkToEmail
     try {
       const actionCodeSettings = {
-        url: window.location.origin + window.location.pathname + '?email_verified=true',
+        url: window.location.origin + window.location.pathname,
         handleCodeInApp: true
       }
       sendSignInLinkToEmail(auth, trimmedEmail, actionCodeSettings)
         .then(() => {
           console.log('🔥 Firebase sign-in link sent to:', trimmedEmail)
         })
-        .catch((err) => {
+        .catch((err: any) => {
           console.warn('Firebase sendSignInLink note:', err)
+          if (err?.code === 'auth/unauthorized-domain') {
+            console.warn('Please add domain to Firebase Console > Authentication > Settings > Authorized domains')
+          }
         })
     } catch (err) {
       console.warn('Firebase dispatch note:', err)

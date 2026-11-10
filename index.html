@@ -2018,13 +2018,18 @@
       GoogleAuthProvider, 
       signInWithPopup, 
       signOut, 
-      onAuthStateChanged 
+      onAuthStateChanged,
+      sendSignInLinkToEmail,
+      isSignInWithEmailLink,
+      signInWithEmailLink
     } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
     import { 
       getFirestore, 
       collection, 
       addDoc, 
       doc, 
+      getDoc,
+      setDoc,
       updateDoc, 
       increment, 
       onSnapshot, 
@@ -3059,7 +3064,26 @@
       }
 
       authCurrentEmail = email;
+      window.localStorage.setItem('emailForSignIn', email);
       localStorage.setItem('puja_parikrama_pending_email', email);
+
+      if (firebaseAuth) {
+        try {
+          const actionCodeSettings = {
+            url: window.location.origin + window.location.pathname,
+            handleCodeInApp: true
+          };
+          sendSignInLinkToEmail(firebaseAuth, email, actionCodeSettings)
+            .then(() => {
+              console.log("🔥 Firebase sign-in link sent to:", email);
+            })
+            .catch((err) => {
+              console.warn("Firebase sendSignInLink note:", err);
+            });
+        } catch (err) {
+          console.warn("Firebase dispatch note:", err);
+        }
+      }
 
       if (submitBtn) {
         submitBtn.disabled = true;
@@ -3228,6 +3252,12 @@
         totalPandalsCovered: 0
       };
 
+      if (firestoreDb) {
+        try {
+          setDoc(doc(firestoreDb, 'users', userDoc.uid), userDoc, { merge: true }).catch(err => console.warn('Firestore setDoc notice:', err));
+        } catch (e) {}
+      }
+
       let registeredUsers = {};
       try {
         registeredUsers = JSON.parse(localStorage.getItem('puja_parikrama_registered_users') || '{}');
@@ -3331,6 +3361,56 @@
         }
       });
     }
+
+    // Check if returning from Firebase email link
+    async function checkReturningEmailAuth() {
+      if (firebaseAuth && isSignInWithEmailLink(firebaseAuth, window.location.href)) {
+        let email = window.localStorage.getItem('emailForSignIn') || localStorage.getItem('puja_parikrama_pending_email');
+        if (!email) {
+          email = window.prompt('Please provide your email for confirmation') || '';
+        }
+        if (email) {
+          try {
+            const res = await signInWithEmailLink(firebaseAuth, email, window.location.href);
+            window.localStorage.removeItem('emailForSignIn');
+            const fbUser = res.user;
+            authVerifiedUid = fbUser.uid;
+            authCurrentEmail = fbUser.email || email;
+
+            if (firestoreDb) {
+              try {
+                const snap = await getDoc(doc(firestoreDb, 'users', fbUser.uid));
+                if (snap.exists() && snap.data()?.profileCompleted) {
+                  completeSignIn(snap.data(), 'Firebase');
+                  return;
+                }
+              } catch (e) {}
+            }
+
+            let registeredUsers = {};
+            try {
+              registeredUsers = JSON.parse(localStorage.getItem('puja_parikrama_registered_users') || '{}');
+            } catch (e) {}
+            const existing = Object.values(registeredUsers).find(u => u.email && u.email.toLowerCase() === email.toLowerCase());
+            if (existing && existing.profileCompleted) {
+              completeSignIn(existing, 'Email');
+            } else {
+              switchAuthStage('profile');
+              const modal = document.getElementById('google-auth-modal');
+              if (modal) {
+                modal.classList.remove('hidden');
+                requestAnimationFrame(() => modal.classList.add('active'));
+              }
+            }
+          } catch (err) {
+            console.warn('signInWithEmailLink notice:', err);
+          }
+        }
+        const cleanUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, cleanUrl);
+      }
+    }
+    checkReturningEmailAuth();
 
     // Wire auth buttons
     document.getElementById('btn-google-signin')?.addEventListener('click', () => openGoogleAuthModal());
