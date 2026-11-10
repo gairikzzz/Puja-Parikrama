@@ -3474,9 +3474,9 @@ export default function App() {
                     type="button"
                     disabled={resendCooldown > 0}
                     onClick={handleResendEmail}
-                    className="text-xs font-bold text-[#E9B83E] hover:underline disabled:opacity-50 disabled:no-underline cursor-pointer transition"
+                    className="w-full py-2.5 sm:py-3 rounded-full bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] text-[#211329] font-black text-xs sm:text-sm tracking-wider flex items-center justify-center border-2 border-[#E9B83E] shadow-[0_0_14px_rgba(233,184,62,0.30)] hover:shadow-[0_0_20px_rgba(233,184,62,0.50)] hover:scale-[1.01] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:shadow-none transition-all cursor-pointer mb-2"
                   >
-                    {resendCooldown > 0 ? `Resend email in ${resendCooldown}s` : 'Resend Verification Email'}
+                    <span>{resendCooldown > 0 ? `Resend email in ${resendCooldown}s` : 'Resend Verification Email'}</span>
                   </button>
 
                   {resendNotice && (
