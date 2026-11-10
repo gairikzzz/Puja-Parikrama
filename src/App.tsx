@@ -3502,9 +3502,6 @@ export default function App() {
                       )}
                     </div>
                   )}
-                  <p className="text-[#E9B83E]/70 text-[10px] sm:text-[11px] mt-1.5 leading-tight">
-                    Your city helps us make your Puja experience more relevant.
-                  </p>
                 </div>
 
                 <button
