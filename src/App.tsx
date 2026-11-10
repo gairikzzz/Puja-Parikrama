@@ -1222,7 +1222,15 @@ export default function App() {
   const [user, setUser] = useState<AuthUser | null>(() => {
     const cached = localStorage.getItem('puja_parikrama_user')
     if (cached) {
-      try { return JSON.parse(cached) } catch { return null }
+      try {
+        const parsed = JSON.parse(cached)
+        if (parsed && parsed.email && parsed.uid && !parsed.uid.startsWith('google-uid') && !parsed.uid.startsWith('fb-uid')) {
+          return parsed
+        } else {
+          localStorage.removeItem('puja_parikrama_user')
+          return null
+        }
+      } catch { return null }
     }
     return null
   })
@@ -2808,16 +2816,18 @@ export default function App() {
 
             {/* Title & Subtitle */}
             <h3 className="text-gray-900 font-extrabold text-xl sm:text-2xl tracking-tight mb-1.5">
-              Welcome to Puja Porikroma
+              {pendingUploadAfterAuth ? 'Create an Account' : 'Welcome to Puja Porikroma'}
             </h3>
             <p className="text-[#DF9F28] font-medium text-xs sm:text-sm leading-relaxed mb-6">
-              Discover pandals. Capture memories. Celebrate together.
+              {pendingUploadAfterAuth
+                ? 'Sign up with your email to upload and share pandal snaps.'
+                : 'Discover pandals. Capture memories. Celebrate together.'}
             </p>
 
             {/* Mandatory Upload Indicator */}
             {pendingUploadAfterAuth && (
               <div className="w-full mb-4 px-3.5 py-2 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-semibold text-center flex items-center justify-center gap-1.5">
-                <span>📸 Sign in required to upload pandal photos</span>
+                <span>📸 Free account required to submit pandal snaps</span>
               </div>
             )}
 
@@ -2864,7 +2874,7 @@ export default function App() {
                   disabled={isSubmittingEmail}
                   className="w-full py-3.5 px-4 rounded-xl bg-[#E5A928] hover:bg-[#d99d1f] active:scale-[0.99] text-[#1a1306] font-semibold text-sm transition-all shadow-sm flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-60"
                 >
-                  <span>Continue with Email</span>
+                  <span>{pendingUploadAfterAuth ? 'Create Account & Continue' : 'Continue with Email'}</span>
                   <span className="text-base font-bold">→</span>
                 </button>
               )}
@@ -2880,16 +2890,18 @@ export default function App() {
                 <span className="underline hover:text-gray-600 cursor-pointer">Privacy Policy</span>.
               </p>
 
-              {/* Skip option for initial launch visitors */}
-              <div className="text-center mt-3 pt-1 border-t border-gray-100">
-                <button
-                  type="button"
-                  onClick={handleSkipAuth}
-                  className="text-xs text-gray-400 hover:text-gray-600 underline font-medium cursor-pointer transition"
-                >
-                  Skip for now and explore map
-                </button>
-              </div>
+              {/* Skip option for initial launch visitors (hidden when mandatory for camera upload) */}
+              {!pendingUploadAfterAuth && (
+                <div className="text-center mt-3 pt-1 border-t border-gray-100">
+                  <button
+                    type="button"
+                    onClick={handleSkipAuth}
+                    className="text-xs text-gray-400 hover:text-gray-600 underline font-medium cursor-pointer transition"
+                  >
+                    Skip for now and explore map
+                  </button>
+                </div>
+              )}
             </form>
           </div>
         </div>

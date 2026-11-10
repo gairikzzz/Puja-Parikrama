@@ -781,10 +781,10 @@
         <img src="login-durga-emblem.png" alt="Durga Maa Emblem" class="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover">
       </div>
 
-      <h3 class="text-gray-900 font-extrabold text-xl sm:text-2xl tracking-tight mb-1.5">
+      <h3 id="auth-modal-title" class="text-gray-900 font-extrabold text-xl sm:text-2xl tracking-tight mb-1.5">
         Welcome to Puja Porikroma
       </h3>
-      <p class="text-[#DF9F28] font-medium text-xs sm:text-sm leading-relaxed mb-6">
+      <p id="auth-modal-subtitle" class="text-[#DF9F28] font-medium text-xs sm:text-sm leading-relaxed mb-6">
         Discover pandals. Capture memories. Celebrate together.
       </p>
 
@@ -2791,17 +2791,29 @@
 
     function openGoogleAuthModal() {
       const modal = document.getElementById('google-auth-modal');
+      const titleEl = document.getElementById('auth-modal-title');
+      const subEl = document.getElementById('auth-modal-subtitle');
       const badge = document.getElementById('auth-modal-mandatory-badge');
       const skipContainer = document.getElementById('auth-modal-skip-container');
-      if (badge) {
-        if (window.pendingUploadAfterAuth) {
+      const submitBtn = document.getElementById('auth-email-submit-btn');
+
+      if (window.pendingUploadAfterAuth) {
+        if (titleEl) titleEl.textContent = 'Create an Account';
+        if (subEl) subEl.textContent = 'Sign up with your email to upload and share pandal snaps.';
+        if (badge) {
+          badge.innerHTML = '<span>📸 Free account required to submit pandal snaps</span>';
           badge.classList.remove('hidden');
-          if (skipContainer) skipContainer.classList.add('hidden');
-        } else {
-          badge.classList.add('hidden');
-          if (skipContainer) skipContainer.classList.remove('hidden');
         }
+        if (skipContainer) skipContainer.classList.add('hidden');
+        if (submitBtn) submitBtn.innerHTML = '<span>Create Account & Continue</span><span class="text-base font-bold">→</span>';
+      } else {
+        if (titleEl) titleEl.textContent = 'Welcome to Puja Porikroma';
+        if (subEl) subEl.textContent = 'Discover pandals. Capture memories. Celebrate together.';
+        if (badge) badge.classList.add('hidden');
+        if (skipContainer) skipContainer.classList.remove('hidden');
+        if (submitBtn) submitBtn.innerHTML = '<span>Continue with Email</span><span class="text-base font-bold">→</span>';
       }
+
       if (modal) {
         modal.classList.remove('hidden');
         requestAnimationFrame(() => modal.classList.add('active'));
@@ -2921,8 +2933,15 @@
     const cachedUser = localStorage.getItem('puja_parikrama_user');
     if (cachedUser) {
       try {
-        currentUser = JSON.parse(cachedUser);
-        updateAuthUI(currentUser);
+        const parsed = JSON.parse(cachedUser);
+        if (parsed && parsed.email && parsed.uid && !parsed.uid.startsWith('google-uid') && !parsed.uid.startsWith('fb-uid')) {
+          currentUser = parsed;
+          updateAuthUI(currentUser);
+        } else {
+          localStorage.removeItem('puja_parikrama_user');
+          currentUser = null;
+          updateAuthUI(null);
+        }
       } catch {
         localStorage.removeItem('puja_parikrama_user');
       }
