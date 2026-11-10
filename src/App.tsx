@@ -2179,7 +2179,7 @@ export default function App() {
     } catch (err) {}
 
     setResendCooldown(45)
-    setResendNotice('✨ Verification link resent! Please check your inbox.')
+    setResendNotice('Verification link resent! Please check your inbox.')
     setTimeout(() => setResendNotice(''), 4000)
   }
 
@@ -3480,7 +3480,7 @@ export default function App() {
                   </button>
 
                   {resendNotice && (
-                    <p className="text-emerald-400 text-[11px] font-semibold mt-1.5 animate-in fade-in">
+                    <p className="text-[#E9B83E] text-xs font-medium leading-relaxed mt-1.5 animate-in fade-in">
                       {resendNotice}
                     </p>
                   )}
