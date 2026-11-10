@@ -3320,18 +3320,14 @@ export default function App() {
                       ? 'Welcome to Puja Porikroma!'
                       : authStage === 'profile'
                       ? 'Complete Your Profile'
-                      : authStage === 'sent'
-                      ? 'Check Your Email'
-                      : (pendingUploadAfterAuth ? 'Create an Account' : 'Welcome to Puja Porikroma')}
+                      : (pendingUploadAfterAuth && authStage === 'email' ? 'Create an Account' : 'Welcome to Puja Porikroma')}
                   </h2>
                   <p className="text-[#E9B83E]/80 text-xs sm:text-[13px] font-medium leading-tight">
                     {authStage === 'welcome'
                       ? 'Your journey begins here.'
                       : authStage === 'profile'
                       ? "Let's get to know you!"
-                      : authStage === 'sent'
-                      ? 'Verification link sent'
-                      : (pendingUploadAfterAuth
+                      : (pendingUploadAfterAuth && authStage === 'email'
                         ? 'Sign up with your email to share pandal snaps'
                         : 'Discover pandals. Capture memories.')}
                   </p>
