@@ -769,9 +769,9 @@
     </div>
   </header>
 
-  <!-- ── PUJA PORIKROMA EMAIL-ONLY AUTHENTICATION MODAL ── -->
-  <div id="google-auth-modal" onclick="if (event.target === this) closeGoogleAuthModal()" class="snap-modal-backdrop hidden fixed inset-0 z-[160] bg-black/40 backdrop-blur-[2px] flex items-center justify-center p-2.5 sm:p-4">
-    <div class="snap-modal-content w-full sm:max-w-md mx-auto bg-[#211329]/90 backdrop-blur-2xl rounded-[22px] sm:rounded-[26px] border border-[#E9B83E]/40 p-4 sm:p-5 flex flex-col shadow-[0_24px_60px_rgba(13,12,27,0.7),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_24px_rgba(233,184,62,0.18)] relative">
+  <!-- ── PUJA PORIKROMA EMAIL-ONLY AUTHENTICATION MODAL (3-STAGE ONBOARDING + WELCOME) ── -->
+  <div id="google-auth-modal" onclick="if (event.target === this) handleSkipAuth()" class="snap-modal-backdrop hidden fixed inset-0 z-[160] bg-black/40 backdrop-blur-[2px] flex items-center justify-center p-2.5 sm:p-4">
+    <div class="snap-modal-content w-full sm:max-w-md mx-auto bg-[#211329]/95 backdrop-blur-2xl rounded-[22px] sm:rounded-[26px] border border-[#E9B83E]/40 p-4 sm:p-5 flex flex-col shadow-[0_24px_60px_rgba(13,12,27,0.7),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_24px_rgba(233,184,62,0.18)] relative">
       <!-- Modal Header matching Submit Snap modal -->
       <div class="flex items-center justify-between pb-2.5 border-b border-[#E9B83E]/20 mb-3.5 flex-shrink-0">
         <div class="flex items-center gap-2">
@@ -780,65 +780,193 @@
           </div>
           <div>
             <h2 id="auth-modal-title" class="text-[#F5E5B7] font-bold text-sm sm:text-base leading-tight">
-              Create an Account
+              Welcome to Puja Porikroma
             </h2>
             <p id="auth-modal-subtitle" class="text-[#E9B83E]/80 text-xs sm:text-[13px] font-medium leading-tight">
-              Sign up with your email to upload and share pandal snaps
+              Discover pandals. Capture memories.
             </p>
           </div>
         </div>
-        <button id="btn-close-auth-modal" type="button" onclick="closeGoogleAuthModal()" class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition active:scale-95 cursor-pointer text-xs" title="Close">
+        <button id="btn-close-auth-modal" type="button" onclick="handleSkipAuth()" class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition active:scale-95 cursor-pointer text-xs" title="Close">
           ✕
         </button>
       </div>
 
-      <!-- Mandatory Upload Indicator -->
-      <div id="auth-modal-mandatory-badge" class="hidden w-full mb-3 px-3 py-2 rounded-xl bg-[#E9B83E]/10 border border-[#E9B83E]/30 text-[#F5E5B7] text-xs font-semibold text-center flex items-center justify-center gap-1.5">
-        <span>📸 Free account required to submit pandal snaps</span>
+      <!-- ── STAGE 1: ENTER EMAIL ── -->
+      <div id="auth-stage-1" class="w-full text-left">
+        <!-- Mandatory Upload Indicator -->
+        <div id="auth-modal-mandatory-badge" class="hidden w-full mb-3 px-3 py-2 rounded-xl bg-[#E9B83E]/10 border border-[#E9B83E]/30 text-[#F5E5B7] text-xs font-semibold text-center flex items-center justify-center gap-1.5">
+          <span>📸 Free account required to submit pandal snaps</span>
+        </div>
+
+        <form id="auth-email-form" onsubmit="handleEmailAuthSubmit(event)">
+          <label class="block text-[#F5E5B7] font-semibold text-xs sm:text-[13px] mb-1.5">
+            Email Address
+          </label>
+
+          <div class="relative mb-3.5">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#E9B83E]/70">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <input id="auth-email-input" type="email" required placeholder="Enter your email address" class="w-full pl-10 pr-3.5 py-2.5 sm:py-3 rounded-xl bg-[#121224]/80 border border-[#E9B83E]/35 focus:border-[#E9B83E] text-[#F5E5B7] placeholder-[#F5E5B7]/40 text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-[#E9B83E]/50 transition">
+          </div>
+
+          <p id="auth-email-error" class="hidden text-red-300 text-xs font-medium bg-red-950/50 border border-red-500/30 rounded-xl p-2.5 mb-3 text-center"></p>
+
+          <button id="auth-email-submit-btn" type="submit" class="w-full py-2.5 sm:py-3 rounded-full bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] text-[#211329] font-black text-xs sm:text-sm tracking-wider flex items-center justify-center gap-1.5 border-2 border-[#E9B83E] shadow-[0_0_14px_rgba(233,184,62,0.30)] hover:shadow-[0_0_20px_rgba(233,184,62,0.50)] hover:scale-[1.01] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer">
+            <span id="auth-submit-btn-text">Continue with Email</span>
+            <span id="auth-submit-btn-arrow" class="text-base font-bold">→</span>
+          </button>
+
+          <p class="text-[#E9B83E]/80 text-[11px] text-center mt-3 leading-relaxed">
+            We'll send you a secure sign-in link to verify your email.
+          </p>
+
+          <p class="text-[#F5E5B7]/50 text-[10px] sm:text-[11px] text-center mt-1.5 leading-relaxed">
+            By continuing, you agree to our
+            <span class="underline hover:text-[#F5E5B7] cursor-pointer">Terms of Service</span>
+            and
+            <span class="underline hover:text-[#F5E5B7] cursor-pointer">Privacy Policy</span>.
+          </p>
+        </form>
       </div>
 
-      <!-- Email Form -->
-      <form id="auth-email-form" onsubmit="handleEmailAuthSubmit(event)" class="w-full text-left">
-        <label class="block text-[#F5E5B7] font-semibold text-xs sm:text-[13px] mb-1.5">
-          Email Address
-        </label>
-
-        <div class="relative mb-3.5">
-          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#E9B83E]/70">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-          </div>
-          <input id="auth-email-input" type="email" required placeholder="Enter your email address" class="w-full pl-10 pr-3.5 py-2.5 sm:py-3 rounded-xl bg-[#121224]/80 border border-[#E9B83E]/35 focus:border-[#E9B83E] text-[#F5E5B7] placeholder-[#F5E5B7]/40 text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-[#E9B83E]/50 transition">
+      <!-- ── STAGE 2: EMAIL SENT CONFIRMATION ("Check your inbox") ── -->
+      <div id="auth-stage-2" class="hidden w-full flex flex-col items-center text-center">
+        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] flex items-center justify-center text-[#211329] mb-3 shadow-[0_0_16px_rgba(233,184,62,0.35)]">
+          <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
         </div>
 
-        <p id="auth-email-error" class="hidden text-red-300 text-xs font-medium bg-red-950/50 border border-red-500/30 rounded-xl p-2.5 mb-3 text-center"></p>
+        <p class="text-[#F5E5B7]/80 text-xs sm:text-[13px] mb-1.5">
+          We've sent a secure sign-in link to:
+        </p>
 
-        <div id="auth-email-sent-banner" class="hidden bg-[#211329]/80 border border-[#E9B83E]/40 rounded-xl p-3 text-center mb-3">
-          <p class="text-[#F5E5B7] font-bold text-xs sm:text-sm">
-            ✨ Secure sign-in link verified!
-          </p>
-          <p class="text-[#E9B83E]/80 text-[11px] mt-0.5">
-            Signing you in to Puja Porikroma...
-          </p>
+        <div id="auth-sent-email-display" class="w-full px-3.5 py-2.5 rounded-xl bg-[#121224]/80 border border-[#E9B83E]/40 text-[#F5E5B7] font-bold text-xs sm:text-sm mb-3.5 break-all shadow-inner">
+          user@example.com
         </div>
 
-        <button id="auth-email-submit-btn" type="submit" class="w-full py-2.5 sm:py-3 rounded-full bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] text-[#211329] font-black text-xs sm:text-sm tracking-wider flex items-center justify-center gap-1.5 border-2 border-[#E9B83E] shadow-[0_0_14px_rgba(233,184,62,0.30),0_4px_16px_rgba(13,12,27,0.55)] hover:shadow-[0_0_20px_rgba(233,184,62,0.50)] hover:scale-[1.01] active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer">
-          <span>Continue with Email</span>
+        <p class="text-[#E9B83E]/90 text-xs leading-relaxed mb-4">
+          Open your inbox and click the link to verify your email and continue to Puja Porikroma.
+        </p>
+
+        <button type="button" onclick="handleVerifyEmailLink()" class="w-full py-2.5 sm:py-3 rounded-full bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] text-[#211329] font-black text-xs sm:text-sm tracking-wider flex items-center justify-center gap-1.5 border-2 border-[#E9B83E] shadow-[0_0_14px_rgba(233,184,62,0.30)] hover:shadow-[0_0_20px_rgba(233,184,62,0.50)] hover:scale-[1.01] active:scale-95 transition-all cursor-pointer mb-3">
+          <span>Verify Email &amp; Continue</span>
           <span class="text-base font-bold">→</span>
         </button>
 
-        <p class="text-[#E9B83E]/80 text-[11px] text-center mt-3 leading-relaxed">
-          We'll send you a secure sign-in link to verify your email.
-        </p>
+        <div class="w-full pt-3 border-t border-[#E9B83E]/20 text-center">
+          <p class="text-[#F5E5B7]/70 text-[11px] mb-1.5 leading-tight">
+            Didn't receive the email?<br />
+            Check your spam folder or request another email.
+          </p>
 
-        <p class="text-[#F5E5B7]/50 text-[10px] sm:text-[11px] text-center mt-1.5 leading-relaxed">
-          By continuing, you agree to our
-          <span class="underline hover:text-[#F5E5B7] cursor-pointer">Terms of Service</span>
-          and
-          <span class="underline hover:text-[#F5E5B7] cursor-pointer">Privacy Policy</span>.
+          <button id="auth-resend-btn" type="button" onclick="handleResendVerificationEmail()" class="text-xs font-bold text-[#E9B83E] hover:underline disabled:opacity-50 disabled:no-underline cursor-pointer transition">
+            Resend Verification Email
+          </button>
+
+          <p id="auth-resend-notice" class="hidden text-emerald-400 text-[11px] font-semibold mt-1.5"></p>
+
+          <p class="text-[#F5E5B7]/40 text-[10px] mt-2.5">
+            You can close this window and return after verifying.
+          </p>
+        </div>
+      </div>
+
+      <!-- ── STAGE 3: COMPLETE YOUR PROFILE ── -->
+      <div id="auth-stage-3" class="hidden w-full text-left">
+        <!-- Profile Photo -->
+        <div class="flex flex-col items-center mb-3.5">
+          <div class="relative w-16 h-16 sm:w-18 sm:h-18 rounded-full p-1 bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] flex items-center justify-center shadow-[0_0_12px_rgba(233,184,62,0.35)] mb-2">
+            <img id="profile-photo-preview" src="https://api.dicebear.com/7.x/adventurer/svg?seed=Devotee&backgroundColor=ffdfbf" alt="Devotee Avatar" class="w-full h-full rounded-full object-cover bg-[#121224]">
+          </div>
+          <input id="profile-photo-file-input" type="file" accept="image/*" class="hidden" onchange="handleProfilePhotoSelected(event)">
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="document.getElementById('profile-photo-file-input')?.click()" class="px-2.5 py-1 rounded-lg bg-[#E9B83E]/15 hover:bg-[#E9B83E]/25 text-[#E9B83E] text-[11px] font-semibold border border-[#E9B83E]/35 transition active:scale-95 cursor-pointer">
+              📸 Add Photo (Optional)
+            </button>
+            <button type="button" onclick="shuffleProfileAvatar()" class="px-2 py-1 rounded-lg bg-white/10 hover:bg-white/15 text-[#F5E5B7] text-[11px] font-semibold border border-white/15 transition active:scale-95 cursor-pointer" title="Shuffle Avatar">
+              🎲 Shuffle
+            </button>
+          </div>
+        </div>
+
+        <!-- Email Address (Read-only with Verified badge) -->
+        <div class="mb-3 text-left">
+          <label class="block text-[#F5E5B7] font-semibold text-xs sm:text-[13px] mb-1">
+            Email Address
+          </label>
+          <div class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-[#121224]/80 border border-[#E9B83E]/30 text-xs sm:text-sm">
+            <span id="profile-email-display" class="text-[#F5E5B7] font-medium truncate"></span>
+            <span class="flex items-center gap-1 text-emerald-400 text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex-shrink-0 ml-2">
+              <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+              <span>Verified</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Name Field -->
+        <div class="mb-3 text-left">
+          <label class="block text-[#F5E5B7] font-semibold text-xs sm:text-[13px] mb-1">
+            Your Name <span class="text-[#E9B83E]">*</span>
+          </label>
+          <input id="profile-name-input" type="text" required placeholder="Enter your full name" class="w-full px-3.5 py-2.5 sm:py-3 rounded-xl bg-[#121224]/80 border border-[#E9B83E]/35 focus:border-[#E9B83E] text-[#F5E5B7] placeholder-[#F5E5B7]/40 text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-[#E9B83E]/50 transition">
+        </div>
+
+        <!-- City Searchable Dropdown -->
+        <div class="relative mb-4 text-left" id="profile-city-container">
+          <label class="block text-[#F5E5B7] font-semibold text-xs sm:text-[13px] mb-1">
+            Your City <span class="text-[#E9B83E]">*</span>
+          </label>
+          <div class="relative flex items-center cursor-pointer">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#E9B83E]/70">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+            <input id="profile-city-input" type="text" required placeholder="Select or enter your city" class="w-full pl-10 pr-8 py-2.5 sm:py-3 rounded-xl bg-[#121224]/80 border border-[#E9B83E]/35 focus:border-[#E9B83E] text-[#F5E5B7] placeholder-[#F5E5B7]/40 text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-[#E9B83E]/50 transition">
+            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-[#E9B83E]/70 text-[10px]">
+              ▼
+            </div>
+          </div>
+
+          <div id="profile-city-dropdown" class="hidden absolute z-50 left-0 right-0 mt-1 max-h-44 overflow-y-auto bg-[#1b1022] border border-[#E9B83E]/40 rounded-xl shadow-2xl backdrop-blur-xl divide-y divide-[#E9B83E]/10">
+            <!-- Dynamically populated cities -->
+          </div>
+          <p class="text-[#E9B83E]/70 text-[10px] sm:text-[11px] mt-1.5 leading-tight">
+            Your city helps us make your Puja experience more relevant.
+          </p>
+        </div>
+
+        <button id="profile-save-btn" type="button" onclick="handleSaveProfile()" class="w-full py-2.5 sm:py-3 rounded-full bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] text-[#211329] font-black text-xs sm:text-sm tracking-wider flex items-center justify-center gap-1.5 border-2 border-[#E9B83E] shadow-[0_0_14px_rgba(233,184,62,0.30)] hover:shadow-[0_0_20px_rgba(233,184,62,0.50)] hover:scale-[1.01] active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer">
+          <span>Save &amp; Continue</span>
+          <span class="text-base font-bold">→</span>
+        </button>
+      </div>
+
+      <!-- ── STAGE 4: WELCOME CELEBRATION ── -->
+      <div id="auth-stage-4" class="hidden flex flex-col items-center text-center py-2">
+        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full p-1 bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] flex items-center justify-center shadow-[0_0_24px_rgba(233,184,62,0.50)] mb-3.5 animate-bounce">
+          <img src="durga-emblem.png?v=c2" alt="Puja Porikroma" class="w-full h-full rounded-full object-contain">
+        </div>
+        <h3 class="text-[#F5E5B7] font-black text-lg sm:text-xl tracking-tight mb-1">
+          Welcome to Puja Porikroma!
+        </h3>
+        <p class="text-[#E9B83E] font-semibold text-xs sm:text-sm mb-2.5">
+          Your journey begins here.
         </p>
-      </form>
+        <p class="text-[#F5E5B7]/80 text-xs sm:text-[13px] leading-relaxed max-w-xs mb-5">
+          Discover beautiful pandals, explore the festivities and share your favourite moments.
+        </p>
+        <button type="button" onclick="handleFinishWelcomeAndExplore()" class="w-full py-2.5 sm:py-3 rounded-full bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] text-[#211329] font-black text-xs sm:text-sm tracking-wider flex items-center justify-center gap-1.5 border-2 border-[#E9B83E] shadow-[0_0_14px_rgba(233,184,62,0.30)] hover:shadow-[0_0_20px_rgba(233,184,62,0.50)] hover:scale-[1.01] active:scale-95 transition-all cursor-pointer">
+          <span>Explore the Map</span>
+          <span class="text-base font-bold">→</span>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -2786,28 +2914,86 @@
       }
     }
 
-    function openGoogleAuthModal() {
-      const modal = document.getElementById('google-auth-modal');
+    const POPULAR_INDIAN_CITIES = [
+      'Agartala', 'Kolkata', 'Bengaluru', 'Guwahati', 'Silchar', 'Dharmanagar',
+      'Udaipur (Tripura)', 'Delhi', 'Mumbai', 'Hyderabad', 'Chennai', 'Pune',
+      'Ahmedabad', 'Jaipur', 'Lucknow', 'Patna', 'Bhubaneswar', 'Ranchi',
+      'Shillong', 'Siliguri', 'Durgapur', 'Asansol', 'Howrah', 'Noida',
+      'Gurugram', 'Chandigarh', 'Indore', 'Kochi'
+    ];
+
+    let authCurrentStage = 'email';
+    let authCurrentEmail = '';
+    let authResendCooldownSec = 0;
+    let authResendTimer = null;
+    let authProfileAvatarUrl = '';
+    let authVerifiedUid = '';
+
+    function switchAuthStage(stage) {
+      authCurrentStage = stage;
+      const stage1 = document.getElementById('auth-stage-1');
+      const stage2 = document.getElementById('auth-stage-2');
+      const stage3 = document.getElementById('auth-stage-3');
+      const stage4 = document.getElementById('auth-stage-4');
       const titleEl = document.getElementById('auth-modal-title');
       const subEl = document.getElementById('auth-modal-subtitle');
       const badge = document.getElementById('auth-modal-mandatory-badge');
-      const submitBtn = document.getElementById('auth-email-submit-btn');
 
-      if (window.pendingUploadAfterAuth) {
-        if (titleEl) titleEl.textContent = 'Create an Account';
-        if (subEl) subEl.textContent = 'Sign up with your email to upload and share pandal snaps';
+      if (stage1) stage1.classList.add('hidden');
+      if (stage2) stage2.classList.add('hidden');
+      if (stage3) stage3.classList.add('hidden');
+      if (stage4) stage4.classList.add('hidden');
+
+      if (stage === 'email') {
+        if (stage1) stage1.classList.remove('hidden');
+        if (titleEl) titleEl.textContent = window.pendingUploadAfterAuth ? 'Create an Account' : 'Welcome to Puja Porikroma';
+        if (subEl) subEl.textContent = window.pendingUploadAfterAuth ? 'Sign up with your email to upload and share pandal snaps' : 'Discover pandals. Capture memories.';
         if (badge) {
-          badge.innerHTML = '<span>📸 Free account required to submit pandal snaps</span>';
-          badge.classList.remove('hidden');
+          if (window.pendingUploadAfterAuth) badge.classList.remove('hidden');
+          else badge.classList.add('hidden');
         }
-        if (submitBtn) submitBtn.innerHTML = '<span>Create Account & Continue</span><span class="text-base font-bold">→</span>';
-      } else {
-        if (titleEl) titleEl.textContent = 'Welcome to Puja Porikroma';
-        if (subEl) subEl.textContent = 'Discover pandals. Capture memories.';
-        if (badge) badge.classList.add('hidden');
-        if (submitBtn) submitBtn.innerHTML = '<span>Continue with Email</span><span class="text-base font-bold">→</span>';
+      } else if (stage === 'sent') {
+        if (stage2) stage2.classList.remove('hidden');
+        if (titleEl) titleEl.textContent = 'Check Your Email';
+        if (subEl) subEl.textContent = 'Verification link sent';
+        const display = document.getElementById('auth-sent-email-display');
+        if (display) display.textContent = authCurrentEmail;
+      } else if (stage === 'profile') {
+        if (stage3) stage3.classList.remove('hidden');
+        if (titleEl) titleEl.textContent = 'Complete Your Profile';
+        if (subEl) subEl.textContent = "Let's get to know you!";
+        const emailDisp = document.getElementById('profile-email-display');
+        if (emailDisp) emailDisp.textContent = authCurrentEmail;
+        const nameInput = document.getElementById('profile-name-input');
+        if (nameInput && !nameInput.value.trim()) {
+          const namePart = authCurrentEmail.split('@')[0].replace(/[._]/g, ' ');
+          nameInput.value = namePart.replace(/\b\w/g, c => c.toUpperCase()) || 'Devotee';
+        }
+        const cityInput = document.getElementById('profile-city-input');
+        if (cityInput && !cityInput.value.trim()) {
+          cityInput.value = 'Agartala';
+        }
+        if (!authProfileAvatarUrl) {
+          authProfileAvatarUrl = `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(nameInput?.value || 'Devotee')}&backgroundColor=ffdfbf`;
+        }
+        const preview = document.getElementById('profile-photo-preview');
+        if (preview) preview.src = authProfileAvatarUrl;
+        setupCityDropdown();
+      } else if (stage === 'welcome') {
+        if (stage4) stage4.classList.remove('hidden');
+        if (titleEl) titleEl.textContent = 'Welcome to Puja Porikroma!';
+        if (subEl) subEl.textContent = 'Your journey begins here.';
+        setTimeout(() => {
+          if (authCurrentStage === 'welcome') {
+            handleFinishWelcomeAndExplore();
+          }
+        }, 2500);
       }
+    }
 
+    function openGoogleAuthModal() {
+      const modal = document.getElementById('google-auth-modal');
+      switchAuthStage('email');
       if (modal) {
         modal.classList.remove('hidden');
         requestAnimationFrame(() => modal.classList.add('active'));
@@ -2816,9 +3002,14 @@
     window.openGoogleAuthModal = openGoogleAuthModal;
 
     function handleSkipAuth() {
+      if (authCurrentStage === 'welcome') {
+        handleFinishWelcomeAndExplore();
+        return;
+      }
       sessionStorage.setItem('puja_parikrama_auth_skipped', 'true');
       window.pendingUploadAfterAuth = false;
       closeGoogleAuthModal();
+      switchAuthStage('email');
     }
     window.handleSkipAuth = handleSkipAuth;
 
@@ -2842,21 +3033,247 @@
           if (!modal.classList.contains('active')) {
             modal.classList.add('hidden');
             const errEl = document.getElementById('auth-email-error');
-            const bannerEl = document.getElementById('auth-email-sent-banner');
             if (errEl) errEl.classList.add('hidden');
-            if (bannerEl) bannerEl.classList.add('hidden');
           }
         }, 280);
       }
     }
     window.closeGoogleAuthModal = closeGoogleAuthModal;
 
+    function handleEmailAuthSubmit(e) {
+      if (e) e.preventDefault();
+      const emailInput = document.getElementById('auth-email-input');
+      const errEl = document.getElementById('auth-email-error');
+      const submitBtn = document.getElementById('auth-email-submit-btn');
+      const submitText = document.getElementById('auth-submit-btn-text');
+      const submitArrow = document.getElementById('auth-submit-btn-arrow');
+      const email = (emailInput?.value || '').trim();
+
+      if (errEl) errEl.classList.add('hidden');
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!email || !emailRegex.test(email)) {
+        if (errEl) {
+          errEl.textContent = 'Please enter a valid email address';
+          errEl.classList.remove('hidden');
+        }
+        return;
+      }
+
+      authCurrentEmail = email;
+      localStorage.setItem('puja_parikrama_pending_email', email);
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-60');
+      }
+      if (submitText) submitText.textContent = 'Sending verification email...';
+      if (submitArrow) submitArrow.classList.add('hidden');
+
+      setTimeout(() => {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.classList.remove('opacity-60');
+        }
+        if (submitText) submitText.textContent = 'Continue with Email';
+        if (submitArrow) submitArrow.classList.remove('hidden');
+
+        startResendCooldown(45);
+        switchAuthStage('sent');
+      }, 600);
+    }
+    window.handleEmailAuthSubmit = handleEmailAuthSubmit;
+
+    function startResendCooldown(sec) {
+      authResendCooldownSec = sec;
+      const resendBtn = document.getElementById('auth-resend-btn');
+      if (authResendTimer) clearInterval(authResendTimer);
+      if (resendBtn) {
+        resendBtn.disabled = true;
+        resendBtn.textContent = `Resend email in ${authResendCooldownSec}s`;
+      }
+      authResendTimer = setInterval(() => {
+        authResendCooldownSec--;
+        if (authResendCooldownSec <= 0) {
+          clearInterval(authResendTimer);
+          if (resendBtn) {
+            resendBtn.disabled = false;
+            resendBtn.textContent = 'Resend Verification Email';
+          }
+        } else {
+          if (resendBtn) resendBtn.textContent = `Resend email in ${authResendCooldownSec}s`;
+        }
+      }, 1000);
+    }
+
+    function handleResendVerificationEmail() {
+      if (authResendCooldownSec > 0) return;
+      startResendCooldown(45);
+      const notice = document.getElementById('auth-resend-notice');
+      if (notice) {
+        notice.textContent = '✨ Verification link resent! Please check your inbox.';
+        notice.classList.remove('hidden');
+        setTimeout(() => notice.classList.add('hidden'), 4000);
+      }
+    }
+    window.handleResendVerificationEmail = handleResendVerificationEmail;
+
+    function handleVerifyEmailLink() {
+      const email = authCurrentEmail.trim();
+      let registeredUsers = {};
+      try {
+        registeredUsers = JSON.parse(localStorage.getItem('puja_parikrama_registered_users') || '{}');
+      } catch (e) {}
+
+      const existing = Object.values(registeredUsers).find(u => u.email && u.email.toLowerCase() === email.toLowerCase());
+      if (existing && existing.profileCompleted) {
+        completeSignIn(existing, 'Email');
+        return;
+      }
+
+      authVerifiedUid = 'uid_' + Math.random().toString(36).substring(2, 10);
+      switchAuthStage('profile');
+    }
+    window.handleVerifyEmailLink = handleVerifyEmailLink;
+
+    function handleProfilePhotoSelected(e) {
+      const file = e.target.files && e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          if (typeof reader.result === 'string') {
+            authProfileAvatarUrl = reader.result;
+            const preview = document.getElementById('profile-photo-preview');
+            if (preview) preview.src = authProfileAvatarUrl;
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+    window.handleProfilePhotoSelected = handleProfilePhotoSelected;
+
+    function shuffleProfileAvatar() {
+      const seed = Math.random().toString(36).substring(2, 7);
+      authProfileAvatarUrl = `https://api.dicebear.com/7.x/adventurer/svg?seed=${seed}&backgroundColor=ffdfbf`;
+      const preview = document.getElementById('profile-photo-preview');
+      if (preview) preview.src = authProfileAvatarUrl;
+    }
+    window.shuffleProfileAvatar = shuffleProfileAvatar;
+
+    function setupCityDropdown() {
+      const cityInput = document.getElementById('profile-city-input');
+      const dropdown = document.getElementById('profile-city-dropdown');
+      if (!cityInput || !dropdown) return;
+
+      function renderCities(filter) {
+        dropdown.innerHTML = '';
+        const q = (filter || '').trim().toLowerCase();
+        const matches = POPULAR_INDIAN_CITIES.filter(c => c.toLowerCase().includes(q));
+        matches.forEach(city => {
+          const item = document.createElement('div');
+          item.className = 'px-3.5 py-2 text-xs cursor-pointer flex items-center justify-between text-[#F5E5B7] hover:bg-[#E9B83E]/15 transition';
+          item.innerHTML = `<span>${city}</span>${cityInput.value.toLowerCase() === city.toLowerCase() ? '<span class="text-xs">✓</span>' : ''}`;
+          item.onclick = () => {
+            cityInput.value = city;
+            dropdown.classList.add('hidden');
+          };
+          dropdown.appendChild(item);
+        });
+        if (q && !POPULAR_INDIAN_CITIES.some(c => c.toLowerCase() === q)) {
+          const custom = document.createElement('div');
+          custom.className = 'px-3.5 py-2 text-xs text-[#E9B83E] hover:bg-[#E9B83E]/20 cursor-pointer font-semibold flex items-center gap-1.5';
+          custom.innerHTML = `<span>➕</span><span>Use "${cityInput.value.trim()}"</span>`;
+          custom.onclick = () => {
+            dropdown.classList.add('hidden');
+          };
+          dropdown.appendChild(custom);
+        }
+      }
+
+      cityInput.onfocus = () => {
+        renderCities(cityInput.value);
+        dropdown.classList.remove('hidden');
+      };
+      cityInput.oninput = () => {
+        renderCities(cityInput.value);
+        dropdown.classList.remove('hidden');
+      };
+      document.addEventListener('click', (e) => {
+        const container = document.getElementById('profile-city-container');
+        if (container && !container.contains(e.target)) {
+          dropdown.classList.add('hidden');
+        }
+      });
+    }
+
+    function handleSaveProfile() {
+      const nameInput = document.getElementById('profile-name-input');
+      const cityInput = document.getElementById('profile-city-input');
+      const name = (nameInput?.value || '').trim();
+      const city = (cityInput?.value || '').trim();
+
+      if (!name || !city) {
+        showToast('⚠️ Please enter your name and city to continue');
+        return;
+      }
+
+      const userDoc = {
+        uid: authVerifiedUid || 'uid_' + Math.random().toString(36).substring(2, 10),
+        displayName: name,
+        email: authCurrentEmail.trim(),
+        city: city,
+        photoURL: authProfileAvatarUrl || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(name)}&backgroundColor=ffdfbf`,
+        emailVerified: true,
+        profileCompleted: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        totalPhotosShared: 0,
+        totalPandalsCovered: 0
+      };
+
+      let registeredUsers = {};
+      try {
+        registeredUsers = JSON.parse(localStorage.getItem('puja_parikrama_registered_users') || '{}');
+      } catch (e) {}
+      registeredUsers[userDoc.uid] = userDoc;
+      localStorage.setItem('puja_parikrama_registered_users', JSON.stringify(registeredUsers));
+
+      currentUser = userDoc;
+      localStorage.setItem('puja_parikrama_user', JSON.stringify(currentUser));
+      updateAuthUI(currentUser);
+
+      switchAuthStage('welcome');
+    }
+    window.handleSaveProfile = handleSaveProfile;
+
+    function handleFinishWelcomeAndExplore() {
+      closeGoogleAuthModal();
+      switchAuthStage('email');
+      showToast(`🎉 Welcome to Puja Porikroma, ${currentUser ? currentUser.displayName : 'Devotee'}!`);
+      if (window.pendingUploadAfterAuth) {
+        window.pendingUploadAfterAuth = false;
+        setTimeout(() => {
+          if (typeof window.openSnapUploadModal === 'function') {
+            window.openSnapUploadModal();
+          }
+        }, 250);
+      }
+    }
+    window.handleFinishWelcomeAndExplore = handleFinishWelcomeAndExplore;
+
     function completeSignIn(user, provider) {
       currentUser = user;
       localStorage.setItem('puja_parikrama_user', JSON.stringify(currentUser));
+      let registeredUsers = {};
+      try {
+        registeredUsers = JSON.parse(localStorage.getItem('puja_parikrama_registered_users') || '{}');
+      } catch (e) {}
+      registeredUsers[user.uid] = user;
+      localStorage.setItem('puja_parikrama_registered_users', JSON.stringify(registeredUsers));
+
       updateAuthUI(currentUser);
       closeGoogleAuthModal();
-      showToast(`✅ Welcome, ${currentUser.displayName}!`);
+      switchAuthStage('email');
+      showToast(`✅ Welcome back, ${currentUser.displayName}!`);
       if (window.pendingUploadAfterAuth) {
         window.pendingUploadAfterAuth = false;
         setTimeout(() => {
@@ -2867,50 +3284,6 @@
       }
       return currentUser;
     }
-
-    function handleEmailAuthSubmit(e) {
-      if (e) e.preventDefault();
-      const emailInput = document.getElementById('auth-email-input');
-      const errEl = document.getElementById('auth-email-error');
-      const bannerEl = document.getElementById('auth-email-sent-banner');
-      const submitBtn = document.getElementById('auth-email-submit-btn');
-      const email = (emailInput?.value || '').trim();
-
-      if (errEl) errEl.classList.add('hidden');
-
-      if (!email || !email.includes('@') || !email.includes('.')) {
-        if (errEl) {
-          errEl.textContent = 'Please enter a valid email address';
-          errEl.classList.remove('hidden');
-        }
-        return;
-      }
-
-      if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.classList.add('opacity-60');
-      }
-      if (bannerEl) bannerEl.classList.remove('hidden');
-
-      // Simulate passwordless email verification & registration
-      setTimeout(() => {
-        const namePart = email.split('@')[0].replace(/[._]/g, ' ');
-        const formattedName = namePart.replace(/\b\w/g, c => c.toUpperCase()) || 'Devotee';
-        const authUser = {
-          uid: 'email-' + Math.random().toString(36).substring(2, 10),
-          displayName: formattedName,
-          email: email,
-          photoURL: `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(formattedName)}&backgroundColor=ffdfbf`
-        };
-        completeSignIn(authUser, 'Email');
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.classList.remove('opacity-60');
-        }
-        if (bannerEl) bannerEl.classList.add('hidden');
-      }, 850);
-    }
-    window.handleEmailAuthSubmit = handleEmailAuthSubmit;
 
     function handleSignOut() {
       if (firebaseAuth && isRealFirebaseConfig) {
