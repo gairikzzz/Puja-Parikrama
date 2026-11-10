@@ -2768,7 +2768,7 @@ export default function App() {
           id="footer-attribution"
           className="fixed bottom-0.5 sm:bottom-1 left-1/2 -translate-x-1/2 z-30 pointer-events-none select-none text-center whitespace-nowrap text-[7px] sm:text-[8px] font-medium text-[#E9B83E]/85 tracking-wide drop-shadow-[0_1px_2px_rgba(0,0,0,0.95)]"
         >
-          Crafted with <span className="inline-block mx-0.5 text-[6.5px] sm:text-[7.5px] align-middle">❤️</span> by Gairik & Shatadru
+          Crafted with <span className="inline-block mx-0.5 text-[6.5px] sm:text-[7.5px] align-middle">❤️</span> by Gairik
         </div>
       )}
 
