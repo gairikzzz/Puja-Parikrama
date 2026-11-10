@@ -3011,18 +3011,41 @@ export default function App() {
                 </svg>
               </button>
 
-              {/* Profile Button */}
+              {/* Profile / Auth Button */}
               <button
                 id="guest-avatar-chip"
                 type="button"
-                onClick={() => setProfileModalVisible(true)}
-                title="Guest Devotee Profile"
+                onClick={() => {
+                  if (!user) {
+                    setAuthModalVisible(true)
+                  } else {
+                    setProfileModalVisible(true)
+                  }
+                }}
+                title={user ? `${user.displayName || 'Devotee'} Profile` : 'Sign In to Profile'}
                 className="h-7 sm:h-7.5 px-2.5 sm:px-3 rounded-xl backdrop-blur-md bg-[#211329]/70 hover:bg-[#211329]/85 border border-[#E9B83E]/40 hover:border-[#E9B83E] flex items-center gap-1.5 text-[#F5E5B7] font-semibold text-[11px] sm:text-xs shadow-[0_0_8px_rgba(233,184,62,0.22),inset_0_1px_1px_rgba(255,255,255,0.10)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] hover:scale-[1.02] active:scale-95 transition-all flex-shrink-0 cursor-pointer"
               >
-                <span>Profile</span>
-                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#E9B83E] flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                </svg>
+                {user ? (
+                  <>
+                    <div className="w-5 h-5 rounded-full p-[1px] bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] flex items-center justify-center flex-shrink-0 aspect-square overflow-hidden shadow-[0_0_6px_rgba(233,184,62,0.35)]">
+                      <img
+                        src={user.photoURL || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(user.displayName || 'Devotee')}&backgroundColor=ffdfbf`}
+                        alt={user.displayName || 'Devotee'}
+                        className="w-full h-full rounded-full object-cover object-center aspect-square block"
+                      />
+                    </div>
+                    <span className="truncate max-w-[70px] sm:max-w-[90px] font-bold">
+                      {(user.displayName || 'Devotee').trim().split(' ')[0]}
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <span>Profile</span>
+                    <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#E9B83E] flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                    </svg>
+                  </>
+                )}
               </button>
             </div>
           </div>

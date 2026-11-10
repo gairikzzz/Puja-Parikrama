@@ -752,16 +752,23 @@
           </svg>
         </button>
 
-        <!-- Profile Button -->
+        <!-- Profile / Auth Button -->
         <button
           id="guest-avatar-chip"
           type="button"
-          onclick="openProfileModal()"
-          title="Guest Devotee Profile"
+          onclick="handleHeaderProfileClick()"
+          title="Profile"
           class="h-7 sm:h-7.5 px-2.5 sm:px-3 rounded-xl backdrop-blur-md bg-[#211329]/70 hover:bg-[#211329]/85 border border-[#E9B83E]/40 hover:border-[#E9B83E] flex items-center gap-1.5 text-[#F5E5B7] font-semibold text-[11px] sm:text-xs shadow-[0_0_8px_rgba(233,184,62,0.22),inset_0_1px_1px_rgba(255,255,255,0.10)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] hover:scale-[1.02] active:scale-95 transition-all flex-shrink-0 cursor-pointer"
         >
-          <span>Profile</span>
-          <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#E9B83E] flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+          <!-- Signed in avatar and name -->
+          <div id="header-user-avatar-frame" class="hidden w-5 h-5 rounded-full p-[1px] bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] flex items-center justify-center flex-shrink-0 aspect-square overflow-hidden shadow-[0_0_6px_rgba(233,184,62,0.35)]">
+            <img id="header-user-avatar-img" src="" alt="Devotee" class="w-full h-full rounded-full object-cover object-center aspect-square block">
+          </div>
+          <span id="header-user-name" class="hidden truncate max-w-[70px] sm:max-w-[90px] font-bold"></span>
+
+          <!-- Guest state -->
+          <span id="header-guest-label">Profile</span>
+          <svg id="header-guest-icon" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#E9B83E] flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
           </svg>
         </button>
@@ -2931,6 +2938,13 @@
       const uploadAvatar = document.getElementById('upload-user-avatar');
       const uploadName = document.getElementById('upload-user-name');
 
+      const headerChip = document.getElementById('guest-avatar-chip');
+      const headerAvatarFrame = document.getElementById('header-user-avatar-frame');
+      const headerAvatarImg = document.getElementById('header-user-avatar-img');
+      const headerUserName = document.getElementById('header-user-name');
+      const headerGuestLabel = document.getElementById('header-guest-label');
+      const headerGuestIcon = document.getElementById('header-guest-icon');
+
       if (user) {
         if (btnSignIn) btnSignIn.classList.add('hidden');
         if (profileChip) profileChip.classList.remove('hidden');
@@ -2939,12 +2953,42 @@
 
         if (uploadAvatar) uploadAvatar.src = user.photoURL;
         if (uploadName) uploadName.textContent = user.displayName;
+
+        if (headerAvatarFrame) headerAvatarFrame.classList.remove('hidden');
+        if (headerAvatarImg) {
+          headerAvatarImg.src = user.photoURL || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(user.displayName || 'Devotee')}&backgroundColor=ffdfbf`;
+          headerAvatarImg.alt = user.displayName || 'Devotee';
+        }
+        if (headerUserName) {
+          headerUserName.textContent = (user.displayName || 'Devotee').trim().split(' ')[0];
+          headerUserName.classList.remove('hidden');
+        }
+        if (headerGuestLabel) headerGuestLabel.classList.add('hidden');
+        if (headerGuestIcon) headerGuestIcon.classList.add('hidden');
+        if (headerChip) headerChip.title = `${user.displayName || 'Devotee'} Profile`;
       } else {
         if (btnSignIn) btnSignIn.classList.remove('hidden');
         if (profileChip) profileChip.classList.add('hidden');
         if (uploadName) uploadName.textContent = 'Not signed in';
+
+        if (headerAvatarFrame) headerAvatarFrame.classList.add('hidden');
+        if (headerUserName) headerUserName.classList.add('hidden');
+        if (headerGuestLabel) headerGuestLabel.classList.remove('hidden');
+        if (headerGuestIcon) headerGuestIcon.classList.remove('hidden');
+        if (headerChip) headerChip.title = 'Sign In to Profile';
       }
     }
+
+    function handleHeaderProfileClick() {
+      if (!currentUser) {
+        openGoogleAuthModal();
+      } else {
+        if (typeof window.openProfileModal === 'function') {
+          window.openProfileModal();
+        }
+      }
+    }
+    window.handleHeaderProfileClick = handleHeaderProfileClick;
 
     const POPULAR_INDIAN_CITIES = [
       'Agartala', 'Kolkata', 'Bengaluru', 'Guwahati', 'Silchar', 'Dharmanagar',
@@ -3837,7 +3881,7 @@
 
     document.getElementById('guest-avatar-chip')?.addEventListener('click', (e) => {
       e?.preventDefault();
-      window.openProfileModal();
+      handleHeaderProfileClick();
     });
     document.getElementById('btn-close-profile-modal')?.addEventListener('click', (e) => {
       e?.preventDefault();
