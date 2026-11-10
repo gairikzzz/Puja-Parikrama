@@ -794,11 +794,6 @@
 
       <!-- ── STAGE 1: ENTER GOOGLE OR EMAIL AUTH ── -->
       <div id="auth-stage-1" class="w-full text-left">
-        <!-- Mandatory Upload Indicator -->
-        <div id="auth-modal-mandatory-badge" class="hidden w-full mb-3.5 px-3 py-2 rounded-xl bg-[#E9B83E]/10 border border-[#E9B83E]/30 text-[#F5E5B7] text-xs font-semibold text-center flex items-center justify-center gap-1.5">
-          <span>📸 Sign in required to submit pandal snaps</span>
-        </div>
-
         <!-- Option 1: Continue with Google (One-click authentication) -->
         <button
           id="btn-google-auth-oneclick"
@@ -2967,7 +2962,6 @@
       const stage4 = document.getElementById('auth-stage-4');
       const titleEl = document.getElementById('auth-modal-title');
       const subEl = document.getElementById('auth-modal-subtitle');
-      const badge = document.getElementById('auth-modal-mandatory-badge');
 
       if (stage1) stage1.classList.add('hidden');
       if (stage2) stage2.classList.add('hidden');
@@ -2978,10 +2972,6 @@
         if (stage1) stage1.classList.remove('hidden');
         if (titleEl) titleEl.textContent = window.pendingUploadAfterAuth ? 'Create an Account' : 'Welcome to Puja Porikroma';
         if (subEl) subEl.textContent = window.pendingUploadAfterAuth ? 'Sign up with your email to upload and share pandal snaps' : 'Discover pandals. Capture memories.';
-        if (badge) {
-          if (window.pendingUploadAfterAuth) badge.classList.remove('hidden');
-          else badge.classList.add('hidden');
-        }
       } else if (stage === 'sent') {
         if (stage2) stage2.classList.remove('hidden');
         if (titleEl) titleEl.textContent = 'Check Your Email';

@@ -3197,12 +3197,6 @@ export default function App() {
             {/* ── STAGE 1: ENTER GOOGLE OR EMAIL AUTH ── */}
             {authStage === 'email' && (
               <div className="w-full text-left">
-                {pendingUploadAfterAuth && (
-                  <div className="w-full mb-3.5 px-3 py-2 rounded-xl bg-[#E9B83E]/10 border border-[#E9B83E]/30 text-[#F5E5B7] text-xs font-semibold text-center flex items-center justify-center gap-1.5">
-                    <span>📸 Sign in required to submit pandal snaps</span>
-                  </div>
-                )}
-
                 {/* Option 1: Continue with Google (One-click authentication) */}
                 <button
                   type="button"
