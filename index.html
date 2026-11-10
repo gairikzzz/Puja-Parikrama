@@ -899,13 +899,32 @@
       <!-- ── STAGE 3: COMPLETE YOUR PROFILE ── -->
       <div id="auth-stage-3" class="hidden w-full text-left">
         <!-- Profile Photo -->
-        <div class="flex flex-col items-center mb-3.5">
-          <div class="relative w-16 h-16 sm:w-18 sm:h-18 rounded-full p-1 bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] flex items-center justify-center shadow-[0_0_12px_rgba(233,184,62,0.35)] mb-2">
-            <img id="profile-photo-preview" src="https://api.dicebear.com/7.x/adventurer/svg?seed=Devotee&backgroundColor=ffdfbf" alt="Devotee Avatar" class="w-full h-full rounded-full object-cover bg-[#121224]">
+        <div class="flex flex-col items-center mb-3">
+          <div id="avatar-frame-container" class="relative w-20 h-20 sm:w-22 sm:h-22 rounded-full p-1 bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] flex items-center justify-center shadow-[0_0_14px_rgba(233,184,62,0.35)] mb-2 select-none overflow-hidden touch-none">
+            <img id="profile-photo-preview" src="https://api.dicebear.com/7.x/adventurer/svg?seed=Devotee&backgroundColor=ffdfbf" alt="Devotee Avatar" class="w-full h-full rounded-full object-cover object-center aspect-square bg-[#121224] block select-none pointer-events-none">
           </div>
           <input id="profile-photo-file-input" type="file" accept="image/*" class="hidden" onchange="handleProfilePhotoSelected(event)">
+          
+          <!-- Avatar Nudge / Centering Controls -->
+          <div id="avatar-nudge-controls" class="hidden flex flex-col items-center mb-2">
+            <div class="flex items-center gap-1.5 mb-1">
+              <button type="button" onclick="nudgeProfileAvatar(-0.06, 0)" class="px-2 py-0.5 rounded-md bg-white/10 hover:bg-white/20 text-[#F5E5B7] text-[10px] font-semibold border border-[#E9B83E]/30 transition active:scale-95 cursor-pointer" title="Nudge Left">
+                ◀ Left
+              </button>
+              <button type="button" onclick="resetProfileAvatarCenter()" class="px-2 py-0.5 rounded-md bg-[#E9B83E]/20 hover:bg-[#E9B83E]/30 text-[#F5E5B7] text-[10px] font-bold border border-[#E9B83E]/50 transition active:scale-95 cursor-pointer" title="Center Photo">
+                Center
+              </button>
+              <button type="button" onclick="nudgeProfileAvatar(0.06, 0)" class="px-2 py-0.5 rounded-md bg-white/10 hover:bg-white/20 text-[#F5E5B7] text-[10px] font-semibold border border-[#E9B83E]/30 transition active:scale-95 cursor-pointer" title="Nudge Right">
+                Right ▶
+              </button>
+            </div>
+            <span class="text-[10px] text-[#E9B83E]/75 flex items-center gap-1">
+              <span>👆</span> Drag or nudge to center photo
+            </span>
+          </div>
+
           <div class="flex items-center gap-2">
-            <button type="button" onclick="document.getElementById('profile-photo-file-input')?.click()" class="px-3 py-1 rounded-full border border-[#E9B83E] bg-[#E9B83E]/15 hover:bg-[#E9B83E]/25 text-[#F5E5B7] text-[11px] sm:text-xs font-bold transition active:scale-95 cursor-pointer shadow-[0_0_8px_rgba(233,184,62,0.20)]">
+            <button id="btn-add-profile-photo" type="button" onclick="document.getElementById('profile-photo-file-input')?.click()" class="px-3 py-1 rounded-full border border-[#E9B83E] bg-[#E9B83E]/15 hover:bg-[#E9B83E]/25 text-[#F5E5B7] text-[11px] sm:text-xs font-bold transition active:scale-95 cursor-pointer shadow-[0_0_8px_rgba(233,184,62,0.20)]">
               Add Photo
             </button>
             <button type="button" onclick="shuffleProfileAvatar()" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/15 text-[#F5E5B7] text-[11px] sm:text-xs font-semibold border border-white/15 transition active:scale-95 cursor-pointer" title="Shuffle Avatar">
@@ -1313,7 +1332,7 @@
               id="profile-modal-avatar"
               src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80"
               alt="Devotee"
-              class="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover border-2 border-[#E9B83E] shadow-[0_0_16px_rgba(233,184,62,0.4)]"
+              class="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover object-center aspect-square block border-2 border-[#E9B83E] shadow-[0_0_16px_rgba(233,184,62,0.4)]"
             >
           </div>
           <div class="min-w-0">
@@ -2950,6 +2969,11 @@
     let authResendTimer = null;
     let authProfileAvatarUrl = '';
     let authVerifiedUid = '';
+    let hasCustomProfilePhoto = false;
+    let avatarFocalX = 0.5;
+    let avatarFocalY = 0.5;
+    let rawProfileImg = null;
+    let avatarDragState = { isDragging: false, startX: 0, startY: 0, startFocalX: 0.5, startFocalY: 0.5 };
 
     function switchAuthStage(stage) {
       authCurrentStage = stage;
@@ -3254,15 +3278,135 @@
     }
     window.handleVerifyEmailLink = handleVerifyEmailLink;
 
+    function cropAvatarCanvas(img, focalX, focalY, size) {
+      size = size || 512;
+      focalX = typeof focalX === 'number' ? focalX : 0.5;
+      focalY = typeof focalY === 'number' ? focalY : 0.5;
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return '';
+        const nw = img.naturalWidth || img.width;
+        const nh = img.naturalHeight || img.height;
+        if (!nw || !nh) return '';
+        const cropSize = Math.min(nw, nh);
+        let sx = focalX * nw - cropSize / 2;
+        let sy = focalY * nh - cropSize / 2;
+        sx = Math.max(0, Math.min(nw - cropSize, sx));
+        sy = Math.max(0, Math.min(nh - cropSize, sy));
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(img, sx, sy, cropSize, cropSize, 0, 0, size, size);
+        return canvas.toDataURL('image/jpeg', 0.92);
+      } catch (err) {
+        console.warn('Avatar crop failed:', err);
+        return img.src;
+      }
+    }
+
+    async function detectFaceFocal(img) {
+      if (typeof window !== 'undefined' && 'FaceDetector' in window) {
+        try {
+          const FaceDetectorClass = window.FaceDetector;
+          const detector = new FaceDetectorClass({ fastMode: true, maxDetectedFaces: 1 });
+          const faces = await detector.detect(img);
+          if (faces && faces.length > 0) {
+            const box = faces[0].boundingBox;
+            const nw = img.naturalWidth || img.width;
+            const nh = img.naturalHeight || img.height;
+            return {
+              x: Math.max(0, Math.min(1, (box.x + box.width / 2) / nw)),
+              y: Math.max(0, Math.min(1, (box.y + box.height / 2) / nh))
+            };
+          }
+        } catch (_) {}
+      }
+      return null;
+    }
+
+    function initAvatarPointerEvents() {
+      const container = document.getElementById('avatar-frame-container');
+      if (!container || container.dataset.pointerInitialized) return;
+      container.dataset.pointerInitialized = 'true';
+
+      container.addEventListener('pointerdown', (e) => {
+        if (!hasCustomProfilePhoto || !rawProfileImg) return;
+        try { container.setPointerCapture(e.pointerId); } catch (_) {}
+        container.classList.add('cursor-grabbing');
+        avatarDragState = {
+          isDragging: true,
+          startX: e.clientX,
+          startY: e.clientY,
+          startFocalX: avatarFocalX,
+          startFocalY: avatarFocalY
+        };
+      });
+
+      container.addEventListener('pointermove', (e) => {
+        if (!avatarDragState.isDragging || !rawProfileImg) return;
+        const nw = rawProfileImg.naturalWidth || rawProfileImg.width;
+        const nh = rawProfileImg.naturalHeight || rawProfileImg.height;
+        const cropSize = Math.min(nw, nh);
+
+        const dx = e.clientX - avatarDragState.startX;
+        const dy = e.clientY - avatarDragState.startY;
+
+        const previewSize = 80;
+        const sensitivity = 0.9;
+        const deltaX = (dx / previewSize) * (cropSize / nw) * sensitivity;
+        const deltaY = (dy / previewSize) * (cropSize / nh) * sensitivity;
+
+        avatarFocalX = Math.max(0, Math.min(1, avatarDragState.startFocalX - deltaX));
+        avatarFocalY = Math.max(0, Math.min(1, avatarDragState.startFocalY - deltaY));
+
+        const cropped = cropAvatarCanvas(rawProfileImg, avatarFocalX, avatarFocalY);
+        if (cropped) {
+          authProfileAvatarUrl = cropped;
+          const preview = document.getElementById('profile-photo-preview');
+          if (preview) preview.src = authProfileAvatarUrl;
+        }
+      });
+
+      const endDrag = (e) => {
+        if (avatarDragState.isDragging) {
+          try { container.releasePointerCapture(e.pointerId); } catch (_) {}
+          avatarDragState.isDragging = false;
+          container.classList.remove('cursor-grabbing');
+        }
+      };
+      container.addEventListener('pointerup', endDrag);
+      container.addEventListener('pointercancel', endDrag);
+    }
+
     function handleProfilePhotoSelected(e) {
       const file = e.target.files && e.target.files[0];
       if (file) {
         const reader = new FileReader();
         reader.onload = () => {
           if (typeof reader.result === 'string') {
-            authProfileAvatarUrl = reader.result;
-            const preview = document.getElementById('profile-photo-preview');
-            if (preview) preview.src = authProfileAvatarUrl;
+            const img = new Image();
+            img.onload = async () => {
+              rawProfileImg = img;
+              const faceFocal = await detectFaceFocal(img);
+              const initialFocal = faceFocal || { x: 0.5, y: 0.5 };
+              avatarFocalX = initialFocal.x;
+              avatarFocalY = initialFocal.y;
+              hasCustomProfilePhoto = true;
+              const cropped = cropAvatarCanvas(img, avatarFocalX, avatarFocalY);
+              authProfileAvatarUrl = cropped || reader.result;
+              const preview = document.getElementById('profile-photo-preview');
+              if (preview) preview.src = authProfileAvatarUrl;
+              const nudgeControls = document.getElementById('avatar-nudge-controls');
+              if (nudgeControls) nudgeControls.classList.remove('hidden');
+              const btnAddPhoto = document.getElementById('btn-add-profile-photo');
+              if (btnAddPhoto) btnAddPhoto.textContent = 'Change Photo';
+              const container = document.getElementById('avatar-frame-container');
+              if (container) container.classList.add('cursor-grab');
+              initAvatarPointerEvents();
+            };
+            img.src = reader.result;
           }
         };
         reader.readAsDataURL(file);
@@ -3270,11 +3414,47 @@
     }
     window.handleProfilePhotoSelected = handleProfilePhotoSelected;
 
+    function nudgeProfileAvatar(dxRatio, dyRatio) {
+      if (!rawProfileImg) return;
+      avatarFocalX = Math.max(0, Math.min(1, avatarFocalX + dxRatio));
+      avatarFocalY = Math.max(0, Math.min(1, avatarFocalY + dyRatio));
+      const cropped = cropAvatarCanvas(rawProfileImg, avatarFocalX, avatarFocalY);
+      if (cropped) {
+        authProfileAvatarUrl = cropped;
+        const preview = document.getElementById('profile-photo-preview');
+        if (preview) preview.src = authProfileAvatarUrl;
+      }
+    }
+    window.nudgeProfileAvatar = nudgeProfileAvatar;
+
+    function resetProfileAvatarCenter() {
+      if (!rawProfileImg) return;
+      avatarFocalX = 0.5;
+      avatarFocalY = 0.5;
+      const cropped = cropAvatarCanvas(rawProfileImg, 0.5, 0.5);
+      if (cropped) {
+        authProfileAvatarUrl = cropped;
+        const preview = document.getElementById('profile-photo-preview');
+        if (preview) preview.src = authProfileAvatarUrl;
+      }
+    }
+    window.resetProfileAvatarCenter = resetProfileAvatarCenter;
+
     function shuffleProfileAvatar() {
+      hasCustomProfilePhoto = false;
+      rawProfileImg = null;
+      avatarFocalX = 0.5;
+      avatarFocalY = 0.5;
       const seed = Math.random().toString(36).substring(2, 7);
       authProfileAvatarUrl = `https://api.dicebear.com/7.x/adventurer/svg?seed=${seed}&backgroundColor=ffdfbf`;
       const preview = document.getElementById('profile-photo-preview');
       if (preview) preview.src = authProfileAvatarUrl;
+      const nudgeControls = document.getElementById('avatar-nudge-controls');
+      if (nudgeControls) nudgeControls.classList.add('hidden');
+      const btnAddPhoto = document.getElementById('btn-add-profile-photo');
+      if (btnAddPhoto) btnAddPhoto.textContent = 'Add Photo';
+      const container = document.getElementById('avatar-frame-container');
+      if (container) container.classList.remove('cursor-grab', 'cursor-grabbing');
     }
     window.shuffleProfileAvatar = shuffleProfileAvatar;
 

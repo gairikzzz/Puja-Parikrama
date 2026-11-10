@@ -1229,6 +1229,64 @@ function mapSupabaseRowToSnapPost(row: SupabaseSubmissionRow): SnapPost {
   }
 }
 
+// Center-crop an avatar to a 1:1 square canvas at focal coordinates
+const cropAvatarToSquare = (
+  img: HTMLImageElement,
+  focalX = 0.5,
+  focalY = 0.5,
+  size = 512
+): string => {
+  try {
+    const canvas = document.createElement('canvas')
+    canvas.width = size
+    canvas.height = size
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return ''
+
+    const nw = img.naturalWidth || img.width
+    const nh = img.naturalHeight || img.height
+    if (!nw || !nh) return ''
+
+    const cropSize = Math.min(nw, nh)
+
+    // Calculate crop origin centered on focal coordinates
+    let sx = focalX * nw - cropSize / 2
+    let sy = focalY * nh - cropSize / 2
+
+    // Clamp within bounds to ensure no empty margins
+    sx = Math.max(0, Math.min(nw - cropSize, sx))
+    sy = Math.max(0, Math.min(nh - cropSize, sy))
+
+    ctx.imageSmoothingEnabled = true
+    ctx.imageSmoothingQuality = 'high'
+    ctx.drawImage(img, sx, sy, cropSize, cropSize, 0, 0, size, size)
+    return canvas.toDataURL('image/jpeg', 0.92)
+  } catch (err) {
+    console.warn('Avatar crop failed:', err)
+    return img.src
+  }
+}
+
+const detectFaceCenter = async (img: HTMLImageElement): Promise<{ x: number; y: number } | null> => {
+  if (typeof window !== 'undefined' && 'FaceDetector' in window) {
+    try {
+      const FaceDetectorClass = (window as any).FaceDetector
+      const detector = new FaceDetectorClass({ fastMode: true, maxDetectedFaces: 1 })
+      const faces = await detector.detect(img)
+      if (faces && faces.length > 0) {
+        const box = faces[0].boundingBox
+        const nw = img.naturalWidth || img.width
+        const nh = img.naturalHeight || img.height
+        return {
+          x: Math.max(0, Math.min(1, (box.x + box.width / 2) / nw)),
+          y: Math.max(0, Math.min(1, (box.y + box.height / 2) / nh)),
+        }
+      }
+    } catch (_) {}
+  }
+  return null
+}
+
 /* ─────────────────────────────────────────────────────────────────────────
    Main App
    ───────────────────────────────────────────────────────────────────────── */
@@ -1298,6 +1356,16 @@ export default function App() {
   const [citySearchQuery, setCitySearchQuery] = useState('')
   const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false)
   const [profilePhoto, setProfilePhoto] = useState('')
+  const [hasCustomPhoto, setHasCustomPhoto] = useState(false)
+  const [avatarFocal, setAvatarFocal] = useState({ x: 0.5, y: 0.5 })
+  const rawAvatarImgRef = useRef<HTMLImageElement | null>(null)
+  const avatarDragRef = useRef<{
+    isDragging: boolean
+    startX: number
+    startY: number
+    startFocalX: number
+    startFocalY: number
+  }>({ isDragging: false, startX: 0, startY: 0, startFocalX: 0.5, startFocalY: 0.5 })
   const [verifiedUid, setVerifiedUid] = useState('')
   const cityDropdownRef = useRef<HTMLDivElement>(null)
   const profilePhotoInputRef = useRef<HTMLInputElement>(null)
@@ -2135,6 +2203,91 @@ export default function App() {
     setVerifiedUid('uid_' + Math.random().toString(36).substring(2, 10))
     setProfilePhoto(`https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(formattedName)}&backgroundColor=ffdfbf`)
     setAuthStage('profile')
+  }
+
+  const handleAvatarFileSelected = (file: File) => {
+    const reader = new FileReader()
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        const img = new Image()
+        img.onload = async () => {
+          rawAvatarImgRef.current = img
+          const faceFocal = await detectFaceCenter(img)
+          const initialFocal = faceFocal || { x: 0.5, y: 0.5 }
+          setAvatarFocal(initialFocal)
+          setHasCustomPhoto(true)
+          const cropped = cropAvatarToSquare(img, initialFocal.x, initialFocal.y)
+          setProfilePhoto(cropped || (reader.result as string))
+        }
+        img.src = reader.result
+      }
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const nudgeAvatar = (dxRatio: number, dyRatio: number) => {
+    if (!rawAvatarImgRef.current) return
+    const nextX = Math.max(0, Math.min(1, avatarFocal.x + dxRatio))
+    const nextY = Math.max(0, Math.min(1, avatarFocal.y + dyRatio))
+    const newFocal = { x: nextX, y: nextY }
+    setAvatarFocal(newFocal)
+    const cropped = cropAvatarToSquare(rawAvatarImgRef.current, nextX, nextY)
+    if (cropped) setProfilePhoto(cropped)
+  }
+
+  const resetAvatarCenter = () => {
+    if (!rawAvatarImgRef.current) return
+    const newFocal = { x: 0.5, y: 0.5 }
+    setAvatarFocal(newFocal)
+    const cropped = cropAvatarToSquare(rawAvatarImgRef.current, 0.5, 0.5)
+    if (cropped) setProfilePhoto(cropped)
+  }
+
+  const onAvatarPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!hasCustomPhoto || !rawAvatarImgRef.current) return
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId)
+    } catch (_) {}
+    avatarDragRef.current = {
+      isDragging: true,
+      startX: e.clientX,
+      startY: e.clientY,
+      startFocalX: avatarFocal.x,
+      startFocalY: avatarFocal.y,
+    }
+  }
+
+  const onAvatarPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!avatarDragRef.current.isDragging || !rawAvatarImgRef.current) return
+    const img = rawAvatarImgRef.current
+    const nw = img.naturalWidth || img.width
+    const nh = img.naturalHeight || img.height
+    const cropSize = Math.min(nw, nh)
+
+    const dx = e.clientX - avatarDragRef.current.startX
+    const dy = e.clientY - avatarDragRef.current.startY
+
+    const previewSize = 80
+    const sensitivity = 0.9
+    const deltaX = (dx / previewSize) * (cropSize / nw) * sensitivity
+    const deltaY = (dy / previewSize) * (cropSize / nh) * sensitivity
+
+    const nextX = Math.max(0, Math.min(1, avatarDragRef.current.startFocalX - deltaX))
+    const nextY = Math.max(0, Math.min(1, avatarDragRef.current.startFocalY - deltaY))
+
+    const newFocal = { x: nextX, y: nextY }
+    setAvatarFocal(newFocal)
+    const cropped = cropAvatarToSquare(img, nextX, nextY)
+    if (cropped) setProfilePhoto(cropped)
+  }
+
+  const onAvatarPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (avatarDragRef.current.isDragging) {
+      try {
+        e.currentTarget.releasePointerCapture(e.pointerId)
+      } catch (_) {}
+      avatarDragRef.current.isDragging = false
+    }
   }
 
   const handleSaveProfile = (e?: React.FormEvent) => {
@@ -3357,12 +3510,20 @@ export default function App() {
             {authStage === 'profile' && (
               <div className="w-full text-left animate-in fade-in duration-200">
                 {/* Profile Photo Avatar */}
-                <div className="flex flex-col items-center mb-3.5">
-                  <div className="relative w-16 h-16 sm:w-18 sm:h-18 rounded-full p-1 bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] flex items-center justify-center shadow-[0_0_12px_rgba(233,184,62,0.35)] mb-2">
+                <div className="flex flex-col items-center mb-3">
+                  <div
+                    onPointerDown={onAvatarPointerDown}
+                    onPointerMove={onAvatarPointerMove}
+                    onPointerUp={onAvatarPointerUp}
+                    onPointerCancel={onAvatarPointerUp}
+                    className={`relative w-20 h-20 sm:w-22 sm:h-22 rounded-full p-1 bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] flex items-center justify-center shadow-[0_0_14px_rgba(233,184,62,0.35)] mb-2 select-none overflow-hidden touch-none ${
+                      hasCustomPhoto ? 'cursor-grab active:cursor-grabbing' : ''
+                    }`}
+                  >
                     <img
                       src={profilePhoto || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(profileName || 'Devotee')}&backgroundColor=ffdfbf`}
                       alt="Devotee Avatar"
-                      className="w-full h-full rounded-full object-cover bg-[#121224]"
+                      className="w-full h-full rounded-full object-cover object-center aspect-square bg-[#121224] block select-none pointer-events-none"
                     />
                   </div>
                   <input
@@ -3372,26 +3533,58 @@ export default function App() {
                     className="hidden"
                     onChange={(e) => {
                       const file = e.target.files?.[0]
-                      if (file) {
-                        const reader = new FileReader()
-                        reader.onload = () => {
-                          if (typeof reader.result === 'string') setProfilePhoto(reader.result)
-                        }
-                        reader.readAsDataURL(file)
-                      }
+                      if (file) handleAvatarFileSelected(file)
                     }}
                   />
+
+                  {hasCustomPhoto && (
+                    <div className="flex flex-col items-center mb-2">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <button
+                          type="button"
+                          onClick={() => nudgeAvatar(-0.06, 0)}
+                          className="px-2 py-0.5 rounded-md bg-white/10 hover:bg-white/20 text-[#F5E5B7] text-[10px] font-semibold border border-[#E9B83E]/30 transition active:scale-95 cursor-pointer"
+                          title="Nudge Left"
+                        >
+                          ◀ Left
+                        </button>
+                        <button
+                          type="button"
+                          onClick={resetAvatarCenter}
+                          className="px-2 py-0.5 rounded-md bg-[#E9B83E]/20 hover:bg-[#E9B83E]/30 text-[#F5E5B7] text-[10px] font-bold border border-[#E9B83E]/50 transition active:scale-95 cursor-pointer"
+                          title="Center Photo"
+                        >
+                          Center
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => nudgeAvatar(0.06, 0)}
+                          className="px-2 py-0.5 rounded-md bg-white/10 hover:bg-white/20 text-[#F5E5B7] text-[10px] font-semibold border border-[#E9B83E]/30 transition active:scale-95 cursor-pointer"
+                          title="Nudge Right"
+                        >
+                          Right ▶
+                        </button>
+                      </div>
+                      <span className="text-[10px] text-[#E9B83E]/75 flex items-center gap-1">
+                        <span>👆</span> Drag or nudge to center photo
+                      </span>
+                    </div>
+                  )}
+
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
                       onClick={() => profilePhotoInputRef.current?.click()}
                       className="px-3 py-1 rounded-full border border-[#E9B83E] bg-[#E9B83E]/15 hover:bg-[#E9B83E]/25 text-[#F5E5B7] text-[11px] sm:text-xs font-bold transition active:scale-95 cursor-pointer shadow-[0_0_8px_rgba(233,184,62,0.20)]"
                     >
-                      Add Photo
+                      {hasCustomPhoto ? 'Change Photo' : 'Add Photo'}
                     </button>
                     <button
                       type="button"
                       onClick={() => {
+                        setHasCustomPhoto(false)
+                        rawAvatarImgRef.current = null
+                        setAvatarFocal({ x: 0.5, y: 0.5 })
                         const seed = Math.random().toString(36).substring(2, 7)
                         setProfilePhoto(`https://api.dicebear.com/7.x/adventurer/svg?seed=${seed}&backgroundColor=ffdfbf`)
                       }}
@@ -3838,7 +4031,7 @@ export default function App() {
                   <img
                     src={user?.photoURL || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80'}
                     alt="Devotee"
-                    className="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover border-2 border-[#E9B83E] shadow-[0_0_16px_rgba(233,184,62,0.4)]"
+                    className="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover object-center aspect-square block border-2 border-[#E9B83E] shadow-[0_0_16px_rgba(233,184,62,0.4)]"
                   />
                 </div>
                 <div className="min-w-0">
