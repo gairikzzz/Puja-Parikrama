@@ -2807,7 +2807,7 @@ export default function App() {
                   <p className="text-[#E9B83E]/80 text-xs sm:text-[13px] font-medium leading-tight">
                     {pendingUploadAfterAuth
                       ? 'Sign up with your email to upload and share pandal snaps'
-                      : 'Discover pandals. Capture memories. Celebrate together.'}
+                      : 'Discover pandals. Capture memories.'}
                   </p>
                 </div>
               </div>
