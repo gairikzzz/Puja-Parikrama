@@ -3179,7 +3179,7 @@ export default function App() {
                       : authStage === 'sent'
                       ? 'Verification link sent'
                       : (pendingUploadAfterAuth
-                        ? 'Sign up with your email to upload and share pandal snaps'
+                        ? 'Sign up with your email to share pandal snaps'
                         : 'Discover pandals. Capture memories.')}
                   </p>
                 </div>
