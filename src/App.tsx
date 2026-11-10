@@ -3429,7 +3429,7 @@ export default function App() {
                         <span>Sending verification email...</span>
                       </span>
                     ) : (
-                      <span>Continue with Email →</span>
+                      <span>Continue with Email</span>
                     )}
                   </button>
 

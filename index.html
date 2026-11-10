@@ -837,7 +837,7 @@
           <p id="auth-email-error" class="hidden text-red-300 text-xs font-medium bg-red-950/50 border border-red-500/30 rounded-xl p-2.5 mb-3 text-center"></p>
 
           <button id="auth-email-submit-btn" type="submit" class="w-full py-2.5 sm:py-3 rounded-full bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] text-[#211329] font-black text-xs sm:text-sm tracking-wider flex items-center justify-center border-2 border-[#E9B83E] shadow-[0_0_14px_rgba(233,184,62,0.30)] hover:shadow-[0_0_20px_rgba(233,184,62,0.50)] hover:scale-[1.01] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer">
-            <span id="auth-submit-btn-text">Continue with Email →</span>
+            <span id="auth-submit-btn-text">Continue with Email</span>
           </button>
 
           <p class="text-[#E9B83E]/80 text-[11px] text-center mt-3 leading-relaxed">
@@ -3218,7 +3218,7 @@
           submitBtn.disabled = false;
           submitBtn.classList.remove('opacity-60');
         }
-        if (submitText) submitText.textContent = 'Continue';
+        if (submitText) submitText.textContent = 'Continue with Email';
 
         startResendCooldown(45);
         switchAuthStage('sent');
