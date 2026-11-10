@@ -3385,9 +3385,9 @@ export default function App() {
                     <button
                       type="button"
                       onClick={() => profilePhotoInputRef.current?.click()}
-                      className="px-2.5 py-1 rounded-lg bg-[#E9B83E]/15 hover:bg-[#E9B83E]/25 text-[#E9B83E] text-[11px] font-semibold border border-[#E9B83E]/35 transition active:scale-95 cursor-pointer"
+                      className="px-3 py-1 rounded-full border border-[#E9B83E] bg-[#E9B83E]/15 hover:bg-[#E9B83E]/25 text-[#F5E5B7] text-[11px] sm:text-xs font-bold transition active:scale-95 cursor-pointer shadow-[0_0_8px_rgba(233,184,62,0.20)]"
                     >
-                      📸 Add Photo (Optional)
+                      Add Photo
                     </button>
                     <button
                       type="button"
@@ -3395,7 +3395,7 @@ export default function App() {
                         const seed = Math.random().toString(36).substring(2, 7)
                         setProfilePhoto(`https://api.dicebear.com/7.x/adventurer/svg?seed=${seed}&backgroundColor=ffdfbf`)
                       }}
-                      className="px-2 py-1 rounded-lg bg-white/10 hover:bg-white/15 text-[#F5E5B7] text-[11px] font-semibold border border-white/15 transition active:scale-95 cursor-pointer"
+                      className="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/15 text-[#F5E5B7] text-[11px] sm:text-xs font-semibold border border-white/15 transition active:scale-95 cursor-pointer"
                       title="Shuffle Avatar"
                     >
                       🎲 Shuffle
