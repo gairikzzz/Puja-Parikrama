@@ -3501,7 +3501,7 @@ export default function App() {
                   <button
                     type="submit"
                     disabled={isSubmittingEmail}
-                    className="w-full py-2.5 sm:py-3 rounded-full bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] text-[#211329] font-black text-xs sm:text-sm tracking-wider flex items-center justify-center gap-1.5 border-2 border-[#E9B83E] shadow-[0_0_14px_rgba(233,184,62,0.30)] hover:shadow-[0_0_20px_rgba(233,184,62,0.50)] hover:scale-[1.01] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
+                    className="w-full py-2.5 sm:py-3 rounded-full bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] text-[#211329] font-black text-xs sm:text-sm tracking-wider flex items-center justify-center gap-2 border-2 border-[#E9B83E] shadow-[0_0_14px_rgba(233,184,62,0.30)] hover:shadow-[0_0_20px_rgba(233,184,62,0.50)] hover:scale-[1.01] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
                   >
                     {isSubmittingEmail ? (
                       <span className="flex items-center justify-center gap-2">
@@ -3512,7 +3512,12 @@ export default function App() {
                         <span>Sending verification email...</span>
                       </span>
                     ) : (
-                      <span>Continue with Email</span>
+                      <span className="flex items-center justify-center gap-2">
+                        <svg className="w-4 h-4 text-[#211329] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                        <span>Continue with Email</span>
+                      </span>
                     )}
                   </button>
 
