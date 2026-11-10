@@ -1287,6 +1287,39 @@ const detectFaceCenter = async (img: HTMLImageElement): Promise<{ x: number; y: 
   return null
 }
 
+const LEADERBOARD_TOP_USERS: Record<string, string> = {
+  'arindam': '#1 Top Contributor',
+  'moumita': '#2 Top Contributor',
+  'moumita d.': '#2 Top Contributor',
+  'sourav': '#3 Top Contributor',
+  'anwesha': '#4 Top Contributor',
+  'ritam': '#5 Top Contributor',
+  'debolina': '#6 Top Contributor',
+  'subhojit': '#7 Top Contributor',
+  'ishita': '#8 Top Contributor',
+}
+
+const getLeaderboardTag = (u: AuthUser | null): string | null => {
+  if (!u) return null
+  if ((u as any).leaderboardRank) return `#${(u as any).leaderboardRank} Top Contributor`
+  const key = (u.displayName || '').trim().toLowerCase()
+  if (key && LEADERBOARD_TOP_USERS[key]) return LEADERBOARD_TOP_USERS[key]
+  if (u.totalPhotosShared && u.totalPhotosShared >= 100) return 'Top Contributor'
+  return null
+}
+
+const getFirstActiveDate = (u: AuthUser | null): string => {
+  if (u?.createdAt) {
+    try {
+      const d = new Date(u.createdAt)
+      if (!isNaN(d.getTime())) {
+        return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+      }
+    } catch (_) {}
+  }
+  return 'Sep 2024'
+}
+
 /* ─────────────────────────────────────────────────────────────────────────
    Main App
    ───────────────────────────────────────────────────────────────────────── */
@@ -4016,15 +4049,22 @@ export default function App() {
                     className="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover object-center aspect-square block border-2 border-[#E9B83E] shadow-[0_0_16px_rgba(233,184,62,0.4)]"
                   />
                 </div>
-                <div className="min-w-0">
+                <div className="min-w-0 flex flex-col justify-center">
                   <h3 className="text-white font-bold text-sm sm:text-[15px] leading-tight truncate">
-                    {user?.displayName || 'Moumita D.'}
+                    {user?.displayName || (user ? 'Devotee' : 'Moumita D.')}
                   </h3>
-                  <div className="inline-flex items-center px-2 py-0.5 rounded-full border border-[#E9B83E]/80 bg-[#E9B83E]/15 text-[#F5E5B7] text-[9.5px] sm:text-[10px] font-bold mt-1 shadow-[0_0_8px_rgba(233,184,62,0.20)]">
-                    #2 Top Contributor
-                  </div>
-                  <p className="text-[#E9B83E]/80 text-[9.5px] sm:text-[10px] font-medium mt-0.5 flex items-center gap-1.5">
-                    Member since Sep 2024
+                  {(() => {
+                    const tag = getLeaderboardTag(user)
+                    return tag ? (
+                      <div className="inline-flex items-center px-2 py-0.5 rounded-full border border-[#E9B83E]/80 bg-[#E9B83E]/15 text-[#F5E5B7] text-[9.5px] sm:text-[10px] font-bold mt-1 shadow-[0_0_8px_rgba(233,184,62,0.20)] w-fit">
+                        {tag}
+                      </div>
+                    ) : null
+                  })()}
+                  <p className={`text-[#E9B83E]/80 font-medium flex items-center gap-1.5 ${
+                    getLeaderboardTag(user) ? 'text-[9.5px] sm:text-[10px] mt-0.5' : 'text-[10px] sm:text-[11px] mt-1'
+                  }`}>
+                    First active {getFirstActiveDate(user)}
                   </p>
                 </div>
               </div>

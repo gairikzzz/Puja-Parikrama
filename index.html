@@ -1326,15 +1326,15 @@
               class="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover object-center aspect-square block border-2 border-[#E9B83E] shadow-[0_0_16px_rgba(233,184,62,0.4)]"
             >
           </div>
-          <div class="min-w-0">
+          <div class="min-w-0 flex flex-col justify-center">
             <h3 id="profile-modal-name" class="text-white font-bold text-sm sm:text-[15px] leading-tight truncate">
               Moumita D.
             </h3>
-            <div id="profile-modal-badge" class="inline-flex items-center px-2 py-0.5 rounded-full border border-[#E9B83E]/80 bg-[#E9B83E]/15 text-[#F5E5B7] text-[9.5px] sm:text-[10px] font-bold mt-1 shadow-[0_0_8px_rgba(233,184,62,0.20)]">
+            <div id="profile-modal-badge" class="hidden inline-flex items-center px-2 py-0.5 rounded-full border border-[#E9B83E]/80 bg-[#E9B83E]/15 text-[#F5E5B7] text-[9.5px] sm:text-[10px] font-bold mt-1 shadow-[0_0_8px_rgba(233,184,62,0.20)] w-fit">
               #2 Top Contributor
             </div>
-            <p id="profile-modal-email" class="text-[#E9B83E]/80 text-[9.5px] sm:text-[10px] font-medium mt-0.5 flex items-center gap-1.5">
-              Member since Sep 2024
+            <p id="profile-modal-email" class="text-[#E9B83E]/80 text-[10px] sm:text-[11px] font-medium mt-1 flex items-center gap-1.5">
+              First active Sep 2024
             </p>
           </div>
         </div>
@@ -3752,21 +3752,65 @@
     tabThisPuja?.addEventListener('click', () => setActiveTab(tabThisPuja));
     tabAllTime?.addEventListener('click', () => setActiveTab(tabAllTime));
 
-    // Wire Profile modal buttons
-    const profileModal = document.getElementById('profile-modal');
+    const LEADERBOARD_TOP_USERS = {
+      'arindam': '#1 Top Contributor',
+      'moumita': '#2 Top Contributor',
+      'moumita d.': '#2 Top Contributor',
+      'sourav': '#3 Top Contributor',
+      'anwesha': '#4 Top Contributor',
+      'ritam': '#5 Top Contributor',
+      'debolina': '#6 Top Contributor',
+      'subhojit': '#7 Top Contributor',
+      'ishita': '#8 Top Contributor'
+    };
+
     function updateProfileModalUI(user) {
       const nameEl = document.getElementById('profile-modal-name');
       const emailEl = document.getElementById('profile-modal-email');
       const avatarEl = document.getElementById('profile-modal-avatar');
+      const badgeEl = document.getElementById('profile-modal-badge');
       const googleBtnText = document.getElementById('btn-profile-google-text');
+
       if (user) {
-        if (nameEl) nameEl.textContent = user.displayName || 'Moumita D.';
-        if (emailEl) emailEl.textContent = 'Member since Sep 2024';
+        const name = user.displayName || 'Devotee';
+        if (nameEl) nameEl.textContent = name;
+
+        let dateStr = 'Sep 2024';
+        if (user.createdAt) {
+          try {
+            const d = new Date(user.createdAt);
+            if (!isNaN(d.getTime())) {
+              dateStr = d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+            }
+          } catch (_) {}
+        }
+        if (emailEl) emailEl.textContent = `First active ${dateStr}`;
         if (avatarEl && user.photoURL) avatarEl.src = user.photoURL;
         if (googleBtnText) googleBtnText.textContent = 'Sign Out';
+
+        // Check leaderboard status
+        const nameKey = name.trim().toLowerCase();
+        const rankTag = user.leaderboardRank ? `#${user.leaderboardRank} Top Contributor` : LEADERBOARD_TOP_USERS[nameKey];
+        if (badgeEl) {
+          if (rankTag) {
+            badgeEl.textContent = rankTag;
+            badgeEl.classList.remove('hidden');
+            if (emailEl) emailEl.className = 'text-[#E9B83E]/80 text-[9.5px] sm:text-[10px] font-medium mt-0.5 flex items-center gap-1.5';
+          } else {
+            badgeEl.classList.add('hidden');
+            if (emailEl) emailEl.className = 'text-[#E9B83E]/80 text-[10px] sm:text-[11px] font-medium mt-1 flex items-center gap-1.5';
+          }
+        }
       } else {
         if (nameEl) nameEl.textContent = 'Moumita D.';
-        if (emailEl) emailEl.textContent = 'Member since Sep 2024';
+        if (emailEl) {
+          emailEl.textContent = 'First active Sep 2024';
+          emailEl.className = 'text-[#E9B83E]/80 text-[9.5px] sm:text-[10px] font-medium mt-0.5 flex items-center gap-1.5';
+        }
+        if (badgeEl) {
+          badgeEl.textContent = '#2 Top Contributor';
+          badgeEl.classList.remove('hidden');
+        }
         if (avatarEl) avatarEl.src = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80';
         if (googleBtnText) googleBtnText.textContent = 'Connect with Google';
       }
