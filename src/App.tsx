@@ -1228,11 +1228,10 @@ export default function App() {
   })
   const [authModalVisible, setAuthModalVisible] = useState(false)
   const [pendingUploadAfterAuth, setPendingUploadAfterAuth] = useState(false)
-  const [authEmailMode, setAuthEmailMode] = useState(false)
   const [authEmail, setAuthEmail] = useState('')
-  const [authPassword, setAuthPassword] = useState('')
-  const [authIsSignUp, setAuthIsSignUp] = useState(false)
   const [authError, setAuthError] = useState('')
+  const [isSubmittingEmail, setIsSubmittingEmail] = useState(false)
+  const [emailSentSuccess, setEmailSentSuccess] = useState(false)
   const [leaderboardModalVisible, setLeaderboardModalVisible] = useState(false)
   const [leaderboardTab, setLeaderboardTab] = useState<'this_puja' | 'all_time'>('this_puja')
   const [profileModalVisible, setProfileModalVisible] = useState(false)
@@ -1751,43 +1750,41 @@ export default function App() {
     }
   }, [showSplash, triggerCameraFlashAndEnter])
 
-  const completeAuth = (newUser: AuthUser, provider: string) => {
+  // ── Auto-load Email Auth on Opening (if not authenticated and not skipped) ──
+  useEffect(() => {
+    if (!showSplash && !user) {
+      const skipped = sessionStorage.getItem('puja_parikrama_auth_skipped')
+      if (!skipped) {
+        const timer = setTimeout(() => {
+          setAuthModalVisible(true)
+        }, 500)
+        return () => clearTimeout(timer)
+      }
+    }
+  }, [showSplash, user])
+
+  const handleSkipAuth = () => {
+    sessionStorage.setItem('puja_parikrama_auth_skipped', 'true')
+    setAuthModalVisible(false)
+    setPendingUploadAfterAuth(false)
+    setAuthError('')
+    setEmailSentSuccess(false)
+    setIsSubmittingEmail(false)
+  }
+
+  const completeAuth = (newUser: AuthUser) => {
     localStorage.setItem('puja_parikrama_user', JSON.stringify(newUser))
     setUser(newUser)
     setAuthModalVisible(false)
-    setAuthEmailMode(false)
     setAuthEmail('')
-    setAuthPassword('')
     setAuthError('')
-    showToast(`✅ Welcome, ${newUser.displayName}! (${provider})`)
+    setEmailSentSuccess(false)
+    setIsSubmittingEmail(false)
+    showToast(`✅ Welcome, ${newUser.displayName}!`)
     if (pendingUploadAfterAuth) {
       setPendingUploadAfterAuth(false)
       setUploadVisible(true)
     }
-  }
-
-  const handleGoogleSignIn = () => {
-    const simulatedNames = ['Shatadru Sarkar', 'Ananya Roy', 'Priya Saha', 'Saptarshi Sen']
-    const chosenName = simulatedNames[Math.floor(Math.random() * simulatedNames.length)]
-    const newUser: AuthUser = {
-      uid: 'google-uid-' + Math.random().toString(36).substring(2, 10),
-      displayName: chosenName,
-      email: `${chosenName.toLowerCase().replace(' ', '.')}@gmail.com`,
-      photoURL: `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(chosenName)}&backgroundColor=ffdfbf`
-    }
-    completeAuth(newUser, 'Google')
-  }
-
-  const handleFacebookSignIn = () => {
-    const simulatedNames = ['Debasish Chakraborty', 'Riya Bhattacharya', 'Sourav Das', 'Moumita Deb']
-    const chosenName = simulatedNames[Math.floor(Math.random() * simulatedNames.length)]
-    const newUser: AuthUser = {
-      uid: 'fb-uid-' + Math.random().toString(36).substring(2, 10),
-      displayName: chosenName,
-      email: `${chosenName.toLowerCase().replace(' ', '.')}@facebook.com`,
-      photoURL: `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(chosenName)}&backgroundColor=b6e3f4`
-    }
-    completeAuth(newUser, 'Facebook')
   }
 
   const handleEmailAuthSubmit = (e?: React.FormEvent) => {
@@ -1798,23 +1795,27 @@ export default function App() {
       setAuthError('Please enter a valid email address')
       return
     }
-    if (!authPassword || authPassword.length < 6) {
-      setAuthError('Password must be at least 6 characters')
-      return
-    }
-    const namePart = trimmedEmail.split('@')[0].replace(/[._]/g, ' ')
-    const formattedName = namePart.replace(/\b\w/g, c => c.toUpperCase()) || 'Devotee'
-    const newUser: AuthUser = {
-      uid: 'email-uid-' + Math.random().toString(36).substring(2, 10),
-      displayName: formattedName,
-      email: trimmedEmail,
-      photoURL: `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(formattedName)}&backgroundColor=ffdfbf`
-    }
-    completeAuth(newUser, 'Email')
+
+    setIsSubmittingEmail(true)
+    setEmailSentSuccess(true)
+
+    // Simulate passwordless email verification & registration
+    setTimeout(() => {
+      const namePart = trimmedEmail.split('@')[0].replace(/[._]/g, ' ')
+      const formattedName = namePart.replace(/\b\w/g, c => c.toUpperCase()) || 'Devotee'
+      const newUser: AuthUser = {
+        uid: 'email-' + Math.random().toString(36).substring(2, 10),
+        displayName: formattedName,
+        email: trimmedEmail,
+        photoURL: `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(formattedName)}&backgroundColor=ffdfbf`
+      }
+      completeAuth(newUser)
+    }, 850)
   }
 
   const handleSignOut = () => {
     localStorage.removeItem('puja_parikrama_user')
+    sessionStorage.removeItem('puja_parikrama_auth_skipped')
     setUser(null)
     showToast('👋 Signed out of Puja Porikroma')
   }
@@ -2765,190 +2766,123 @@ export default function App() {
         }}
       />
 
-      {/* ── PUJA PORIKROMA REGISTRATION / SIGN-IN MODAL ── */}
+      {/* ── PUJA PORIKROMA EMAIL-ONLY AUTHENTICATION MODAL ── */}
       {authModalVisible && (
         <div
           className="fixed inset-0 z-[160] flex items-center justify-center p-3 sm:p-4"
-          style={{ background: 'rgba(5, 5, 12, 0.78)', backdropFilter: 'blur(16px)' }}
+          style={{ background: 'rgba(5, 5, 12, 0.70)', backdropFilter: 'blur(12px)' }}
           onClick={(e) => {
             if (e.target === e.currentTarget) {
-              setAuthModalVisible(false)
-              setPendingUploadAfterAuth(false)
-              setAuthEmailMode(false)
-              setAuthError('')
+              handleSkipAuth()
             }
           }}
         >
           <div
-            className="w-full max-w-sm rounded-[28px] p-6 text-center relative border border-[#E9B83E]/35 shadow-[0_20px_60px_rgba(0,0,0,0.8),0_0_30px_rgba(233,184,62,0.15)] flex flex-col items-center"
-            style={{
-              background: 'radial-gradient(ellipse at top, #2b1836 0%, #150e20 60%, #0d0814 100%)'
-            }}
+            className="w-full max-w-md rounded-[26px] sm:rounded-[30px] p-6 sm:p-8 text-center relative bg-white text-gray-900 shadow-[0_25px_60px_rgba(0,0,0,0.5)] border border-gray-100 flex flex-col items-center animate-in fade-in zoom-in-95 duration-200"
           >
             {/* Close Button */}
             <button
-              onClick={() => {
-                setAuthModalVisible(false)
-                setPendingUploadAfterAuth(false)
-                setAuthEmailMode(false)
-                setAuthError('')
-              }}
-              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition active:scale-95 cursor-pointer text-sm"
+              onClick={handleSkipAuth}
+              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-400 hover:text-gray-700 transition active:scale-95 cursor-pointer text-sm font-semibold"
               title="Close"
             >
               ✕
             </button>
 
-            {/* Circular Durga Maa Round Emblem */}
-            <div className="relative mb-3 flex items-center justify-center">
-              <div className="absolute inset-0 rounded-full bg-[#E9B83E]/25 blur-md" />
+            {/* Circular Durga Maa Emblem inside soft squircle frame */}
+            <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl bg-[#f7f4f1] border border-[#ece7e1] p-1 flex items-center justify-center mb-4 shadow-sm flex-shrink-0">
               <img
                 src="/login-durga-emblem.png"
-                alt="Puja Porikroma Durga Emblem"
-                className="relative w-20 h-20 sm:w-22 sm:h-22 rounded-full object-cover border-2 border-[#E9B83E] shadow-[0_0_20px_rgba(233,184,62,0.45)]"
+                alt="Durga Maa Emblem"
+                className="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover"
               />
             </div>
 
             {/* Title & Subtitle */}
-            <h3 className="text-[#F5E5B7] font-black text-xl sm:text-2xl tracking-tight mb-1">
+            <h3 className="text-gray-900 font-extrabold text-xl sm:text-2xl tracking-tight mb-1.5">
               Welcome to Puja Porikroma
             </h3>
-            <p className="text-[#E9B83E]/85 text-xs sm:text-[13px] font-medium leading-relaxed mb-5">
-              Sign in to explore, share and celebrate.
+            <p className="text-[#DF9F28] font-medium text-xs sm:text-sm leading-relaxed mb-6">
+              Discover pandals. Capture memories. Celebrate together.
             </p>
 
-            {!authEmailMode ? (
-              <div className="w-full flex flex-col gap-2.5">
-                {/* Continue with Google */}
-                <button
-                  id="google-modal-signin-btn"
-                  onClick={handleGoogleSignIn}
-                  className="w-full py-3 px-4 rounded-xl bg-white hover:bg-gray-100 text-gray-800 font-bold text-sm flex items-center justify-center gap-3 shadow-[0_4px_14px_rgba(0,0,0,0.3)] transition active:scale-98 cursor-pointer"
-                >
-                  <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24">
-                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-                  </svg>
-                  <span>Continue with Google</span>
-                </button>
-
-                {/* Continue with Facebook */}
-                <button
-                  id="facebook-modal-signin-btn"
-                  onClick={handleFacebookSignIn}
-                  className="w-full py-3 px-4 rounded-xl bg-[#1877F2] hover:bg-[#166fe5] text-white font-bold text-sm flex items-center justify-center gap-3 shadow-[0_4px_14px_rgba(24,119,242,0.35)] transition active:scale-98 cursor-pointer"
-                >
-                  <svg className="w-5 h-5 flex-shrink-0 fill-current" viewBox="0 0 24 24">
-                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                  </svg>
-                  <span>Continue with Facebook</span>
-                </button>
-
-                {/* OR Divider */}
-                <div className="flex items-center my-1 px-2">
-                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#E9B83E]/30 to-[#E9B83E]/40" />
-                  <span className="px-3 text-[11px] font-bold text-[#F5E5B7]/60 tracking-widest uppercase">
-                    OR
-                  </span>
-                  <div className="flex-1 h-px bg-gradient-to-r from-[#E9B83E]/40 via-[#E9B83E]/30 to-transparent" />
-                </div>
-
-                {/* Continue with Email */}
-                <button
-                  id="email-modal-toggle-btn"
-                  onClick={() => {
-                    setAuthEmailMode(true)
-                    setAuthError('')
-                  }}
-                  className="w-full py-3 px-4 rounded-xl bg-[#211329]/90 hover:bg-[#2b1836] text-[#F5E5B7] font-semibold text-sm border border-[#E9B83E]/40 hover:border-[#E9B83E] flex items-center justify-center gap-2.5 shadow-md transition active:scale-98 cursor-pointer"
-                >
-                  <svg className="w-5 h-5 text-[#E9B83E] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                  </svg>
-                  <span>Continue with Email</span>
-                </button>
+            {/* Mandatory Upload Indicator */}
+            {pendingUploadAfterAuth && (
+              <div className="w-full mb-4 px-3.5 py-2 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-semibold text-center flex items-center justify-center gap-1.5">
+                <span>📸 Sign in required to upload pandal photos</span>
               </div>
-            ) : (
-              <form onSubmit={handleEmailAuthSubmit} className="w-full flex flex-col gap-3 text-left">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setAuthEmailMode(false)
-                    setAuthError('')
-                  }}
-                  className="text-xs text-[#E9B83E]/80 hover:text-[#E9B83E] flex items-center gap-1 font-medium transition cursor-pointer mb-1"
-                >
-                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                  </svg>
-                  <span>Back to all options</span>
-                </button>
-
-                <div>
-                  <label className="block text-[11px] font-semibold text-[#F5E5B7]/80 uppercase tracking-wider mb-1">
-                    Email Address
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    value={authEmail}
-                    onChange={(e) => setAuthEmail(e.target.value)}
-                    placeholder="devotee@gmail.com"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-black/40 border border-[#E9B83E]/30 focus:border-[#E9B83E] focus:outline-none text-white text-xs sm:text-sm placeholder-white/30"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-semibold text-[#F5E5B7]/80 uppercase tracking-wider mb-1">
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    required
-                    value={authPassword}
-                    onChange={(e) => setAuthPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-black/40 border border-[#E9B83E]/30 focus:border-[#E9B83E] focus:outline-none text-white text-xs sm:text-sm placeholder-white/30"
-                  />
-                </div>
-
-                {authError && (
-                  <p className="text-red-400 text-xs font-medium bg-red-950/40 border border-red-500/30 rounded-lg p-2 text-center">
-                    {authError}
-                  </p>
-                )}
-
-                <button
-                  type="submit"
-                  className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] text-[#211329] font-bold text-sm shadow-[0_0_15px_rgba(233,184,62,0.35)] hover:shadow-[0_0_20px_rgba(233,184,62,0.5)] transition active:scale-98 cursor-pointer mt-1"
-                >
-                  {authIsSignUp ? 'Create Account' : 'Sign In with Email'}
-                </button>
-
-                <div className="text-center mt-1">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setAuthIsSignUp(!authIsSignUp)
-                      setAuthError('')
-                    }}
-                    className="text-xs text-[#E9B83E]/90 hover:text-[#E9B83E] font-medium transition cursor-pointer"
-                  >
-                    {authIsSignUp ? 'Already have an account? Sign In' : "Don't have an account? Create one"}
-                  </button>
-                </div>
-              </form>
             )}
 
-            {/* Footer Terms */}
-            <p className="text-white/40 text-[11px] leading-relaxed mt-5 max-w-[280px]">
-              By continuing, you agree to our{' '}
-              <span className="text-[#E9B83E]/70 underline decoration-[#E9B83E]/40 hover:text-[#E9B83E] cursor-pointer">Terms of Service</span>
-              {' '}and{' '}
-              <span className="text-[#E9B83E]/70 underline decoration-[#E9B83E]/40 hover:text-[#E9B83E] cursor-pointer">Privacy Policy</span>.
-            </p>
+            {/* Email Form */}
+            <form onSubmit={handleEmailAuthSubmit} className="w-full text-left">
+              <label className="block text-gray-900 font-bold text-xs sm:text-sm mb-1.5">
+                Email Address
+              </label>
+
+              <div className="relative mb-3.5">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <input
+                  type="email"
+                  required
+                  value={authEmail}
+                  onChange={(e) => setAuthEmail(e.target.value)}
+                  placeholder="Enter your email address"
+                  className="w-full pl-10 pr-3.5 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-[#E5A928] focus:ring-2 focus:ring-[#E5A928]/20 transition"
+                />
+              </div>
+
+              {authError && (
+                <p className="text-red-500 text-xs font-medium bg-red-50 border border-red-200 rounded-lg p-2.5 mb-3 text-center">
+                  {authError}
+                </p>
+              )}
+
+              {emailSentSuccess ? (
+                <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-center mb-3 animate-in fade-in duration-200">
+                  <p className="text-emerald-800 font-semibold text-xs sm:text-sm">
+                    ✨ Secure sign-in link verified for {authEmail}!
+                  </p>
+                  <p className="text-emerald-600 text-[11px] mt-0.5">
+                    Signing you in to Puja Porikroma...
+                  </p>
+                </div>
+              ) : (
+                <button
+                  type="submit"
+                  disabled={isSubmittingEmail}
+                  className="w-full py-3.5 px-4 rounded-xl bg-[#E5A928] hover:bg-[#d99d1f] active:scale-[0.99] text-[#1a1306] font-semibold text-sm transition-all shadow-sm flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-60"
+                >
+                  <span>Continue with Email</span>
+                  <span className="text-base font-bold">→</span>
+                </button>
+              )}
+
+              <p className="text-gray-500 text-xs text-center mt-3 leading-relaxed">
+                We'll send you a secure sign-in link to verify your email.
+              </p>
+
+              <p className="text-gray-400 text-[11px] text-center mt-2 leading-relaxed">
+                By continuing, you agree to our{' '}
+                <span className="underline hover:text-gray-600 cursor-pointer">Terms of Service</span>
+                {' '}and{' '}
+                <span className="underline hover:text-gray-600 cursor-pointer">Privacy Policy</span>.
+              </p>
+
+              {/* Skip option for initial launch visitors */}
+              <div className="text-center mt-3 pt-1 border-t border-gray-100">
+                <button
+                  type="button"
+                  onClick={handleSkipAuth}
+                  className="text-xs text-gray-400 hover:text-gray-600 underline font-medium cursor-pointer transition"
+                >
+                  Skip for now and explore map
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
