@@ -3484,10 +3484,6 @@ export default function App() {
                       {resendNotice}
                     </p>
                   )}
-
-                  <p className="text-[#F5E5B7]/40 text-[10px] mt-2.5">
-                    You can close this window and return after verifying.
-                  </p>
                 </div>
               </div>
             )}
