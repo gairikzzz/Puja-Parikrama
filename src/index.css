@@ -66,3 +66,24 @@ body { user-select: none; -webkit-user-select: none; }
   60% { transform: scale(1.35); opacity: 0.25; }
   100% { transform: scale(1.75); opacity: 0; }
 }
+
+/* ── PREVENT BROWSER AUTOFILL FROM TURNING INPUT BACKGROUND WHITE ── */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #160e1f inset !important;
+  box-shadow: 0 0 0 1000px #160e1f inset !important;
+  -webkit-text-fill-color: #F5E5B7 !important;
+  color: #F5E5B7 !important;
+  caret-color: #E9B83E !important;
+  border-color: rgba(233, 184, 62, 0.5) !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+

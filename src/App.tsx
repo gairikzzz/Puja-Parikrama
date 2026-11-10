@@ -1308,6 +1308,37 @@ const getLeaderboardTag = (u: AuthUser | null): string | null => {
   return null
 }
 
+const getUserLeaderboardRank = (u: AuthUser | null): number | null => {
+  if (!u) return null
+  if ((u as any).leaderboardRank) {
+    const r = parseInt(String((u as any).leaderboardRank), 10)
+    if (!isNaN(r) && r >= 1 && r <= 8) return r
+  }
+  const key = (u.displayName || '').trim().toLowerCase()
+  if (key) {
+    if (key === 'arindam' || key.startsWith('arindam ') || key.includes('arindam')) return 1
+    if (key === 'moumita' || key.startsWith('moumita ') || key === 'moumita d.' || key.includes('moumita')) return 2
+    if (key === 'sourav' || key.startsWith('sourav ') || key.includes('sourav')) return 3
+    if (key === 'anwesha' || key.startsWith('anwesha ') || key.includes('anwesha')) return 4
+    if (key === 'ritam' || key.startsWith('ritam ') || key.includes('ritam')) return 5
+    if (key === 'debolina' || key.startsWith('debolina ') || key.includes('debolina')) return 6
+    if (key === 'subhojit' || key.startsWith('subhojit ') || key.includes('subhojit')) return 7
+    if (key === 'ishita' || key.startsWith('ishita ') || key.includes('ishita')) return 8
+  }
+  const emailKey = (u.email || '').toLowerCase().split('@')[0]
+  if (emailKey) {
+    if (emailKey.includes('arindam')) return 1
+    if (emailKey.includes('moumita')) return 2
+    if (emailKey.includes('sourav')) return 3
+    if (emailKey.includes('anwesha')) return 4
+    if (emailKey.includes('ritam')) return 5
+    if (emailKey.includes('debolina')) return 6
+    if (emailKey.includes('subhojit')) return 7
+    if (emailKey.includes('ishita')) return 8
+  }
+  return null
+}
+
 const getFirstActiveDate = (u: AuthUser | null): string => {
   if (u?.createdAt) {
     try {
@@ -3854,174 +3885,298 @@ export default function App() {
             </div>
 
             {/* Top 3 Podium Area */}
-            <div className="pt-1 pb-3 px-1">
-              <div className="grid grid-cols-3 gap-2 items-end">
-                {/* 2nd Place: Moumita D. */}
-                <div className="flex flex-col items-center">
-                  <div className="relative mb-1 flex flex-col items-center">
-                    {/* Silver Laurel Wreath SVG */}
-                    <div className="relative w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center">
-                      <svg className="absolute -inset-2 w-[calc(100%+16px)] h-[calc(100%+16px)] text-slate-300/80 pointer-events-none drop-shadow" viewBox="0 0 100 100" fill="none">
-                        <path d="M 28 80 C 12 58 14 34 32 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-                        <path d="M 22 70 C 14 68 12 60 18 56 C 22 62 23 66 22 70 Z" fill="currentColor" />
-                        <path d="M 17 56 C 9 52 10 44 17 42 C 19 48 19 52 17 56 Z" fill="currentColor" />
-                        <path d="M 16 42 C 10 36 13 28 20 28 C 21 34 19 38 16 42 Z" fill="currentColor" />
-                        <path d="M 22 28 C 18 20 25 14 31 16 C 30 22 27 26 22 28 Z" fill="currentColor" />
-                        <path d="M 32 18 C 30 10 39 8 43 13 C 40 18 36 19 32 18 Z" fill="currentColor" />
-                        <path d="M 72 80 C 88 58 86 34 68 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-                        <path d="M 78 70 C 86 68 88 60 82 56 C 78 62 77 66 78 70 Z" fill="currentColor" />
-                        <path d="M 83 56 C 91 52 90 44 83 42 C 81 48 81 52 83 56 Z" fill="currentColor" />
-                        <path d="M 84 42 C 90 36 87 28 80 28 C 79 34 81 38 84 42 Z" fill="currentColor" />
-                        <path d="M 78 28 C 82 20 75 14 69 16 C 70 22 73 26 78 28 Z" fill="currentColor" />
-                        <path d="M 68 18 C 70 10 61 8 57 13 C 60 18 64 19 68 18 Z" fill="currentColor" />
-                      </svg>
-                      <img
-                        src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
-                        alt="Moumita D."
-                        className="w-12 h-12 sm:w-13 sm:h-13 rounded-full object-cover border-2 border-slate-300 shadow-[0_0_12px_rgba(200,215,240,0.4)]"
-                      />
-                    </div>
-                    {/* Rank Badge */}
-                    <div className="w-5 h-5 rounded-full bg-[#3d384d] border border-slate-300 text-slate-100 font-bold text-[10px] flex items-center justify-center -mt-2.5 z-10 shadow">
-                      2
-                    </div>
-                  </div>
-                  {/* Step Pedestal Box (Complete) */}
-                  <div className="w-full bg-[#261533]/80 border border-slate-400/40 rounded-xl py-2 px-1 text-center shadow-[0_0_12px_rgba(180,195,220,0.12)]">
-                    <p className="text-white font-bold text-[11px] sm:text-xs truncate">Moumita</p>
-                    <p className="flex items-center justify-center gap-1 mt-0.5 text-[#F5E5B7]/80 text-xs font-medium">
-                      <svg className="w-3.5 h-3.5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect width="15" height="15" x="3" y="3" rx="2.5" />
-                        <circle cx="12.5" cy="8.5" r="1.5" />
-                        <path d="m3.5 15 4-4a1.5 1.5 0 0 1 2.1 0L14 15" />
-                        <path d="M21 7v11a2 2 0 0 1-2 2H8" />
-                      </svg>
-                      <span>247 photos</span>
-                    </p>
-                  </div>
-                </div>
+            {(() => {
+              const currentUserRank = getUserLeaderboardRank(user)
+              const isRank1User = currentUserRank === 1
+              const isRank2User = currentUserRank === 2
+              const isRank3User = currentUserRank === 3
 
-                {/* 1st Place: Arindam */}
-                <div className="flex flex-col items-center">
-                  <div className="relative mb-1 flex flex-col items-center">
-                    {/* Golden Laurel Wreath SVG */}
-                    <div className="relative w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center">
-                      <svg className="absolute -inset-2 w-[calc(100%+16px)] h-[calc(100%+16px)] text-[#E9B83E] pointer-events-none drop-shadow-[0_0_10px_rgba(233,184,62,0.7)]" viewBox="0 0 100 100" fill="none">
-                        <path d="M 28 80 C 12 58 14 34 32 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-                        <path d="M 22 70 C 14 68 12 60 18 56 C 22 62 23 66 22 70 Z" fill="currentColor" />
-                        <path d="M 17 56 C 9 52 10 44 17 42 C 19 48 19 52 17 56 Z" fill="currentColor" />
-                        <path d="M 16 42 C 10 36 13 28 20 28 C 21 34 19 38 16 42 Z" fill="currentColor" />
-                        <path d="M 22 28 C 18 20 25 14 31 16 C 30 22 27 26 22 28 Z" fill="currentColor" />
-                        <path d="M 32 18 C 30 10 39 8 43 13 C 40 18 36 19 32 18 Z" fill="currentColor" />
-                        <path d="M 72 80 C 88 58 86 34 68 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-                        <path d="M 78 70 C 86 68 88 60 82 56 C 78 62 77 66 78 70 Z" fill="currentColor" />
-                        <path d="M 83 56 C 91 52 90 44 83 42 C 81 48 81 52 83 56 Z" fill="currentColor" />
-                        <path d="M 84 42 C 90 36 87 28 80 28 C 79 34 81 38 84 42 Z" fill="currentColor" />
-                        <path d="M 78 28 C 82 20 75 14 69 16 C 70 22 73 26 78 28 Z" fill="currentColor" />
-                        <path d="M 68 18 C 70 10 61 8 57 13 C 60 18 64 19 68 18 Z" fill="currentColor" />
-                      </svg>
-                      <img
-                        src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80"
-                        alt="Arindam"
-                        className="w-12 h-12 sm:w-13 sm:h-13 rounded-full object-cover border-2 border-[#E9B83E] shadow-[0_0_16px_rgba(233,184,62,0.7)]"
-                      />
+              return (
+                <div className="pt-1 pb-3 px-1">
+                  <div className="grid grid-cols-3 gap-2 items-end">
+                    {/* 2nd Place: Moumita D. */}
+                    <div className="flex flex-col items-center">
+                      <div className="relative mb-1 flex flex-col items-center">
+                        {/* Laurel Wreath SVG */}
+                        <div className="relative w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center">
+                          <svg className={`absolute -inset-2 w-[calc(100%+16px)] h-[calc(100%+16px)] pointer-events-none drop-shadow ${
+                            isRank2User ? 'text-[#E9B83E] drop-shadow-[0_0_10px_rgba(233,184,62,0.8)]' : 'text-slate-300/80'
+                          }`} viewBox="0 0 100 100" fill="none">
+                            <path d="M 28 80 C 12 58 14 34 32 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                            <path d="M 22 70 C 14 68 12 60 18 56 C 22 62 23 66 22 70 Z" fill="currentColor" />
+                            <path d="M 17 56 C 9 52 10 44 17 42 C 19 48 19 52 17 56 Z" fill="currentColor" />
+                            <path d="M 16 42 C 10 36 13 28 20 28 C 21 34 19 38 16 42 Z" fill="currentColor" />
+                            <path d="M 22 28 C 18 20 25 14 31 16 C 30 22 27 26 22 28 Z" fill="currentColor" />
+                            <path d="M 32 18 C 30 10 39 8 43 13 C 40 18 36 19 32 18 Z" fill="currentColor" />
+                            <path d="M 72 80 C 88 58 86 34 68 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                            <path d="M 78 70 C 86 68 88 60 82 56 C 78 62 77 66 78 70 Z" fill="currentColor" />
+                            <path d="M 83 56 C 91 52 90 44 83 42 C 81 48 81 52 83 56 Z" fill="currentColor" />
+                            <path d="M 84 42 C 90 36 87 28 80 28 C 79 34 81 38 84 42 Z" fill="currentColor" />
+                            <path d="M 78 28 C 82 20 75 14 69 16 C 70 22 73 26 78 28 Z" fill="currentColor" />
+                            <path d="M 68 18 C 70 10 61 8 57 13 C 60 18 64 19 68 18 Z" fill="currentColor" />
+                          </svg>
+                          <img
+                            src={isRank2User && user?.photoURL ? user.photoURL : "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"}
+                            alt="Moumita"
+                            className={`w-12 h-12 sm:w-13 sm:h-13 rounded-full object-cover transition-all ${
+                              isRank2User
+                                ? 'border-2 border-[#211329] ring-2 ring-[#FFE79A] shadow-[0_0_16px_rgba(233,184,62,0.85)]'
+                                : 'border-2 border-slate-300 shadow-[0_0_12px_rgba(200,215,240,0.4)]'
+                            }`}
+                          />
+                        </div>
+                        {/* Rank Badge */}
+                        <div className={`w-5 h-5 rounded-full font-bold text-[10px] flex items-center justify-center -mt-2.5 z-10 shadow transition-all ${
+                          isRank2User
+                            ? 'bg-[#211329] border border-[#FFE79A] text-[#FFE79A] font-black shadow-[0_0_8px_rgba(233,184,62,0.6)]'
+                            : 'bg-[#3d384d] border border-slate-300 text-slate-100'
+                        }`}>
+                          2
+                        </div>
+                      </div>
+                      {/* Step Pedestal Box */}
+                      <div className={`w-full rounded-xl py-2 px-1 text-center transition-all ${
+                        isRank2User
+                          ? 'bg-gradient-to-b from-[#FFE79A] via-[#E9B83E] to-[#D4A017] border-2 border-white/80 shadow-[0_0_22px_rgba(233,184,62,0.85),inset_0_1px_2px_rgba(255,255,255,0.7)] ring-1 ring-[#FFE79A]/80'
+                          : 'bg-[#261533]/80 border border-slate-400/40 shadow-[0_0_12px_rgba(180,195,220,0.12)]'
+                      }`}>
+                        <p className={`text-[11px] sm:text-xs truncate flex items-center justify-center gap-1 ${
+                          isRank2User ? 'text-[#211329] font-black' : 'text-white font-bold'
+                        }`}>
+                          <span>{isRank2User && user?.displayName ? user.displayName.trim().split(' ')[0] : 'Moumita'}</span>
+                          {isRank2User && (
+                            <span className="px-1 py-0.2 rounded text-[8px] sm:text-[8.5px] font-black bg-[#211329] text-[#E9B83E] leading-none uppercase tracking-wide shadow-sm">
+                              You
+                            </span>
+                          )}
+                        </p>
+                        <p className={`flex items-center justify-center gap-1 mt-0.5 text-xs ${
+                          isRank2User ? 'text-[#211329] font-black' : 'text-[#F5E5B7]/80 font-medium'
+                        }`}>
+                          <svg className={`w-3.5 h-3.5 flex-shrink-0 ${isRank2User ? 'text-[#211329]' : 'text-[#E9B83E]'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={isRank2User ? "2.5" : "2"} strokeLinecap="round" strokeLinejoin="round">
+                            <rect width="15" height="15" x="3" y="3" rx="2.5" />
+                            <circle cx="12.5" cy="8.5" r="1.5" />
+                            <path d="m3.5 15 4-4a1.5 1.5 0 0 1 2.1 0L14 15" />
+                            <path d="M21 7v11a2 2 0 0 1-2 2H8" />
+                          </svg>
+                          <span>{isRank2User && user?.totalPhotosShared ? `${user.totalPhotosShared} photos` : '247 photos'}</span>
+                        </p>
+                      </div>
                     </div>
-                    {/* Rank Badge */}
-                    <div className="w-5 h-5 rounded-full bg-[#3d3218] border border-[#E9B83E] text-[#E9B83E] font-bold text-[10px] flex items-center justify-center -mt-2.5 z-10 shadow">
-                      1
-                    </div>
-                  </div>
-                  {/* Step Pedestal Box (Complete) */}
-                  <div className="w-full bg-[#261533]/80 border border-[#E9B83E]/50 rounded-xl py-2 px-1 text-center shadow-[0_0_12px_rgba(233,184,62,0.15)]">
-                    <p className="text-white font-bold text-[11px] sm:text-xs truncate">Arindam</p>
-                    <p className="flex items-center justify-center gap-1 mt-0.5 text-[#F5E5B7]/80 text-xs font-medium">
-                      <svg className="w-3.5 h-3.5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect width="15" height="15" x="3" y="3" rx="2.5" />
-                        <circle cx="12.5" cy="8.5" r="1.5" />
-                        <path d="m3.5 15 4-4a1.5 1.5 0 0 1 2.1 0L14 15" />
-                        <path d="M21 7v11a2 2 0 0 1-2 2H8" />
-                      </svg>
-                      <span>328 photos</span>
-                    </p>
-                  </div>
-                </div>
 
-                {/* 3rd Place: Sourav */}
-                <div className="flex flex-col items-center">
-                  <div className="relative mb-1 flex flex-col items-center">
-                    {/* Bronze Laurel Wreath SVG */}
-                    <div className="relative w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center">
-                      <svg className="absolute -inset-2 w-[calc(100%+16px)] h-[calc(100%+16px)] text-amber-500/80 pointer-events-none drop-shadow" viewBox="0 0 100 100" fill="none">
-                        <path d="M 28 80 C 12 58 14 34 32 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-                        <path d="M 22 70 C 14 68 12 60 18 56 C 22 62 23 66 22 70 Z" fill="currentColor" />
-                        <path d="M 17 56 C 9 52 10 44 17 42 C 19 48 19 52 17 56 Z" fill="currentColor" />
-                        <path d="M 16 42 C 10 36 13 28 20 28 C 21 34 19 38 16 42 Z" fill="currentColor" />
-                        <path d="M 22 28 C 18 20 25 14 31 16 C 30 22 27 26 22 28 Z" fill="currentColor" />
-                        <path d="M 32 18 C 30 10 39 8 43 13 C 40 18 36 19 32 18 Z" fill="currentColor" />
-                        <path d="M 72 80 C 88 58 86 34 68 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-                        <path d="M 78 70 C 86 68 88 60 82 56 C 78 62 77 66 78 70 Z" fill="currentColor" />
-                        <path d="M 83 56 C 91 52 90 44 83 42 C 81 48 81 52 83 56 Z" fill="currentColor" />
-                        <path d="M 84 42 C 90 36 87 28 80 28 C 79 34 81 38 84 42 Z" fill="currentColor" />
-                        <path d="M 78 28 C 82 20 75 14 69 16 C 70 22 73 26 78 28 Z" fill="currentColor" />
-                        <path d="M 68 18 C 70 10 61 8 57 13 C 60 18 64 19 68 18 Z" fill="currentColor" />
-                      </svg>
-                      <img
-                        src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80"
-                        alt="Sourav"
-                        className="w-12 h-12 sm:w-13 sm:h-13 rounded-full object-cover border-2 border-amber-600 shadow-[0_0_12px_rgba(217,119,6,0.4)]"
-                      />
+                    {/* 1st Place: Arindam */}
+                    <div className="flex flex-col items-center">
+                      <div className="relative mb-1 flex flex-col items-center">
+                        {/* Golden Laurel Wreath SVG */}
+                        <div className="relative w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center">
+                          <svg className="absolute -inset-2 w-[calc(100%+16px)] h-[calc(100%+16px)] text-[#E9B83E] pointer-events-none drop-shadow-[0_0_10px_rgba(233,184,62,0.7)]" viewBox="0 0 100 100" fill="none">
+                            <path d="M 28 80 C 12 58 14 34 32 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                            <path d="M 22 70 C 14 68 12 60 18 56 C 22 62 23 66 22 70 Z" fill="currentColor" />
+                            <path d="M 17 56 C 9 52 10 44 17 42 C 19 48 19 52 17 56 Z" fill="currentColor" />
+                            <path d="M 16 42 C 10 36 13 28 20 28 C 21 34 19 38 16 42 Z" fill="currentColor" />
+                            <path d="M 22 28 C 18 20 25 14 31 16 C 30 22 27 26 22 28 Z" fill="currentColor" />
+                            <path d="M 32 18 C 30 10 39 8 43 13 C 40 18 36 19 32 18 Z" fill="currentColor" />
+                            <path d="M 72 80 C 88 58 86 34 68 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                            <path d="M 78 70 C 86 68 88 60 82 56 C 78 62 77 66 78 70 Z" fill="currentColor" />
+                            <path d="M 83 56 C 91 52 90 44 83 42 C 81 48 81 52 83 56 Z" fill="currentColor" />
+                            <path d="M 84 42 C 90 36 87 28 80 28 C 79 34 81 38 84 42 Z" fill="currentColor" />
+                            <path d="M 78 28 C 82 20 75 14 69 16 C 70 22 73 26 78 28 Z" fill="currentColor" />
+                            <path d="M 68 18 C 70 10 61 8 57 13 C 60 18 64 19 68 18 Z" fill="currentColor" />
+                          </svg>
+                          <img
+                            src={isRank1User && user?.photoURL ? user.photoURL : "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80"}
+                            alt="Arindam"
+                            className={`w-12 h-12 sm:w-13 sm:h-13 rounded-full object-cover transition-all ${
+                              isRank1User
+                                ? 'border-2 border-[#211329] ring-2 ring-[#FFE79A] shadow-[0_0_20px_rgba(233,184,62,0.95)]'
+                                : 'border-2 border-[#E9B83E] shadow-[0_0_16px_rgba(233,184,62,0.7)]'
+                            }`}
+                          />
+                        </div>
+                        {/* Rank Badge */}
+                        <div className={`w-5 h-5 rounded-full font-bold text-[10px] flex items-center justify-center -mt-2.5 z-10 shadow transition-all ${
+                          isRank1User
+                            ? 'bg-[#211329] border border-[#FFE79A] text-[#FFE79A] font-black shadow-[0_0_8px_rgba(233,184,62,0.6)]'
+                            : 'bg-[#3d3218] border border-[#E9B83E] text-[#E9B83E]'
+                        }`}>
+                          1
+                        </div>
+                      </div>
+                      {/* Step Pedestal Box */}
+                      <div className={`w-full rounded-xl py-2 px-1 text-center transition-all ${
+                        isRank1User
+                          ? 'bg-gradient-to-b from-[#FFE79A] via-[#E9B83E] to-[#D4A017] border-2 border-white/80 shadow-[0_0_24px_rgba(233,184,62,0.9),inset_0_1px_2px_rgba(255,255,255,0.7)] ring-1 ring-[#FFE79A]/80'
+                          : 'bg-[#261533]/80 border border-[#E9B83E]/50 shadow-[0_0_12px_rgba(233,184,62,0.15)]'
+                      }`}>
+                        <p className={`text-[11px] sm:text-xs truncate flex items-center justify-center gap-1 ${
+                          isRank1User ? 'text-[#211329] font-black' : 'text-white font-bold'
+                        }`}>
+                          <span>{isRank1User && user?.displayName ? user.displayName.trim().split(' ')[0] : 'Arindam'}</span>
+                          {isRank1User && (
+                            <span className="px-1 py-0.2 rounded text-[8px] sm:text-[8.5px] font-black bg-[#211329] text-[#E9B83E] leading-none uppercase tracking-wide shadow-sm">
+                              You
+                            </span>
+                          )}
+                        </p>
+                        <p className={`flex items-center justify-center gap-1 mt-0.5 text-xs ${
+                          isRank1User ? 'text-[#211329] font-black' : 'text-[#F5E5B7]/80 font-medium'
+                        }`}>
+                          <svg className={`w-3.5 h-3.5 flex-shrink-0 ${isRank1User ? 'text-[#211329]' : 'text-[#E9B83E]'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={isRank1User ? "2.5" : "2"} strokeLinecap="round" strokeLinejoin="round">
+                            <rect width="15" height="15" x="3" y="3" rx="2.5" />
+                            <circle cx="12.5" cy="8.5" r="1.5" />
+                            <path d="m3.5 15 4-4a1.5 1.5 0 0 1 2.1 0L14 15" />
+                            <path d="M21 7v11a2 2 0 0 1-2 2H8" />
+                          </svg>
+                          <span>{isRank1User && user?.totalPhotosShared ? `${user.totalPhotosShared} photos` : '328 photos'}</span>
+                        </p>
+                      </div>
                     </div>
-                    {/* Rank Badge */}
-                    <div className="w-5 h-5 rounded-full bg-[#3b2b24] border border-amber-600 text-amber-200 font-bold text-[10px] flex items-center justify-center -mt-2.5 z-10 shadow">
-                      3
+
+                    {/* 3rd Place: Sourav */}
+                    <div className="flex flex-col items-center">
+                      <div className="relative mb-1 flex flex-col items-center">
+                        {/* Bronze Laurel Wreath SVG */}
+                        <div className="relative w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center">
+                          <svg className={`absolute -inset-2 w-[calc(100%+16px)] h-[calc(100%+16px)] pointer-events-none drop-shadow ${
+                            isRank3User ? 'text-[#E9B83E] drop-shadow-[0_0_10px_rgba(233,184,62,0.8)]' : 'text-amber-500/80'
+                          }`} viewBox="0 0 100 100" fill="none">
+                            <path d="M 28 80 C 12 58 14 34 32 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                            <path d="M 22 70 C 14 68 12 60 18 56 C 22 62 23 66 22 70 Z" fill="currentColor" />
+                            <path d="M 17 56 C 9 52 10 44 17 42 C 19 48 19 52 17 56 Z" fill="currentColor" />
+                            <path d="M 16 42 C 10 36 13 28 20 28 C 21 34 19 38 16 42 Z" fill="currentColor" />
+                            <path d="M 22 28 C 18 20 25 14 31 16 C 30 22 27 26 22 28 Z" fill="currentColor" />
+                            <path d="M 32 18 C 30 10 39 8 43 13 C 40 18 36 19 32 18 Z" fill="currentColor" />
+                            <path d="M 72 80 C 88 58 86 34 68 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                            <path d="M 78 70 C 86 68 88 60 82 56 C 78 62 77 66 78 70 Z" fill="currentColor" />
+                            <path d="M 83 56 C 91 52 90 44 83 42 C 81 48 81 52 83 56 Z" fill="currentColor" />
+                            <path d="M 84 42 C 90 36 87 28 80 28 C 79 34 81 38 84 42 Z" fill="currentColor" />
+                            <path d="M 78 28 C 82 20 75 14 69 16 C 70 22 73 26 78 28 Z" fill="currentColor" />
+                            <path d="M 68 18 C 70 10 61 8 57 13 C 60 18 64 19 68 18 Z" fill="currentColor" />
+                          </svg>
+                          <img
+                            src={isRank3User && user?.photoURL ? user.photoURL : "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80"}
+                            alt="Sourav"
+                            className={`w-12 h-12 sm:w-13 sm:h-13 rounded-full object-cover transition-all ${
+                              isRank3User
+                                ? 'border-2 border-[#211329] ring-2 ring-[#FFE79A] shadow-[0_0_16px_rgba(233,184,62,0.85)]'
+                                : 'border-2 border-amber-600 shadow-[0_0_12px_rgba(217,119,6,0.4)]'
+                            }`}
+                          />
+                        </div>
+                        {/* Rank Badge */}
+                        <div className={`w-5 h-5 rounded-full font-bold text-[10px] flex items-center justify-center -mt-2.5 z-10 shadow transition-all ${
+                          isRank3User
+                            ? 'bg-[#211329] border border-[#FFE79A] text-[#FFE79A] font-black shadow-[0_0_8px_rgba(233,184,62,0.6)]'
+                            : 'bg-[#3b2b24] border border-amber-600 text-amber-200'
+                        }`}>
+                          3
+                        </div>
+                      </div>
+                      {/* Step Pedestal Box */}
+                      <div className={`w-full rounded-xl py-2 px-1 text-center transition-all ${
+                        isRank3User
+                          ? 'bg-gradient-to-b from-[#FFE79A] via-[#E9B83E] to-[#D4A017] border-2 border-white/80 shadow-[0_0_22px_rgba(233,184,62,0.85),inset_0_1px_2px_rgba(255,255,255,0.7)] ring-1 ring-[#FFE79A]/80'
+                          : 'bg-[#261533]/80 border border-amber-600/40 shadow-[0_0_12px_rgba(217,119,6,0.12)]'
+                      }`}>
+                        <p className={`text-[11px] sm:text-xs truncate flex items-center justify-center gap-1 ${
+                          isRank3User ? 'text-[#211329] font-black' : 'text-white font-bold'
+                        }`}>
+                          <span>{isRank3User && user?.displayName ? user.displayName.trim().split(' ')[0] : 'Sourav'}</span>
+                          {isRank3User && (
+                            <span className="px-1 py-0.2 rounded text-[8px] sm:text-[8.5px] font-black bg-[#211329] text-[#E9B83E] leading-none uppercase tracking-wide shadow-sm">
+                              You
+                            </span>
+                          )}
+                        </p>
+                        <p className={`flex items-center justify-center gap-1 mt-0.5 text-xs ${
+                          isRank3User ? 'text-[#211329] font-black' : 'text-[#F5E5B7]/80 font-medium'
+                        }`}>
+                          <svg className={`w-3.5 h-3.5 flex-shrink-0 ${isRank3User ? 'text-[#211329]' : 'text-[#E9B83E]'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={isRank3User ? "2.5" : "2"} strokeLinecap="round" strokeLinejoin="round">
+                            <rect width="15" height="15" x="3" y="3" rx="2.5" />
+                            <circle cx="12.5" cy="8.5" r="1.5" />
+                            <path d="m3.5 15 4-4a1.5 1.5 0 0 1 2.1 0L14 15" />
+                            <path d="M21 7v11a2 2 0 0 1-2 2H8" />
+                          </svg>
+                          <span>{isRank3User && user?.totalPhotosShared ? `${user.totalPhotosShared} photos` : '196 photos'}</span>
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  {/* Step Pedestal Box (Complete) */}
-                  <div className="w-full bg-[#261533]/80 border border-amber-600/40 rounded-xl py-2 px-1 text-center shadow-[0_0_12px_rgba(217,119,6,0.12)]">
-                    <p className="text-white font-bold text-[11px] sm:text-xs truncate">Sourav</p>
-                    <p className="flex items-center justify-center gap-1 mt-0.5 text-[#F5E5B7]/80 text-xs font-medium">
-                      <svg className="w-3.5 h-3.5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect width="15" height="15" x="3" y="3" rx="2.5" />
-                        <circle cx="12.5" cy="8.5" r="1.5" />
-                        <path d="m3.5 15 4-4a1.5 1.5 0 0 1 2.1 0L14 15" />
-                        <path d="M21 7v11a2 2 0 0 1-2 2H8" />
-                      </svg>
-                      <span>196 photos</span>
-                    </p>
                   </div>
                 </div>
-              </div>
-            </div>
+              )
+            })()}
 
             {/* Ranked List (#4 to #8) */}
-            <div className="bg-[#211329]/70 border border-[#E9B83E]/25 rounded-2xl p-1 sm:p-1.5 divide-y divide-[#E9B83E]/15 mb-3 shadow-inner">
-              {[
-                { rank: '4', name: 'Anwesha', photos: '182 photos', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&q=80' },
-                { rank: '5', name: 'Ritam', photos: '160 photos', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=120&q=80' },
-                { rank: '6', name: 'Debolina', photos: '149 photos', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=120&q=80' },
-                { rank: '7', name: 'Subhojit', photos: '141 photos', avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=120&q=80' },
-                { rank: '8', name: 'Ishita', photos: '128 photos', avatar: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=120&q=80' },
-              ].map((item) => (
-                <div key={item.rank} className="flex items-center justify-between p-2 hover:bg-white/5 rounded-xl transition">
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-6 h-6 rounded-full bg-[#211329] border border-[#E9B83E]/30 text-[#F5E5B7] font-bold text-xs flex items-center justify-center flex-shrink-0">
-                      {item.rank}
-                    </span>
-                    <img src={item.avatar} alt={item.name} className="w-8 h-8 rounded-full object-cover border border-[#E9B83E]/40 flex-shrink-0" />
-                    <span className="text-white font-medium text-xs">{item.name}</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 text-[#F5E5B7]/80 text-xs font-medium">
-                    <svg className="w-3.5 h-3.5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <rect width="15" height="15" x="3" y="3" rx="2.5" />
-                      <circle cx="12.5" cy="8.5" r="1.5" />
-                      <path d="m3.5 15 4-4a1.5 1.5 0 0 1 2.1 0L14 15" />
-                      <path d="M21 7v11a2 2 0 0 1-2 2H8" />
-                    </svg>
-                    <span>{item.photos}</span>
-                  </div>
+            {(() => {
+              const currentUserRank = getUserLeaderboardRank(user)
+
+              return (
+                <div className="bg-[#211329]/70 border border-[#E9B83E]/25 rounded-2xl p-1 sm:p-1.5 divide-y divide-[#E9B83E]/15 mb-3 shadow-inner">
+                  {[
+                    { rank: '4', name: 'Anwesha', photos: '182 photos', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&q=80' },
+                    { rank: '5', name: 'Ritam', photos: '160 photos', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=120&q=80' },
+                    { rank: '6', name: 'Debolina', photos: '149 photos', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=120&q=80' },
+                    { rank: '7', name: 'Subhojit', photos: '141 photos', avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=120&q=80' },
+                    { rank: '8', name: 'Ishita', photos: '128 photos', avatar: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=120&q=80' },
+                  ].map((item) => {
+                    const isCurrentUserRow = currentUserRank === parseInt(item.rank, 10)
+
+                    return (
+                      <div
+                        key={item.rank}
+                        className={`flex items-center justify-between p-2 rounded-xl transition ${
+                          isCurrentUserRow
+                            ? 'bg-gradient-to-r from-[#FFE79A] via-[#E9B83E] to-[#D4A017] border border-white/80 shadow-[0_0_18px_rgba(233,184,62,0.65),inset_0_1px_1.5px_rgba(255,255,255,0.7)] my-0.5'
+                            : 'hover:bg-white/5'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <span className={`w-6 h-6 rounded-full font-bold text-xs flex items-center justify-center flex-shrink-0 transition-all ${
+                            isCurrentUserRow
+                              ? 'bg-[#211329] border border-[#211329] text-[#FFE79A] font-black shadow-sm'
+                              : 'bg-[#211329] border border-[#E9B83E]/30 text-[#F5E5B7]'
+                          }`}>
+                            {item.rank}
+                          </span>
+                          <img
+                            src={isCurrentUserRow && user?.photoURL ? user.photoURL : item.avatar}
+                            alt={item.name}
+                            className={`w-8 h-8 rounded-full object-cover flex-shrink-0 transition-all ${
+                              isCurrentUserRow
+                                ? 'border-2 border-[#211329] shadow-sm'
+                                : 'border border-[#E9B83E]/40'
+                            }`}
+                          />
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <span className={`text-xs truncate ${
+                              isCurrentUserRow ? 'text-[#211329] font-black' : 'text-white font-medium'
+                            }`}>
+                              {isCurrentUserRow && user?.displayName ? user.displayName.trim().split(' ')[0] : item.name}
+                            </span>
+                            {isCurrentUserRow && (
+                              <span className="px-1.5 py-0.5 rounded text-[8.5px] font-black bg-[#211329] text-[#E9B83E] leading-none uppercase tracking-wide shadow-sm flex-shrink-0">
+                                You
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <div className={`flex items-center gap-1.5 text-xs ${
+                          isCurrentUserRow ? 'text-[#211329] font-black' : 'text-[#F5E5B7]/80 font-medium'
+                        }`}>
+                          <svg className={`w-3.5 h-3.5 flex-shrink-0 ${isCurrentUserRow ? 'text-[#211329]' : 'text-[#E9B83E]'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={isCurrentUserRow ? "2.5" : "2"} strokeLinecap="round" strokeLinejoin="round">
+                            <rect width="15" height="15" x="3" y="3" rx="2.5" />
+                            <circle cx="12.5" cy="8.5" r="1.5" />
+                            <path d="m3.5 15 4-4a1.5 1.5 0 0 1 2.1 0L14 15" />
+                            <path d="M21 7v11a2 2 0 0 1-2 2H8" />
+                          </svg>
+                          <span>{isCurrentUserRow && user?.totalPhotosShared ? `${user.totalPhotosShared} photos` : item.photos}</span>
+                        </div>
+                      </div>
+                    )
+                  })}
                 </div>
-              ))}
-            </div>
+              )
+            })()}
 
 
           </div>

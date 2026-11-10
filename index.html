@@ -70,6 +70,26 @@
       -webkit-user-select: none;
     }
 
+    /* ── PREVENT BROWSER AUTOFILL FROM TURNING INPUT BACKGROUND WHITE ── */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus, 
+    input:-webkit-autofill:active,
+    textarea:-webkit-autofill,
+    textarea:-webkit-autofill:hover,
+    textarea:-webkit-autofill:focus,
+    select:-webkit-autofill,
+    select:-webkit-autofill:hover,
+    select:-webkit-autofill:focus {
+      -webkit-box-shadow: 0 0 0 1000px #160e1f inset !important;
+      box-shadow: 0 0 0 1000px #160e1f inset !important;
+      -webkit-text-fill-color: #F5E5B7 !important;
+      color: #F5E5B7 !important;
+      caret-color: #E9B83E !important;
+      border-color: rgba(233, 184, 62, 0.5) !important;
+      transition: background-color 5000s ease-in-out 0s;
+    }
+
     html, body {
       width: 100%;
       height: 100%;
@@ -1067,11 +1087,11 @@
       <div class="pt-1 pb-3 px-1">
         <div class="grid grid-cols-3 gap-2 items-end">
           <!-- 2nd Place: Moumita D. -->
-          <div class="flex flex-col items-center">
+          <div id="podium-col-2" class="flex flex-col items-center">
             <div class="relative mb-1 flex flex-col items-center">
               <div class="relative w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center">
-                <!-- Silver Laurel Wreath SVG -->
-                <svg class="absolute -inset-2 w-[calc(100%+16px)] h-[calc(100%+16px)] text-slate-300/80 pointer-events-none drop-shadow" viewBox="0 0 100 100" fill="none">
+                <!-- Laurel Wreath SVG -->
+                <svg id="podium-wreath-2" class="absolute -inset-2 w-[calc(100%+16px)] h-[calc(100%+16px)] text-slate-300/80 pointer-events-none drop-shadow transition-all" viewBox="0 0 100 100" fill="none">
                   <path d="M 28 80 C 12 58 14 34 32 18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
                   <path d="M 22 70 C 14 68 12 60 18 56 C 22 62 23 66 22 70 Z" fill="currentColor" />
                   <path d="M 17 56 C 9 52 10 44 17 42 C 19 48 19 52 17 56 Z" fill="currentColor" />
@@ -1086,35 +1106,38 @@
                   <path d="M 68 18 C 70 10 61 8 57 13 C 60 18 64 19 68 18 Z" fill="currentColor" />
                 </svg>
                 <img
+                  id="podium-avatar-2"
                   src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
                   alt="Moumita D."
-                  class="w-12 h-12 sm:w-13 sm:h-13 rounded-full object-cover border-2 border-slate-300 shadow-[0_0_12px_rgba(200,215,240,0.4)]"
+                  class="w-12 h-12 sm:w-13 sm:h-13 rounded-full object-cover border-2 border-slate-300 shadow-[0_0_12px_rgba(200,215,240,0.4)] transition-all"
                 >
               </div>
-              <div class="w-5 h-5 rounded-full bg-[#3d384d] border border-slate-300 text-slate-100 font-bold text-[10px] flex items-center justify-center -mt-2.5 z-10 shadow">
+              <div id="podium-rank-badge-2" class="w-5 h-5 rounded-full bg-[#3d384d] border border-slate-300 text-slate-100 font-bold text-[10px] flex items-center justify-center -mt-2.5 z-10 shadow transition-all">
                 2
               </div>
             </div>
-            <div class="w-full bg-[#261533]/80 border border-slate-400/40 rounded-xl py-2 px-1 text-center shadow-[0_0_12px_rgba(180,195,220,0.12)]">
-              <p class="text-white font-bold text-[11px] sm:text-xs truncate">Moumita</p>
-              <p class="flex items-center justify-center gap-1 mt-0.5 text-[#F5E5B7]/80 text-xs font-medium">
-                <svg class="w-3.5 h-3.5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <div id="podium-box-2" class="w-full bg-[#261533]/80 border border-slate-400/40 rounded-xl py-2 px-1 text-center shadow-[0_0_12px_rgba(180,195,220,0.12)] transition-all">
+              <p id="podium-name-2" class="text-white font-bold text-[11px] sm:text-xs truncate flex items-center justify-center gap-1">
+                <span>Moumita</span>
+              </p>
+              <p id="podium-photos-wrap-2" class="flex items-center justify-center gap-1 mt-0.5 text-[#F5E5B7]/80 text-xs font-medium">
+                <svg id="podium-photo-icon-2" class="w-3.5 h-3.5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <rect width="15" height="15" x="3" y="3" rx="2.5" />
                   <circle cx="12.5" cy="8.5" r="1.5" />
                   <path d="m3.5 15 4-4a1.5 1.5 0 0 1 2.1 0L14 15" />
                   <path d="M21 7v11a2 2 0 0 1-2 2H8" />
                 </svg>
-                <span>247 photos</span>
+                <span id="podium-photos-text-2">247 photos</span>
               </p>
             </div>
           </div>
 
           <!-- 1st Place: Arindam -->
-          <div class="flex flex-col items-center">
+          <div id="podium-col-1" class="flex flex-col items-center">
             <div class="relative mb-1 flex flex-col items-center">
               <div class="relative w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center">
                 <!-- Golden Laurel Wreath SVG -->
-                <svg class="absolute -inset-2 w-[calc(100%+16px)] h-[calc(100%+16px)] text-[#E9B83E] pointer-events-none drop-shadow-[0_0_10px_rgba(233,184,62,0.7)]" viewBox="0 0 100 100" fill="none">
+                <svg id="podium-wreath-1" class="absolute -inset-2 w-[calc(100%+16px)] h-[calc(100%+16px)] text-[#E9B83E] pointer-events-none drop-shadow-[0_0_10px_rgba(233,184,62,0.7)] transition-all" viewBox="0 0 100 100" fill="none">
                   <path d="M 28 80 C 12 58 14 34 32 18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
                   <path d="M 22 70 C 14 68 12 60 18 56 C 22 62 23 66 22 70 Z" fill="currentColor" />
                   <path d="M 17 56 C 9 52 10 44 17 42 C 19 48 19 52 17 56 Z" fill="currentColor" />
@@ -1129,35 +1152,38 @@
                   <path d="M 68 18 C 70 10 61 8 57 13 C 60 18 64 19 68 18 Z" fill="currentColor" />
                 </svg>
                 <img
+                  id="podium-avatar-1"
                   src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80"
                   alt="Arindam"
-                  class="w-12 h-12 sm:w-13 sm:h-13 rounded-full object-cover border-2 border-[#E9B83E] shadow-[0_0_16px_rgba(233,184,62,0.7)]"
+                  class="w-12 h-12 sm:w-13 sm:h-13 rounded-full object-cover border-2 border-[#E9B83E] shadow-[0_0_16px_rgba(233,184,62,0.7)] transition-all"
                 >
               </div>
-              <div class="w-5 h-5 rounded-full bg-[#3d3218] border border-[#E9B83E] text-[#E9B83E] font-bold text-[10px] flex items-center justify-center -mt-2.5 z-10 shadow">
+              <div id="podium-rank-badge-1" class="w-5 h-5 rounded-full bg-[#3d3218] border border-[#E9B83E] text-[#E9B83E] font-bold text-[10px] flex items-center justify-center -mt-2.5 z-10 shadow transition-all">
                 1
               </div>
             </div>
-            <div class="w-full bg-[#261533]/80 border border-[#E9B83E]/50 rounded-xl py-2 px-1 text-center shadow-[0_0_12px_rgba(233,184,62,0.15)]">
-              <p class="text-white font-bold text-[11px] sm:text-xs truncate">Arindam</p>
-              <p class="flex items-center justify-center gap-1 mt-0.5 text-[#F5E5B7]/80 text-xs font-medium">
-                <svg class="w-3.5 h-3.5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <div id="podium-box-1" class="w-full bg-[#261533]/80 border border-[#E9B83E]/50 rounded-xl py-2 px-1 text-center shadow-[0_0_12px_rgba(233,184,62,0.15)] transition-all">
+              <p id="podium-name-1" class="text-white font-bold text-[11px] sm:text-xs truncate flex items-center justify-center gap-1">
+                <span>Arindam</span>
+              </p>
+              <p id="podium-photos-wrap-1" class="flex items-center justify-center gap-1 mt-0.5 text-[#F5E5B7]/80 text-xs font-medium">
+                <svg id="podium-photo-icon-1" class="w-3.5 h-3.5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <rect width="15" height="15" x="3" y="3" rx="2.5" />
                   <circle cx="12.5" cy="8.5" r="1.5" />
                   <path d="m3.5 15 4-4a1.5 1.5 0 0 1 2.1 0L14 15" />
                   <path d="M21 7v11a2 2 0 0 1-2 2H8" />
                 </svg>
-                <span>328 photos</span>
+                <span id="podium-photos-text-1">328 photos</span>
               </p>
             </div>
           </div>
 
           <!-- 3rd Place: Sourav -->
-          <div class="flex flex-col items-center">
+          <div id="podium-col-3" class="flex flex-col items-center">
             <div class="relative mb-1 flex flex-col items-center">
               <!-- Bronze Laurel Wreath SVG -->
               <div class="relative w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center">
-                <svg class="absolute -inset-2 w-[calc(100%+16px)] h-[calc(100%+16px)] text-amber-500/80 pointer-events-none drop-shadow" viewBox="0 0 100 100" fill="none">
+                <svg id="podium-wreath-3" class="absolute -inset-2 w-[calc(100%+16px)] h-[calc(100%+16px)] text-amber-500/80 pointer-events-none drop-shadow transition-all" viewBox="0 0 100 100" fill="none">
                   <path d="M 28 80 C 12 58 14 34 32 18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
                   <path d="M 22 70 C 14 68 12 60 18 56 C 22 62 23 66 22 70 Z" fill="currentColor" />
                   <path d="M 17 56 C 9 52 10 44 17 42 C 19 48 19 52 17 56 Z" fill="currentColor" />
@@ -1172,25 +1198,28 @@
                   <path d="M 68 18 C 70 10 61 8 57 13 C 60 18 64 19 68 18 Z" fill="currentColor" />
                 </svg>
                 <img
+                  id="podium-avatar-3"
                   src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80"
                   alt="Sourav"
-                  class="w-12 h-12 sm:w-13 sm:h-13 rounded-full object-cover border-2 border-amber-600 shadow-[0_0_12px_rgba(217,119,6,0.4)]"
+                  class="w-12 h-12 sm:w-13 sm:h-13 rounded-full object-cover border-2 border-amber-600 shadow-[0_0_12px_rgba(217,119,6,0.4)] transition-all"
                 >
               </div>
-              <div class="w-5 h-5 rounded-full bg-[#3b2b24] border border-amber-600 text-amber-200 font-bold text-[10px] flex items-center justify-center -mt-2.5 z-10 shadow">
+              <div id="podium-rank-badge-3" class="w-5 h-5 rounded-full bg-[#3b2b24] border border-amber-600 text-amber-200 font-bold text-[10px] flex items-center justify-center -mt-2.5 z-10 shadow transition-all">
                 3
               </div>
             </div>
-            <div class="w-full bg-[#261533]/80 border border-amber-600/40 rounded-xl py-2 px-1 text-center shadow-[0_0_12px_rgba(217,119,6,0.12)]">
-              <p class="text-white font-bold text-[11px] sm:text-xs truncate">Sourav</p>
-              <p class="flex items-center justify-center gap-1 mt-0.5 text-[#F5E5B7]/80 text-xs font-medium">
-                <svg class="w-3.5 h-3.5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <div id="podium-box-3" class="w-full bg-[#261533]/80 border border-amber-600/40 rounded-xl py-2 px-1 text-center shadow-[0_0_12px_rgba(217,119,6,0.12)] transition-all">
+              <p id="podium-name-3" class="text-white font-bold text-[11px] sm:text-xs truncate flex items-center justify-center gap-1">
+                <span>Sourav</span>
+              </p>
+              <p id="podium-photos-wrap-3" class="flex items-center justify-center gap-1 mt-0.5 text-[#F5E5B7]/80 text-xs font-medium">
+                <svg id="podium-photo-icon-3" class="w-3.5 h-3.5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <rect width="15" height="15" x="3" y="3" rx="2.5" />
                   <circle cx="12.5" cy="8.5" r="1.5" />
                   <path d="m3.5 15 4-4a1.5 1.5 0 0 1 2.1 0L14 15" />
                   <path d="M21 7v11a2 2 0 0 1-2 2H8" />
                 </svg>
-                <span>196 photos</span>
+                <span id="podium-photos-text-3">196 photos</span>
               </p>
             </div>
           </div>
@@ -1199,98 +1228,113 @@
 
       <!-- Ranked List (#4 to #8) -->
       <div class="bg-[#211329]/70 border border-[#E9B83E]/25 rounded-2xl p-1 sm:p-1.5 divide-y divide-[#E9B83E]/15 mb-3 shadow-inner">
-        <div class="flex items-center justify-between p-2 hover:bg-white/5 rounded-xl transition">
-          <div class="flex items-center gap-2.5">
-            <span class="w-6 h-6 rounded-full bg-[#211329] border border-[#E9B83E]/30 text-[#F5E5B7] font-bold text-xs flex items-center justify-center flex-shrink-0">
+        <div id="leaderboard-row-4" class="flex items-center justify-between p-2 hover:bg-white/5 rounded-xl transition">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span id="leaderboard-rank-badge-4" class="w-6 h-6 rounded-full bg-[#211329] border border-[#E9B83E]/30 text-[#F5E5B7] font-bold text-xs flex items-center justify-center flex-shrink-0">
               4
             </span>
-            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&q=80" alt="Anwesha" class="w-8 h-8 rounded-full object-cover border border-[#E9B83E]/40 flex-shrink-0">
-            <span class="text-white font-medium text-xs">Anwesha</span>
+            <img id="leaderboard-avatar-4" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&q=80" alt="Anwesha" class="w-8 h-8 rounded-full object-cover border border-[#E9B83E]/40 flex-shrink-0">
+            <div class="flex items-center gap-1.5 min-w-0">
+              <span id="leaderboard-name-4" class="text-white font-medium text-xs truncate">Anwesha</span>
+              <span id="leaderboard-you-badge-4" class="hidden px-1.5 py-0.5 rounded text-[8.5px] font-black bg-[#211329] text-[#E9B83E] leading-none uppercase tracking-wide shadow-sm flex-shrink-0">You</span>
+            </div>
           </div>
-          <div class="flex items-center gap-1.5 text-[#F5E5B7]/80 text-xs font-medium">
-            <svg class="w-3.5 h-3.5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <div id="leaderboard-photos-wrap-4" class="flex items-center gap-1.5 text-[#F5E5B7]/80 text-xs font-medium">
+            <svg id="leaderboard-photo-icon-4" class="w-3.5 h-3.5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <rect width="15" height="15" x="3" y="3" rx="2.5" />
               <circle cx="12.5" cy="8.5" r="1.5" />
               <path d="m3.5 15 4-4a1.5 1.5 0 0 1 2.1 0L14 15" />
               <path d="M21 7v11a2 2 0 0 1-2 2H8" />
             </svg>
-            <span>182 photos</span>
+            <span id="leaderboard-photos-text-4">182 photos</span>
           </div>
         </div>
 
-        <div class="flex items-center justify-between p-2 hover:bg-white/5 rounded-xl transition">
-          <div class="flex items-center gap-2.5">
-            <span class="w-6 h-6 rounded-full bg-[#211329] border border-[#E9B83E]/30 text-[#F5E5B7] font-bold text-xs flex items-center justify-center flex-shrink-0">
+        <div id="leaderboard-row-5" class="flex items-center justify-between p-2 hover:bg-white/5 rounded-xl transition">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span id="leaderboard-rank-badge-5" class="w-6 h-6 rounded-full bg-[#211329] border border-[#E9B83E]/30 text-[#F5E5B7] font-bold text-xs flex items-center justify-center flex-shrink-0">
               5
             </span>
-            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=120&q=80" alt="Ritam" class="w-8 h-8 rounded-full object-cover border border-[#E9B83E]/40 flex-shrink-0">
-            <span class="text-white font-medium text-xs">Ritam</span>
+            <img id="leaderboard-avatar-5" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=120&q=80" alt="Ritam" class="w-8 h-8 rounded-full object-cover border border-[#E9B83E]/40 flex-shrink-0">
+            <div class="flex items-center gap-1.5 min-w-0">
+              <span id="leaderboard-name-5" class="text-white font-medium text-xs truncate">Ritam</span>
+              <span id="leaderboard-you-badge-5" class="hidden px-1.5 py-0.5 rounded text-[8.5px] font-black bg-[#211329] text-[#E9B83E] leading-none uppercase tracking-wide shadow-sm flex-shrink-0">You</span>
+            </div>
           </div>
-          <div class="flex items-center gap-1.5 text-[#F5E5B7]/80 text-xs font-medium">
-            <svg class="w-3.5 h-3.5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <div id="leaderboard-photos-wrap-5" class="flex items-center gap-1.5 text-[#F5E5B7]/80 text-xs font-medium">
+            <svg id="leaderboard-photo-icon-5" class="w-3.5 h-3.5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <rect width="15" height="15" x="3" y="3" rx="2.5" />
               <circle cx="12.5" cy="8.5" r="1.5" />
               <path d="m3.5 15 4-4a1.5 1.5 0 0 1 2.1 0L14 15" />
               <path d="M21 7v11a2 2 0 0 1-2 2H8" />
             </svg>
-            <span>160 photos</span>
+            <span id="leaderboard-photos-text-5">160 photos</span>
           </div>
         </div>
 
-        <div class="flex items-center justify-between p-2 hover:bg-white/5 rounded-xl transition">
-          <div class="flex items-center gap-2.5">
-            <span class="w-6 h-6 rounded-full bg-[#211329] border border-[#E9B83E]/30 text-[#F5E5B7] font-bold text-xs flex items-center justify-center flex-shrink-0">
+        <div id="leaderboard-row-6" class="flex items-center justify-between p-2 hover:bg-white/5 rounded-xl transition">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span id="leaderboard-rank-badge-6" class="w-6 h-6 rounded-full bg-[#211329] border border-[#E9B83E]/30 text-[#F5E5B7] font-bold text-xs flex items-center justify-center flex-shrink-0">
               6
             </span>
-            <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=120&q=80" alt="Debolina" class="w-8 h-8 rounded-full object-cover border border-[#E9B83E]/40 flex-shrink-0">
-            <span class="text-white font-medium text-xs">Debolina</span>
+            <img id="leaderboard-avatar-6" src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=120&q=80" alt="Debolina" class="w-8 h-8 rounded-full object-cover border border-[#E9B83E]/40 flex-shrink-0">
+            <div class="flex items-center gap-1.5 min-w-0">
+              <span id="leaderboard-name-6" class="text-white font-medium text-xs truncate">Debolina</span>
+              <span id="leaderboard-you-badge-6" class="hidden px-1.5 py-0.5 rounded text-[8.5px] font-black bg-[#211329] text-[#E9B83E] leading-none uppercase tracking-wide shadow-sm flex-shrink-0">You</span>
+            </div>
           </div>
-          <div class="flex items-center gap-1.5 text-[#F5E5B7]/80 text-xs font-medium">
-            <svg class="w-3.5 h-3.5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <div id="leaderboard-photos-wrap-6" class="flex items-center gap-1.5 text-[#F5E5B7]/80 text-xs font-medium">
+            <svg id="leaderboard-photo-icon-6" class="w-3.5 h-3.5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <rect width="15" height="15" x="3" y="3" rx="2.5" />
               <circle cx="12.5" cy="8.5" r="1.5" />
               <path d="m3.5 15 4-4a1.5 1.5 0 0 1 2.1 0L14 15" />
               <path d="M21 7v11a2 2 0 0 1-2 2H8" />
             </svg>
-            <span>149 photos</span>
+            <span id="leaderboard-photos-text-6">149 photos</span>
           </div>
         </div>
 
-        <div class="flex items-center justify-between p-2 hover:bg-white/5 rounded-xl transition">
-          <div class="flex items-center gap-2.5">
-            <span class="w-6 h-6 rounded-full bg-[#211329] border border-[#E9B83E]/30 text-[#F5E5B7] font-bold text-xs flex items-center justify-center flex-shrink-0">
+        <div id="leaderboard-row-7" class="flex items-center justify-between p-2 hover:bg-white/5 rounded-xl transition">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span id="leaderboard-rank-badge-7" class="w-6 h-6 rounded-full bg-[#211329] border border-[#E9B83E]/30 text-[#F5E5B7] font-bold text-xs flex items-center justify-center flex-shrink-0">
               7
             </span>
-            <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=120&q=80" alt="Subhojit" class="w-8 h-8 rounded-full object-cover border border-[#E9B83E]/40 flex-shrink-0">
-            <span class="text-white font-medium text-xs">Subhojit</span>
+            <img id="leaderboard-avatar-7" src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=120&q=80" alt="Subhojit" class="w-8 h-8 rounded-full object-cover border border-[#E9B83E]/40 flex-shrink-0">
+            <div class="flex items-center gap-1.5 min-w-0">
+              <span id="leaderboard-name-7" class="text-white font-medium text-xs truncate">Subhojit</span>
+              <span id="leaderboard-you-badge-7" class="hidden px-1.5 py-0.5 rounded text-[8.5px] font-black bg-[#211329] text-[#E9B83E] leading-none uppercase tracking-wide shadow-sm flex-shrink-0">You</span>
+            </div>
           </div>
-          <div class="flex items-center gap-1.5 text-[#F5E5B7]/80 text-xs font-medium">
-            <svg class="w-3.5 h-3.5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <div id="leaderboard-photos-wrap-7" class="flex items-center gap-1.5 text-[#F5E5B7]/80 text-xs font-medium">
+            <svg id="leaderboard-photo-icon-7" class="w-3.5 h-3.5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <rect width="15" height="15" x="3" y="3" rx="2.5" />
               <circle cx="12.5" cy="8.5" r="1.5" />
               <path d="m3.5 15 4-4a1.5 1.5 0 0 1 2.1 0L14 15" />
               <path d="M21 7v11a2 2 0 0 1-2 2H8" />
             </svg>
-            <span>141 photos</span>
+            <span id="leaderboard-photos-text-7">141 photos</span>
           </div>
         </div>
 
-        <div class="flex items-center justify-between p-2 hover:bg-white/5 rounded-xl transition">
-          <div class="flex items-center gap-2.5">
-            <span class="w-6 h-6 rounded-full bg-[#211329] border border-[#E9B83E]/30 text-[#F5E5B7] font-bold text-xs flex items-center justify-center flex-shrink-0">
+        <div id="leaderboard-row-8" class="flex items-center justify-between p-2 hover:bg-white/5 rounded-xl transition">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span id="leaderboard-rank-badge-8" class="w-6 h-6 rounded-full bg-[#211329] border border-[#E9B83E]/30 text-[#F5E5B7] font-bold text-xs flex items-center justify-center flex-shrink-0">
               8
             </span>
-            <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=120&q=80" alt="Ishita" class="w-8 h-8 rounded-full object-cover border border-[#E9B83E]/40 flex-shrink-0">
-            <span class="text-white font-medium text-xs">Ishita</span>
+            <img id="leaderboard-avatar-8" src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=120&q=80" alt="Ishita" class="w-8 h-8 rounded-full object-cover border border-[#E9B83E]/40 flex-shrink-0">
+            <div class="flex items-center gap-1.5 min-w-0">
+              <span id="leaderboard-name-8" class="text-white font-medium text-xs truncate">Ishita</span>
+              <span id="leaderboard-you-badge-8" class="hidden px-1.5 py-0.5 rounded text-[8.5px] font-black bg-[#211329] text-[#E9B83E] leading-none uppercase tracking-wide shadow-sm flex-shrink-0">You</span>
+            </div>
           </div>
-          <div class="flex items-center gap-1.5 text-[#F5E5B7]/80 text-xs font-medium">
-            <svg class="w-3.5 h-3.5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <div id="leaderboard-photos-wrap-8" class="flex items-center gap-1.5 text-[#F5E5B7]/80 text-xs font-medium">
+            <svg id="leaderboard-photo-icon-8" class="w-3.5 h-3.5 text-[#E9B83E] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <rect width="15" height="15" x="3" y="3" rx="2.5" />
               <circle cx="12.5" cy="8.5" r="1.5" />
               <path d="m3.5 15 4-4a1.5 1.5 0 0 1 2.1 0L14 15" />
               <path d="M21 7v11a2 2 0 0 1-2 2H8" />
             </svg>
-            <span>128 photos</span>
+            <span id="leaderboard-photos-text-8">128 photos</span>
           </div>
         </div>
       </div>
@@ -2977,6 +3021,10 @@
         if (headerGuestIcon) headerGuestIcon.classList.remove('hidden');
         if (headerChip) headerChip.title = 'Sign In to Profile';
       }
+
+      if (typeof updateLeaderboardModalUI === 'function') {
+        try { updateLeaderboardModalUI(user); } catch (e) {}
+      }
     }
 
     function handleHeaderProfileClick() {
@@ -3736,6 +3784,9 @@
     window.openLeaderboardModal = function() {
       const modal = document.getElementById('leaderboard-modal');
       if (modal) {
+        if (typeof updateLeaderboardModalUI === 'function') {
+          try { updateLeaderboardModalUI(currentUser); } catch (e) {}
+        }
         modal.classList.remove('hidden');
         requestAnimationFrame(() => modal.classList.add('active'));
       }
@@ -3807,6 +3858,259 @@
       'subhojit': '#7 Top Contributor',
       'ishita': '#8 Top Contributor'
     };
+
+    function getUserLeaderboardRank(u) {
+      if (!u) return null;
+      if (u.leaderboardRank) {
+        const r = parseInt(String(u.leaderboardRank), 10);
+        if (!isNaN(r) && r >= 1 && r <= 8) return r;
+      }
+      const key = (u.displayName || '').trim().toLowerCase();
+      if (key) {
+        if (key === 'arindam' || key.startsWith('arindam ') || key.includes('arindam')) return 1;
+        if (key === 'moumita' || key.startsWith('moumita ') || key === 'moumita d.' || key.includes('moumita')) return 2;
+        if (key === 'sourav' || key.startsWith('sourav ') || key.includes('sourav')) return 3;
+        if (key === 'anwesha' || key.startsWith('anwesha ') || key.includes('anwesha')) return 4;
+        if (key === 'ritam' || key.startsWith('ritam ') || key.includes('ritam')) return 5;
+        if (key === 'debolina' || key.startsWith('debolina ') || key.includes('debolina')) return 6;
+        if (key === 'subhojit' || key.startsWith('subhojit ') || key.includes('subhojit')) return 7;
+        if (key === 'ishita' || key.startsWith('ishita ') || key.includes('ishita')) return 8;
+      }
+      const emailKey = (u.email || '').toLowerCase().split('@')[0];
+      if (emailKey) {
+        if (emailKey.includes('arindam')) return 1;
+        if (emailKey.includes('moumita')) return 2;
+        if (emailKey.includes('sourav')) return 3;
+        if (emailKey.includes('anwesha')) return 4;
+        if (emailKey.includes('ritam')) return 5;
+        if (emailKey.includes('debolina')) return 6;
+        if (emailKey.includes('subhojit')) return 7;
+        if (emailKey.includes('ishita')) return 8;
+      }
+      return null;
+    }
+
+    function updateLeaderboardModalUI(user) {
+      const userRank = getUserLeaderboardRank(user);
+      const isRank1 = userRank === 1;
+      const isRank2 = userRank === 2;
+      const isRank3 = userRank === 3;
+
+      // --- Podium 2 (Moumita) ---
+      const wreath2 = document.getElementById('podium-wreath-2');
+      const avatar2 = document.getElementById('podium-avatar-2');
+      const rankBadge2 = document.getElementById('podium-rank-badge-2');
+      const box2 = document.getElementById('podium-box-2');
+      const name2 = document.getElementById('podium-name-2');
+      const photosWrap2 = document.getElementById('podium-photos-wrap-2');
+      const photoIcon2 = document.getElementById('podium-photo-icon-2');
+      const photosText2 = document.getElementById('podium-photos-text-2');
+
+      if (box2) {
+        if (isRank2) {
+          box2.className = 'w-full rounded-xl py-2 px-1 text-center transition-all bg-gradient-to-b from-[#FFE79A] via-[#E9B83E] to-[#D4A017] border-2 border-white/80 shadow-[0_0_22px_rgba(233,184,62,0.85),inset_0_1px_2px_rgba(255,255,255,0.7)] ring-1 ring-[#FFE79A]/80';
+          if (wreath2) wreath2.className = 'absolute -inset-2 w-[calc(100%+16px)] h-[calc(100%+16px)] pointer-events-none drop-shadow text-[#E9B83E] drop-shadow-[0_0_10px_rgba(233,184,62,0.8)] transition-all';
+          if (avatar2) {
+            avatar2.src = (user && user.photoURL) || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80';
+            avatar2.className = 'w-12 h-12 sm:w-13 sm:h-13 rounded-full object-cover border-2 border-[#211329] ring-2 ring-[#FFE79A] shadow-[0_0_16px_rgba(233,184,62,0.85)] transition-all';
+          }
+          if (rankBadge2) rankBadge2.className = 'w-5 h-5 rounded-full font-bold text-[10px] flex items-center justify-center -mt-2.5 z-10 shadow transition-all bg-[#211329] border border-[#FFE79A] text-[#FFE79A] font-black shadow-[0_0_8px_rgba(233,184,62,0.6)]';
+          if (name2) {
+            const firstName = (user && user.displayName) ? user.displayName.trim().split(' ')[0] : 'Moumita';
+            name2.className = 'text-[11px] sm:text-xs truncate flex items-center justify-center gap-1 text-[#211329] font-black';
+            name2.innerHTML = `<span>${firstName}</span><span class="px-1 py-0.2 rounded text-[8px] sm:text-[8.5px] font-black bg-[#211329] text-[#E9B83E] leading-none uppercase tracking-wide shadow-sm">You</span>`;
+          }
+          if (photosWrap2) photosWrap2.className = 'flex items-center justify-center gap-1 mt-0.5 text-xs text-[#211329] font-black';
+          if (photoIcon2) {
+            photoIcon2.className = 'w-3.5 h-3.5 flex-shrink-0 text-[#211329]';
+            photoIcon2.setAttribute('stroke-width', '2.5');
+          }
+          if (photosText2) photosText2.textContent = (user && user.totalPhotosShared) ? `${user.totalPhotosShared} photos` : '247 photos';
+        } else {
+          box2.className = 'w-full bg-[#261533]/80 border border-slate-400/40 rounded-xl py-2 px-1 text-center shadow-[0_0_12px_rgba(180,195,220,0.12)] transition-all';
+          if (wreath2) wreath2.className = 'absolute -inset-2 w-[calc(100%+16px)] h-[calc(100%+16px)] text-slate-300/80 pointer-events-none drop-shadow transition-all';
+          if (avatar2) {
+            avatar2.src = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80';
+            avatar2.className = 'w-12 h-12 sm:w-13 sm:h-13 rounded-full object-cover border-2 border-slate-300 shadow-[0_0_12px_rgba(200,215,240,0.4)] transition-all';
+          }
+          if (rankBadge2) rankBadge2.className = 'w-5 h-5 rounded-full bg-[#3d384d] border border-slate-300 text-slate-100 font-bold text-[10px] flex items-center justify-center -mt-2.5 z-10 shadow transition-all';
+          if (name2) {
+            name2.className = 'text-white font-bold text-[11px] sm:text-xs truncate flex items-center justify-center gap-1';
+            name2.innerHTML = '<span>Moumita</span>';
+          }
+          if (photosWrap2) photosWrap2.className = 'flex items-center justify-center gap-1 mt-0.5 text-[#F5E5B7]/80 text-xs font-medium';
+          if (photoIcon2) {
+            photoIcon2.className = 'w-3.5 h-3.5 text-[#E9B83E] flex-shrink-0';
+            photoIcon2.setAttribute('stroke-width', '2');
+          }
+          if (photosText2) photosText2.textContent = '247 photos';
+        }
+      }
+
+      // --- Podium 1 (Arindam) ---
+      const wreath1 = document.getElementById('podium-wreath-1');
+      const avatar1 = document.getElementById('podium-avatar-1');
+      const rankBadge1 = document.getElementById('podium-rank-badge-1');
+      const box1 = document.getElementById('podium-box-1');
+      const name1 = document.getElementById('podium-name-1');
+      const photosWrap1 = document.getElementById('podium-photos-wrap-1');
+      const photoIcon1 = document.getElementById('podium-photo-icon-1');
+      const photosText1 = document.getElementById('podium-photos-text-1');
+
+      if (box1) {
+        if (isRank1) {
+          box1.className = 'w-full rounded-xl py-2 px-1 text-center transition-all bg-gradient-to-b from-[#FFE79A] via-[#E9B83E] to-[#D4A017] border-2 border-white/80 shadow-[0_0_24px_rgba(233,184,62,0.9),inset_0_1px_2px_rgba(255,255,255,0.7)] ring-1 ring-[#FFE79A]/80';
+          if (wreath1) wreath1.className = 'absolute -inset-2 w-[calc(100%+16px)] h-[calc(100%+16px)] pointer-events-none drop-shadow text-[#E9B83E] drop-shadow-[0_0_12px_rgba(233,184,62,0.9)] transition-all';
+          if (avatar1) {
+            avatar1.src = (user && user.photoURL) || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80';
+            avatar1.className = 'w-12 h-12 sm:w-13 sm:h-13 rounded-full object-cover border-2 border-[#211329] ring-2 ring-[#FFE79A] shadow-[0_0_20px_rgba(233,184,62,0.95)] transition-all';
+          }
+          if (rankBadge1) rankBadge1.className = 'w-5 h-5 rounded-full font-bold text-[10px] flex items-center justify-center -mt-2.5 z-10 shadow transition-all bg-[#211329] border border-[#FFE79A] text-[#FFE79A] font-black shadow-[0_0_8px_rgba(233,184,62,0.6)]';
+          if (name1) {
+            const firstName = (user && user.displayName) ? user.displayName.trim().split(' ')[0] : 'Arindam';
+            name1.className = 'text-[11px] sm:text-xs truncate flex items-center justify-center gap-1 text-[#211329] font-black';
+            name1.innerHTML = `<span>${firstName}</span><span class="px-1 py-0.2 rounded text-[8px] sm:text-[8.5px] font-black bg-[#211329] text-[#E9B83E] leading-none uppercase tracking-wide shadow-sm">You</span>`;
+          }
+          if (photosWrap1) photosWrap1.className = 'flex items-center justify-center gap-1 mt-0.5 text-xs text-[#211329] font-black';
+          if (photoIcon1) {
+            photoIcon1.className = 'w-3.5 h-3.5 flex-shrink-0 text-[#211329]';
+            photoIcon1.setAttribute('stroke-width', '2.5');
+          }
+          if (photosText1) photosText1.textContent = (user && user.totalPhotosShared) ? `${user.totalPhotosShared} photos` : '328 photos';
+        } else {
+          box1.className = 'w-full bg-[#261533]/80 border border-[#E9B83E]/50 rounded-xl py-2 px-1 text-center shadow-[0_0_12px_rgba(233,184,62,0.15)] transition-all';
+          if (wreath1) wreath1.className = 'absolute -inset-2 w-[calc(100%+16px)] h-[calc(100%+16px)] text-[#E9B83E] pointer-events-none drop-shadow-[0_0_10px_rgba(233,184,62,0.7)] transition-all';
+          if (avatar1) {
+            avatar1.src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80';
+            avatar1.className = 'w-12 h-12 sm:w-13 sm:h-13 rounded-full object-cover border-2 border-[#E9B83E] shadow-[0_0_16px_rgba(233,184,62,0.7)] transition-all';
+          }
+          if (rankBadge1) rankBadge1.className = 'w-5 h-5 rounded-full bg-[#3d3218] border border-[#E9B83E] text-[#E9B83E] font-bold text-[10px] flex items-center justify-center -mt-2.5 z-10 shadow transition-all';
+          if (name1) {
+            name1.className = 'text-white font-bold text-[11px] sm:text-xs truncate flex items-center justify-center gap-1';
+            name1.innerHTML = '<span>Arindam</span>';
+          }
+          if (photosWrap1) photosWrap1.className = 'flex items-center justify-center gap-1 mt-0.5 text-[#F5E5B7]/80 text-xs font-medium';
+          if (photoIcon1) {
+            photoIcon1.className = 'w-3.5 h-3.5 text-[#E9B83E] flex-shrink-0';
+            photoIcon1.setAttribute('stroke-width', '2');
+          }
+          if (photosText1) photosText1.textContent = '328 photos';
+        }
+      }
+
+      // --- Podium 3 (Sourav) ---
+      const wreath3 = document.getElementById('podium-wreath-3');
+      const avatar3 = document.getElementById('podium-avatar-3');
+      const rankBadge3 = document.getElementById('podium-rank-badge-3');
+      const box3 = document.getElementById('podium-box-3');
+      const name3 = document.getElementById('podium-name-3');
+      const photosWrap3 = document.getElementById('podium-photos-wrap-3');
+      const photoIcon3 = document.getElementById('podium-photo-icon-3');
+      const photosText3 = document.getElementById('podium-photos-text-3');
+
+      if (box3) {
+        if (isRank3) {
+          box3.className = 'w-full rounded-xl py-2 px-1 text-center transition-all bg-gradient-to-b from-[#FFE79A] via-[#E9B83E] to-[#D4A017] border-2 border-white/80 shadow-[0_0_22px_rgba(233,184,62,0.85),inset_0_1px_2px_rgba(255,255,255,0.7)] ring-1 ring-[#FFE79A]/80';
+          if (wreath3) wreath3.className = 'absolute -inset-2 w-[calc(100%+16px)] h-[calc(100%+16px)] pointer-events-none drop-shadow text-[#E9B83E] drop-shadow-[0_0_10px_rgba(233,184,62,0.8)] transition-all';
+          if (avatar3) {
+            avatar3.src = (user && user.photoURL) || 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80';
+            avatar3.className = 'w-12 h-12 sm:w-13 sm:h-13 rounded-full object-cover border-2 border-[#211329] ring-2 ring-[#FFE79A] shadow-[0_0_16px_rgba(233,184,62,0.85)] transition-all';
+          }
+          if (rankBadge3) rankBadge3.className = 'w-5 h-5 rounded-full font-bold text-[10px] flex items-center justify-center -mt-2.5 z-10 shadow transition-all bg-[#211329] border border-[#FFE79A] text-[#FFE79A] font-black shadow-[0_0_8px_rgba(233,184,62,0.6)]';
+          if (name3) {
+            const firstName = (user && user.displayName) ? user.displayName.trim().split(' ')[0] : 'Sourav';
+            name3.className = 'text-[11px] sm:text-xs truncate flex items-center justify-center gap-1 text-[#211329] font-black';
+            name3.innerHTML = `<span>${firstName}</span><span class="px-1 py-0.2 rounded text-[8px] sm:text-[8.5px] font-black bg-[#211329] text-[#E9B83E] leading-none uppercase tracking-wide shadow-sm">You</span>`;
+          }
+          if (photosWrap3) photosWrap3.className = 'flex items-center justify-center gap-1 mt-0.5 text-xs text-[#211329] font-black';
+          if (photoIcon3) {
+            photoIcon3.className = 'w-3.5 h-3.5 flex-shrink-0 text-[#211329]';
+            photoIcon3.setAttribute('stroke-width', '2.5');
+          }
+          if (photosText3) photosText3.textContent = (user && user.totalPhotosShared) ? `${user.totalPhotosShared} photos` : '196 photos';
+        } else {
+          box3.className = 'w-full bg-[#261533]/80 border border-amber-600/40 rounded-xl py-2 px-1 text-center shadow-[0_0_12px_rgba(217,119,6,0.12)] transition-all';
+          if (wreath3) wreath3.className = 'absolute -inset-2 w-[calc(100%+16px)] h-[calc(100%+16px)] text-amber-500/80 pointer-events-none drop-shadow transition-all';
+          if (avatar3) {
+            avatar3.src = 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80';
+            avatar3.className = 'w-12 h-12 sm:w-13 sm:h-13 rounded-full object-cover border-2 border-amber-600 shadow-[0_0_12px_rgba(217,119,6,0.4)] transition-all';
+          }
+          if (rankBadge3) rankBadge3.className = 'w-5 h-5 rounded-full bg-[#3b2b24] border border-amber-600 text-amber-200 font-bold text-[10px] flex items-center justify-center -mt-2.5 z-10 shadow transition-all';
+          if (name3) {
+            name3.className = 'text-white font-bold text-[11px] sm:text-xs truncate flex items-center justify-center gap-1';
+            name3.innerHTML = '<span>Sourav</span>';
+          }
+          if (photosWrap3) photosWrap3.className = 'flex items-center justify-center gap-1 mt-0.5 text-[#F5E5B7]/80 text-xs font-medium';
+          if (photoIcon3) {
+            photoIcon3.className = 'w-3.5 h-3.5 text-[#E9B83E] flex-shrink-0';
+            photoIcon3.setAttribute('stroke-width', '2');
+          }
+          if (photosText3) photosText3.textContent = '196 photos';
+        }
+      }
+
+      // --- Ranked List Rows (4 to 8) ---
+      const defaultRows = [
+        { rank: 4, name: 'Anwesha', photos: '182 photos', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&q=80' },
+        { rank: 5, name: 'Ritam', photos: '160 photos', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=120&q=80' },
+        { rank: 6, name: 'Debolina', photos: '149 photos', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=120&q=80' },
+        { rank: 7, name: 'Subhojit', photos: '141 photos', avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=120&q=80' },
+        { rank: 8, name: 'Ishita', photos: '128 photos', avatar: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=120&q=80' }
+      ];
+
+      defaultRows.forEach(item => {
+        const isCurrent = userRank === item.rank;
+        const row = document.getElementById(`leaderboard-row-${item.rank}`);
+        const rankBadge = document.getElementById(`leaderboard-rank-badge-${item.rank}`);
+        const avatar = document.getElementById(`leaderboard-avatar-${item.rank}`);
+        const name = document.getElementById(`leaderboard-name-${item.rank}`);
+        const youBadge = document.getElementById(`leaderboard-you-badge-${item.rank}`);
+        const photosWrap = document.getElementById(`leaderboard-photos-wrap-${item.rank}`);
+        const photoIcon = document.getElementById(`leaderboard-photo-icon-${item.rank}`);
+        const photosText = document.getElementById(`leaderboard-photos-text-${item.rank}`);
+
+        if (row) {
+          if (isCurrent) {
+            row.className = 'flex items-center justify-between p-2 rounded-xl transition bg-gradient-to-r from-[#FFE79A] via-[#E9B83E] to-[#D4A017] border border-white/80 shadow-[0_0_18px_rgba(233,184,62,0.65),inset_0_1px_1.5px_rgba(255,255,255,0.7)] my-0.5';
+            if (rankBadge) rankBadge.className = 'w-6 h-6 rounded-full font-bold text-xs flex items-center justify-center flex-shrink-0 transition-all bg-[#211329] border border-[#211329] text-[#FFE79A] font-black shadow-sm';
+            if (avatar) {
+              avatar.src = (user && user.photoURL) || item.avatar;
+              avatar.className = 'w-8 h-8 rounded-full object-cover flex-shrink-0 transition-all border-2 border-[#211329] shadow-sm';
+            }
+            if (name) {
+              name.className = 'text-xs truncate text-[#211329] font-black';
+              name.textContent = (user && user.displayName) ? user.displayName.trim().split(' ')[0] : item.name;
+            }
+            if (youBadge) youBadge.classList.remove('hidden');
+            if (photosWrap) photosWrap.className = 'flex items-center gap-1.5 text-xs text-[#211329] font-black';
+            if (photoIcon) {
+              photoIcon.className = 'w-3.5 h-3.5 flex-shrink-0 text-[#211329]';
+              photoIcon.setAttribute('stroke-width', '2.5');
+            }
+            if (photosText) photosText.textContent = (user && user.totalPhotosShared) ? `${user.totalPhotosShared} photos` : item.photos;
+          } else {
+            row.className = 'flex items-center justify-between p-2 hover:bg-white/5 rounded-xl transition';
+            if (rankBadge) rankBadge.className = 'w-6 h-6 rounded-full bg-[#211329] border border-[#E9B83E]/30 text-[#F5E5B7] font-bold text-xs flex items-center justify-center flex-shrink-0 transition-all';
+            if (avatar) {
+              avatar.src = item.avatar;
+              avatar.className = 'w-8 h-8 rounded-full object-cover border border-[#E9B83E]/40 flex-shrink-0 transition-all';
+            }
+            if (name) {
+              name.className = 'text-white font-medium text-xs truncate';
+              name.textContent = item.name;
+            }
+            if (youBadge) youBadge.classList.add('hidden');
+            if (photosWrap) photosWrap.className = 'flex items-center gap-1.5 text-[#F5E5B7]/80 text-xs font-medium';
+            if (photoIcon) {
+              photoIcon.className = 'w-3.5 h-3.5 text-[#E9B83E] flex-shrink-0';
+              photoIcon.setAttribute('stroke-width', '2');
+            }
+            if (photosText) photosText.textContent = item.photos;
+          }
+        }
+      });
+    }
+    window.updateLeaderboardModalUI = updateLeaderboardModalUI;
 
     function updateProfileModalUI(user) {
       const nameEl = document.getElementById('profile-modal-name');
