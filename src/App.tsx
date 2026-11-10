@@ -5,6 +5,16 @@ import {
   type SubmissionPayload,
   type SupabaseSubmissionRow
 } from './lib/supabase'
+import {
+  auth,
+  db,
+  sendSignInLinkToEmail,
+  isSignInWithEmailLink,
+  signInWithEmailLink,
+  doc,
+  setDoc,
+  getDoc
+} from './firebase'
 
 /* ─────────────────────────────────────────────────────────────────────────
    Types
@@ -1863,34 +1873,84 @@ export default function App() {
     }
   }, [authStage])
 
-  // Check URL if returning from email link
+  // Check URL if returning from Firebase email link
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    if (params.get('email_verified') === 'true' || params.get('mode') === 'signIn') {
-      const savedEmail = localStorage.getItem('puja_parikrama_pending_email') || ''
-      if (savedEmail) {
-        setAuthEmail(savedEmail)
-        let registeredUsers: Record<string, AuthUser> = {}
-        try {
-          registeredUsers = JSON.parse(localStorage.getItem('puja_parikrama_registered_users') || '{}')
-        } catch {}
-        const existing = Object.values(registeredUsers).find(u => u.email?.toLowerCase() === savedEmail.toLowerCase())
-        if (existing && existing.profileCompleted) {
-          completeAuth(existing)
-        } else {
-          const namePart = savedEmail.split('@')[0].replace(/[._]/g, ' ')
-          const formattedName = namePart.replace(/\b\w/g, c => c.toUpperCase()) || 'Devotee'
-          setProfileName(formattedName)
-          setProfileCity('Agartala')
-          setVerifiedUid('uid_' + Math.random().toString(36).substring(2, 10))
-          setProfilePhoto(`https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(formattedName)}&backgroundColor=ffdfbf`)
-          setAuthStage('profile')
-          setAuthModalVisible(true)
+    const handleReturningAuth = async () => {
+      try {
+        if (isSignInWithEmailLink(auth, window.location.href)) {
+          let email = localStorage.getItem('puja_parikrama_pending_email')
+          if (!email) {
+            email = window.prompt('Please provide your email for confirmation') || ''
+          }
+          if (email) {
+            const res = await signInWithEmailLink(auth, email, window.location.href)
+            const fbUser = res.user
+            setVerifiedUid(fbUser.uid)
+            setAuthEmail(fbUser.email || email)
+
+            // Check Firestore for user profile
+            try {
+              const snap = await getDoc(doc(db, 'users', fbUser.uid))
+              if (snap.exists() && snap.data()?.profileCompleted) {
+                completeAuth(snap.data() as AuthUser)
+                return
+              }
+            } catch (err) {}
+
+            let registeredUsers: Record<string, AuthUser> = {}
+            try {
+              registeredUsers = JSON.parse(localStorage.getItem('puja_parikrama_registered_users') || '{}')
+            } catch {}
+            const existing = Object.values(registeredUsers).find(u => u.email?.toLowerCase() === email.toLowerCase())
+            if (existing && existing.profileCompleted) {
+              completeAuth(existing)
+            } else {
+              const namePart = email.split('@')[0].replace(/[._]/g, ' ')
+              const formattedName = namePart.replace(/\b\w/g, c => c.toUpperCase()) || 'Devotee'
+              setProfileName(formattedName)
+              setProfileCity('Agartala')
+              setProfilePhoto(`https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(formattedName)}&backgroundColor=ffdfbf`)
+              setAuthStage('profile')
+              setAuthModalVisible(true)
+            }
+          }
+          const cleanUrl = window.location.pathname
+          window.history.replaceState({}, document.title, cleanUrl)
+          return
         }
-        const newUrl = window.location.pathname
-        window.history.replaceState({}, document.title, newUrl)
+      } catch (err) {
+        console.warn('Firebase email link auth note:', err)
+      }
+
+      // Query fallback (?email_verified=true)
+      const params = new URLSearchParams(window.location.search)
+      if (params.get('email_verified') === 'true' || params.get('mode') === 'signIn') {
+        const savedEmail = localStorage.getItem('puja_parikrama_pending_email') || ''
+        if (savedEmail) {
+          setAuthEmail(savedEmail)
+          let registeredUsers: Record<string, AuthUser> = {}
+          try {
+            registeredUsers = JSON.parse(localStorage.getItem('puja_parikrama_registered_users') || '{}')
+          } catch {}
+          const existing = Object.values(registeredUsers).find(u => u.email?.toLowerCase() === savedEmail.toLowerCase())
+          if (existing && existing.profileCompleted) {
+            completeAuth(existing)
+          } else {
+            const namePart = savedEmail.split('@')[0].replace(/[._]/g, ' ')
+            const formattedName = namePart.replace(/\b\w/g, c => c.toUpperCase()) || 'Devotee'
+            setProfileName(formattedName)
+            setProfileCity('Agartala')
+            setVerifiedUid('uid_' + Math.random().toString(36).substring(2, 10))
+            setProfilePhoto(`https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(formattedName)}&backgroundColor=ffdfbf`)
+            setAuthStage('profile')
+            setAuthModalVisible(true)
+          }
+          const newUrl = window.location.pathname
+          window.history.replaceState({}, document.title, newUrl)
+        }
       }
     }
+    handleReturningAuth()
   }, [])
 
   const handleSkipAuth = () => {
@@ -1941,7 +2001,23 @@ export default function App() {
     setIsSubmittingEmail(true)
     localStorage.setItem('puja_parikrama_pending_email', trimmedEmail)
 
-    // Simulate sending sign-in verification link
+    // Trigger Firebase sendSignInLinkToEmail
+    try {
+      const actionCodeSettings = {
+        url: window.location.origin + window.location.pathname + '?email_verified=true',
+        handleCodeInApp: true
+      }
+      sendSignInLinkToEmail(auth, trimmedEmail, actionCodeSettings)
+        .then(() => {
+          console.log('🔥 Firebase sign-in link sent to:', trimmedEmail)
+        })
+        .catch((err) => {
+          console.warn('Firebase sendSignInLink note:', err)
+        })
+    } catch (err) {
+      console.warn('Firebase dispatch note:', err)
+    }
+
     setTimeout(() => {
       setIsSubmittingEmail(false)
       setResendCooldown(45)
@@ -1952,6 +2028,15 @@ export default function App() {
 
   const handleResendEmail = () => {
     if (resendCooldown > 0) return
+    const trimmedEmail = authEmail.trim()
+    try {
+      const actionCodeSettings = {
+        url: window.location.origin + window.location.pathname + '?email_verified=true',
+        handleCodeInApp: true
+      }
+      sendSignInLinkToEmail(auth, trimmedEmail, actionCodeSettings).catch(() => {})
+    } catch (err) {}
+
     setResendCooldown(45)
     setResendNotice('✨ Verification link resent! Please check your inbox.')
     setTimeout(() => setResendNotice(''), 4000)
@@ -1998,6 +2083,15 @@ export default function App() {
       totalPandalsCovered: 0
     }
 
+    // Save to Firestore
+    try {
+      setDoc(doc(db, 'users', userDoc.uid), {
+        ...userDoc,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }, { merge: true }).catch(err => console.warn('Firestore setDoc notice:', err))
+    } catch (e) {}
+
     let registeredUsers: Record<string, AuthUser> = {}
     try {
       registeredUsers = JSON.parse(localStorage.getItem('puja_parikrama_registered_users') || '{}')
@@ -2021,6 +2115,9 @@ export default function App() {
   }
 
   const handleSignOut = () => {
+    try {
+      auth.signOut().catch(() => {})
+    } catch {}
     localStorage.removeItem('puja_parikrama_user')
     sessionStorage.removeItem('puja_parikrama_auth_skipped')
     setUser(null)
