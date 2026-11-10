@@ -8,6 +8,8 @@ import {
 import {
   auth,
   db,
+  googleProvider,
+  signInWithPopup,
   sendSignInLinkToEmail,
   isSignInWithEmailLink,
   signInWithEmailLink,
@@ -1288,6 +1290,7 @@ export default function App() {
   const [authEmail, setAuthEmail] = useState('')
   const [authError, setAuthError] = useState('')
   const [isSubmittingEmail, setIsSubmittingEmail] = useState(false)
+  const [isSubmittingGoogle, setIsSubmittingGoogle] = useState(false)
   const [resendCooldown, setResendCooldown] = useState(0)
   const [resendNotice, setResendNotice] = useState('')
   const [profileName, setProfileName] = useState('')
@@ -1986,6 +1989,71 @@ export default function App() {
     if (pendingUploadAfterAuth) {
       setPendingUploadAfterAuth(false)
       setUploadVisible(true)
+    }
+  }
+
+  const handleGoogleSignIn = async () => {
+    setAuthError('')
+    setIsSubmittingGoogle(true)
+    try {
+      const res = await signInWithPopup(auth, googleProvider)
+      const fbUser = res.user
+      const uid = fbUser.uid
+      const email = fbUser.email || ''
+      const displayName = fbUser.displayName || ''
+      const photoURL = fbUser.photoURL || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(displayName || 'Devotee')}&backgroundColor=ffdfbf`
+
+      // Check Firestore to see if this is an existing user with completed profile
+      let existingProfile: AuthUser | null = null
+      try {
+        const snap = await getDoc(doc(db, 'users', uid))
+        if (snap.exists() && snap.data()?.profileCompleted) {
+          existingProfile = snap.data() as AuthUser
+        }
+      } catch (e) {
+        console.warn('Firestore user fetch note:', e)
+      }
+
+      if (!existingProfile) {
+        try {
+          const registered = JSON.parse(localStorage.getItem('puja_parikrama_registered_users') || '{}')
+          if (registered[uid] && registered[uid].profileCompleted) {
+            existingProfile = registered[uid]
+          } else {
+            const matchByEmail = Object.values(registered as Record<string, AuthUser>).find(u => u.email?.toLowerCase() === email.toLowerCase())
+            if (matchByEmail && matchByEmail.profileCompleted) {
+              existingProfile = matchByEmail
+            }
+          }
+        } catch {}
+      }
+
+      if (existingProfile && existingProfile.profileCompleted) {
+        // Returning user -> directly log in and enter map!
+        completeAuth(existingProfile)
+        setIsSubmittingGoogle(false)
+        return
+      }
+
+      // New user -> proceed to Stage 3: Complete Profile (name and city)
+      setVerifiedUid(uid)
+      setAuthEmail(email)
+      setProfileName(displayName)
+      setProfilePhoto(photoURL)
+      setProfileCity('Agartala')
+      setAuthStage('profile')
+      setIsSubmittingGoogle(false)
+    } catch (err: any) {
+      console.warn('Google sign-in error:', err)
+      setIsSubmittingGoogle(false)
+      if (err?.code === 'auth/popup-closed-by-user' || err?.code === 'auth/cancelled-popup-request') {
+        return
+      }
+      if (err?.code === 'auth/unauthorized-domain') {
+        setAuthError('Domain not authorized in Firebase Console > Authentication > Settings > Authorized domains.')
+      } else {
+        setAuthError(err?.message || 'Google sign-in failed. Please try again.')
+      }
     }
   }
 
@@ -3126,15 +3194,53 @@ export default function App() {
               </button>
             </div>
 
-            {/* ── STAGE 1: ENTER EMAIL ── */}
+            {/* ── STAGE 1: ENTER GOOGLE OR EMAIL AUTH ── */}
             {authStage === 'email' && (
               <div className="w-full text-left">
                 {pendingUploadAfterAuth && (
-                  <div className="w-full mb-3 px-3 py-2 rounded-xl bg-[#E9B83E]/10 border border-[#E9B83E]/30 text-[#F5E5B7] text-xs font-semibold text-center flex items-center justify-center gap-1.5">
-                    <span>📸 Free account required to submit pandal snaps</span>
+                  <div className="w-full mb-3.5 px-3 py-2 rounded-xl bg-[#E9B83E]/10 border border-[#E9B83E]/30 text-[#F5E5B7] text-xs font-semibold text-center flex items-center justify-center gap-1.5">
+                    <span>📸 Sign in required to submit pandal snaps</span>
                   </div>
                 )}
 
+                {/* Option 1: Continue with Google (One-click authentication) */}
+                <button
+                  type="button"
+                  onClick={handleGoogleSignIn}
+                  disabled={isSubmittingGoogle}
+                  className="w-full py-2.5 sm:py-3 rounded-full bg-white hover:bg-slate-50 text-slate-900 font-bold text-xs sm:text-sm tracking-wide flex items-center justify-center gap-2.5 border border-white/80 shadow-[0_4px_16px_rgba(0,0,0,0.35)] hover:scale-[1.01] active:scale-95 disabled:opacity-50 transition-all cursor-pointer mb-3.5"
+                >
+                  {isSubmittingGoogle ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <svg className="animate-spin h-4 w-4 text-slate-900" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                      </svg>
+                      <span>Connecting to Google...</span>
+                    </span>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+                        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
+                        <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+                        <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+                      </svg>
+                      <span>Continue with Google</span>
+                    </>
+                  )}
+                </button>
+
+                {/* Divider: OR */}
+                <div className="relative flex items-center justify-center my-3.5">
+                  <div className="border-t border-[#E9B83E]/20 w-full" />
+                  <span className="bg-[#211329] px-3 text-[#E9B83E]/70 text-[11px] font-bold tracking-widest uppercase">
+                    OR
+                  </span>
+                  <div className="border-t border-[#E9B83E]/20 w-full" />
+                </div>
+
+                {/* Option 2: Continue with Email (Passwordless email link) */}
                 <form onSubmit={handleEmailAuthSubmit}>
                   <label className="block text-[#F5E5B7] font-semibold text-xs sm:text-[13px] mb-1.5">
                     Email Address
@@ -3176,7 +3282,7 @@ export default function App() {
                         <span>Sending verification email...</span>
                       </span>
                     ) : (
-                      <span>Continue</span>
+                      <span>Continue with Email →</span>
                     )}
                   </button>
 

@@ -1,6 +1,8 @@
 import { initializeApp } from "firebase/app";
 import { 
   getAuth, 
+  GoogleAuthProvider,
+  signInWithPopup,
   sendSignInLinkToEmail, 
   isSignInWithEmailLink, 
   signInWithEmailLink,
@@ -29,9 +31,13 @@ export const firebaseConfig = {
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
+export const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({ prompt: 'select_account' });
 export const db = getFirestore(app);
 
 export {
+  GoogleAuthProvider,
+  signInWithPopup,
   sendSignInLinkToEmail,
   isSignInWithEmailLink,
   signInWithEmailLink,
