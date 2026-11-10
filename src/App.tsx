@@ -3074,10 +3074,7 @@ export default function App() {
                         <span>Sending verification email...</span>
                       </span>
                     ) : (
-                      <span className="flex items-center justify-center gap-1.5">
-                        <span>Continue with Email</span>
-                        <span className="text-base font-bold">→</span>
-                      </span>
+                      <span>Continue</span>
                     )}
                   </button>
 
