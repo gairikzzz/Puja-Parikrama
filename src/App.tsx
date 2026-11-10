@@ -176,11 +176,11 @@ export interface SpotifyTrack {
 export const SPOTIFY_DURGA_TRACKS: SpotifyTrack[] = [
   {
     id: '1',
-    title: 'Dugga Ma Asche',
-    artist: 'Infra',
+    title: 'Dugga Elo',
+    artist: 'Monali Thakur',
     cover: '/dugga-ma-asche.png',
-    durationSec: 213, // 3:33
-    initialSec: 163, // 2:43 as in screenshot!
+    durationSec: 146,
+    initialSec: 0,
     spotifyUrl: 'https://open.spotify.com/playlist/2cjLMgWAt3S6YNCEKFtVtk',
   },
   {
@@ -1351,10 +1351,18 @@ export default function App() {
           if (cut) cleanTitle = cut
         }
         setTrackTitle(cleanTitle)
+
+        // Find curated match by video ID or track title
+        const match = YOUTUBE_DURGA_TRACKS.find(t => t.id === data.video_id) ||
+          YOUTUBE_DURGA_TRACKS.find(t => cleanTitle.toLowerCase().includes(t.title.toLowerCase()) || t.title.toLowerCase().includes(cleanTitle.toLowerCase())) ||
+          YOUTUBE_DURGA_TRACKS[currentTrackIndexRef.current]
+
         let author = data.author ? data.author.replace(/\s*-\s*Topic$/i, '').trim() : ''
         author = author.replace(/\s*·\s*YouTube(\s*Music)?/gi, '').trim()
         author = author.replace(/\s*YouTube(\s*Music)?/gi, '').trim()
-        setTrackArtist(author || 'Infra')
+
+        const finalArtist = (match && match.artist) ? match.artist : (author || 'Monali Thakur')
+        setTrackArtist(finalArtist)
         if (data.video_id) {
           setTrackCover(`https://i.ytimg.com/vi/${data.video_id}/hqdefault.jpg`)
         }

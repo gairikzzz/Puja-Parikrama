@@ -4728,10 +4728,18 @@
             if (cut) cleanTitle = cut;
           }
           if (elTrackTitle) elTrackTitle.textContent = cleanTitle;
+
+          // Find curated match by video ID or track title
+          const match = YOUTUBE_DURGA_TRACKS.find(t => t.id === data.video_id) ||
+            YOUTUBE_DURGA_TRACKS.find(t => cleanTitle.toLowerCase().includes(t.title.toLowerCase()) || t.title.toLowerCase().includes(cleanTitle.toLowerCase())) ||
+            YOUTUBE_DURGA_TRACKS[currentTrackIndex];
+
           let author = data.author ? data.author.replace(/\s*-\s*Topic$/i, '').trim() : '';
           author = author.replace(/\s*·\s*YouTube(\s*Music)?/gi, '').trim();
           author = author.replace(/\s*YouTube(\s*Music)?/gi, '').trim();
-          if (elTrackArtist) elTrackArtist.textContent = author || 'Infra';
+
+          const finalArtist = (match && match.artist) ? match.artist : (author || 'Monali Thakur');
+          if (elTrackArtist) elTrackArtist.textContent = finalArtist;
           if (data.video_id && elTrackCover) {
             elTrackCover.src = `https://i.ytimg.com/vi/${data.video_id}/hqdefault.jpg`;
           }
