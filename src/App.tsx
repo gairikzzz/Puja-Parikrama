@@ -169,21 +169,36 @@ export async function searchLocationsAndPandals(query: string): Promise<SearchLo
     type: 'pandal'
   }))
 
-  // 2. Google Maps Places / Geocoding Locations
+  // 2. Google Maps Places / Geocoding Locations (Exclusively restricted to India)
   let locationMatches: SearchLocationResult[] = []
 
-  // Try Google Geocoder if available
+  // Try Google Geocoder if available with strict India country restriction
   if (typeof window !== 'undefined' && (window as any).google?.maps?.Geocoder) {
     try {
       const geocoder = new (window as any).google.maps.Geocoder()
       const geoRes = await new Promise<any[]>((resolve) => {
-        geocoder.geocode({ address: q }, (results: any, status: string) => {
-          if (status === 'OK' && results) resolve(results.slice(0, 4))
+        geocoder.geocode({
+          address: q,
+          componentRestrictions: { country: 'IN' }
+        }, (results: any, status: string) => {
+          if (status === 'OK' && results) resolve(results)
           else resolve([])
         })
       })
       if (geoRes && geoRes.length > 0) {
-        locationMatches = geoRes.map((r, idx) => ({
+        // Strictly filter to India by coordinates and address components
+        const indianGeoRes = geoRes.filter(r => {
+          const lat = r.geometry?.location?.lat?.() ?? 0
+          const lng = r.geometry?.location?.lng?.() ?? 0
+          const inBounds = lat >= 6.0 && lat <= 38.0 && lng >= 68.0 && lng <= 98.0
+          const isIndiaComponent = (r.address_components || []).some((c: any) =>
+            c.short_name === 'IN' || c.long_name?.toLowerCase() === 'india'
+          )
+          const formattedLower = (r.formatted_address || '').toLowerCase()
+          return (inBounds && isIndiaComponent) || formattedLower.includes('india')
+        }).slice(0, 4)
+
+        locationMatches = indianGeoRes.map((r, idx) => ({
           id: `geo_${r.place_id || idx}`,
           name: r.formatted_address.split(',')[0],
           subtitle: r.formatted_address.split(',').slice(1).join(',').trim(),
@@ -195,26 +210,45 @@ export async function searchLocationsAndPandals(query: string): Promise<SearchLo
     } catch (_) {}
   }
 
-  // Supplement with Photon Geocoding API (OpenStreetMap & Google Maps place data globally)
+  // Supplement with Photon Geocoding API (strictly restricted to India)
   if (locationMatches.length < 3) {
     try {
-      const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=5`)
+      const photonQuery = qLower.includes('india') ? q : `${q}, India`
+      const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(photonQuery)}&lat=20.5937&lon=78.9629&limit=10`)
       if (res.ok) {
         const data = await res.json()
         if (data && data.features) {
-          const photonItems: SearchLocationResult[] = data.features.map((f: any, idx: number) => {
+          const photonItems: SearchLocationResult[] = []
+          for (const f of data.features) {
             const props = f.properties || {}
+            const coords = f.geometry?.coordinates || []
+            const lng = coords[0]
+            const lat = coords[1]
+            if (typeof lat !== 'number' || typeof lng !== 'number') continue
+
+            const countryCode = (props.countrycode || '').toUpperCase()
+            const countryName = (props.country || '').toLowerCase()
+            const inIndiaBounds = lat >= 6.0 && lat <= 38.0 && lng >= 68.0 && lng <= 98.0
+
+            // Strictly reject non-Indian locations
+            if (countryCode && countryCode !== 'IN') continue
+            if (!inIndiaBounds && countryCode !== 'IN' && !countryName.includes('india')) continue
+            if (countryName && !countryName.includes('india') && countryCode !== 'IN') continue
+
             const name = props.name || props.street || props.city || q
-            const subtitle = [props.district, props.city, props.state, props.country].filter(Boolean).join(', ')
-            return {
-              id: `photon_${f.properties.osm_id || idx}`,
+            const subtitleParts = [props.district, props.city, props.state, props.country || 'India'].filter(Boolean)
+            const cleanSubtitle = Array.from(new Set(subtitleParts.filter((part: string) => part.toLowerCase() !== name.toLowerCase()))).join(', ')
+
+            photonItems.push({
+              id: `photon_${props.osm_id || Math.random()}`,
               name: name,
-              subtitle: subtitle || 'Location on Map',
-              lat: f.geometry.coordinates[1],
-              lng: f.geometry.coordinates[0],
+              subtitle: cleanSubtitle || 'India',
+              lat: lat,
+              lng: lng,
               type: 'location'
-            }
-          })
+            })
+          }
+
           for (const item of photonItems) {
             if (!locationMatches.some(l => Math.abs(l.lat - item.lat) < 0.001 && Math.abs(l.lng - item.lng) < 0.001)) {
               locationMatches.push(item)
