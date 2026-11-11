@@ -3604,9 +3604,8 @@ export default function App() {
                 </p>
 
                 <div className="w-full pt-3 border-t border-[#E9B83E]/20 text-center">
-                  <p className="text-[#F5E5B7]/70 text-[11px] mb-1.5 leading-tight">
-                    Didn't receive the email?<br />
-                    Check your spam folder or request another email.
+                  <p className="text-[#F5E5B7]/70 text-[10px] sm:text-[11px] mb-2 leading-normal">
+                    Didn't receive the email? Check your spam folder or request another email.
                   </p>
 
                   <button
