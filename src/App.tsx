@@ -3729,7 +3729,7 @@ export default function App() {
 
                 {/* Email Address (Read-only, slightly greyed out) */}
                 <div className="mb-3 text-left">
-                  <label className="block text-[#F5E5B7]/80 font-semibold text-xs sm:text-[13px] mb-1">
+                  <label className="block text-[#F5E5B7] font-semibold text-xs sm:text-[13px] mb-1">
                     Email Address
                   </label>
                   <div className="flex items-center px-3.5 py-2.5 sm:py-3 rounded-xl bg-white/[0.04] border border-white/15 text-neutral-400 text-xs sm:text-sm cursor-not-allowed select-none">
