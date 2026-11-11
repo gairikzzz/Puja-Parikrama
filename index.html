@@ -739,10 +739,10 @@
             </svg>
           </button>
           <!-- Dropdown Menu -->
-          <div id="year-dropdown-menu" class="hidden absolute top-full mt-1.5 left-0 right-0 w-full bg-[#211329]/95 border border-[#E9B83E]/30 rounded-xl p-1 shadow-[0_12px_32px_rgba(13,12,27,0.75),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-xl z-50 flex flex-col">
+          <div id="year-dropdown-menu" class="hidden absolute top-full mt-1.5 left-0 right-0 w-full min-w-[90px] bg-[#211329]/95 border border-[#E9B83E]/30 rounded-xl p-1 shadow-[0_12px_32px_rgba(13,12,27,0.75),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-xl z-50 flex flex-col pointer-events-auto">
             <button
               type="button"
-              onclick="selectPujaYear(2026)"
+              onclick="window.selectPujaYear(2026, event)"
               class="year-option py-2 text-center justify-center text-xs font-semibold flex items-center transition cursor-pointer text-[#E9B83E] font-bold bg-[#E9B83E]/15 border-b border-[#E9B83E]/20 last:border-b-0 first:rounded-t-lg last:rounded-b-lg"
               data-year="2026"
             >
@@ -750,7 +750,7 @@
             </button>
             <button
               type="button"
-              onclick="selectPujaYear(2025)"
+              onclick="window.selectPujaYear(2025, event)"
               class="year-option py-2 text-center justify-center text-xs font-semibold flex items-center transition cursor-pointer text-[#F5E5B7]/80 hover:bg-[#E9B83E]/15 hover:text-[#E9B83E] border-b border-[#E9B83E]/20 last:border-b-0 first:rounded-t-lg last:rounded-b-lg"
               data-year="2025"
             >
@@ -6303,33 +6303,37 @@
 
     /* ── YEAR SELECTOR DROPDOWN ── */
     let selectedPujaYear = 2026;
-    const btnYearSelector = document.getElementById('btn-year-selector');
-    const yearDropdownMenu = document.getElementById('year-dropdown-menu');
-    const yearChevron = document.getElementById('year-chevron');
-    const selectedYearLabel = document.getElementById('selected-year-label');
 
     window.toggleYearDropdown = function(e) {
-      if (e) e.stopPropagation();
+      if (e) {
+        try { e.preventDefault(); } catch (_) {}
+        try { e.stopPropagation(); } catch (_) {}
+      }
       const menu = document.getElementById('year-dropdown-menu');
       const chev = document.getElementById('year-chevron');
       if (!menu) return;
       const isHidden = menu.classList.contains('hidden');
-      menu.classList.toggle('hidden');
-      chev?.classList.toggle('rotate-180', isHidden);
+      if (isHidden) {
+        menu.classList.remove('hidden');
+        chev?.classList.add('rotate-180');
+      } else {
+        menu.classList.add('hidden');
+        chev?.classList.remove('rotate-180');
+      }
     };
 
-    btnYearSelector?.addEventListener('click', (e) => {
-      window.toggleYearDropdown(e);
-    });
-
     document.addEventListener('click', (e) => {
-      if (!document.getElementById('year-selector-container')?.contains(e.target)) {
+      const container = document.getElementById('year-selector-container');
+      if (container && !container.contains(e.target)) {
         document.getElementById('year-dropdown-menu')?.classList.add('hidden');
         document.getElementById('year-chevron')?.classList.remove('rotate-180');
       }
     });
 
-    window.selectPujaYear = function(year) {
+    window.selectPujaYear = function(year, e) {
+      if (e) {
+        try { e.stopPropagation(); } catch (_) {}
+      }
       selectedPujaYear = year;
       const label = document.getElementById('selected-year-label');
       if (label) label.textContent = year;

@@ -3037,7 +3037,7 @@ export default function App() {
                 </button>
 
                 {yearDropdownOpen && (
-                  <div className="absolute top-full mt-1.5 left-0 right-0 w-full bg-[#211329]/95 border border-[#E9B83E]/30 rounded-xl p-1 shadow-[0_12px_32px_rgba(13,12,27,0.75),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-xl z-50 flex flex-col animate-in fade-in zoom-in-95 duration-150">
+                  <div className="absolute top-full mt-1.5 left-0 right-0 w-full min-w-[90px] bg-[#211329]/95 border border-[#E9B83E]/30 rounded-xl p-1 shadow-[0_12px_32px_rgba(13,12,27,0.75),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-xl z-50 flex flex-col animate-in fade-in zoom-in-95 duration-150 pointer-events-auto">
                     {[2026, 2025].map(year => (
                       <button
                         key={year}
