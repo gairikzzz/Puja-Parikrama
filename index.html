@@ -3709,7 +3709,7 @@
           item.className = `px-3.5 py-2.5 text-xs cursor-pointer flex items-center justify-between transition ${
             isSelected ? 'bg-[#E9B83E]/20 text-[#E9B83E] font-bold' : 'text-[#F5E5B7] hover:bg-[#E9B83E]/15'
           }`;
-          item.innerHTML = `<span>${city}</span>${isSelected ? '<span class="text-xs text-[#E9B83E]">✓</span>' : ''}`;
+          item.innerHTML = `<span>${city}</span>`;
           item.onclick = (e) => {
             e.stopPropagation();
             cityInput.value = city;

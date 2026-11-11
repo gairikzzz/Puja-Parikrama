@@ -3767,7 +3767,6 @@ export default function App() {
                           }`}
                         >
                           <span>{city}</span>
-                          {profileCity.toLowerCase() === city.toLowerCase() && <span className="text-xs text-[#E9B83E]">✓</span>}
                         </div>
                       ))}
                     </div>
