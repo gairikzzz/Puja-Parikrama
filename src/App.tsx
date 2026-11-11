@@ -3681,39 +3681,6 @@ export default function App() {
                     }}
                   />
 
-                  {hasCustomPhoto && (
-                    <div className="flex flex-col items-center mb-2">
-                      <div className="flex items-center gap-1.5 mb-1">
-                        <button
-                          type="button"
-                          onClick={() => nudgeAvatar(-0.06, 0)}
-                          className="px-2 py-0.5 rounded-md bg-white/10 hover:bg-white/20 text-[#F5E5B7] text-[10px] font-semibold border border-[#E9B83E]/30 transition active:scale-95 cursor-pointer"
-                          title="Nudge Left"
-                        >
-                          ◀ Left
-                        </button>
-                        <button
-                          type="button"
-                          onClick={resetAvatarCenter}
-                          className="px-2 py-0.5 rounded-md bg-[#E9B83E]/20 hover:bg-[#E9B83E]/30 text-[#F5E5B7] text-[10px] font-bold border border-[#E9B83E]/50 transition active:scale-95 cursor-pointer"
-                          title="Center Photo"
-                        >
-                          Center
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => nudgeAvatar(0.06, 0)}
-                          className="px-2 py-0.5 rounded-md bg-white/10 hover:bg-white/20 text-[#F5E5B7] text-[10px] font-semibold border border-[#E9B83E]/30 transition active:scale-95 cursor-pointer"
-                          title="Nudge Right"
-                        >
-                          Right ▶
-                        </button>
-                      </div>
-                      <span className="text-[10px] text-[#E9B83E]/75 flex items-center gap-1">
-                        <span>👆</span> Drag or nudge to center photo
-                      </span>
-                    </div>
-                  )}
 
                   <div className="flex justify-center">
                     <button
