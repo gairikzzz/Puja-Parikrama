@@ -728,6 +728,7 @@
           <button
             type="button"
             id="btn-year-selector"
+            onclick="window.toggleYearDropdown(event)"
             title="Select Puja Year"
             class="h-7 sm:h-7.5 px-2.5 sm:px-3 rounded-xl backdrop-blur-md bg-[#211329]/70 hover:bg-[#211329]/85 border border-[#E9B83E]/40 hover:border-[#E9B83E] flex items-center gap-1.5 text-[#F5E5B7] font-semibold text-[11px] sm:text-xs shadow-[0_0_8px_rgba(233,184,62,0.22),inset_0_1px_1px_rgba(255,255,255,0.10)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] hover:scale-[1.02] active:scale-95 transition-all cursor-pointer"
           >
@@ -1600,6 +1601,7 @@
         <button
           type="button"
           id="btn-player-prev"
+          onclick="window.playerPrevTrack(event)"
           title="Previous Track"
           class="text-white/70 hover:text-white transition p-0.5 cursor-pointer"
         >
@@ -1611,6 +1613,7 @@
         <button
           type="button"
           id="btn-player-play-pause"
+          onclick="window.togglePlayback()"
           title="Play"
           class="w-6 h-6 sm:w-6.5 sm:h-6.5 rounded-full bg-white text-black hover:scale-105 active:scale-95 flex items-center justify-center transition shadow-md flex-shrink-0 cursor-pointer"
         >
@@ -1622,6 +1625,7 @@
         <button
           type="button"
           id="btn-player-next"
+          onclick="window.playerNextTrack(event)"
           title="Next Track"
           class="text-white/70 hover:text-white transition p-0.5 cursor-pointer"
         >
@@ -1634,6 +1638,7 @@
         <button
           type="button"
           id="btn-player-mute"
+          onclick="window.playerToggleMute(event)"
           title="Mute / Unmute"
           class="text-white hover:text-white/80 transition p-0.5 cursor-pointer"
         >
@@ -4250,6 +4255,7 @@
       e?.preventDefault();
       window.closeProfileModal();
     });
+    const profileModal = document.getElementById('profile-modal');
     profileModal?.addEventListener('click', (e) => {
       if (e.target === profileModal) window.closeProfileModal();
     });
@@ -6172,22 +6178,44 @@
       }
     }
 
-    btnPlayPause?.addEventListener('click', togglePlayback);
-    btnPlayPauseMobile?.addEventListener('click', togglePlayback);
+    window.togglePlayback = togglePlayback;
 
-    btnPlayerNext?.addEventListener('click', (e) => {
-      e?.stopPropagation();
+    window.playerNextTrack = function(e) {
+      if (e) e.stopPropagation();
       const currentState = (ytPlayer && ytPlayerReady && typeof ytPlayer.getPlayerState === 'function') ? ytPlayer.getPlayerState() : -1;
       const isCurrentlyPlaying = isTrackPlaying || (currentState === window.YT?.PlayerState.PLAYING);
       changeTrack(currentTrackIndex + 1, isCurrentlyPlaying);
-    });
+    };
 
-    btnPlayerPrev?.addEventListener('click', (e) => {
-      e?.stopPropagation();
+    window.playerPrevTrack = function(e) {
+      if (e) e.stopPropagation();
       const currentState = (ytPlayer && ytPlayerReady && typeof ytPlayer.getPlayerState === 'function') ? ytPlayer.getPlayerState() : -1;
       const isCurrentlyPlaying = isTrackPlaying || (currentState === window.YT?.PlayerState.PLAYING);
       changeTrack(currentTrackIndex - 1, isCurrentlyPlaying);
-    });
+    };
+
+    window.playerToggleMute = function(e) {
+      if (e) e.stopPropagation();
+      isAudioMuted = !isAudioMuted;
+      if (ytPlayer && ytPlayerReady) {
+        try {
+          if (isAudioMuted) {
+            if (typeof ytPlayer.mute === 'function') ytPlayer.mute();
+          } else {
+            if (typeof ytPlayer.unMute === 'function') ytPlayer.unMute();
+            if (typeof ytPlayer.setVolume === 'function') ytPlayer.setVolume(100);
+          }
+        } catch (err) {}
+      }
+      dhakEngine.setMuted(isAudioMuted);
+      updateMuteButtonUI(isAudioMuted);
+    };
+
+    btnPlayPause?.addEventListener('click', togglePlayback);
+    btnPlayPauseMobile?.addEventListener('click', togglePlayback);
+    btnPlayerNext?.addEventListener('click', window.playerNextTrack);
+    btnPlayerPrev?.addEventListener('click', window.playerPrevTrack);
+    btnPlayerMute?.addEventListener('click', window.playerToggleMute);
 
     function updateMuteButtonUI(muted) {
       if (!iconPlayerMute || !btnPlayerMute) return;
@@ -6209,23 +6237,6 @@
         btnPlayerMute.classList.add('text-white');
       }
     }
-
-    btnPlayerMute?.addEventListener('click', (e) => {
-      e?.stopPropagation();
-      isAudioMuted = !isAudioMuted;
-      if (ytPlayer && ytPlayerReady) {
-        try {
-          if (isAudioMuted) {
-            if (typeof ytPlayer.mute === 'function') ytPlayer.mute();
-          } else {
-            if (typeof ytPlayer.unMute === 'function') ytPlayer.unMute();
-            if (typeof ytPlayer.setVolume === 'function') ytPlayer.setVolume(100);
-          }
-        } catch (err) {}
-      }
-      dhakEngine.setMuted(isAudioMuted);
-      updateMuteButtonUI(isAudioMuted);
-    });
 
     elScrubberTrack?.addEventListener('click', (e) => {
       const rect = elScrubberTrack.getBoundingClientRect();
@@ -6275,23 +6286,31 @@
     const yearChevron = document.getElementById('year-chevron');
     const selectedYearLabel = document.getElementById('selected-year-label');
 
+    window.toggleYearDropdown = function(e) {
+      if (e) e.stopPropagation();
+      const menu = document.getElementById('year-dropdown-menu');
+      const chev = document.getElementById('year-chevron');
+      if (!menu) return;
+      const isHidden = menu.classList.contains('hidden');
+      menu.classList.toggle('hidden');
+      chev?.classList.toggle('rotate-180', isHidden);
+    };
+
     btnYearSelector?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const isHidden = yearDropdownMenu?.classList.contains('hidden');
-      yearDropdownMenu?.classList.toggle('hidden');
-      yearChevron?.classList.toggle('rotate-180', isHidden);
+      window.toggleYearDropdown(e);
     });
 
     document.addEventListener('click', (e) => {
       if (!document.getElementById('year-selector-container')?.contains(e.target)) {
-        yearDropdownMenu?.classList.add('hidden');
-        yearChevron?.classList.remove('rotate-180');
+        document.getElementById('year-dropdown-menu')?.classList.add('hidden');
+        document.getElementById('year-chevron')?.classList.remove('rotate-180');
       }
     });
 
     window.selectPujaYear = function(year) {
       selectedPujaYear = year;
-      if (selectedYearLabel) selectedYearLabel.textContent = year;
+      const label = document.getElementById('selected-year-label');
+      if (label) label.textContent = year;
       document.querySelectorAll('.year-option').forEach(el => {
         const isCurrent = Number(el.getAttribute('data-year')) === year;
         if (isCurrent) {
@@ -6300,11 +6319,16 @@
           el.className = 'year-option py-2 text-center justify-center text-xs font-semibold flex items-center transition cursor-pointer text-[#F5E5B7]/80 hover:bg-[#E9B83E]/15 hover:text-[#E9B83E] border-b border-[#E9B83E]/20 last:border-b-0 first:rounded-t-lg last:rounded-b-lg';
         }
       });
-      yearDropdownMenu?.classList.add('hidden');
-      yearChevron?.classList.remove('rotate-180');
+      document.getElementById('year-dropdown-menu')?.classList.add('hidden');
+      document.getElementById('year-chevron')?.classList.remove('rotate-180');
+      if (typeof showToast === 'function') {
+        showToast(`📅 Viewing Puja Parikrama ${year}`);
+      }
     };
 
-    syncPlayerUI();
+    if (typeof updateYTTrackInfo === 'function') {
+      try { updateYTTrackInfo(); } catch (_) {}
+    }
 
     /* ── Initial Render ── */
     renderRecentSnapsList();
