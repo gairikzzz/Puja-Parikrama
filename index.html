@@ -3207,8 +3207,8 @@
         if (display) display.textContent = authCurrentEmail;
       } else if (stage === 'profile') {
         if (stage3) stage3.classList.remove('hidden');
-        if (titleEl) titleEl.textContent = 'Complete Your Profile';
-        if (subEl) subEl.textContent = 'Personalise your Puja Porikroma experience';
+        if (titleEl) titleEl.textContent = window.isEditingProfile ? 'Edit Profile' : 'Complete Your Profile';
+        if (subEl) subEl.textContent = window.isEditingProfile ? 'Keep your Puja Porikroma profile up to date.' : 'Personalise your Puja Porikroma experience';
         const emailDisp = document.getElementById('profile-email-display');
         if (emailDisp) emailDisp.textContent = authCurrentEmail;
         const nameInput = document.getElementById('profile-name-input');
@@ -3240,6 +3240,7 @@
     }
 
     function openGoogleAuthModal(forceStage) {
+      window.isEditingProfile = false;
       const modal = document.getElementById('google-auth-modal');
       if (forceStage) {
         switchAuthStage(forceStage);
@@ -3254,6 +3255,7 @@
     window.openGoogleAuthModal = openGoogleAuthModal;
 
     function openEditProfileModal() {
+      window.isEditingProfile = true;
       if (typeof window.closeProfileModal === 'function') {
         window.closeProfileModal();
       }
@@ -3303,6 +3305,7 @@
     window.handleSnapCtaClick = handleSnapCtaClick;
 
     function closeGoogleAuthModal() {
+      window.isEditingProfile = false;
       const modal = document.getElementById('google-auth-modal');
       if (modal) {
         modal.classList.remove('active');

@@ -1584,6 +1584,7 @@ export default function App() {
   const [profileCity, setProfileCity] = useState('')
   const [citySearchQuery, setCitySearchQuery] = useState('')
   const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false)
+  const [isEditingProfile, setIsEditingProfile] = useState(false)
   const [profilePhoto, setProfilePhoto] = useState('')
   const [hasCustomPhoto, setHasCustomPhoto] = useState(false)
   const [avatarFocal, setAvatarFocal] = useState({ x: 0.5, y: 0.5 })
@@ -2301,6 +2302,7 @@ export default function App() {
       return
     }
     sessionStorage.setItem('puja_parikrama_auth_skipped', 'true')
+    setIsEditingProfile(false)
     setAuthModalVisible(false)
     setPendingUploadAfterAuth(false)
     setAuthError('')
@@ -2597,6 +2599,7 @@ export default function App() {
 
   const handleOpenEditProfile = () => {
     setProfileModalVisible(false)
+    setIsEditingProfile(true)
     if (user) {
       setVerifiedUid(user.uid)
       setAuthEmail(user.email || '')
@@ -2648,6 +2651,7 @@ export default function App() {
     setUser(userDoc)
 
     // Close modal directly - do not show Welcome screen after editing/saving
+    setIsEditingProfile(false)
     setAuthModalVisible(false)
     setAuthStage('email')
     if (isExistingUser) {
@@ -3758,14 +3762,14 @@ export default function App() {
                     {authStage === 'welcome'
                       ? 'Welcome to Puja Porikroma!'
                       : authStage === 'profile'
-                      ? 'Complete Your Profile'
+                      ? (isEditingProfile ? 'Edit Profile' : 'Complete Your Profile')
                       : (pendingUploadAfterAuth && authStage === 'email' ? 'Create an Account' : 'Welcome to Puja Porikroma')}
                   </h2>
                   <p className="text-[#E9B83E]/80 text-xs sm:text-[13px] font-medium leading-tight">
                     {authStage === 'welcome'
                       ? 'Your journey begins here.'
                       : authStage === 'profile'
-                      ? 'Personalise your Puja Porikroma experience'
+                      ? (isEditingProfile ? 'Keep your Puja Porikroma profile up to date.' : 'Personalise your Puja Porikroma experience')
                       : (pendingUploadAfterAuth && authStage === 'email'
                         ? 'Sign up with your email to share pandal snaps'
                         : 'Discover pandals. Capture memories.')}
