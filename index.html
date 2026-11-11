@@ -3754,6 +3754,8 @@
         return;
       }
 
+      const isExistingUser = !!(currentUser && currentUser.profileCompleted);
+
       const userDoc = {
         uid: (currentUser && currentUser.uid) || authVerifiedUid || 'uid_' + Math.random().toString(36).substring(2, 10),
         displayName: name,
@@ -3786,7 +3788,23 @@
       localStorage.setItem('puja_parikrama_user', JSON.stringify(currentUser));
       updateAuthUI(currentUser);
 
-      switchAuthStage('welcome');
+      // Close modal directly - do not show Welcome screen after editing/saving
+      closeGoogleAuthModal();
+      switchAuthStage('email');
+      if (isExistingUser) {
+        showToast('Profile updated successfully!');
+      } else {
+        showToast(`🎉 Welcome to Puja Porikroma, ${userDoc.displayName}!`);
+      }
+
+      if (window.pendingUploadAfterAuth) {
+        window.pendingUploadAfterAuth = false;
+        setTimeout(() => {
+          if (typeof window.openSnapUploadModal === 'function') {
+            window.openSnapUploadModal();
+          }
+        }, 250);
+      }
     }
     window.handleSaveProfile = handleSaveProfile;
 

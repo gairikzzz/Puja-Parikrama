@@ -2393,6 +2393,7 @@ export default function App() {
     if (!profileName.trim() || !profileCity.trim()) return
 
     const trimmedEmail = authEmail.trim()
+    const isExistingUser = !!(user && user.profileCompleted)
     const userDoc: AuthUser = {
       uid: user?.uid || verifiedUid || 'uid_' + Math.random().toString(36).substring(2, 10),
       displayName: profileName.trim(),
@@ -2425,7 +2426,21 @@ export default function App() {
     localStorage.setItem('puja_parikrama_user', JSON.stringify(userDoc))
     setUser(userDoc)
 
-    setAuthStage('welcome')
+    // Close modal directly - do not show Welcome screen after editing/saving
+    setAuthModalVisible(false)
+    setAuthStage('email')
+    if (isExistingUser) {
+      showToast('Profile updated successfully!')
+    } else {
+      showToast(`🎉 Welcome to Puja Porikroma, ${userDoc.displayName}!`)
+    }
+
+    if (pendingUploadAfterAuth) {
+      setPendingUploadAfterAuth(false)
+      setTimeout(() => {
+        setUploadVisible(true)
+      }, 250)
+    }
   }
 
   const handleFinishWelcomeAndExplore = () => {
