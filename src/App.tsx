@@ -3376,7 +3376,7 @@ export default function App() {
           {/* 2. Combined Zoom Controls Capsule (+ and − in one shared vertical container) */}
           <div
             id="zoom-controls-capsule"
-            className="w-9 sm:w-10 h-[76px] sm:h-[84px] p-1 rounded-full bg-[#211329]/75 hover:bg-[#211329]/90 border border-[#E9B83E]/40 hover:border-[#E9B83E] shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.22)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] backdrop-blur-md flex flex-col items-center justify-between flex-shrink-0 transition-all hover:scale-[1.02]"
+            className="relative w-9 sm:w-10 h-[76px] sm:h-[84px] p-1 rounded-full bg-[#211329]/75 hover:bg-[#211329]/90 border border-[#E9B83E]/40 hover:border-[#E9B83E] shadow-[0_4px_16px_rgba(13,12,27,0.5),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_8px_rgba(233,184,62,0.22)] hover:shadow-[0_0_12px_rgba(233,184,62,0.40)] backdrop-blur-md flex flex-col items-center flex-shrink-0 transition-all hover:scale-[1.02]"
           >
             {/* Magnify Map (+) Button */}
             <button
@@ -3385,7 +3385,7 @@ export default function App() {
               title="Magnify Map (Zoom In)"
               aria-label="Magnify Map"
               style={{ touchAction: 'manipulation' }}
-              className="w-full flex-1 rounded-t-full flex items-center justify-center text-[#E9B83E] hover:text-[#F5E5B7] active:bg-[#E9B83E]/15 active:scale-95 transition-all cursor-pointer group/in"
+              className="w-full h-1/2 rounded-t-full flex items-center justify-center text-[#E9B83E] hover:text-[#F5E5B7] active:bg-[#E9B83E]/15 transition-colors cursor-pointer group/in"
             >
               <svg className="pointer-events-none w-4 h-4 sm:w-4.5 sm:h-4.5 group-hover/in:scale-110 group-hover/in:text-[#F5E5B7] transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -3393,8 +3393,8 @@ export default function App() {
               </svg>
             </button>
 
-            {/* Thin Golden Divider Line */}
-            <div className="w-4 sm:w-5 h-[1px] bg-[#E9B83E]/30 pointer-events-none flex-shrink-0 my-0.5"></div>
+            {/* Thin Golden Divider Line in exact center */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 sm:w-5 h-[1px] bg-[#E9B83E]/30 pointer-events-none z-10"></div>
 
             {/* Demagnify Map (−) Button */}
             <button
@@ -3403,7 +3403,7 @@ export default function App() {
               title="Demagnify Map (Zoom Out)"
               aria-label="Demagnify Map"
               style={{ touchAction: 'manipulation' }}
-              className="w-full flex-1 rounded-b-full flex items-center justify-center text-[#E9B83E] hover:text-[#F5E5B7] active:bg-[#E9B83E]/15 active:scale-95 transition-all cursor-pointer group/out"
+              className="w-full h-1/2 rounded-b-full flex items-center justify-center text-[#E9B83E] hover:text-[#F5E5B7] active:bg-[#E9B83E]/15 transition-colors cursor-pointer group/out"
             >
               <svg className="pointer-events-none w-4 h-4 sm:w-4.5 sm:h-4.5 group-hover/out:scale-110 group-hover/out:text-[#F5E5B7] transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="5" y1="12" x2="19" y2="12"></line>
