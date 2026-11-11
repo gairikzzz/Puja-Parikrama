@@ -1432,6 +1432,7 @@ export default function App() {
   const [verifiedUid, setVerifiedUid] = useState('')
   const cityDropdownRef = useRef<HTMLDivElement>(null)
   const profilePhotoInputRef = useRef<HTMLInputElement>(null)
+  const profilePhotosSliderRef = useRef<HTMLDivElement>(null)
   const [leaderboardModalVisible, setLeaderboardModalVisible] = useState(false)
   const [leaderboardTab, setLeaderboardTab] = useState<'this_puja' | 'all_time'>('this_puja')
   const [profileModalVisible, setProfileModalVisible] = useState(false)
@@ -2377,6 +2378,17 @@ export default function App() {
         e.currentTarget.releasePointerCapture(e.pointerId)
       } catch (_) {}
       avatarDragRef.current.isDragging = false
+    }
+  }
+
+  const slideProfilePhotosNext = () => {
+    if (!profilePhotosSliderRef.current) return
+    const el = profilePhotosSliderRef.current
+    const maxScroll = el.scrollWidth - el.clientWidth
+    if (el.scrollLeft >= maxScroll - 15) {
+      el.scrollTo({ left: 0, behavior: 'smooth' })
+    } else {
+      el.scrollBy({ left: 180, behavior: 'smooth' })
     }
   }
 
@@ -4334,23 +4346,51 @@ export default function App() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => {
-                    setProfileModalVisible(false)
-                    setUploadVisible(true)
-                  }}
-                  className="text-[#E9B83E] hover:text-[#F5E5B7] text-[11px] sm:text-xs font-semibold cursor-pointer transition flex items-center gap-1"
+                  onClick={slideProfilePhotosNext}
+                  aria-label="Slide photos"
+                  title="Slide photos"
+                  className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#E9B83E]/10 hover:bg-[#E9B83E]/20 text-[#E9B83E] flex items-center justify-center transition active:scale-90 cursor-pointer border border-[#E9B83E]/25 hover:border-[#E9B83E]/50"
                 >
-                  View All →
+                  <svg className="w-3.5 h-3.5 text-[#E9B83E]" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                  </svg>
                 </button>
               </div>
-              <div className="grid grid-cols-4 gap-2">
+              <div
+                ref={profilePhotosSliderRef}
+                className="flex gap-2 overflow-x-auto scroll-smooth no-scrollbar py-0.5 -mx-1 px-1"
+              >
                 {[
-                  { img: 'https://images.unsplash.com/photo-1567157577867-05ccb1388e66?auto=format&fit=crop&w=300&q=80', title: 'Golden Temple Pandal' },
-                  { img: 'https://images.unsplash.com/photo-1601055283742-8b27e81b5553?auto=format&fit=crop&w=300&q=80', title: 'Maa Durga Cyan' },
-                  { img: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=300&q=80', title: 'Red Toron Arch' },
-                  { img: 'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=300&q=80', title: 'White Temple Pandal' },
+                  { img: 'https://images.unsplash.com/photo-1567157577867-05ccb1388e66?auto=format&fit=crop&w=600&q=80', title: 'Golden Temple Pandal' },
+                  { img: 'https://images.unsplash.com/photo-1601055283742-8b27e81b5553?auto=format&fit=crop&w=600&q=80', title: 'Maa Durga Cyan' },
+                  { img: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=600&q=80', title: 'Red Toron Arch' },
+                  { img: 'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=600&q=80', title: 'White Temple Pandal' },
+                  { img: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=80', title: 'Puja Illumination' },
+                  { img: 'https://images.unsplash.com/photo-1561571994-3c3915152285?auto=format&fit=crop&w=600&q=80', title: 'Dhunuchi Dance & Aarti' },
+                  { img: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=600&q=80', title: 'Durga Pratima Closeup' },
+                  { img: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=600&q=80', title: 'Pandal Lights & Festivities' },
                 ].map((item, idx) => (
-                  <div key={idx} className="aspect-square rounded-xl overflow-hidden border border-[#E9B83E]/30 hover:border-[#E9B83E] transition shadow cursor-pointer group">
+                  <div
+                    key={idx}
+                    onClick={() => {
+                      setProfileModalVisible(false)
+                      setSelectedPost({
+                        id: `profile_photo_${idx}`,
+                        userId: user?.uid || 'devotee',
+                        userName: user?.displayName || 'Devotee',
+                        userAvatar: user?.photoURL || '',
+                        pandalName: item.title,
+                        lat: 23.8315,
+                        lng: 91.2868,
+                        mediaUrl: item.img,
+                        mediaType: 'image',
+                        likesCount: 24 + idx * 7,
+                        viewsCount: 140 + idx * 35,
+                        createdAt: new Date()
+                      })
+                    }}
+                    className="w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] flex-shrink-0 aspect-square rounded-xl overflow-hidden border border-[#E9B83E]/30 hover:border-[#E9B83E] transition shadow cursor-pointer group"
+                  >
                     <img src={item.img} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition duration-300" />
                   </div>
                 ))}

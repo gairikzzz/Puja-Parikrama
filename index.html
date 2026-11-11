@@ -1445,25 +1445,42 @@
             My Contributions
           </div>
           <button
-            id="btn-profile-view-all"
+            id="btn-profile-photos-next"
             type="button"
-            class="text-[#E9B83E] hover:text-[#F5E5B7] text-[11px] sm:text-xs font-semibold cursor-pointer transition flex items-center gap-1"
+            onclick="slideProfilePhotosNext()"
+            aria-label="Slide photos"
+            title="Slide photos"
+            class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#E9B83E]/10 hover:bg-[#E9B83E]/20 text-[#E9B83E] flex items-center justify-center transition active:scale-90 cursor-pointer border border-[#E9B83E]/25 hover:border-[#E9B83E]/50"
           >
-            View All →
+            <svg class="w-3.5 h-3.5 text-[#E9B83E]" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+            </svg>
           </button>
         </div>
-        <div class="grid grid-cols-4 gap-2">
-          <div class="aspect-square rounded-xl overflow-hidden border border-[#E9B83E]/30 hover:border-[#E9B83E] transition shadow cursor-pointer group">
+        <div id="profile-photos-slider" class="flex gap-2 overflow-x-auto scroll-smooth no-scrollbar py-0.5 -mx-1 px-1">
+          <div onclick="window.closeProfileModal(); openStoryModal({ id: 'contrib_1', userName: currentUser?.displayName || 'Devotee', userPhoto: currentUser?.photoURL || '', verifiedBadge: true, pandalTitle: 'Golden Temple Pandal', neighborhood: 'Agartala', mediaUrl: 'https://images.unsplash.com/photo-1567157577867-05ccb1388e66?auto=format&fit=crop&w=600&q=80', timestamp: 'Just now', likesCount: 28, viewsCount: 162 })" class="w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] flex-shrink-0 aspect-square rounded-xl overflow-hidden border border-[#E9B83E]/30 hover:border-[#E9B83E] transition shadow cursor-pointer group">
             <img src="https://images.unsplash.com/photo-1567157577867-05ccb1388e66?auto=format&fit=crop&w=300&q=80" alt="Golden Temple Pandal" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
           </div>
-          <div class="aspect-square rounded-xl overflow-hidden border border-[#E9B83E]/30 hover:border-[#E9B83E] transition shadow cursor-pointer group">
+          <div onclick="window.closeProfileModal(); openStoryModal({ id: 'contrib_2', userName: currentUser?.displayName || 'Devotee', userPhoto: currentUser?.photoURL || '', verifiedBadge: true, pandalTitle: 'Maa Durga Cyan', neighborhood: 'Agartala', mediaUrl: 'https://images.unsplash.com/photo-1601055283742-8b27e81b5553?auto=format&fit=crop&w=600&q=80', timestamp: 'Just now', likesCount: 42, viewsCount: 210 })" class="w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] flex-shrink-0 aspect-square rounded-xl overflow-hidden border border-[#E9B83E]/30 hover:border-[#E9B83E] transition shadow cursor-pointer group">
             <img src="https://images.unsplash.com/photo-1601055283742-8b27e81b5553?auto=format&fit=crop&w=300&q=80" alt="Maa Durga Cyan" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
           </div>
-          <div class="aspect-square rounded-xl overflow-hidden border border-[#E9B83E]/30 hover:border-[#E9B83E] transition shadow cursor-pointer group">
+          <div onclick="window.closeProfileModal(); openStoryModal({ id: 'contrib_3', userName: currentUser?.displayName || 'Devotee', userPhoto: currentUser?.photoURL || '', verifiedBadge: true, pandalTitle: 'Red Toron Arch', neighborhood: 'Agartala', mediaUrl: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=600&q=80', timestamp: 'Just now', likesCount: 35, viewsCount: 184 })" class="w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] flex-shrink-0 aspect-square rounded-xl overflow-hidden border border-[#E9B83E]/30 hover:border-[#E9B83E] transition shadow cursor-pointer group">
             <img src="https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=300&q=80" alt="Red Toron Arch" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
           </div>
-          <div class="aspect-square rounded-xl overflow-hidden border border-[#E9B83E]/30 hover:border-[#E9B83E] transition shadow cursor-pointer group">
+          <div onclick="window.closeProfileModal(); openStoryModal({ id: 'contrib_4', userName: currentUser?.displayName || 'Devotee', userPhoto: currentUser?.photoURL || '', verifiedBadge: true, pandalTitle: 'White Temple Pandal', neighborhood: 'Agartala', mediaUrl: 'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=600&q=80', timestamp: 'Just now', likesCount: 19, viewsCount: 115 })" class="w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] flex-shrink-0 aspect-square rounded-xl overflow-hidden border border-[#E9B83E]/30 hover:border-[#E9B83E] transition shadow cursor-pointer group">
             <img src="https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=300&q=80" alt="White Temple Pandal" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+          </div>
+          <div onclick="window.closeProfileModal(); openStoryModal({ id: 'contrib_5', userName: currentUser?.displayName || 'Devotee', userPhoto: currentUser?.photoURL || '', verifiedBadge: true, pandalTitle: 'Puja Illumination', neighborhood: 'Agartala', mediaUrl: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=80', timestamp: 'Just now', likesCount: 51, viewsCount: 290 })" class="w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] flex-shrink-0 aspect-square rounded-xl overflow-hidden border border-[#E9B83E]/30 hover:border-[#E9B83E] transition shadow cursor-pointer group">
+            <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=300&q=80" alt="Puja Illumination" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+          </div>
+          <div onclick="window.closeProfileModal(); openStoryModal({ id: 'contrib_6', userName: currentUser?.displayName || 'Devotee', userPhoto: currentUser?.photoURL || '', verifiedBadge: true, pandalTitle: 'Dhunuchi Dance & Aarti', neighborhood: 'Agartala', mediaUrl: 'https://images.unsplash.com/photo-1561571994-3c3915152285?auto=format&fit=crop&w=600&q=80', timestamp: 'Just now', likesCount: 63, viewsCount: 340 })" class="w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] flex-shrink-0 aspect-square rounded-xl overflow-hidden border border-[#E9B83E]/30 hover:border-[#E9B83E] transition shadow cursor-pointer group">
+            <img src="https://images.unsplash.com/photo-1561571994-3c3915152285?auto=format&fit=crop&w=300&q=80" alt="Dhunuchi Dance & Aarti" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+          </div>
+          <div onclick="window.closeProfileModal(); openStoryModal({ id: 'contrib_7', userName: currentUser?.displayName || 'Devotee', userPhoto: currentUser?.photoURL || '', verifiedBadge: true, pandalTitle: 'Durga Pratima Closeup', neighborhood: 'Agartala', mediaUrl: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=600&q=80', timestamp: 'Just now', likesCount: 88, viewsCount: 420 })" class="w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] flex-shrink-0 aspect-square rounded-xl overflow-hidden border border-[#E9B83E]/30 hover:border-[#E9B83E] transition shadow cursor-pointer group">
+            <img src="https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=300&q=80" alt="Durga Pratima Closeup" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+          </div>
+          <div onclick="window.closeProfileModal(); openStoryModal({ id: 'contrib_8', userName: currentUser?.displayName || 'Devotee', userPhoto: currentUser?.photoURL || '', verifiedBadge: true, pandalTitle: 'Pandal Lights & Festivities', neighborhood: 'Agartala', mediaUrl: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=600&q=80', timestamp: 'Just now', likesCount: 37, viewsCount: 198 })" class="w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] flex-shrink-0 aspect-square rounded-xl overflow-hidden border border-[#E9B83E]/30 hover:border-[#E9B83E] transition shadow cursor-pointer group">
+            <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=300&q=80" alt="Pandal Lights & Festivities" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
           </div>
         </div>
       </div>
@@ -4473,6 +4490,17 @@
         setTimeout(() => {
           if (!modal.classList.contains('active')) modal.classList.add('hidden');
         }, 280);
+      }
+    };
+
+    window.slideProfilePhotosNext = function() {
+      const slider = document.getElementById('profile-photos-slider');
+      if (!slider) return;
+      const maxScroll = slider.scrollWidth - slider.clientWidth;
+      if (slider.scrollLeft >= maxScroll - 15) {
+        slider.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        slider.scrollBy({ left: 180, behavior: 'smooth' });
       }
     };
 
