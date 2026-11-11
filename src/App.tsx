@@ -1452,6 +1452,7 @@ export default function App() {
   const [leaderboardModalVisible, setLeaderboardModalVisible] = useState(false)
   const [leaderboardTab, setLeaderboardTab] = useState<'this_puja' | 'all_time'>('this_puja')
   const [profileModalVisible, setProfileModalVisible] = useState(false)
+  const [logoutModalVisible, setLogoutModalVisible] = useState(false)
   const [topSearchQuery, setTopSearchQuery] = useState('')
   const [isSearchFocused, setIsSearchFocused] = useState(false)
   const [showTopSearchDropdown, setShowTopSearchDropdown] = useState(false)
@@ -2444,6 +2445,11 @@ export default function App() {
     setAuthStage('email')
     setProfileModalVisible(false)
     showToast('👋 Signed out of Puja Porikroma')
+  }
+
+  const confirmLogout = () => {
+    setLogoutModalVisible(false)
+    handleSignOut()
   }
 
   // ── increment live viewer count randomly ──
@@ -4417,7 +4423,7 @@ export default function App() {
             <button
               type="button"
               id="btn-profile-logout"
-              onClick={handleSignOut}
+              onClick={() => setLogoutModalVisible(true)}
               className="w-full p-2.5 sm:p-3 rounded-2xl bg-[#211329]/70 border border-[#E9B83E]/25 hover:border-[#E9B83E]/45 flex items-center justify-between mb-3 transition cursor-pointer active:scale-98 group text-left"
             >
               <div className="flex items-center gap-3">
@@ -4437,6 +4443,63 @@ export default function App() {
             </button>
 
 
+          </div>
+        </div>
+      )}
+
+      {/* ── LOG OUT CONFIRMATION MODAL ── */}
+      {logoutModalVisible && (
+        <div
+          id="logout-confirm-modal"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setLogoutModalVisible(false)
+          }}
+          className="snap-modal-backdrop fixed inset-0 z-[170] bg-black/60 backdrop-blur-[3px] flex items-center justify-center p-3 sm:p-4 active"
+        >
+          <div className="snap-modal-content w-full max-w-[340px] sm:max-w-[370px] mx-auto bg-[#211329]/95 backdrop-blur-2xl rounded-[22px] sm:rounded-[26px] border border-[#E9B83E]/40 p-4 sm:p-5 flex flex-col shadow-[0_24px_60px_rgba(13,12,27,0.7),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_24px_rgba(233,184,62,0.18)] relative animate-in fade-in zoom-in-95 duration-200">
+            {/* Top Header with Durga emblem and Cross on top right */}
+            <div className="flex items-center justify-between pb-2.5 border-b border-[#E9B83E]/20 mb-3 flex-shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full p-0.5 bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] flex items-center justify-center overflow-hidden flex-shrink-0 aspect-square shadow-[0_0_8px_rgba(233,184,62,0.35)]">
+                  <img src="/durga-emblem.png?v=c2" alt="Puja Porikroma" className="w-full h-full rounded-full object-contain" />
+                </div>
+                <div>
+                  <h2 className="text-[#F5E5B7] font-bold text-sm sm:text-base leading-tight">
+                    Log Out?
+                  </h2>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setLogoutModalVisible(false)}
+                className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition active:scale-95 cursor-pointer text-xs"
+                title="Close"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Message */}
+            <div className="py-2.5 text-center">
+              <p className="text-white/85 text-xs sm:text-[13px] font-medium leading-relaxed">
+                Are you sure you want to log out of Puja Porikroma?
+              </p>
+            </div>
+
+            {/* Center CTA Button (No Cancel) */}
+            <div className="mt-3 flex justify-center">
+              <button
+                type="button"
+                id="btn-confirm-logout"
+                onClick={confirmLogout}
+                className="w-full py-2.5 sm:py-3 rounded-full bg-gradient-to-r from-[#A83C38] via-[#BA4440] to-[#A83C38] hover:from-[#BA4440] hover:to-[#BA4440] text-white font-bold text-xs sm:text-sm tracking-wider flex items-center justify-center gap-2 border border-rose-400/40 shadow-[0_0_16px_rgba(168,60,56,0.40)] hover:shadow-[0_0_22px_rgba(168,60,56,0.60)] hover:scale-[1.01] active:scale-95 transition-all cursor-pointer"
+              >
+                <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                <span>Log Out</span>
+              </button>
+            </div>
           </div>
         </div>
       )}
