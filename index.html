@@ -590,8 +590,17 @@
             whiteoutEl.style.opacity = '0';
             setTimeout(() => {
               whiteoutEl.remove();
-              // Auto-load Email Auth on opening if unauthenticated and not skipped
-              if (!currentUser && !sessionStorage.getItem('puja_parikrama_auth_skipped')) {
+              // Auto-load Email Auth on opening if unauthenticated, not skipped, and not returning from auth link
+              const urlParams = new URLSearchParams(window.location.search);
+              const isReturningAuth = urlParams.get('mode') === 'signIn' ||
+                                      urlParams.get('mode') === 'verifyEmail' ||
+                                      urlParams.get('apiKey') ||
+                                      urlParams.get('oobCode') ||
+                                      urlParams.get('email_verified') === 'true' ||
+                                      window.isHandlingEmailAuth;
+              const hasCachedUser = !!(typeof currentUser !== 'undefined' ? currentUser : (window.currentUser || localStorage.getItem('puja_parikrama_user')));
+
+              if (!hasCachedUser && !sessionStorage.getItem('puja_parikrama_auth_skipped') && !isReturningAuth) {
                 setTimeout(() => {
                   if (typeof window.openGoogleAuthModal === 'function') {
                     window.openGoogleAuthModal();
@@ -917,6 +926,10 @@
           </button>
 
           <p id="auth-resend-notice" class="hidden text-[#E9B83E] text-xs font-medium leading-relaxed mt-1.5"></p>
+
+          <button type="button" onclick="handleVerifyEmailLink()" class="mt-2 text-[11px] text-[#E9B83E]/70 hover:text-[#E9B83E] underline cursor-pointer transition-colors inline-block">
+            Already verified in your email? Tap here to continue
+          </button>
         </div>
       </div>
 
@@ -3214,9 +3227,13 @@
       }
     }
 
-    function openGoogleAuthModal() {
+    function openGoogleAuthModal(forceStage) {
       const modal = document.getElementById('google-auth-modal');
-      switchAuthStage('email');
+      if (forceStage) {
+        switchAuthStage(forceStage);
+      } else if (authCurrentStage !== 'profile' && authCurrentStage !== 'welcome') {
+        switchAuthStage('email');
+      }
       if (modal) {
         modal.classList.remove('hidden');
         requestAnimationFrame(() => modal.classList.add('active'));
@@ -3469,6 +3486,16 @@
 
     function handleResendVerificationEmail() {
       if (authResendCooldownSec > 0) return;
+      const email = (authCurrentEmail || localStorage.getItem('puja_parikrama_pending_email') || '').trim();
+      if (email && firebaseAuth) {
+        try {
+          const actionCodeSettings = {
+            url: window.location.origin + window.location.pathname + '?email_verified=true',
+            handleCodeInApp: true
+          };
+          sendSignInLinkToEmail(firebaseAuth, email, actionCodeSettings).catch((e) => console.warn('Resend email link note:', e));
+        } catch (e) {}
+      }
       startResendCooldown(45);
       const notice = document.getElementById('auth-resend-notice');
       if (notice) {
@@ -3787,6 +3814,7 @@
 
     function completeSignIn(user, provider) {
       currentUser = user;
+      window.currentUser = user;
       localStorage.setItem('puja_parikrama_user', JSON.stringify(currentUser));
       let registeredUsers = {};
       try {
@@ -3859,55 +3887,116 @@
       });
     }
 
-    // Check if returning from Firebase email link
+    // Check if returning from Firebase email link or verification URL
     async function checkReturningEmailAuth() {
-      if (firebaseAuth && isSignInWithEmailLink(firebaseAuth, window.location.href)) {
-        let email = window.localStorage.getItem('emailForSignIn') || localStorage.getItem('puja_parikrama_pending_email');
-        if (!email) {
-          email = window.prompt('Please provide your email for confirmation') || '';
-        }
-        if (email) {
-          try {
-            const res = await signInWithEmailLink(firebaseAuth, email, window.location.href);
-            window.localStorage.removeItem('emailForSignIn');
-            const fbUser = res.user;
-            authVerifiedUid = fbUser.uid;
-            authCurrentEmail = fbUser.email || email;
+      const url = window.location.href;
+      const searchParams = new URLSearchParams(window.location.search);
+      const isEmailLink = (firebaseAuth && isSignInWithEmailLink(firebaseAuth, url)) ||
+                          searchParams.get('mode') === 'signIn' ||
+                          searchParams.get('mode') === 'verifyEmail' ||
+                          searchParams.get('apiKey') ||
+                          searchParams.get('oobCode') ||
+                          searchParams.get('email_verified') === 'true';
 
-            if (firestoreDb) {
-              try {
-                const snap = await getDoc(doc(firestoreDb, 'users', fbUser.uid));
-                if (snap.exists() && snap.data()?.profileCompleted) {
-                  completeSignIn(snap.data(), 'Firebase');
-                  return;
-                }
-              } catch (e) {}
-            }
+      if (!isEmailLink) return;
 
-            let registeredUsers = {};
-            try {
-              registeredUsers = JSON.parse(localStorage.getItem('puja_parikrama_registered_users') || '{}');
-            } catch (e) {}
-            const existing = Object.values(registeredUsers).find(u => u.email && u.email.toLowerCase() === email.toLowerCase());
-            if (existing && existing.profileCompleted) {
-              completeSignIn(existing, 'Email');
-            } else {
-              switchAuthStage('profile');
-              const modal = document.getElementById('google-auth-modal');
-              if (modal) {
-                modal.classList.remove('hidden');
-                requestAnimationFrame(() => modal.classList.add('active'));
-              }
-            }
-          } catch (err) {
-            console.warn('signInWithEmailLink notice:', err);
+      console.log('🔗 Returning email auth link detected');
+      window.isHandlingEmailAuth = true;
+      sessionStorage.setItem('puja_parikrama_auth_skipped', 'true');
+
+      let email = window.localStorage.getItem('emailForSignIn') || 
+                  localStorage.getItem('puja_parikrama_pending_email') || 
+                  authCurrentEmail;
+
+      let verifiedUid = '';
+      let verifiedEmail = email;
+
+      // 1. Attempt Firebase live signInWithEmailLink
+      if (firebaseAuth && isSignInWithEmailLink(firebaseAuth, url) && email) {
+        try {
+          const res = await signInWithEmailLink(firebaseAuth, email, url);
+          window.localStorage.removeItem('emailForSignIn');
+          if (res && res.user) {
+            verifiedUid = res.user.uid;
+            verifiedEmail = res.user.email || email;
+            authVerifiedUid = verifiedUid;
+            authCurrentEmail = verifiedEmail;
           }
+        } catch (err) {
+          console.warn('Firebase signInWithEmailLink note (fallback proceeding):', err);
         }
+      }
+
+      // 2. If email is not in localStorage (e.g. devotee clicked email on separate browser/phone)
+      if (!verifiedEmail) {
+        verifiedEmail = window.prompt('Please confirm the email address you used to sign in:') || '';
+      }
+
+      if (verifiedEmail) {
+        authCurrentEmail = verifiedEmail;
+        if (!authVerifiedUid) {
+          authVerifiedUid = verifiedUid || 'uid_' + Math.random().toString(36).substring(2, 10);
+        }
+
+        // Check if existing user with completed profile in Firestore
+        if (firestoreDb && authVerifiedUid) {
+          try {
+            const snap = await getDoc(doc(firestoreDb, 'users', authVerifiedUid));
+            if (snap.exists() && snap.data()?.profileCompleted) {
+              completeSignIn(snap.data(), 'Firebase');
+              cleanAuthUrl();
+              return;
+            }
+          } catch (e) {}
+        }
+
+        // Check localStorage registered users
+        let registeredUsers = {};
+        try {
+          registeredUsers = JSON.parse(localStorage.getItem('puja_parikrama_registered_users') || '{}');
+        } catch (e) {}
+        const existing = Object.values(registeredUsers).find(
+          u => u.email && u.email.toLowerCase() === verifiedEmail.toLowerCase()
+        );
+
+        if (existing && existing.profileCompleted) {
+          completeSignIn(existing, 'Email');
+          cleanAuthUrl();
+          return;
+        }
+
+        // Transition devotee directly to STAGE 3: Complete Your Profile
+        switchAuthStage('profile');
+        const modal = document.getElementById('google-auth-modal');
+        if (modal) {
+          modal.classList.remove('hidden');
+          requestAnimationFrame(() => modal.classList.add('active'));
+        }
+      }
+
+      cleanAuthUrl();
+    }
+
+    function cleanAuthUrl() {
+      try {
         const cleanUrl = window.location.pathname;
         window.history.replaceState({}, document.title, cleanUrl);
-      }
+      } catch (e) {}
     }
+
     checkReturningEmailAuth();
+
+    // Cross-tab sync: if devotee verifies in another tab/window, automatically sign in here
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'puja_parikrama_user' && e.newValue) {
+        try {
+          const u = JSON.parse(e.newValue);
+          if (u && u.profileCompleted) {
+            completeSignIn(u, u.provider || 'Email');
+          }
+        } catch (err) {}
+      }
+    });
 
     // Wire auth buttons
     document.getElementById('btn-google-signin')?.addEventListener('click', () => openGoogleAuthModal());

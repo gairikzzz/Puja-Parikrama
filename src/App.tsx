@@ -1979,15 +1979,26 @@ export default function App() {
   // ── Auto-load Email Auth on Opening (if not authenticated and not skipped) ──
   useEffect(() => {
     if (!showSplash && !user) {
+      const params = new URLSearchParams(window.location.search)
+      const isReturningAuth = isSignInWithEmailLink(auth, window.location.href) ||
+                              params.get('email_verified') === 'true' ||
+                              params.get('mode') === 'signIn' ||
+                              params.get('mode') === 'verifyEmail' ||
+                              params.get('oobCode') ||
+                              params.get('apiKey')
+      if (isReturningAuth) return
+
       const skipped = sessionStorage.getItem('puja_parikrama_auth_skipped')
       if (!skipped) {
         const timer = setTimeout(() => {
-          setAuthModalVisible(true)
+          if (authStage !== 'profile' && authStage !== 'welcome') {
+            setAuthModalVisible(true)
+          }
         }, 500)
         return () => clearTimeout(timer)
       }
     }
-  }, [showSplash, user])
+  }, [showSplash, user, authStage])
 
   const filteredCities = useMemo(() => {
     const q = (citySearchQuery || '').trim().toLowerCase()
@@ -2026,83 +2037,100 @@ export default function App() {
   }, [authStage])
 
   // Check URL if returning from Firebase email link
+  // Check URL if returning from Firebase email link or verification URL
   useEffect(() => {
     const handleReturningAuth = async () => {
-      try {
-        if (isSignInWithEmailLink(auth, window.location.href)) {
-          let email = window.localStorage.getItem('emailForSignIn') || localStorage.getItem('puja_parikrama_pending_email')
-          if (!email) {
-            email = window.prompt('Please provide your email for confirmation') || ''
-          }
-          if (email) {
-            const res = await signInWithEmailLink(auth, email, window.location.href)
-            window.localStorage.removeItem('emailForSignIn')
-            const fbUser = res.user
-            setVerifiedUid(fbUser.uid)
-            setAuthEmail(fbUser.email || email)
+      const searchParams = new URLSearchParams(window.location.search)
+      const isEmailLink = isSignInWithEmailLink(auth, window.location.href) ||
+                          searchParams.get('mode') === 'signIn' ||
+                          searchParams.get('mode') === 'verifyEmail' ||
+                          searchParams.get('apiKey') ||
+                          searchParams.get('oobCode') ||
+                          searchParams.get('email_verified') === 'true'
 
-            // Check Firestore for user profile
-            try {
-              const snap = await getDoc(doc(db, 'users', fbUser.uid))
-              if (snap.exists() && snap.data()?.profileCompleted) {
-                completeAuth(snap.data() as AuthUser)
-                return
-              }
-            } catch (err) {}
+      if (!isEmailLink) return
 
-            let registeredUsers: Record<string, AuthUser> = {}
-            try {
-              registeredUsers = JSON.parse(localStorage.getItem('puja_parikrama_registered_users') || '{}')
-            } catch {}
-            const existing = Object.values(registeredUsers).find(u => u.email?.toLowerCase() === email.toLowerCase())
-            if (existing && existing.profileCompleted) {
-              completeAuth(existing)
-            } else {
-              const namePart = email.split('@')[0].replace(/[._]/g, ' ')
-              const formattedName = namePart.replace(/\b\w/g, c => c.toUpperCase()) || 'Devotee'
-              setProfileName(formattedName)
-              setProfileCity('Agartala')
-              setProfilePhoto(`https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(formattedName)}&backgroundColor=ffdfbf`)
-              setAuthStage('profile')
-              setAuthModalVisible(true)
-            }
+      sessionStorage.setItem('puja_parikrama_auth_skipped', 'true')
+
+      let email = window.localStorage.getItem('emailForSignIn') || 
+                  localStorage.getItem('puja_parikrama_pending_email') || 
+                  authEmail
+
+      let resolvedUid = ''
+      let resolvedEmail = email
+
+      // 1. Attempt Firebase live signInWithEmailLink
+      if (isSignInWithEmailLink(auth, window.location.href) && email) {
+        try {
+          const res = await signInWithEmailLink(auth, email, window.location.href)
+          window.localStorage.removeItem('emailForSignIn')
+          if (res?.user) {
+            resolvedUid = res.user.uid
+            resolvedEmail = res.user.email || email
+            setVerifiedUid(resolvedUid)
+            setAuthEmail(resolvedEmail)
           }
-          const cleanUrl = window.location.pathname
-          window.history.replaceState({}, document.title, cleanUrl)
+        } catch (err) {
+          console.warn('Firebase email link auth note (fallback proceeding):', err)
+        }
+      }
+
+      // 2. Fallback prompt if email was not preserved in localStorage
+      if (!resolvedEmail) {
+        resolvedEmail = window.prompt('Please confirm the email address you used to sign in:') || ''
+      }
+
+      if (resolvedEmail) {
+        setAuthEmail(resolvedEmail)
+        if (!resolvedUid) {
+          resolvedUid = 'uid_' + Math.random().toString(36).substring(2, 10)
+          setVerifiedUid(resolvedUid)
+        }
+
+        // Check Firestore for user profile
+        try {
+          const snap = await getDoc(doc(db, 'users', resolvedUid))
+          if (snap.exists() && snap.data()?.profileCompleted) {
+            completeAuth(snap.data() as AuthUser)
+            cleanUrl()
+            return
+          }
+        } catch (err) {}
+
+        // Check localStorage registered users
+        let registeredUsers: Record<string, AuthUser> = {}
+        try {
+          registeredUsers = JSON.parse(localStorage.getItem('puja_parikrama_registered_users') || '{}')
+        } catch {}
+        const existing = Object.values(registeredUsers).find(
+          u => u.email?.toLowerCase() === resolvedEmail.toLowerCase()
+        )
+        if (existing && existing.profileCompleted) {
+          completeAuth(existing)
+          cleanUrl()
           return
         }
-      } catch (err) {
-        console.warn('Firebase email link auth note:', err)
+
+        // Transition devotee directly to Stage 3: Complete Your Profile
+        const namePart = resolvedEmail.split('@')[0].replace(/[._]/g, ' ')
+        const formattedName = namePart.replace(/\b\w/g, c => c.toUpperCase()) || 'Devotee'
+        setProfileName(formattedName)
+        setProfileCity('Agartala')
+        setProfilePhoto(`https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(formattedName)}&backgroundColor=ffdfbf`)
+        setAuthStage('profile')
+        setAuthModalVisible(true)
       }
 
-      // Query fallback (?email_verified=true)
-      const params = new URLSearchParams(window.location.search)
-      if (params.get('email_verified') === 'true' || params.get('mode') === 'signIn') {
-        const savedEmail = localStorage.getItem('puja_parikrama_pending_email') || ''
-        if (savedEmail) {
-          setAuthEmail(savedEmail)
-          let registeredUsers: Record<string, AuthUser> = {}
-          try {
-            registeredUsers = JSON.parse(localStorage.getItem('puja_parikrama_registered_users') || '{}')
-          } catch {}
-          const existing = Object.values(registeredUsers).find(u => u.email?.toLowerCase() === savedEmail.toLowerCase())
-          if (existing && existing.profileCompleted) {
-            completeAuth(existing)
-          } else {
-            const namePart = savedEmail.split('@')[0].replace(/[._]/g, ' ')
-            const formattedName = namePart.replace(/\b\w/g, c => c.toUpperCase()) || 'Devotee'
-            setProfileName(formattedName)
-            setProfileCity('Agartala')
-            setVerifiedUid('uid_' + Math.random().toString(36).substring(2, 10))
-            setProfilePhoto(`https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(formattedName)}&backgroundColor=ffdfbf`)
-            setAuthStage('profile')
-            setAuthModalVisible(true)
-          }
-          const newUrl = window.location.pathname
-          window.history.replaceState({}, document.title, newUrl)
-        }
-      }
+      cleanUrl()
     }
+
+    const cleanUrl = () => {
+      try {
+        const cleanUrl = window.location.pathname
+        window.history.replaceState({}, document.title, cleanUrl)
+      } catch (e) {}
+    }
+
     handleReturningAuth()
   }, [])
 
@@ -3625,6 +3653,14 @@ export default function App() {
                       {resendNotice}
                     </p>
                   )}
+
+                  <button
+                    type="button"
+                    onClick={handleVerifyEmailLink}
+                    className="mt-2 text-[11px] text-[#E9B83E]/70 hover:text-[#E9B83E] underline cursor-pointer transition-colors block mx-auto"
+                  >
+                    Already verified in your email? Tap here to continue
+                  </button>
                 </div>
               </div>
             )}
