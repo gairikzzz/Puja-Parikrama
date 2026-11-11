@@ -3701,24 +3701,20 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Email Address (Read-only with Verified badge) */}
+                {/* Email Address (Read-only, slightly greyed out) */}
                 <div className="mb-3 text-left">
-                  <label className="block text-[#F5E5B7] font-semibold text-xs sm:text-[13px] mb-1">
+                  <label className="block text-[#F5E5B7]/80 font-semibold text-xs sm:text-[13px] mb-1">
                     Email Address
                   </label>
-                  <div className="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-[#121224]/80 border border-[#E9B83E]/30 text-xs sm:text-sm">
-                    <span className="text-[#F5E5B7] font-medium truncate">{authEmail}</span>
-                    <span className="flex items-center gap-1 text-emerald-400 text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex-shrink-0 ml-2">
-                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
-                      <span>Verified</span>
-                    </span>
+                  <div className="flex items-center px-3.5 py-2.5 sm:py-3 rounded-xl bg-white/[0.04] border border-white/15 text-neutral-400 text-xs sm:text-sm cursor-not-allowed select-none">
+                    <span className="font-medium truncate">{authEmail}</span>
                   </div>
                 </div>
 
                 {/* Name Field */}
                 <div className="mb-3 text-left">
                   <label className="block text-[#F5E5B7] font-semibold text-xs sm:text-[13px] mb-1">
-                    Your Name <span className="text-[#E9B83E]">*</span>
+                    Name
                   </label>
                   <input
                     type="text"
@@ -3733,7 +3729,7 @@ export default function App() {
                 {/* City Searchable Dropdown */}
                 <div className="relative mb-4 text-left" ref={cityDropdownRef}>
                   <label className="block text-[#F5E5B7] font-semibold text-xs sm:text-[13px] mb-1">
-                    Your City <span className="text-[#E9B83E]">*</span>
+                    City
                   </label>
                   <div
                     className="relative flex items-center cursor-pointer"
