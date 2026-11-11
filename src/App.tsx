@@ -40,31 +40,6 @@ export const POPULAR_INDIAN_CITIES = [
   'Agartala',
   'Kolkata',
   'Bengaluru',
-  'Guwahati',
-  'Silchar',
-  'Dharmanagar',
-  'Udaipur (Tripura)',
-  'Delhi',
-  'Mumbai',
-  'Hyderabad',
-  'Chennai',
-  'Pune',
-  'Ahmedabad',
-  'Jaipur',
-  'Lucknow',
-  'Patna',
-  'Bhubaneswar',
-  'Ranchi',
-  'Shillong',
-  'Siliguri',
-  'Durgapur',
-  'Asansol',
-  'Howrah',
-  'Noida',
-  'Gurugram',
-  'Chandigarh',
-  'Indore',
-  'Kochi'
 ]
 
 export interface SnapPost {
@@ -3784,14 +3759,8 @@ export default function App() {
                   </label>
                   <div
                     className="relative flex items-center cursor-pointer"
-                    onClick={() => setIsCityDropdownOpen(true)}
+                    onClick={() => setIsCityDropdownOpen(o => !o)}
                   >
-                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#E9B83E]/70">
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                    </div>
                     <input
                       type="text"
                       required
@@ -3806,10 +3775,12 @@ export default function App() {
                         setIsCityDropdownOpen(true)
                       }}
                       placeholder="Select or enter your city"
-                      className="w-full pl-10 pr-8 py-2.5 sm:py-3 rounded-xl bg-[#121224]/80 border border-[#E9B83E]/35 focus:border-[#E9B83E] text-[#F5E5B7] placeholder-[#F5E5B7]/40 text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-[#E9B83E]/50 transition"
+                      className="w-full px-3.5 pr-8 py-2.5 sm:py-3 rounded-xl bg-[#121224]/80 border border-[#E9B83E]/35 focus:border-[#E9B83E] text-[#F5E5B7] placeholder-[#F5E5B7]/40 text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-[#E9B83E]/50 transition"
                     />
-                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-[#E9B83E]/70 text-[10px]">
-                      ▼
+                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                      <svg className={`w-3.5 h-3.5 text-[#E9B83E] transition-transform duration-200 ${isCityDropdownOpen ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                      </svg>
                     </div>
                   </div>
 
@@ -3823,28 +3794,16 @@ export default function App() {
                             setCitySearchQuery(city)
                             setIsCityDropdownOpen(false)
                           }}
-                          className={`px-3.5 py-2 text-xs cursor-pointer flex items-center justify-between transition ${
+                          className={`px-3.5 py-2.5 text-xs cursor-pointer flex items-center justify-between transition ${
                             profileCity.toLowerCase() === city.toLowerCase()
                               ? 'bg-[#E9B83E]/20 text-[#E9B83E] font-bold'
                               : 'text-[#F5E5B7] hover:bg-[#E9B83E]/15'
                           }`}
                         >
                           <span>{city}</span>
-                          {profileCity.toLowerCase() === city.toLowerCase() && <span className="text-xs">✓</span>}
+                          {profileCity.toLowerCase() === city.toLowerCase() && <span className="text-xs text-[#E9B83E]">✓</span>}
                         </div>
                       ))}
-                      {citySearchQuery.trim() && !POPULAR_INDIAN_CITIES.some(c => c.toLowerCase() === citySearchQuery.trim().toLowerCase()) && (
-                        <div
-                          onClick={() => {
-                            setProfileCity(citySearchQuery.trim())
-                            setIsCityDropdownOpen(false)
-                          }}
-                          className="px-3.5 py-2 text-xs text-[#E9B83E] hover:bg-[#E9B83E]/20 cursor-pointer font-semibold flex items-center gap-1.5"
-                        >
-                          <span>➕</span>
-                          <span>Use "{citySearchQuery.trim()}"</span>
-                        </div>
-                      )}
                     </div>
                   )}
                 </div>
