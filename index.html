@@ -909,8 +909,11 @@
             Didn't receive the email? Check your spam folder or request another email.
           </p>
 
-          <button id="auth-resend-btn" type="button" onclick="handleResendVerificationEmail()" class="w-full py-2.5 sm:py-3 rounded-full bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] text-[#211329] font-black text-xs sm:text-sm tracking-wider flex items-center justify-center border-2 border-[#E9B83E] shadow-[0_0_14px_rgba(233,184,62,0.30)] hover:shadow-[0_0_20px_rgba(233,184,62,0.50)] hover:scale-[1.01] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:shadow-none transition-all cursor-pointer mb-2">
-            Resend Verification Email
+          <button id="auth-resend-btn" type="button" onclick="handleResendVerificationEmail()" class="w-full py-2.5 sm:py-3 rounded-full bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] text-[#211329] font-black text-xs sm:text-sm tracking-wider flex items-center justify-center gap-2 border-2 border-[#E9B83E] shadow-[0_0_14px_rgba(233,184,62,0.30)] hover:shadow-[0_0_20px_rgba(233,184,62,0.50)] hover:scale-[1.01] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:shadow-none transition-all cursor-pointer mb-2">
+            <svg class="w-4 h-4 text-[#211329] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+            <span id="auth-resend-btn-text">Resend Verification Email</span>
           </button>
 
           <p id="auth-resend-notice" class="hidden text-[#E9B83E] text-xs font-medium leading-relaxed mt-1.5"></p>
@@ -3436,21 +3439,30 @@
     function startResendCooldown(sec) {
       authResendCooldownSec = sec;
       const resendBtn = document.getElementById('auth-resend-btn');
+      const resendText = document.getElementById('auth-resend-btn-text');
       if (authResendTimer) clearInterval(authResendTimer);
-      if (resendBtn) {
-        resendBtn.disabled = true;
+      if (resendBtn) resendBtn.disabled = true;
+      if (resendText) {
+        resendText.textContent = `Resend email in ${authResendCooldownSec}s`;
+      } else if (resendBtn) {
         resendBtn.textContent = `Resend email in ${authResendCooldownSec}s`;
       }
       authResendTimer = setInterval(() => {
         authResendCooldownSec--;
         if (authResendCooldownSec <= 0) {
           clearInterval(authResendTimer);
-          if (resendBtn) {
-            resendBtn.disabled = false;
+          if (resendBtn) resendBtn.disabled = false;
+          if (resendText) {
+            resendText.textContent = 'Resend Verification Email';
+          } else if (resendBtn) {
             resendBtn.textContent = 'Resend Verification Email';
           }
         } else {
-          if (resendBtn) resendBtn.textContent = `Resend email in ${authResendCooldownSec}s`;
+          if (resendText) {
+            resendText.textContent = `Resend email in ${authResendCooldownSec}s`;
+          } else if (resendBtn) {
+            resendBtn.textContent = `Resend email in ${authResendCooldownSec}s`;
+          }
         }
       }, 1000);
     }
