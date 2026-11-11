@@ -3476,7 +3476,7 @@ export default function App() {
                     {authStage === 'welcome'
                       ? 'Your journey begins here.'
                       : authStage === 'profile'
-                      ? 'Personalise your Puja Porikroma experience.'
+                      ? 'Personalise your Puja Porikroma experience'
                       : (pendingUploadAfterAuth && authStage === 'email'
                         ? 'Sign up with your email to share pandal snaps'
                         : 'Discover pandals. Capture memories.')}
