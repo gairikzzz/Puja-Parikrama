@@ -3336,7 +3336,7 @@
           if (firestoreDb) {
             try {
               const snap = await getDoc(doc(firestoreDb, 'users', uid));
-              if (snap.exists() && snap.data()?.profileCompleted) {
+              if (snap.exists() && (snap.data()?.profileCompleted || snap.data()?.city)) {
                 existingProfile = snap.data();
               }
             } catch (e) {
@@ -3347,11 +3347,11 @@
           if (!existingProfile) {
             try {
               const registered = JSON.parse(localStorage.getItem('puja_parikrama_registered_users') || '{}');
-              if (registered[uid] && registered[uid].profileCompleted) {
+              if (registered[uid] && (registered[uid].profileCompleted || registered[uid].city)) {
                 existingProfile = registered[uid];
               } else {
                 const matchByEmail = Object.values(registered).find(u => u.email && u.email.toLowerCase() === email.toLowerCase());
-                if (matchByEmail && matchByEmail.profileCompleted) {
+                if (matchByEmail && (matchByEmail.profileCompleted || matchByEmail.city)) {
                   existingProfile = matchByEmail;
                 }
               }
@@ -3360,7 +3360,13 @@
 
           if (btnGoogleText) btnGoogleText.textContent = 'Continue with Google';
 
-          // Always transition devotee to Stage 3: Complete Your Profile confirmation after Google Sign In
+          // If devotee has already completed their profile before (subsequent login), sign in directly!
+          if (existingProfile && (existingProfile.profileCompleted || existingProfile.city)) {
+            completeSignIn(existingProfile, 'Google');
+            return;
+          }
+
+          // Otherwise 1st login -> transition devotee to Stage 3: Complete Your Profile
           authVerifiedUid = uid;
           authCurrentEmail = email;
           authProfileAvatarUrl = (existingProfile && existingProfile.photoURL) || photoURL;
@@ -3535,7 +3541,7 @@
       } catch (e) {}
 
       const existing = Object.values(registeredUsers).find(u => u.email && u.email.toLowerCase() === email.toLowerCase());
-      if (existing && existing.profileCompleted) {
+      if (existing && (existing.profileCompleted || existing.city)) {
         completeSignIn(existing, 'Email');
         return;
       }
@@ -4022,7 +4028,7 @@
         if (firestoreDb && authVerifiedUid) {
           try {
             const snap = await getDoc(doc(firestoreDb, 'users', authVerifiedUid));
-            if (snap.exists() && snap.data()?.profileCompleted) {
+            if (snap.exists() && (snap.data()?.profileCompleted || snap.data()?.city)) {
               completeSignIn(snap.data(), 'Firebase');
               cleanAuthUrl();
               return;
@@ -4039,7 +4045,7 @@
           u => u.email && u.email.toLowerCase() === verifiedEmail.toLowerCase()
         );
 
-        if (existing && existing.profileCompleted) {
+        if (existing && (existing.profileCompleted || existing.city)) {
           completeSignIn(existing, 'Email');
           cleanAuthUrl();
           return;

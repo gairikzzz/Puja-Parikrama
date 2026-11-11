@@ -2251,7 +2251,7 @@ export default function App() {
         // Check Firestore for user profile
         try {
           const snap = await getDoc(doc(db, 'users', resolvedUid))
-          if (snap.exists() && snap.data()?.profileCompleted) {
+          if (snap.exists() && (snap.data()?.profileCompleted || snap.data()?.city)) {
             completeAuth(snap.data() as AuthUser)
             cleanUrl()
             return
@@ -2266,7 +2266,7 @@ export default function App() {
         const existing = Object.values(registeredUsers).find(
           u => u.email?.toLowerCase() === resolvedEmail.toLowerCase()
         )
-        if (existing && existing.profileCompleted) {
+        if (existing && (existing.profileCompleted || existing.city)) {
           completeAuth(existing)
           cleanUrl()
           return
@@ -2345,7 +2345,7 @@ export default function App() {
       let existingProfile: AuthUser | null = null
       try {
         const snap = await getDoc(doc(db, 'users', uid))
-        if (snap.exists() && snap.data()?.profileCompleted) {
+        if (snap.exists() && (snap.data()?.profileCompleted || snap.data()?.city)) {
           existingProfile = snap.data() as AuthUser
         }
       } catch (e) {
@@ -2355,18 +2355,25 @@ export default function App() {
       if (!existingProfile) {
         try {
           const registered = JSON.parse(localStorage.getItem('puja_parikrama_registered_users') || '{}')
-          if (registered[uid] && registered[uid].profileCompleted) {
+          if (registered[uid] && (registered[uid].profileCompleted || registered[uid].city)) {
             existingProfile = registered[uid]
           } else {
             const matchByEmail = Object.values(registered as Record<string, AuthUser>).find(u => u.email?.toLowerCase() === email.toLowerCase())
-            if (matchByEmail && matchByEmail.profileCompleted) {
+            if (matchByEmail && (matchByEmail.profileCompleted || matchByEmail.city)) {
               existingProfile = matchByEmail
             }
           }
         } catch {}
       }
 
-      // Always transition devotee to Stage 3: Complete Your Profile confirmation after Google Sign In
+      // If devotee has already completed their profile before (subsequent login), sign in directly!
+      if (existingProfile && (existingProfile.profileCompleted || existingProfile.city)) {
+        completeAuth(existingProfile)
+        setIsSubmittingGoogle(false)
+        return
+      }
+
+      // Otherwise 1st login -> transition devotee to Stage 3: Complete Your Profile
       setVerifiedUid(uid)
       setAuthEmail(email)
       const finalName = (existingProfile && existingProfile.displayName) || displayName || email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) || 'Devotee'
