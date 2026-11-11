@@ -3900,14 +3900,6 @@ export default function App() {
                       {resendNotice}
                     </p>
                   )}
-
-                  <button
-                    type="button"
-                    onClick={handleVerifyEmailLink}
-                    className="mt-2 text-[11px] text-[#E9B83E]/70 hover:text-[#E9B83E] underline cursor-pointer transition-colors block mx-auto"
-                  >
-                    Already verified in your email? Tap here to continue
-                  </button>
                 </div>
               </div>
             )}
