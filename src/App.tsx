@@ -998,7 +998,7 @@ function UploadModal({ visible, currentUser, initialPandal, selectedYear = 2026,
           {/* Media Preview Box (Tap to choose or change images) */}
           <div
             onClick={() => document.getElementById('snap-file-input')?.click()}
-            className="w-full h-32 sm:h-36 rounded-xl border border-dashed border-[#E9B83E]/40 hover:border-[#E9B83E] bg-[#211329]/50 flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer transition-all shadow-[0_4px_16px_rgba(13,12,27,0.5)]"
+            className="w-full h-36 sm:h-40 rounded-xl border border-dashed border-[#E9B83E]/40 hover:border-[#E9B83E] bg-[#211329]/60 flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer transition-all shadow-[0_4px_16px_rgba(13,12,27,0.5)]"
           >
             {previews.length === 0 ? (
               <div className="w-full h-full flex flex-col items-center justify-center p-3 text-center">
@@ -1015,35 +1015,35 @@ function UploadModal({ visible, currentUser, initialPandal, selectedYear = 2026,
               <img src={previews[0]} alt="preview" className="w-full h-full object-cover" />
             ) : previews.length === 2 ? (
               <div className="relative flex items-center justify-center w-full h-full p-2 overflow-hidden">
-                {/* Back card */}
-                <div className="absolute w-20 sm:w-24 h-26 sm:h-30 rounded-lg overflow-hidden shadow-xl border border-white/20 transform -rotate-6 -translate-x-2.5 transition-all duration-300 group-hover:-rotate-10 group-hover:-translate-x-4">
+                {/* Back / Top-Right Card */}
+                <div className="absolute w-[58%] sm:w-[62%] aspect-[16/10] rounded-xl overflow-hidden shadow-xl border border-white/25 transform translate-x-5 -translate-y-2.5 rotate-[4deg] transition-all duration-300 group-hover:translate-x-7 group-hover:-translate-y-3.5 group-hover:rotate-[6deg]">
                   <img src={previews[0]} alt="pandal 1" className="w-full h-full object-cover" />
                 </div>
-                {/* Front card */}
-                <div className="relative z-10 w-20 sm:w-24 h-26 sm:h-30 rounded-lg overflow-hidden shadow-2xl border-2 border-[#E9B83E]/70 transform rotate-3 translate-x-2.5 transition-all duration-300 group-hover:rotate-6 group-hover:translate-x-4">
+                {/* Front / Bottom-Left Card */}
+                <div className="relative z-10 w-[58%] sm:w-[62%] aspect-[16/10] rounded-xl overflow-hidden shadow-2xl border-2 border-[#E9B83E]/75 transform -translate-x-5 translate-y-2 -rotate-[3deg] transition-all duration-300 group-hover:-translate-x-7 group-hover:translate-y-3 group-hover:-rotate-[5deg]">
                   <img src={previews[1]} alt="pandal 2" className="w-full h-full object-cover" />
                 </div>
                 {/* Photo count pill */}
-                <div className="absolute bottom-2 right-2 bg-[#211329]/90 backdrop-blur-md border border-[#E9B83E]/50 px-2 py-0.5 rounded-full text-[9px] text-[#F5E5B7] font-bold shadow-md z-20 flex items-center gap-1">
+                <div className="absolute bottom-2 right-2 bg-[#211329]/90 backdrop-blur-md border border-[#E9B83E]/50 px-2.5 py-0.5 rounded-full text-[10px] text-[#F5E5B7] font-bold shadow-md z-30 flex items-center gap-1">
                   <span>📸</span> 2 photos
                 </div>
               </div>
             ) : (
               <div className="relative flex items-center justify-center w-full h-full p-2 overflow-hidden">
-                {/* Bottom card */}
-                <div className="absolute w-18 sm:w-22 h-24 sm:h-28 rounded-lg overflow-hidden shadow-lg border border-white/15 transform -rotate-10 -translate-x-4 scale-95 transition-all duration-300 group-hover:-rotate-14 group-hover:-translate-x-6">
+                {/* 1. Back / Top Card */}
+                <div className="absolute z-10 w-[56%] sm:w-[60%] aspect-[16/10] rounded-xl overflow-hidden shadow-xl border border-white/20 transform -translate-y-4 sm:-translate-y-5 translate-x-1 rotate-[1.5deg] transition-all duration-300 group-hover:-translate-y-6 group-hover:scale-105">
                   <img src={previews[0]} alt="pandal 1" className="w-full h-full object-cover" />
                 </div>
-                {/* Middle card */}
-                <div className="absolute w-19 sm:w-23 h-25 sm:h-29 rounded-lg overflow-hidden shadow-xl border border-white/25 transform rotate-6 translate-x-3 scale-[0.98] transition-all duration-300 group-hover:rotate-10 group-hover:translate-x-5">
+                {/* 2. Middle / Right Card */}
+                <div className="absolute z-20 w-[56%] sm:w-[60%] aspect-[16/10] rounded-xl overflow-hidden shadow-xl border border-white/30 transform translate-x-7 sm:translate-x-8 translate-y-1 sm:translate-y-1.5 rotate-[4.5deg] transition-all duration-300 group-hover:translate-x-10 group-hover:rotate-[6deg]">
                   <img src={previews[1]} alt="pandal 2" className="w-full h-full object-cover" />
                 </div>
-                {/* Top card */}
-                <div className="relative z-10 w-20 sm:w-24 h-26 sm:h-30 rounded-lg overflow-hidden shadow-2xl border-2 border-[#E9B83E]/80 transform -rotate-1 transition-all duration-300 group-hover:scale-105">
+                {/* 3. Front / Bottom-Left Card */}
+                <div className="relative z-30 w-[56%] sm:w-[60%] aspect-[16/10] rounded-xl overflow-hidden shadow-2xl border-2 border-[#E9B83E]/80 transform -translate-x-6 sm:-translate-x-7 translate-y-3 sm:translate-y-3.5 -rotate-[4deg] transition-all duration-300 group-hover:-translate-x-8 group-hover:translate-y-4 group-hover:-rotate-[6deg]">
                   <img src={previews[2]} alt="pandal 3" className="w-full h-full object-cover" />
                 </div>
                 {/* Photo count pill */}
-                <div className="absolute bottom-2 right-2 bg-[#211329]/90 backdrop-blur-md border border-[#E9B83E]/50 px-2 py-0.5 rounded-full text-[9px] text-[#F5E5B7] font-bold shadow-md z-20 flex items-center gap-1">
+                <div className="absolute bottom-2 right-2 bg-[#211329]/90 backdrop-blur-md border border-[#E9B83E]/50 px-2.5 py-0.5 rounded-full text-[10px] text-[#F5E5B7] font-bold shadow-md z-40 flex items-center gap-1">
                   <span>📸</span> {previews.length} photos
                 </div>
               </div>
