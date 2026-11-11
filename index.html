@@ -978,7 +978,7 @@
           </div>
         </div>
 
-        <button id="profile-save-btn" type="button" onclick="handleSaveProfile()" class="w-full py-2.5 sm:py-3 rounded-full bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] text-[#211329] font-black text-xs sm:text-sm tracking-wider flex items-center justify-center gap-2 border-2 border-[#E9B83E] shadow-[0_0_14px_rgba(233,184,62,0.30)] hover:shadow-[0_0_20px_rgba(233,184,62,0.50)] hover:scale-[1.01] active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer">
+        <button id="profile-save-btn" type="button" disabled onclick="handleSaveProfile()" class="w-full py-2.5 sm:py-3 rounded-full bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] text-[#211329] font-black text-xs sm:text-sm tracking-wider flex items-center justify-center gap-2 border-2 border-[#E9B83E] shadow-[0_0_14px_rgba(233,184,62,0.30)] hover:shadow-[0_0_20px_rgba(233,184,62,0.50)] hover:scale-[1.01] active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:active:scale-100 disabled:shadow-none transition-all cursor-pointer">
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
             <polyline points="17 21 17 13 7 13 7 21"/>
@@ -3179,8 +3179,8 @@
           nameInput.value = namePart.replace(/\b\w/g, c => c.toUpperCase()) || 'Devotee';
         }
         const cityInput = document.getElementById('profile-city-input');
-        if (cityInput && !cityInput.value.trim()) {
-          cityInput.value = 'Agartala';
+        if (cityInput && !currentUser?.city && !cityInput.value.trim()) {
+          cityInput.value = '';
         }
         if (!authProfileAvatarUrl) {
           authProfileAvatarUrl = `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(nameInput?.value || 'Devotee')}&backgroundColor=ffdfbf`;
@@ -3188,6 +3188,7 @@
         const preview = document.getElementById('profile-photo-preview');
         if (preview) preview.src = authProfileAvatarUrl;
         setupCityDropdown();
+        if (typeof updateSaveButtonState === 'function') updateSaveButtonState();
       } else if (stage === 'welcome') {
         if (stage4) stage4.classList.remove('hidden');
         if (titleEl) titleEl.textContent = 'Welcome to Puja Porikroma!';
@@ -3226,7 +3227,7 @@
         const nameInput = document.getElementById('profile-name-input');
         if (nameInput) nameInput.value = currentUser.displayName || '';
         const cityInput = document.getElementById('profile-city-input');
-        if (cityInput) cityInput.value = currentUser.city || 'Agartala';
+        if (cityInput) cityInput.value = currentUser.city || '';
         const preview = document.getElementById('profile-photo-preview');
         if (preview && authProfileAvatarUrl) preview.src = authProfileAvatarUrl;
       }
@@ -3328,7 +3329,7 @@
           hasCustomProfilePhoto = !!(existingProfile && existingProfile.photoURL);
 
           const finalName = (existingProfile && existingProfile.displayName) || displayName || email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) || 'Devotee';
-          const finalCity = (existingProfile && existingProfile.city) || 'Agartala';
+          const finalCity = (existingProfile && existingProfile.city) || '';
 
           const nameInput = document.getElementById('profile-name-input');
           if (nameInput) nameInput.value = finalName;
@@ -3686,10 +3687,28 @@
     }
     window.shuffleProfileAvatar = shuffleProfileAvatar;
 
+    function updateSaveButtonState() {
+      const nameInput = document.getElementById('profile-name-input');
+      const cityInput = document.getElementById('profile-city-input');
+      const saveBtn = document.getElementById('profile-save-btn');
+      if (!saveBtn) return;
+      const name = (nameInput?.value || '').trim();
+      const city = (cityInput?.value || '').trim();
+      const isValid = name.length > 0 && city.length > 0;
+      saveBtn.disabled = !isValid;
+    }
+    window.updateSaveButtonState = updateSaveButtonState;
+
     function setupCityDropdown() {
       const cityInput = document.getElementById('profile-city-input');
+      const nameInput = document.getElementById('profile-name-input');
       const dropdown = document.getElementById('profile-city-dropdown');
       if (!cityInput || !dropdown) return;
+
+      if (nameInput && !nameInput._saveStateBound) {
+        nameInput._saveStateBound = true;
+        nameInput.addEventListener('input', updateSaveButtonState);
+      }
 
       function hideDropdown() {
         dropdown.classList.add('hidden');
@@ -3720,6 +3739,7 @@
             e.stopPropagation();
             cityInput.value = city;
             hideDropdown();
+            updateSaveButtonState();
           };
           dropdown.appendChild(item);
         });
@@ -3729,6 +3749,7 @@
 
       cityInput.oninput = () => {
         renderCities(cityInput.value);
+        updateSaveButtonState();
       };
 
       cityInput.onfocus = () => {
@@ -3743,6 +3764,8 @@
           hideDropdown();
         }
       });
+
+      updateSaveButtonState();
     }
 
     function handleSaveProfile() {
@@ -3753,6 +3776,7 @@
 
       if (!name || !city) {
         showToast('⚠️ Please enter your name and city to continue');
+        updateSaveButtonState();
         return;
       }
 

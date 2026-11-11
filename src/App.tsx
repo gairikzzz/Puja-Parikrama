@@ -1415,7 +1415,7 @@ export default function App() {
   const [resendCooldown, setResendCooldown] = useState(0)
   const [resendNotice, setResendNotice] = useState('')
   const [profileName, setProfileName] = useState('')
-  const [profileCity, setProfileCity] = useState('Agartala')
+  const [profileCity, setProfileCity] = useState('')
   const [citySearchQuery, setCitySearchQuery] = useState('')
   const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false)
   const [profilePhoto, setProfilePhoto] = useState('')
@@ -2098,7 +2098,7 @@ export default function App() {
         const namePart = resolvedEmail.split('@')[0].replace(/[._]/g, ' ')
         const formattedName = namePart.replace(/\b\w/g, c => c.toUpperCase()) || 'Devotee'
         setProfileName(formattedName)
-        setProfileCity('Agartala')
+        setProfileCity('')
         setProfilePhoto(`https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(formattedName)}&backgroundColor=ffdfbf`)
         setAuthStage('profile')
         setAuthModalVisible(true)
@@ -2192,7 +2192,7 @@ export default function App() {
       setVerifiedUid(uid)
       setAuthEmail(email)
       const finalName = (existingProfile && existingProfile.displayName) || displayName || email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) || 'Devotee'
-      const finalCity = (existingProfile && existingProfile.city) || 'Agartala'
+      const finalCity = (existingProfile && existingProfile.city) || ''
       const finalPhoto = (existingProfile && existingProfile.photoURL) || photoURL
       setProfileName(finalName)
       setProfilePhoto(finalPhoto)
@@ -2289,7 +2289,7 @@ export default function App() {
     const namePart = trimmedEmail.split('@')[0].replace(/[._]/g, ' ')
     const formattedName = namePart.replace(/\b\w/g, c => c.toUpperCase()) || 'Devotee'
     setProfileName(formattedName)
-    setProfileCity('Agartala')
+    setProfileCity('')
     setVerifiedUid('uid_' + Math.random().toString(36).substring(2, 10))
     setProfilePhoto(`https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(formattedName)}&backgroundColor=ffdfbf`)
     setAuthStage('profile')
@@ -2386,7 +2386,7 @@ export default function App() {
       setVerifiedUid(user.uid)
       setAuthEmail(user.email || '')
       setProfileName(user.displayName || '')
-      setProfileCity(user.city || 'Agartala')
+      setProfileCity(user.city || '')
       setProfilePhoto(user.photoURL || '')
       setHasCustomPhoto(!!user.photoURL)
     }
@@ -3780,7 +3780,7 @@ export default function App() {
                   type="button"
                   onClick={handleSaveProfile}
                   disabled={!profileName.trim() || !profileCity.trim()}
-                  className="w-full py-2.5 sm:py-3 rounded-full bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] text-[#211329] font-black text-xs sm:text-sm tracking-wider flex items-center justify-center gap-2 border-2 border-[#E9B83E] shadow-[0_0_14px_rgba(233,184,62,0.30)] hover:shadow-[0_0_20px_rgba(233,184,62,0.50)] hover:scale-[1.01] active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
+                  className="w-full py-2.5 sm:py-3 rounded-full bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] text-[#211329] font-black text-xs sm:text-sm tracking-wider flex items-center justify-center gap-2 border-2 border-[#E9B83E] shadow-[0_0_14px_rgba(233,184,62,0.30)] hover:shadow-[0_0_20px_rgba(233,184,62,0.50)] hover:scale-[1.01] active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:active:scale-100 disabled:shadow-none transition-all cursor-pointer"
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
