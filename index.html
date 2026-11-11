@@ -4828,7 +4828,84 @@
       { name: 'Sovabazar Rajbari', neighborhood: 'Sovabazar', city: 'Kolkata', lat: 22.5975, lng: 88.3685, emoji: '👑', keywords: ['sovabazar rajbari', 'nabakrishna deb', 'traditional', 'kolkata', 'north kolkata'] }
     ];
 
+    /* ── Universal Location & Pandal Search (Google Maps Places & Geocoding + Photon Fallback) ── */
+    async function searchLocationsAndPandalsAsync(query) {
+      const q = (query || '').trim();
+      if (!q) return [];
+      const qLower = q.toLowerCase();
+      const tokens = qLower.split(/\s+/).filter(Boolean);
 
+      // 1. Local Pandals
+      const pandalMatches = (typeof AGARTALA_MASTER_PANDALS !== 'undefined' ? AGARTALA_MASTER_PANDALS : []).filter(p => {
+        const text = `${p.name} ${p.neighborhood || ''} ${p.city || ''} ${(p.keywords || []).join(' ')}`.toLowerCase();
+        return tokens.every(t => text.includes(t));
+      }).slice(0, 4).map(p => ({
+        id: `pandal_${p.name}`,
+        name: p.name,
+        subtitle: `${p.neighborhood || ''}${p.neighborhood ? ', ' : ''}${p.city || 'Agartala'}`,
+        lat: p.lat,
+        lng: p.lng,
+        type: 'pandal'
+      }));
+
+      // 2. Google Maps Places / Geocoding Locations
+      let locationMatches = [];
+
+      // Try Google Geocoder if available
+      if (typeof window !== 'undefined' && window.google && window.google.maps && window.google.maps.Geocoder) {
+        try {
+          const geocoder = new window.google.maps.Geocoder();
+          const geoRes = await new Promise((resolve) => {
+            geocoder.geocode({ address: q }, (results, status) => {
+              if (status === 'OK' && results) resolve(results.slice(0, 4));
+              else resolve([]);
+            });
+          });
+          if (geoRes && geoRes.length > 0) {
+            locationMatches = geoRes.map((r, idx) => ({
+              id: `geo_${r.place_id || idx}`,
+              name: r.formatted_address.split(',')[0],
+              subtitle: r.formatted_address.split(',').slice(1).join(',').trim(),
+              lat: r.geometry.location.lat(),
+              lng: r.geometry.location.lng(),
+              type: 'location'
+            }));
+          }
+        } catch (_) {}
+      }
+
+      // Supplement with Photon Geocoding API (OpenStreetMap & Google Maps place data globally)
+      if (locationMatches.length < 3) {
+        try {
+          const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=5`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.features) {
+              const photonItems = data.features.map((f, idx) => {
+                const props = f.properties || {};
+                const name = props.name || props.street || props.city || q;
+                const subtitle = [props.district, props.city, props.state, props.country].filter(Boolean).join(', ');
+                return {
+                  id: `photon_${f.properties.osm_id || idx}`,
+                  name: name,
+                  subtitle: subtitle || 'Location on Map',
+                  lat: f.geometry.coordinates[1],
+                  lng: f.geometry.coordinates[0],
+                  type: 'location'
+                };
+              });
+              for (const item of photonItems) {
+                if (!locationMatches.some(l => Math.abs(l.lat - item.lat) < 0.001 && Math.abs(l.lng - item.lng) < 0.001)) {
+                  locationMatches.push(item);
+                }
+              }
+            }
+          }
+        } catch (_) {}
+      }
+
+      return [...pandalMatches, ...locationMatches.slice(0, 6)];
+    }
 
     /* ── State variables for Strategy 4 Hybrid Location Tagging ── */
     let submissionCoords = { lat: 23.8315, lng: 91.2868 };
@@ -5472,75 +5549,102 @@
     const miniSearchResults = document.getElementById('mini-map-search-results');
     const btnClearMiniSearch = document.getElementById('btn-clear-mini-search');
 
-    function filterAndRenderMiniMapSearch(query) {
+    let miniMapSearchTimer = null;
+    let miniMapLastQuery = '';
+    let miniMapCurrentResults = [];
+
+    function selectMiniMapSearchResult(item) {
+      if (!item) return;
+      const targetCoords = { lat: item.lat, lng: item.lng };
+
+      if (miniMap) {
+        miniMap.panTo(targetCoords);
+        miniMap.setZoom(17);
+      }
+      if (miniMapMarker) {
+        miniMapMarker.setPosition(targetCoords);
+      }
+
+      const isPandal = item.type === 'pandal';
+      onCoordinatesUpdated(
+        targetCoords,
+        'map_search',
+        isPandal ? '🏛️ Selected Pandal' : '📍 Map Location',
+        isPandal ? 'bg-amber-500/20 text-amber-300 border-amber-500/30' : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+        isPandal ? 'bg-amber-400' : 'bg-emerald-400',
+        `Aligned to ${item.name}`
+      );
+
+      const nbInput = document.getElementById('input-neighborhood');
+      if (nbInput) {
+        nbInput.value = isPandal ? (item.subtitle.split(',')[0].trim() || 'Agartala') : item.name;
+      }
+      const pandalInput = document.getElementById('input-pandal-name');
+      if (pandalInput && isPandal) {
+        pandalInput.value = item.name;
+      }
+
+      updateUploadModalHeaders();
+      validateUploadForm();
+
+      if (miniSearchInput) miniSearchInput.value = item.name;
+      if (miniSearchResults) miniSearchResults.classList.add('hidden');
+      showToast(`📍 Aligned map to "${item.name}"`);
+    }
+
+    async function filterAndRenderMiniMapSearch(query) {
       if (!miniSearchResults) return;
-      const q = (query || '').trim().toLowerCase();
+      const q = (query || '').trim();
       if (!q) {
         miniSearchResults.classList.add('hidden');
         miniSearchResults.innerHTML = '';
+        miniMapCurrentResults = [];
         if (btnClearMiniSearch) btnClearMiniSearch.classList.add('hidden');
         return;
       }
       if (btnClearMiniSearch) btnClearMiniSearch.classList.remove('hidden');
 
-      const tokens = q.split(/\s+/).filter(Boolean);
-      const matches = AGARTALA_MASTER_PANDALS.filter(p => {
-        const text = `${p.name} ${p.neighborhood || ''} ${p.city || ''} ${(p.keywords || []).join(' ')}`.toLowerCase();
-        return tokens.every(t => text.includes(t));
-      });
+      clearTimeout(miniMapSearchTimer);
+      miniMapSearchTimer = setTimeout(async () => {
+        miniMapLastQuery = q;
+        const matches = await searchLocationsAndPandalsAsync(q);
+        if (miniMapLastQuery !== q) return;
+        miniMapCurrentResults = matches;
 
-      if (matches.length === 0) {
-        miniSearchResults.innerHTML = `<div class="px-3 py-2 text-[10px] text-white/50 text-center">No pandals found for "${(query || '').trim()}"</div>`;
-        miniSearchResults.classList.remove('hidden');
-        return;
-      }
+        if (matches.length === 0) {
+          miniSearchResults.innerHTML = `<div class="px-3 py-2 text-[10px] text-white/50 text-center">No pandals or locations found for "${q}"</div>`;
+          miniSearchResults.classList.remove('hidden');
+          return;
+        }
 
-      miniSearchResults.innerHTML = '';
-      matches.slice(0, 5).forEach(p => {
-        const item = document.createElement('div');
-        item.className = 'px-3 py-2 text-left text-xs font-semibold transition cursor-pointer text-[#F5E5B7]/90 hover:bg-[#E9B83E]/20 hover:text-[#E9B83E] active:scale-[0.99] border-b border-[#E9B83E]/20 last:border-b-0 first:rounded-t-lg last:rounded-b-lg';
-        item.innerHTML = `
-          <div class="truncate">
-            <span class="text-[11px] font-bold truncate block text-white">${p.name}</span>
-            <span class="text-[9px] text-[#F5E5B7]/70 truncate mt-0.5 block">${p.neighborhood || 'Agartala'}, Agartala</span>
-          </div>
-        `;
-        item.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const targetCoords = { lat: p.lat, lng: p.lng };
-
-          // Pan mini-map & reposition marker
-          if (miniMap) {
-            miniMap.panTo(targetCoords);
-            miniMap.setZoom(17);
-          }
-          if (miniMapMarker) {
-            miniMapMarker.setPosition(targetCoords);
-          }
-
-          // Update coordinates & auto-fill inputs
-          onCoordinatesUpdated(
-            targetCoords,
-            'map_search',
-            '🏛️ Selected Pandal',
-            'bg-amber-500/20 text-amber-300 border-amber-500/30',
-            'bg-amber-400',
-            `Aligned to ${p.name}`
-          );
-
-          const nbInput = document.getElementById('input-neighborhood');
-          if (nbInput) nbInput.value = p.neighborhood || 'Agartala';
-
-          updateUploadModalHeaders();
-          validateUploadForm();
-
-          if (miniSearchInput) miniSearchInput.value = p.name;
-          miniSearchResults.classList.add('hidden');
-          showToast(`📍 Aligned map to "${p.name}"`);
+        miniSearchResults.innerHTML = '';
+        matches.forEach(item => {
+          const div = document.createElement('div');
+          div.className = 'px-3 py-2 text-left text-xs font-semibold transition cursor-pointer text-[#F5E5B7]/90 hover:bg-[#E9B83E]/20 hover:text-[#E9B83E] active:scale-[0.99] border-b border-[#E9B83E]/20 last:border-b-0 first:rounded-t-lg last:rounded-b-lg flex items-center justify-between gap-2';
+          div.innerHTML = `
+            <div class="truncate flex-1">
+              <div class="flex items-center gap-1.5 truncate">
+                <span class="text-xs">${item.type === 'pandal' ? '🪔' : '📍'}</span>
+                <span class="text-[11px] font-bold truncate text-white">${item.name}</span>
+              </div>
+              <span class="text-[9px] text-[#F5E5B7]/70 truncate mt-0.5 block pl-4">${item.subtitle}</span>
+            </div>
+            <span class="text-[8px] px-1.5 py-0.5 rounded-full border flex-shrink-0 font-medium ${
+              item.type === 'pandal'
+                ? 'bg-amber-500/20 text-amber-300 border-amber-500/30'
+                : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+            }">
+              ${item.type === 'pandal' ? 'Pandal' : 'Location'}
+            </span>
+          `;
+          div.addEventListener('click', (e) => {
+            e.stopPropagation();
+            selectMiniMapSearchResult(item);
+          });
+          miniSearchResults.appendChild(div);
         });
-        miniSearchResults.appendChild(item);
-      });
-      miniSearchResults.classList.remove('hidden');
+        miniSearchResults.classList.remove('hidden');
+      }, 150);
     }
 
     miniSearchInput?.addEventListener('input', (e) => {
@@ -5550,6 +5654,15 @@
     miniSearchInput?.addEventListener('focus', (e) => {
       if (e.target.value.trim()) {
         filterAndRenderMiniMapSearch(e.target.value);
+      }
+    });
+
+    miniSearchInput?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        if (miniMapCurrentResults.length > 0) {
+          selectMiniMapSearchResult(miniMapCurrentResults[0]);
+        }
       }
     });
 
@@ -5888,51 +6001,72 @@
     const btnHeaderSearch = document.getElementById('btn-header-search');
     const btnTriggerTopSearch = document.getElementById('btn-trigger-top-search');
 
-    function filterTopSearch(query) {
+    let topSearchTimer = null;
+    let topSearchLastQuery = '';
+    let topSearchCurrentResults = [];
+
+    function selectTopSearchResult(item) {
+      if (!item) return;
+      if (map) {
+        map.panTo({ lat: item.lat, lng: item.lng });
+        map.setZoom(item.type === 'pandal' ? 16 : 15);
+      }
+      if (topSearchInput) topSearchInput.value = item.name;
+      if (topSearchDropdown) topSearchDropdown.classList.add('hidden');
+      showToast(`📍 Showing ${item.name}`);
+    }
+
+    async function filterTopSearch(query) {
       if (!topSearchDropdown) return;
-      const q = query.trim().toLowerCase();
+      const q = (query || '').trim();
       if (!q) {
         topSearchDropdown.classList.add('hidden');
         topSearchDropdown.innerHTML = '';
+        topSearchCurrentResults = [];
         return;
       }
 
-      const tokens = q.split(/\s+/).filter(Boolean);
-      const results = (typeof AGARTALA_MASTER_PANDALS !== 'undefined' ? AGARTALA_MASTER_PANDALS : []).filter(p => {
-        const text = `${p.name} ${p.neighborhood || ''} ${p.city || ''} ${(p.keywords || []).join(' ')}`.toLowerCase();
-        return tokens.every(token => text.includes(token));
-      }).slice(0, 6);
+      clearTimeout(topSearchTimer);
+      topSearchTimer = setTimeout(async () => {
+        topSearchLastQuery = q;
+        const results = await searchLocationsAndPandalsAsync(q);
+        if (topSearchLastQuery !== q) return;
+        topSearchCurrentResults = results;
 
-      if (results.length === 0) {
-        topSearchDropdown.innerHTML = '<div class="px-3 py-3 text-xs text-[#F5E5B7]/60 text-center flex items-center justify-center gap-2"><span>🔍</span> No pandals or locations found</div>';
-        topSearchDropdown.classList.remove('hidden');
-        return;
-      }
+        if (results.length === 0) {
+          topSearchDropdown.innerHTML = '<div class="px-3 py-3 text-xs text-[#F5E5B7]/60 text-center flex items-center justify-center gap-2"><span>🔍</span> No pandals or locations found</div>';
+          topSearchDropdown.classList.remove('hidden');
+          return;
+        }
 
-      topSearchDropdown.innerHTML = results.map(p => `
-        <div data-lat="${p.lat}" data-lng="${p.lng}" data-name="${p.name}" class="top-search-item px-3.5 py-2.5 hover:bg-[#E9B83E]/15 hover:text-[#E9B83E] text-white/90 cursor-pointer transition text-left group border-b border-[#E9B83E]/20 last:border-b-0 first:rounded-t-xl last:rounded-b-xl">
-          <div class="truncate">
-            <p class="text-xs font-semibold text-white group-hover:text-[#E9B83E] truncate leading-tight">${p.name}</p>
-            <p class="text-[10px] text-[#F5E5B7]/70 truncate mt-0.5 leading-tight">${p.neighborhood || 'Agartala'}, Agartala</p>
+        topSearchDropdown.innerHTML = results.map((item, idx) => `
+          <div data-idx="${idx}" class="top-search-item px-3.5 py-2.5 hover:bg-[#E9B83E]/15 hover:text-[#E9B83E] text-white/90 cursor-pointer transition text-left group border-b border-[#E9B83E]/20 last:border-b-0 first:rounded-t-xl last:rounded-b-xl flex items-center justify-between gap-2">
+            <div class="truncate flex-1">
+              <div class="flex items-center gap-1.5 truncate">
+                <span class="text-xs">${item.type === 'pandal' ? '🪔' : '📍'}</span>
+                <p class="text-xs font-semibold text-white group-hover:text-[#E9B83E] truncate leading-tight">${item.name}</p>
+              </div>
+              <p class="text-[10px] text-[#F5E5B7]/70 truncate mt-0.5 leading-tight pl-4">${item.subtitle}</p>
+            </div>
+            <span class="text-[8px] px-1.5 py-0.5 rounded-full border flex-shrink-0 font-medium ${
+              item.type === 'pandal'
+                ? 'bg-amber-500/20 text-amber-300 border-amber-500/30'
+                : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+            }">
+              ${item.type === 'pandal' ? 'Pandal' : 'Location'}
+            </span>
           </div>
-        </div>
-      `).join('');
-      topSearchDropdown.classList.remove('hidden');
+        `).join('');
+        topSearchDropdown.classList.remove('hidden');
 
-      topSearchDropdown.querySelectorAll('.top-search-item').forEach(item => {
-        item.addEventListener('click', () => {
-          const lat = parseFloat(item.getAttribute('data-lat'));
-          const lng = parseFloat(item.getAttribute('data-lng'));
-          const name = item.getAttribute('data-name');
-          if (map) {
-            map.panTo({ lat, lng });
-            map.setZoom(16);
-          }
-          topSearchInput.value = name;
-          topSearchDropdown.classList.add('hidden');
-          showToast(`📍 Showing ${name}`);
+        topSearchDropdown.querySelectorAll('.top-search-item').forEach(el => {
+          el.addEventListener('click', () => {
+            const idx = parseInt(el.getAttribute('data-idx'));
+            const res = results[idx];
+            if (res) selectTopSearchResult(res);
+          });
         });
-      });
+      }, 150);
     }
 
     topSearchInput?.addEventListener('input', (e) => filterTopSearch(e.target.value));
@@ -5946,8 +6080,30 @@
         topSearchInput.placeholder = topSearchInput.getAttribute('data-placeholder') || 'Search for a location or pandal...';
       }
     });
-    btnHeaderSearch?.addEventListener('click', () => topSearchInput?.focus());
-    btnTriggerTopSearch?.addEventListener('click', () => topSearchInput?.focus());
+
+    topSearchInput?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        if (topSearchCurrentResults.length > 0) {
+          selectTopSearchResult(topSearchCurrentResults[0]);
+        }
+      }
+    });
+
+    btnHeaderSearch?.addEventListener('click', () => {
+      if (topSearchCurrentResults.length > 0) {
+        selectTopSearchResult(topSearchCurrentResults[0]);
+      } else {
+        topSearchInput?.focus();
+      }
+    });
+    btnTriggerTopSearch?.addEventListener('click', () => {
+      if (topSearchCurrentResults.length > 0) {
+        selectTopSearchResult(topSearchCurrentResults[0]);
+      } else {
+        topSearchInput?.focus();
+      }
+    });
 
     document.addEventListener('click', (e) => {
       if (!e.target.closest('#top-search-input') && !e.target.closest('#top-search-dropdown')) {

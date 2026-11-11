@@ -140,6 +140,93 @@ function fmtDistanceMeters(meters: number): string {
   return meters < 1000 ? `${meters}m away` : `${(meters / 1000).toFixed(1)}km away`
 }
 
+export interface SearchLocationResult {
+  id: string
+  name: string
+  subtitle: string
+  lat: number
+  lng: number
+  type: 'pandal' | 'location'
+}
+
+export async function searchLocationsAndPandals(query: string): Promise<SearchLocationResult[]> {
+  const q = (query || '').trim()
+  if (!q) return []
+  const qLower = q.toLowerCase()
+  const tokens = qLower.split(/\s+/).filter(Boolean)
+
+  // 1. Local Pandals
+  const pandalMatches: SearchLocationResult[] = AGARTALA_MASTER_PANDALS.filter(p => {
+    const text = `${p.name} ${p.neighborhood || ''} ${p.city || ''} ${(p.keywords || []).join(' ')}`.toLowerCase()
+    return tokens.every(t => text.includes(t))
+  }).slice(0, 4).map(p => ({
+    id: `pandal_${p.name}`,
+    name: p.name,
+    subtitle: `${p.neighborhood || ''}${p.neighborhood ? ', ' : ''}${p.city || 'Agartala'}`,
+    lat: p.lat,
+    lng: p.lng,
+    type: 'pandal'
+  }))
+
+  // 2. Google Maps Places / Geocoding Locations
+  let locationMatches: SearchLocationResult[] = []
+
+  // Try Google Geocoder if available
+  if (typeof window !== 'undefined' && (window as any).google?.maps?.Geocoder) {
+    try {
+      const geocoder = new (window as any).google.maps.Geocoder()
+      const geoRes = await new Promise<any[]>((resolve) => {
+        geocoder.geocode({ address: q }, (results: any, status: string) => {
+          if (status === 'OK' && results) resolve(results.slice(0, 4))
+          else resolve([])
+        })
+      })
+      if (geoRes && geoRes.length > 0) {
+        locationMatches = geoRes.map((r, idx) => ({
+          id: `geo_${r.place_id || idx}`,
+          name: r.formatted_address.split(',')[0],
+          subtitle: r.formatted_address.split(',').slice(1).join(',').trim(),
+          lat: r.geometry.location.lat(),
+          lng: r.geometry.location.lng(),
+          type: 'location'
+        }))
+      }
+    } catch (_) {}
+  }
+
+  // Supplement with Photon Geocoding API (OpenStreetMap & Google Maps place data globally)
+  if (locationMatches.length < 3) {
+    try {
+      const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=5`)
+      if (res.ok) {
+        const data = await res.json()
+        if (data && data.features) {
+          const photonItems: SearchLocationResult[] = data.features.map((f: any, idx: number) => {
+            const props = f.properties || {}
+            const name = props.name || props.street || props.city || q
+            const subtitle = [props.district, props.city, props.state, props.country].filter(Boolean).join(', ')
+            return {
+              id: `photon_${f.properties.osm_id || idx}`,
+              name: name,
+              subtitle: subtitle || 'Location on Map',
+              lat: f.geometry.coordinates[1],
+              lng: f.geometry.coordinates[0],
+              type: 'location'
+            }
+          })
+          for (const item of photonItems) {
+            if (!locationMatches.some(l => Math.abs(l.lat - item.lat) < 0.001 && Math.abs(l.lng - item.lng) < 0.001)) {
+              locationMatches.push(item)
+            }
+          }
+        }
+      }
+    } catch (_) {}
+  }
+
+  return [...pandalMatches, ...locationMatches.slice(0, 6)]
+}
+
 // Purged mock/sample data: initialized empty for real-time Firestore sync
 const SEED_POSTS: SnapPost[] = []
 
@@ -763,15 +850,41 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
     )
   }, [pandalsWithProximity, searchFilter])
 
-  const filteredMapPandals = useMemo(() => {
-    const q = mapSearchQuery.trim().toLowerCase()
-    if (!q) return []
-    const tokens = q.split(/\s+/).filter(Boolean)
-    return AGARTALA_MASTER_PANDALS.filter(p => {
-      const text = `${p.name} ${p.neighborhood || ''} ${p.city || ''} ${(p.keywords || []).join(' ')}`.toLowerCase()
-      return tokens.every(t => text.includes(t))
-    }).slice(0, 5)
+  const [mapSearchResults, setMapSearchResults] = useState<SearchLocationResult[]>([])
+
+  useEffect(() => {
+    const q = mapSearchQuery.trim()
+    if (!q) {
+      setMapSearchResults([])
+      return
+    }
+    let cancelled = false
+    const timer = setTimeout(() => {
+      searchLocationsAndPandals(q).then(results => {
+        if (!cancelled) setMapSearchResults(results)
+      })
+    }, 150)
+    return () => {
+      cancelled = true
+      clearTimeout(timer)
+    }
   }, [mapSearchQuery])
+
+  const handleSelectMapResult = (item: SearchLocationResult) => {
+    setCoords({ lat: item.lat, lng: item.lng })
+    if (item.type === 'pandal') {
+      setPandalName(item.name)
+      setNeighborhood(item.subtitle.split(',')[0].trim() || 'Agartala')
+      setLocationSource('custom')
+      setSourceBadge({ text: '🏛️ Pandal Coordinates', cls: 'bg-amber-500/20 text-amber-300 border-amber-500/30' })
+    } else {
+      setNeighborhood(item.name)
+      setLocationSource('custom')
+      setSourceBadge({ text: '📍 Map Location', cls: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' })
+    }
+    setMapSearchQuery(item.name)
+    setShowMapSearch(false)
+  }
 
   const isFormValid = useMemo(() => {
     const hasPhotos = selectedFiles.length > 0
@@ -1035,6 +1148,14 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
                     autoComplete="off"
                     onChange={e => { setMapSearchQuery(e.target.value); setShowMapSearch(true); }}
                     onFocus={() => setShowMapSearch(true)}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault()
+                        if (mapSearchResults.length > 0) {
+                          handleSelectMapResult(mapSearchResults[0])
+                        }
+                      }
+                    }}
                     placeholder="Search for a location or pandal..."
                     className="w-full bg-transparent pl-2.5 pr-8 py-1.5 text-[11px] text-[#F5E5B7] placeholder-[#F5E5B7]/40 outline-none"
                   />
@@ -1051,32 +1172,35 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
                 </div>
 
                 {/* Autocomplete Dropdown */}
-                {showMapSearch && filteredMapPandals.length > 0 && (
-                  <div className="mt-1 bg-[#121224]/95 backdrop-blur-xl border border-[#E9B83E]/40 rounded-xl shadow-2xl max-h-32 overflow-y-auto no-scrollbar p-1 text-left">
-                    {filteredMapPandals.map(p => (
+                {showMapSearch && mapSearchResults.length > 0 && (
+                  <div className="mt-1 bg-[#121224]/95 backdrop-blur-xl border border-[#E9B83E]/40 rounded-xl shadow-2xl max-h-40 overflow-y-auto no-scrollbar p-1 text-left z-30 relative">
+                    {mapSearchResults.map(item => (
                       <div
-                        key={p.name}
-                        onClick={() => {
-                          setNeighborhood(p.neighborhood || 'Agartala');
-                          setCoords({ lat: p.lat, lng: p.lng });
-                          setLocationSource('custom');
-                          setSourceBadge({ text: '🏛️ Pandal Coordinates', cls: 'bg-amber-500/20 text-amber-300 border-amber-500/30' });
-                          setMapSearchQuery(p.name);
-                          setShowMapSearch(false);
-                        }}
-                        className="px-3 py-2 text-left text-xs font-semibold transition cursor-pointer text-[#F5E5B7]/90 hover:bg-[#E9B83E]/20 hover:text-[#E9B83E] border-b border-[#E9B83E]/20 last:border-b-0 first:rounded-t-lg last:rounded-b-lg"
+                        key={item.id}
+                        onClick={() => handleSelectMapResult(item)}
+                        className="px-3 py-2 text-left text-xs font-semibold transition cursor-pointer text-[#F5E5B7]/90 hover:bg-[#E9B83E]/20 hover:text-[#E9B83E] border-b border-[#E9B83E]/20 last:border-b-0 first:rounded-t-lg last:rounded-b-lg flex items-center justify-between gap-2"
                       >
-                        <div className="truncate">
-                          <span className="text-[11px] font-bold truncate block text-white">{p.name}</span>
-                          <span className="text-[9px] text-[#F5E5B7]/70 truncate mt-0.5 block">{p.neighborhood || 'Agartala'}, Agartala</span>
+                        <div className="truncate flex-1">
+                          <div className="flex items-center gap-1.5 truncate">
+                            <span className="text-xs">{item.type === 'pandal' ? '🪔' : '📍'}</span>
+                            <span className="text-[11px] font-bold truncate text-white">{item.name}</span>
+                          </div>
+                          <span className="text-[9px] text-[#F5E5B7]/70 truncate mt-0.5 block pl-4">{item.subtitle}</span>
                         </div>
+                        <span className={`text-[8px] px-1.5 py-0.5 rounded-full border flex-shrink-0 font-medium ${
+                          item.type === 'pandal'
+                            ? 'bg-amber-500/20 text-amber-300 border-amber-500/30'
+                            : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                        }`}>
+                          {item.type === 'pandal' ? 'Pandal' : 'Location'}
+                        </span>
                       </div>
                     ))}
                   </div>
                 )}
-                {showMapSearch && mapSearchQuery.trim() && filteredMapPandals.length === 0 && (
+                {showMapSearch && mapSearchQuery.trim() && mapSearchResults.length === 0 && (
                   <div className="mt-1 bg-[#121224]/95 backdrop-blur-xl border border-[#E9B83E]/40 rounded-xl shadow-2xl p-2.5 text-center text-xs text-[#F5E5B7]/60">
-                    No pandals found for "{mapSearchQuery.trim()}"
+                    No pandals or locations found for "{mapSearchQuery.trim()}"
                   </div>
                 )}
               </div>
@@ -1869,14 +1993,24 @@ export default function App() {
     setCurrentTimeSec(target)
   }, [totalDurationSec])
 
-  const topSearchResults = useMemo(() => {
-    if (!topSearchQuery.trim()) return []
-    const q = topSearchQuery.trim().toLowerCase()
-    const tokens = q.split(/\s+/).filter(Boolean)
-    return AGARTALA_MASTER_PANDALS.filter(p => {
-      const text = `${p.name} ${p.neighborhood || ''} ${p.city || ''} ${(p.keywords || []).join(' ')}`.toLowerCase()
-      return tokens.every(token => text.includes(token))
-    }).slice(0, 6)
+  const [topSearchResults, setTopSearchResults] = useState<SearchLocationResult[]>([])
+
+  useEffect(() => {
+    const q = topSearchQuery.trim()
+    if (!q) {
+      setTopSearchResults([])
+      return
+    }
+    let cancelled = false
+    const timer = setTimeout(() => {
+      searchLocationsAndPandals(q).then(results => {
+        if (!cancelled) setTopSearchResults(results)
+      })
+    }, 150)
+    return () => {
+      cancelled = true
+      clearTimeout(timer)
+    }
   }, [topSearchQuery])
 
   const showToast = useCallback((_msg: string) => {
@@ -2505,7 +2639,7 @@ export default function App() {
     if (window.google?.maps) { initMap(); return }
     window.initMap = initMap
     const script = document.createElement('script')
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${MAPS_API_KEY}&callback=initMap&libraries=marker`
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${MAPS_API_KEY}&callback=initMap&libraries=marker,places`
     script.async = true
     script.defer = true
     document.head.appendChild(script)
@@ -3026,14 +3160,36 @@ export default function App() {
                     if (topSearchQuery.trim()) setShowTopSearchDropdown(true)
                   }}
                   onBlur={() => setIsSearchFocused(false)}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      if (topSearchResults.length > 0) {
+                        const res = topSearchResults[0]
+                        googleMapRef.current?.panTo({ lat: res.lat, lng: res.lng })
+                        googleMapRef.current?.setZoom(res.type === 'pandal' ? 16 : 15)
+                        setTopSearchQuery(res.name)
+                        setShowTopSearchDropdown(false)
+                        showToast(`📍 Showing ${res.name}`)
+                      }
+                    }
+                  }}
                   placeholder={isSearchFocused ? '' : 'Search for a location or pandal...'}
                   className="w-full bg-[#0D0C1B]/60 hover:bg-[#0D0C1B]/80 focus:bg-[#0D0C1B]/95 border border-[#E9B83E]/35 hover:border-[#E9B83E]/60 focus:border-[#E9B83E] rounded-full pl-3 sm:pl-3.5 pr-8 py-1 h-7 sm:h-7.5 text-[11px] sm:text-xs text-[#F5E5B7] placeholder-[#F5E5B7]/45 focus:placeholder-transparent backdrop-blur-md shadow-inner outline-none transition"
                 />
                 <button
                   type="button"
                   onClick={() => {
-                    searchInputRef.current?.focus()
-                    if (topSearchQuery.trim()) setShowTopSearchDropdown(true)
+                    if (topSearchResults.length > 0) {
+                      const res = topSearchResults[0]
+                      googleMapRef.current?.panTo({ lat: res.lat, lng: res.lng })
+                      googleMapRef.current?.setZoom(res.type === 'pandal' ? 16 : 15)
+                      setTopSearchQuery(res.name)
+                      setShowTopSearchDropdown(false)
+                      showToast(`📍 Showing ${res.name}`)
+                    } else {
+                      searchInputRef.current?.focus()
+                      if (topSearchQuery.trim()) setShowTopSearchDropdown(true)
+                    }
                   }}
                   className="absolute right-2.5 text-[#E9B83E] hover:text-[#F5E5B7]"
                 >
@@ -3046,23 +3202,33 @@ export default function App() {
 
               {/* Search Autocomplete Dropdown (Starts just below search bar) */}
               {showTopSearchDropdown && topSearchResults.length > 0 && (
-                <div className="absolute top-full mt-1.5 left-0 right-0 bg-[#211329]/95 border border-[#E9B83E]/35 rounded-2xl p-1 shadow-[0_12px_32px_rgba(13,12,27,0.75),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-xl z-50 max-h-60 overflow-y-auto">
-                  {topSearchResults.map(pandal => (
+                <div className="absolute top-full mt-1.5 left-0 right-0 bg-[#211329]/95 border border-[#E9B83E]/35 rounded-2xl p-1 shadow-[0_12px_32px_rgba(13,12,27,0.75),inset_0_1px_1px_rgba(255,255,255,0.12)] backdrop-blur-xl z-50 max-h-64 overflow-y-auto">
+                  {topSearchResults.map(res => (
                     <div
-                      key={pandal.name}
+                      key={res.id}
                       onClick={() => {
-                        googleMapRef.current?.panTo({ lat: pandal.lat, lng: pandal.lng })
-                        googleMapRef.current?.setZoom(16)
-                        setTopSearchQuery(pandal.name)
+                        googleMapRef.current?.panTo({ lat: res.lat, lng: res.lng })
+                        googleMapRef.current?.setZoom(res.type === 'pandal' ? 16 : 15)
+                        setTopSearchQuery(res.name)
                         setShowTopSearchDropdown(false)
-                        showToast(`📍 Showing ${pandal.name}`)
+                        showToast(`📍 Showing ${res.name}`)
                       }}
-                      className="px-3.5 py-2.5 hover:bg-[#E9B83E]/15 hover:text-[#E9B83E] text-white/90 cursor-pointer transition text-left group border-b border-[#E9B83E]/20 last:border-b-0 first:rounded-t-xl last:rounded-b-xl"
+                      className="px-3.5 py-2.5 hover:bg-[#E9B83E]/15 hover:text-[#E9B83E] text-white/90 cursor-pointer transition text-left group border-b border-[#E9B83E]/20 last:border-b-0 first:rounded-t-xl last:rounded-b-xl flex items-center justify-between gap-2"
                     >
-                      <div className="truncate">
-                        <p className="text-xs font-semibold text-white group-hover:text-[#E9B83E] truncate leading-tight">{pandal.name}</p>
-                        <p className="text-[10px] text-[#F5E5B7]/70 truncate mt-0.5 leading-tight">{pandal.neighborhood}, Agartala</p>
+                      <div className="truncate flex-1">
+                        <div className="flex items-center gap-1.5 truncate">
+                          <span className="text-xs">{res.type === 'pandal' ? '🪔' : '📍'}</span>
+                          <p className="text-xs font-semibold text-white group-hover:text-[#E9B83E] truncate leading-tight">{res.name}</p>
+                        </div>
+                        <p className="text-[10px] text-[#F5E5B7]/70 truncate mt-0.5 leading-tight pl-4">{res.subtitle}</p>
                       </div>
+                      <span className={`text-[8px] px-1.5 py-0.5 rounded-full border flex-shrink-0 font-medium ${
+                        res.type === 'pandal'
+                          ? 'bg-amber-500/20 text-amber-300 border-amber-500/30'
+                          : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                      }`}>
+                        {res.type === 'pandal' ? 'Pandal' : 'Location'}
+                      </span>
                     </div>
                   ))}
                 </div>
