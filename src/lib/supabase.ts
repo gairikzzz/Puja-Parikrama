@@ -29,6 +29,7 @@ export interface SubmissionPayload {
   userName?: string
   userId?: string
   userAvatar?: string
+  year?: number
 }
 
 export interface SupabaseSubmissionRow {
@@ -88,6 +89,7 @@ export async function submitPhotoToN8n(payload: SubmissionPayload): Promise<{ ok
     formData.append('lng', String(payload.coords.lng))
     formData.append('source', payload.source || 'gallery')
     formData.append('locationSource', payload.locationSource || 'auto')
+    formData.append('year', String(payload.year || 2026))
 
     console.log('📡 Submitting multipart/form-data to n8n webhook:', N8N_WEBHOOK_URL)
     const response = await fetch(N8N_WEBHOOK_URL, {

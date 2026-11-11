@@ -75,6 +75,7 @@ export interface SnapPost {
   views?: number
   emoji?: string
   locationSource?: string
+  year?: number
 }
 
 declare global {
@@ -638,12 +639,13 @@ interface UploadModalProps {
   visible: boolean
   currentUser: AuthUser | null
   initialPandal?: string
+  selectedYear?: number
   onRequireAuth: () => void
   onClose: () => void
   onSubmit: (payload: SubmissionPayload) => Promise<boolean>
 }
 
-function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClose, onSubmit }: UploadModalProps) {
+function UploadModal({ visible, currentUser, initialPandal, selectedYear = 2026, onRequireAuth, onClose, onSubmit }: UploadModalProps) {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([])
   const [mediaSource, setMediaSource] = useState<'camera' | 'gallery'>('gallery')
   const [previews, setPreviews] = useState<string[]>([])
@@ -907,6 +909,7 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
       userName: currentUser ? currentUser.displayName : 'Guest Devotee',
       userId: currentUser ? currentUser.uid : 'guest_' + Math.random().toString(36).substring(2, 9),
       userAvatar: currentUser ? currentUser.photoURL : 'https://api.dicebear.com/7.x/bottts/svg?seed=GuestDevotee',
+      year: selectedYear || 2026
     })
     setSubmitting(false)
     if (success) {
@@ -930,11 +933,16 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
               <img src="/durga-emblem.png?v=c2" alt="Puja Parikrama" className="w-full h-full rounded-full object-contain object-center" />
             </div>
             <div>
-              <h2 className="text-[#F5E5B7] font-bold text-sm sm:text-base leading-tight">
-                Share Pandal Photos
-              </h2>
+              <div className="flex items-center gap-1.5">
+                <h2 className="text-[#F5E5B7] font-bold text-sm sm:text-base leading-tight">
+                  Share Pandal Photos
+                </h2>
+                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#E9B83E]/15 text-[#E9B83E] border border-[#E9B83E]/40 font-bold">
+                  {selectedYear || 2026}
+                </span>
+              </div>
               <p className="text-[#E9B83E]/80 text-xs sm:text-[13px] font-medium leading-tight">
-                Showcase your favourite pandals with the community
+                Puja Porikroma {selectedYear || 2026}
               </p>
             </div>
           </div>
@@ -1338,6 +1346,7 @@ function mapSupabaseRowToSnapPost(row: SupabaseSubmissionRow): SnapPost {
     timestamp: row.published_at ? new Date(row.published_at) : new Date(),
     emoji: meta.emoji || '🪔',
     locationSource: meta.locationSource || 'auto',
+    year: Number(meta.year || (row as any).year || ((row.published_at || row.created_at) ? new Date(row.published_at || row.created_at || '').getFullYear() : 2026)),
   }
 }
 
@@ -2715,12 +2724,25 @@ export default function App() {
     }
   }
 
-  // ── Add / update map markers whenever posts or map changes ──
+  // ── Add / update map markers whenever posts, selectedYear, or map changes ──
   useEffect(() => {
     const map = googleMapRef.current
     if (!map || !mapReady) return
 
-    posts.forEach(post => {
+    // Clear previous markers when year changes or posts update
+    markersRef.current.forEach((marker: any) => {
+      if (marker.map) marker.map = null
+      if (typeof marker.setMap === 'function') marker.setMap(null)
+    })
+    markersRef.current.clear()
+
+    // Filter posts for currently selected year
+    const filteredPosts = posts.filter(post => {
+      const postYear = Number(post.year || (post.createdAt ? new Date(post.createdAt).getFullYear() : 2026))
+      return postYear === Number(selectedYear)
+    })
+
+    filteredPosts.forEach(post => {
       if (markersRef.current.has(post.id)) return
 
       // Build custom HTML marker element
@@ -2768,7 +2790,7 @@ export default function App() {
 
       markersRef.current.set(post.id, marker)
     })
-  }, [posts, mapReady])
+  }, [posts, mapReady, selectedYear])
 
   // ── Fetch approved submissions from Supabase ──
   useEffect(() => {
@@ -2796,15 +2818,36 @@ export default function App() {
 
   // ── Handle photo submission for Gemini AI & Gmail HITL moderation ──
   const handlePhotoSubmission = useCallback(async (payload: SubmissionPayload): Promise<boolean> => {
-    showToast('📤 Submitting photo to moderation pipeline...')
+    const targetYear = payload.year || selectedYear || 2026
+    showToast(`📤 Submitting photo for Puja ${targetYear}...`)
     try {
-      console.log('📡 Submitting photo for moderation:', payload.pandalName)
-      const res = await submitPhotoToN8n(payload)
+      console.log('📡 Submitting photo for moderation:', payload.pandalName, 'Year:', targetYear)
+      const res = await submitPhotoToN8n({ ...payload, year: targetYear })
+
+      const localPost: SnapPost = {
+        id: 'local_' + Date.now(),
+        userId: payload.userId || 'anon-user',
+        userName: payload.userName || 'Devotee',
+        userAvatar: payload.userAvatar || '',
+        mediaUrl: URL.createObjectURL(payload.selectedFile),
+        mediaType: 'image',
+        pandalName: payload.pandalName,
+        pandal: payload.pandalName,
+        neighborhood: payload.neighborhood,
+        lat: payload.coords.lat,
+        lng: payload.coords.lng,
+        viewsCount: 0,
+        likesCount: 0,
+        createdAt: new Date(),
+        year: targetYear
+      }
+      setPosts(prev => [localPost, ...prev])
+
       if (res.ok) {
-        showToast('⏳ Photo submitted! Under review and will appear on the map once approved.')
+        showToast(`⏳ Photo submitted for Puja ${targetYear}! Under review and will appear on the map once approved.`)
         return true
       } else {
-        showToast(`⚠️ Upload queued (status ${res.status}). Pending moderation approval.`)
+        showToast(`⚠️ Upload queued for Puja ${targetYear} (status ${res.status}). Pending moderation approval.`)
         return true
       }
     } catch (err) {
@@ -2812,7 +2855,7 @@ export default function App() {
       showToast('❌ Submission failed. Please check network connection.')
       return false
     }
-  }, [showToast])
+  }, [showToast, selectedYear])
 
   const currentMapFlightIdRef = useRef<number | null>(null)
 
@@ -4685,6 +4728,7 @@ export default function App() {
         visible={uploadVisible}
         currentUser={user}
         initialPandal={selectedPandalForUpload}
+        selectedYear={selectedYear}
         onRequireAuth={() => setAuthModalVisible(true)}
         onClose={() => {
           setUploadVisible(false)

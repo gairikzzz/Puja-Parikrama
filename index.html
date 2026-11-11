@@ -1941,8 +1941,11 @@
             <img src="durga-emblem.png?v=c2" alt="Puja Parikrama" class="w-full h-full rounded-full object-contain object-center">
           </div>
           <div>
-            <h2 id="upload-modal-title" class="text-[#F5E5B7] font-bold text-sm sm:text-base leading-tight">Share Pandal Photos</h2>
-            <p id="upload-modal-subtitle" class="text-[#E9B83E]/80 text-xs sm:text-[13px] font-medium leading-tight">Showcase your favourite pandals with the community</p>
+            <div class="flex items-center gap-1.5">
+              <h2 id="upload-modal-title" class="text-[#F5E5B7] font-bold text-sm sm:text-base leading-tight">Share Pandal Photos</h2>
+              <span id="upload-modal-year-badge" class="text-[10px] px-1.5 py-0.5 rounded-full bg-[#E9B83E]/15 text-[#E9B83E] border border-[#E9B83E]/40 font-bold">2026</span>
+            </div>
+            <p id="upload-modal-subtitle" class="text-[#E9B83E]/80 text-xs sm:text-[13px] font-medium leading-tight">Puja Porikroma 2026</p>
           </div>
         </div>
         <button id="btn-close-upload" class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition active:scale-95 cursor-pointer text-xs">
@@ -2574,7 +2577,13 @@
         return;
       }
 
-      snapsData.forEach(snap => {
+      const targetYear = Number(selectedPujaYear || 2026);
+      const filteredSnaps = snapsData.filter(snap => {
+        const snapYear = Number(snap.year || (snap.createdAt ? (typeof snap.createdAt.toDate === 'function' ? snap.createdAt.toDate().getFullYear() : new Date(snap.createdAt).getFullYear()) : 2026));
+        return snapYear === targetYear;
+      });
+
+      filteredSnaps.forEach(snap => {
         const marker = new window.SnapOverlayMarker(snap, map);
         customMarkers.push(marker);
       });
@@ -2666,17 +2675,22 @@
     function renderRecentSnapsList() {
       const listEl = document.getElementById('recent-snaps-list');
       const countEl = document.getElementById('pandal-count');
-      if (countEl) countEl.textContent = snapsData.length;
+      const targetYear = Number(selectedPujaYear || 2026);
+      const filteredSnaps = snapsData.filter(snap => {
+        const snapYear = Number(snap.year || (snap.createdAt ? (typeof snap.createdAt.toDate === 'function' ? snap.createdAt.toDate().getFullYear() : new Date(snap.createdAt).getFullYear()) : 2026));
+        return snapYear === targetYear;
+      });
+      if (countEl) countEl.textContent = filteredSnaps.length;
       if (!listEl) return;
 
       listEl.innerHTML = '';
 
-      if (snapsData.length === 0) {
+      if (filteredSnaps.length === 0) {
         listEl.innerHTML = `
           <div class="p-8 text-center glass-card rounded-2xl flex flex-col items-center justify-center space-y-2 border border-white/10 my-2">
             <span class="text-3xl mb-1">🪔</span>
-            <h4 class="text-white font-bold text-sm">No Puja Snaps Yet</h4>
-            <p class="text-white/50 text-xs max-w-xs leading-relaxed">Be the first devotee to capture a pandal moment and broadcast it live to the Agartala map!</p>
+            <h4 class="text-white font-bold text-sm">No Puja Snaps for ${targetYear}</h4>
+            <p class="text-white/50 text-xs max-w-xs leading-relaxed">Be the first devotee to capture a pandal moment for ${targetYear} and broadcast it live to the map!</p>
             <button onclick="document.getElementById('floating-camera')?.click()" class="mt-2 px-4 py-2 rounded-xl bg-gradient-to-r from-saffron to-puja-crimson text-white text-xs font-bold shadow-md shadow-saffron/20 active:scale-95 transition">
               📸 Snap First Pandal
             </button>
@@ -2685,7 +2699,7 @@
         return;
       }
 
-      snapsData.forEach(snap => {
+      filteredSnaps.forEach(snap => {
         // Calculate proximity for reference
         const distKm = calculateHaversineDistance(
           currentUserCoords.lat, currentUserCoords.lng,
@@ -2740,12 +2754,18 @@
       if (!listEl) return;
       listEl.innerHTML = '';
 
-      if (snapsData.length === 0) {
+      const targetYear = Number(selectedPujaYear || 2026);
+      const filteredSnaps = snapsData.filter(snap => {
+        const snapYear = Number(snap.year || (snap.createdAt ? (typeof snap.createdAt.toDate === 'function' ? snap.createdAt.toDate().getFullYear() : new Date(snap.createdAt).getFullYear()) : 2026));
+        return snapYear === targetYear;
+      });
+
+      if (filteredSnaps.length === 0) {
         listEl.innerHTML = `
           <div class="p-8 text-center glass-card rounded-2xl flex flex-col items-center justify-center space-y-2 border border-white/10 my-2">
             <span class="text-3xl mb-1">📍</span>
-            <h4 class="text-white font-bold text-sm">No Nearby Pandals Yet</h4>
-            <p class="text-white/50 text-xs max-w-xs leading-relaxed">Upload a pandal snap or browse the live map as devotees check in across Agartala.</p>
+            <h4 class="text-white font-bold text-sm">No Nearby Pandals for ${targetYear}</h4>
+            <p class="text-white/50 text-xs max-w-xs leading-relaxed">Upload a pandal snap for ${targetYear} or browse the live map as devotees check in.</p>
             <button onclick="document.getElementById('floating-camera')?.click()" class="mt-2 px-4 py-2 rounded-xl bg-gradient-to-r from-saffron to-puja-crimson text-white text-xs font-bold shadow-md shadow-saffron/20 active:scale-95 transition">
               📸 Snap Pandal
             </button>
@@ -2755,7 +2775,7 @@
       }
 
       // 1. Calculate physical distance for all pandals using Haversine formula
-      const pandalsWithDistance = snapsData.map(snap => {
+      const pandalsWithDistance = filteredSnaps.map(snap => {
         const distKm = calculateHaversineDistance(
           currentUserCoords.lat, currentUserCoords.lng,
           snap.lat, snap.lng
@@ -4619,6 +4639,7 @@
         formData.append('lng', String(snapData.lng));
         formData.append('source', typeof currentMediaSource !== 'undefined' ? currentMediaSource : 'gallery');
         formData.append('locationSource', snapData.locationSource || 'auto');
+        formData.append('year', String(snapData.year || selectedPujaYear || 2026));
 
         const res = await fetch(PARIKRAMA_WEBHOOK_URL, {
           method: 'POST',
@@ -4774,7 +4795,8 @@
               likes: Number(d.likesCount || 0),
               time: formatCreatedAt(d.createdAt),
               createdAt: d.createdAt,
-              emoji: '🪔'
+              emoji: '🪔',
+              year: Number(d.year || (d.createdAt ? (typeof d.createdAt.toDate === 'function' ? d.createdAt.toDate().getFullYear() : new Date(d.createdAt).getFullYear()) : 2026))
             });
           });
           snapsData = incomingList;
@@ -5434,10 +5456,11 @@
     /* ── Wire Modal Triggers & Controls ── */
     function updateUploadModalHeaders() {
       const titleEl = document.getElementById('upload-modal-title');
+      const badgeEl = document.getElementById('upload-modal-year-badge');
       const subEl = document.getElementById('upload-modal-subtitle');
-      if (!titleEl || !subEl) return;
-      titleEl.textContent = 'Share Pandal Photos';
-      subEl.textContent = 'Showcase your favourite pandals with the community';
+      if (titleEl) titleEl.textContent = 'Share Pandal Photos';
+      if (badgeEl) badgeEl.textContent = selectedPujaYear || 2026;
+      if (subEl) subEl.textContent = `Puja Porikroma ${selectedPujaYear || 2026}`;
     }
 
     window.openSnapUploadModal = function(prefillPandal) {
@@ -5790,6 +5813,8 @@
       // 1. Upload media to Firebase Storage (or fallback to data URL)
       const finalMediaUrl = await uploadMediaToStorage(selectedMediaBlobFile);
 
+      const targetYear = Number(selectedPujaYear || 2026);
+
       // 2. Exact Firestore Document Schema
       const snapDocData = {
         userId: currentUser.uid,
@@ -5802,7 +5827,8 @@
         lng: Number(submissionCoords.lng),
         viewsCount: 0,
         likesCount: 0,
-        createdAt: serverTimestamp()
+        createdAt: serverTimestamp(),
+        year: targetYear
       };
 
       const inputNeighborhood = document.getElementById('input-neighborhood');
@@ -5816,8 +5842,28 @@
         uploader: snapDocData.userName,
         avatar: snapDocData.userAvatar,
         locationSource: (typeof currentStrategyBadgeText !== 'undefined' ? currentStrategyBadgeText : 'auto'),
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        year: targetYear
       });
+
+      // 4. Optimistic local post for instant feedback in selected year version
+      const localSnap = {
+        ...snapDocData,
+        id: 'local_' + Date.now(),
+        pandal: pandalName,
+        uploader: snapDocData.userName,
+        avatar: snapDocData.userAvatar,
+        imageUrl: finalMediaUrl,
+        views: '0',
+        likes: 0,
+        time: 'Just now',
+        emoji: '🪔',
+        year: targetYear
+      };
+      snapsData.unshift(localSnap);
+      renderAllMapMarkers();
+      renderRecentSnapsList();
+      updateNearbyList();
 
       // 4. Reset form & close modal (Publishing gated until moderation approval)
       uploadModal.classList.remove('active');
@@ -6762,6 +6808,10 @@
       });
       document.getElementById('year-dropdown-menu')?.classList.add('hidden');
       document.getElementById('year-chevron')?.classList.remove('rotate-180');
+      updateUploadModalHeaders();
+      renderAllMapMarkers();
+      renderRecentSnapsList();
+      updateNearbyList();
       if (typeof showToast === 'function') {
         showToast(`📅 Viewing Puja Parikrama ${year}`);
       }
