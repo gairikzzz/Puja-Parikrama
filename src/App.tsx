@@ -2180,20 +2180,18 @@ export default function App() {
         } catch {}
       }
 
-      if (existingProfile && existingProfile.profileCompleted) {
-        // Returning user -> directly log in and enter map!
-        completeAuth(existingProfile)
-        setIsSubmittingGoogle(false)
-        return
-      }
-
-      // New user -> proceed to Stage 3: Complete Profile (name and city)
+      // Always transition devotee to Stage 3: Complete Your Profile confirmation after Google Sign In
       setVerifiedUid(uid)
       setAuthEmail(email)
-      setProfileName(displayName)
-      setProfilePhoto(photoURL)
-      setProfileCity('Agartala')
+      const finalName = (existingProfile && existingProfile.displayName) || displayName || email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) || 'Devotee'
+      const finalCity = (existingProfile && existingProfile.city) || 'Agartala'
+      const finalPhoto = (existingProfile && existingProfile.photoURL) || photoURL
+      setProfileName(finalName)
+      setProfilePhoto(finalPhoto)
+      setProfileCity(finalCity)
+      setHasCustomPhoto(!!(existingProfile && existingProfile.photoURL))
       setAuthStage('profile')
+      setAuthModalVisible(true)
       setIsSubmittingGoogle(false)
     } catch (err: any) {
       console.warn('Google sign-in error:', err)

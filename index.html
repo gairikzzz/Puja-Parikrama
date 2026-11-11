@@ -3337,21 +3337,30 @@
 
           if (btnGoogleText) btnGoogleText.textContent = 'Continue with Google';
 
-          if (existingProfile && existingProfile.profileCompleted) {
-            // Returning user -> directly map!
-            completeSignIn(existingProfile, 'Google');
-            return;
-          }
-
-          // New user -> Stage 3: Complete Profile (pre-filled from Google)
+          // Always transition devotee to Stage 3: Complete Your Profile confirmation after Google Sign In
           authVerifiedUid = uid;
           authCurrentEmail = email;
-          authProfileAvatarUrl = photoURL;
+          authProfileAvatarUrl = (existingProfile && existingProfile.photoURL) || photoURL;
+          hasCustomProfilePhoto = !!(existingProfile && existingProfile.photoURL);
+
+          const finalName = (existingProfile && existingProfile.displayName) || displayName || email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) || 'Devotee';
+          const finalCity = (existingProfile && existingProfile.city) || 'Agartala';
+
           const nameInput = document.getElementById('profile-name-input');
-          if (nameInput) nameInput.value = displayName;
+          if (nameInput) nameInput.value = finalName;
           const cityInput = document.getElementById('profile-city-input');
-          if (cityInput) cityInput.value = 'Agartala';
+          if (cityInput) cityInput.value = finalCity;
+          const emailDisp = document.getElementById('profile-email-display');
+          if (emailDisp) emailDisp.textContent = email;
+          const preview = document.getElementById('profile-photo-preview');
+          if (preview) preview.src = authProfileAvatarUrl;
+
           switchAuthStage('profile');
+          const modal = document.getElementById('google-auth-modal');
+          if (modal) {
+            modal.classList.remove('hidden');
+            requestAnimationFrame(() => modal.classList.add('active'));
+          }
         } catch (err) {
           if (btnGoogleText) btnGoogleText.textContent = 'Continue with Google';
           console.warn('Google sign-in error:', err);
@@ -3882,14 +3891,19 @@
     if (firebaseAuth) {
       onAuthStateChanged(firebaseAuth, (user) => {
         if (user) {
-          currentUser = {
-            uid: user.uid,
-            displayName: user.displayName || 'Devotee',
-            email: user.email,
-            photoURL: user.photoURL || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(user.displayName || 'Devotee')}&backgroundColor=ffdfbf`
-          };
-          localStorage.setItem('puja_parikrama_user', JSON.stringify(currentUser));
-          updateAuthUI(currentUser);
+          if (authCurrentStage === 'profile') {
+            return;
+          }
+          let registered = {};
+          try {
+            registered = JSON.parse(localStorage.getItem('puja_parikrama_registered_users') || '{}');
+          } catch (e) {}
+          const existing = registered[user.uid];
+          if (existing && existing.profileCompleted) {
+            currentUser = existing;
+            localStorage.setItem('puja_parikrama_user', JSON.stringify(currentUser));
+            updateAuthUI(currentUser);
+          }
         } else if (isRealFirebaseConfig) {
           currentUser = null;
           localStorage.removeItem('puja_parikrama_user');
