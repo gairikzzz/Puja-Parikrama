@@ -1288,6 +1288,8 @@ const detectFaceCenter = async (img: HTMLImageElement): Promise<{ x: number; y: 
 }
 
 const LEADERBOARD_TOP_USERS: Record<string, string> = {
+  'gairik': '#1 Top Contributor',
+  'gairik chakraborty': '#1 Top Contributor',
   'arindam': '#1 Top Contributor',
   'moumita': '#2 Top Contributor',
   'moumita d.': '#2 Top Contributor',
@@ -1299,15 +1301,6 @@ const LEADERBOARD_TOP_USERS: Record<string, string> = {
   'ishita': '#8 Top Contributor',
 }
 
-const getLeaderboardTag = (u: AuthUser | null): string | null => {
-  if (!u) return null
-  if ((u as any).leaderboardRank) return `#${(u as any).leaderboardRank} Top Contributor`
-  const key = (u.displayName || '').trim().toLowerCase()
-  if (key && LEADERBOARD_TOP_USERS[key]) return LEADERBOARD_TOP_USERS[key]
-  if (u.totalPhotosShared && u.totalPhotosShared >= 100) return 'Top Contributor'
-  return null
-}
-
 const getUserLeaderboardRank = (u: AuthUser | null): number | null => {
   if (!u) return null
   if ((u as any).leaderboardRank) {
@@ -1315,27 +1308,49 @@ const getUserLeaderboardRank = (u: AuthUser | null): number | null => {
     if (!isNaN(r) && r >= 1 && r <= 8) return r
   }
   const key = (u.displayName || '').trim().toLowerCase()
+  const emailKey = (u.email || '').toLowerCase().split('@')[0]
+
+  const matches = (target: string) => {
+    return (
+      key === target ||
+      key.startsWith(target + ' ') ||
+      key.includes(target) ||
+      emailKey.includes(target)
+    )
+  }
+
+  if (matches('gairik') || matches('arindam')) return 1
+  if (matches('moumita')) return 2
+  if (matches('sourav')) return 3
+  if (matches('anwesha')) return 4
+  if (matches('ritam')) return 5
+  if (matches('debolina')) return 6
+  if (matches('subhojit')) return 7
+  if (matches('ishita')) return 8
+
+  return null
+}
+
+const getLeaderboardTag = (u: AuthUser | null): string | null => {
+  if (!u) return '#2 Top Contributor'
+  const rank = getUserLeaderboardRank(u)
+  if (rank && rank >= 1 && rank <= 8) {
+    return `#${rank} Top Contributor`
+  }
+  if ((u as any).leaderboardRank) return `#${(u as any).leaderboardRank} Top Contributor`
+  const key = (u.displayName || '').trim().toLowerCase()
   if (key) {
-    if (key === 'arindam' || key.startsWith('arindam ') || key.includes('arindam')) return 1
-    if (key === 'moumita' || key.startsWith('moumita ') || key === 'moumita d.' || key.includes('moumita')) return 2
-    if (key === 'sourav' || key.startsWith('sourav ') || key.includes('sourav')) return 3
-    if (key === 'anwesha' || key.startsWith('anwesha ') || key.includes('anwesha')) return 4
-    if (key === 'ritam' || key.startsWith('ritam ') || key.includes('ritam')) return 5
-    if (key === 'debolina' || key.startsWith('debolina ') || key.includes('debolina')) return 6
-    if (key === 'subhojit' || key.startsWith('subhojit ') || key.includes('subhojit')) return 7
-    if (key === 'ishita' || key.startsWith('ishita ') || key.includes('ishita')) return 8
+    for (const [k, v] of Object.entries(LEADERBOARD_TOP_USERS)) {
+      if (key === k || key.startsWith(k + ' ') || key.includes(k)) return v
+    }
   }
   const emailKey = (u.email || '').toLowerCase().split('@')[0]
   if (emailKey) {
-    if (emailKey.includes('arindam')) return 1
-    if (emailKey.includes('moumita')) return 2
-    if (emailKey.includes('sourav')) return 3
-    if (emailKey.includes('anwesha')) return 4
-    if (emailKey.includes('ritam')) return 5
-    if (emailKey.includes('debolina')) return 6
-    if (emailKey.includes('subhojit')) return 7
-    if (emailKey.includes('ishita')) return 8
+    for (const [k, v] of Object.entries(LEADERBOARD_TOP_USERS)) {
+      if (emailKey.includes(k)) return v
+    }
   }
+  if (u.totalPhotosShared && u.totalPhotosShared >= 100) return 'Top Contributor'
   return null
 }
 
