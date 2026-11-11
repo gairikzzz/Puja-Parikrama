@@ -4459,7 +4459,7 @@ export default function App() {
                 </div>
                 <div>
                   <h2 className="text-[#F5E5B7] font-bold text-sm sm:text-base leading-tight">
-                    Log Out?
+                    Sign Out
                   </h2>
                 </div>
               </div>
@@ -4476,7 +4476,7 @@ export default function App() {
             {/* Message */}
             <div className="py-2.5 text-center">
               <p className="text-white/85 text-xs sm:text-[13px] font-medium leading-relaxed">
-                Are you sure you want to log out of Puja Porikroma?
+                You're about to sign out of your Puja Porikroma account.
               </p>
             </div>
 
