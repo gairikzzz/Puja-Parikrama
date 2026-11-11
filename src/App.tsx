@@ -1599,6 +1599,7 @@ export default function App() {
   const cityDropdownRef = useRef<HTMLDivElement>(null)
   const profilePhotoInputRef = useRef<HTMLInputElement>(null)
   const profilePhotosSliderRef = useRef<HTMLDivElement>(null)
+  const [profilePhotosScrollProgress, setProfilePhotosScrollProgress] = useState(0)
   const [leaderboardModalVisible, setLeaderboardModalVisible] = useState(false)
   const [leaderboardTab, setLeaderboardTab] = useState<'this_puja' | 'all_time'>('this_puja')
   const [profileModalVisible, setProfileModalVisible] = useState(false)
@@ -2565,6 +2566,25 @@ export default function App() {
       el.scrollTo({ left: 0, behavior: 'smooth' })
     } else {
       el.scrollBy({ left: 180, behavior: 'smooth' })
+    }
+  }
+
+  const handleProfilePhotosScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const el = e.currentTarget
+    const max = el.scrollWidth - el.clientWidth
+    if (max > 0) {
+      setProfilePhotosScrollProgress(Math.min(1, Math.max(0, el.scrollLeft / max)))
+    }
+  }
+
+  const handleProfileSliderTrackClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const clickX = e.clientX - rect.left
+    const ratio = Math.max(0, Math.min(1, clickX / rect.width))
+    if (profilePhotosSliderRef.current) {
+      const el = profilePhotosSliderRef.current
+      const maxScroll = el.scrollWidth - el.clientWidth
+      el.scrollTo({ left: ratio * maxScroll, behavior: 'smooth' })
     }
   }
 
@@ -4584,16 +4604,17 @@ export default function App() {
                   onClick={slideProfilePhotosNext}
                   aria-label="Slide photos"
                   title="Slide photos"
-                  className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] text-[#211329] opacity-40 hover:opacity-90 flex items-center justify-center transition-all active:scale-90 cursor-pointer border border-[#E9B83E] shadow-[0_0_8px_rgba(233,184,62,0.25)]"
+                  className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#E9B83E]/10 hover:bg-[#E9B83E]/20 text-[#E9B83E] flex items-center justify-center transition active:scale-90 cursor-pointer border border-[#E9B83E]/25 hover:border-[#E9B83E]/50"
                 >
-                  <svg className="w-3.5 h-3.5 text-[#211329]" viewBox="0 0 20 20" fill="currentColor">
+                  <svg className="w-3.5 h-3.5 text-[#E9B83E]" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
                   </svg>
                 </button>
               </div>
               <div
                 ref={profilePhotosSliderRef}
-                className="flex gap-2 overflow-x-auto scroll-smooth no-scrollbar py-0.5 -mx-1 px-1"
+                onScroll={handleProfilePhotosScroll}
+                className="flex gap-2 overflow-x-auto scroll-smooth hide-scrollbar py-0.5 -mx-1 px-1"
               >
                 {[
                   { img: 'https://images.unsplash.com/photo-1567157577867-05ccb1388e66?auto=format&fit=crop&w=600&q=80', title: 'Golden Temple Pandal' },
@@ -4629,6 +4650,23 @@ export default function App() {
                     <img src={item.img} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition duration-300" />
                   </div>
                 ))}
+              </div>
+
+              {/* Horizontal Slider Bar Down */}
+              <div className="w-full flex items-center justify-center pt-2 pb-0.5">
+                <div
+                  onClick={handleProfileSliderTrackClick}
+                  className="w-24 sm:w-28 h-1 rounded-full bg-[#E9B83E]/15 overflow-hidden relative cursor-pointer"
+                  title="Photo slider"
+                >
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] opacity-40 hover:opacity-80 transition-all duration-150"
+                    style={{
+                      width: '36%',
+                      transform: `translateX(${profilePhotosScrollProgress * 178}%)`
+                    }}
+                  />
+                </div>
               </div>
             </div>
 

@@ -1446,14 +1446,14 @@
             onclick="slideProfilePhotosNext()"
             aria-label="Slide photos"
             title="Slide photos"
-            class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gradient-to-tr from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] text-[#211329] opacity-40 hover:opacity-90 flex items-center justify-center transition-all active:scale-90 cursor-pointer border border-[#E9B83E] shadow-[0_0_8px_rgba(233,184,62,0.25)]"
+            class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#E9B83E]/10 hover:bg-[#E9B83E]/20 text-[#E9B83E] flex items-center justify-center transition active:scale-90 cursor-pointer border border-[#E9B83E]/25 hover:border-[#E9B83E]/50"
           >
-            <svg class="w-3.5 h-3.5 text-[#211329]" viewBox="0 0 20 20" fill="currentColor">
+            <svg class="w-3.5 h-3.5 text-[#E9B83E]" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
             </svg>
           </button>
         </div>
-        <div id="profile-photos-slider" class="flex gap-2 overflow-x-auto scroll-smooth no-scrollbar py-0.5 -mx-1 px-1">
+        <div id="profile-photos-slider" onscroll="updateProfilePhotosSliderBar()" class="flex gap-2 overflow-x-auto scroll-smooth hide-scrollbar py-0.5 -mx-1 px-1">
           <div onclick="window.closeProfileModal(); openStoryModal({ id: 'contrib_1', userName: currentUser?.displayName || 'Devotee', userPhoto: currentUser?.photoURL || '', verifiedBadge: true, pandalTitle: 'Golden Temple Pandal', neighborhood: 'Agartala', mediaUrl: 'https://images.unsplash.com/photo-1567157577867-05ccb1388e66?auto=format&fit=crop&w=600&q=80', timestamp: 'Just now', likesCount: 28, viewsCount: 162 })" class="w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] flex-shrink-0 aspect-square rounded-xl overflow-hidden border border-[#E9B83E]/30 hover:border-[#E9B83E] transition shadow cursor-pointer group">
             <img src="https://images.unsplash.com/photo-1567157577867-05ccb1388e66?auto=format&fit=crop&w=300&q=80" alt="Golden Temple Pandal" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
           </div>
@@ -1477,6 +1477,21 @@
           </div>
           <div onclick="window.closeProfileModal(); openStoryModal({ id: 'contrib_8', userName: currentUser?.displayName || 'Devotee', userPhoto: currentUser?.photoURL || '', verifiedBadge: true, pandalTitle: 'Pandal Lights & Festivities', neighborhood: 'Agartala', mediaUrl: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=600&q=80', timestamp: 'Just now', likesCount: 37, viewsCount: 198 })" class="w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] flex-shrink-0 aspect-square rounded-xl overflow-hidden border border-[#E9B83E]/30 hover:border-[#E9B83E] transition shadow cursor-pointer group">
             <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=300&q=80" alt="Pandal Lights & Festivities" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+          </div>
+        </div>
+
+        <!-- Horizontal Slider Bar Down -->
+        <div class="w-full flex items-center justify-center pt-2 pb-0.5">
+          <div
+            onclick="handleProfileSliderTrackClick(event)"
+            class="w-24 sm:w-28 h-1 rounded-full bg-[#E9B83E]/15 overflow-hidden relative cursor-pointer"
+            title="Photo slider"
+          >
+            <div
+              id="profile-photos-slider-thumb"
+              class="h-full rounded-full bg-gradient-to-r from-[#E9B83E] via-[#f3cb69] to-[#F5E5B7] opacity-40 hover:opacity-80 transition-all duration-150"
+              style="width: 36%; transform: translateX(0%);"
+            ></div>
           </div>
         </div>
       </div>
@@ -4496,6 +4511,27 @@
         setTimeout(() => {
           if (!modal.classList.contains('active')) modal.classList.add('hidden');
         }, 280);
+      }
+    };
+
+    window.updateProfilePhotosSliderBar = function() {
+      const slider = document.getElementById('profile-photos-slider');
+      const thumb = document.getElementById('profile-photos-slider-thumb');
+      if (!slider || !thumb) return;
+      const maxScroll = slider.scrollWidth - slider.clientWidth;
+      const ratio = maxScroll > 0 ? Math.min(1, Math.max(0, slider.scrollLeft / maxScroll)) : 0;
+      thumb.style.transform = `translateX(${ratio * 178}%)`;
+    };
+
+    window.handleProfileSliderTrackClick = function(e) {
+      const track = e.currentTarget;
+      const rect = track.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const ratio = Math.max(0, Math.min(1, clickX / rect.width));
+      const slider = document.getElementById('profile-photos-slider');
+      if (slider) {
+        const maxScroll = slider.scrollWidth - slider.clientWidth;
+        slider.scrollTo({ left: ratio * maxScroll, behavior: 'smooth' });
       }
     };
 
