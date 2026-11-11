@@ -933,16 +933,11 @@ function UploadModal({ visible, currentUser, initialPandal, selectedYear = 2026,
               <img src="/durga-emblem.png?v=c2" alt="Puja Parikrama" className="w-full h-full rounded-full object-contain object-center" />
             </div>
             <div>
-              <div className="flex items-center gap-1.5">
-                <h2 className="text-[#F5E5B7] font-bold text-sm sm:text-base leading-tight">
-                  Share Pandal Photos
-                </h2>
-                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#E9B83E]/15 text-[#E9B83E] border border-[#E9B83E]/40 font-bold">
-                  {selectedYear || 2026}
-                </span>
-              </div>
+              <h2 className="text-[#F5E5B7] font-bold text-sm sm:text-base leading-tight">
+                Share Pandal Photos
+              </h2>
               <p className="text-[#E9B83E]/80 text-xs sm:text-[13px] font-medium leading-tight">
-                Puja Porikroma {selectedYear || 2026}
+                Showcase your favourite pandals with the community
               </p>
             </div>
           </div>

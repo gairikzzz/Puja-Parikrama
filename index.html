@@ -1941,11 +1941,8 @@
             <img src="durga-emblem.png?v=c2" alt="Puja Parikrama" class="w-full h-full rounded-full object-contain object-center">
           </div>
           <div>
-            <div class="flex items-center gap-1.5">
-              <h2 id="upload-modal-title" class="text-[#F5E5B7] font-bold text-sm sm:text-base leading-tight">Share Pandal Photos</h2>
-              <span id="upload-modal-year-badge" class="text-[10px] px-1.5 py-0.5 rounded-full bg-[#E9B83E]/15 text-[#E9B83E] border border-[#E9B83E]/40 font-bold">2026</span>
-            </div>
-            <p id="upload-modal-subtitle" class="text-[#E9B83E]/80 text-xs sm:text-[13px] font-medium leading-tight">Puja Porikroma 2026</p>
+            <h2 id="upload-modal-title" class="text-[#F5E5B7] font-bold text-sm sm:text-base leading-tight">Share Pandal Photos</h2>
+            <p id="upload-modal-subtitle" class="text-[#E9B83E]/80 text-xs sm:text-[13px] font-medium leading-tight">Showcase your favourite pandals with the community</p>
           </div>
         </div>
         <button id="btn-close-upload" class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition active:scale-95 cursor-pointer text-xs">
@@ -5456,11 +5453,9 @@
     /* ── Wire Modal Triggers & Controls ── */
     function updateUploadModalHeaders() {
       const titleEl = document.getElementById('upload-modal-title');
-      const badgeEl = document.getElementById('upload-modal-year-badge');
       const subEl = document.getElementById('upload-modal-subtitle');
       if (titleEl) titleEl.textContent = 'Share Pandal Photos';
-      if (badgeEl) badgeEl.textContent = selectedPujaYear || 2026;
-      if (subEl) subEl.textContent = `Puja Porikroma ${selectedPujaYear || 2026}`;
+      if (subEl) subEl.textContent = 'Showcase your favourite pandals with the community';
     }
 
     window.openSnapUploadModal = function(prefillPandal) {
