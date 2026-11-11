@@ -964,18 +964,13 @@
           <input id="profile-name-input" type="text" required placeholder="Enter your full name" class="w-full px-3.5 py-2.5 sm:py-3 rounded-xl bg-[#121224]/80 border border-[#E9B83E]/35 focus:border-[#E9B83E] text-[#F5E5B7] placeholder-[#F5E5B7]/40 text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-[#E9B83E]/50 transition">
         </div>
 
-        <!-- City Searchable Dropdown -->
+        <!-- City Searchable Field -->
         <div class="relative mb-4 text-left" id="profile-city-container">
           <label class="block text-[#F5E5B7] font-semibold text-xs sm:text-[13px] mb-1">
             City
           </label>
-          <div class="relative flex items-center cursor-pointer" onclick="document.getElementById('profile-city-input').focus()">
-            <input id="profile-city-input" type="text" required placeholder="Select or enter your city" class="w-full px-3.5 pr-8 py-2.5 sm:py-3 rounded-xl bg-[#121224]/80 border border-[#E9B83E]/35 focus:border-[#E9B83E] text-[#F5E5B7] placeholder-[#F5E5B7]/40 text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-[#E9B83E]/50 transition">
-            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-              <svg id="profile-city-chevron" class="w-3.5 h-3.5 text-[#E9B83E] transition-transform duration-200" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-              </svg>
-            </div>
+          <div class="relative flex items-center">
+            <input id="profile-city-input" type="text" required placeholder="Enter your city" class="w-full px-3.5 py-2.5 sm:py-3 rounded-xl bg-[#121224]/80 border border-[#E9B83E]/35 focus:border-[#E9B83E] text-[#F5E5B7] placeholder-[#F5E5B7]/40 text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-[#E9B83E]/50 transition">
           </div>
 
           <div id="profile-city-dropdown" class="hidden absolute z-50 left-0 right-0 mt-1 max-h-44 overflow-y-auto bg-[#1b1022] border border-[#E9B83E]/40 rounded-xl shadow-2xl backdrop-blur-xl divide-y divide-[#E9B83E]/10">
@@ -3123,7 +3118,17 @@
     window.handleHeaderProfileClick = handleHeaderProfileClick;
 
     const POPULAR_INDIAN_CITIES = [
-      'Agartala', 'Kolkata', 'Bengaluru'
+      'Agartala', 'Kolkata', 'Bengaluru', 'Delhi', 'Mumbai', 'Hyderabad', 'Chennai', 'Pune',
+      'Ahmedabad', 'Jaipur', 'Lucknow', 'Patna', 'Bhubaneswar', 'Ranchi', 'Guwahati', 'Silchar',
+      'Dharmanagar', 'Udaipur (Tripura)', 'Shillong', 'Siliguri', 'Durgapur', 'Asansol', 'Howrah',
+      'Noida', 'Gurugram', 'Chandigarh', 'Indore', 'Bhopal', 'Kochi', 'Thiruvananthapuram',
+      'Visakhapatnam', 'Vijayawada', 'Surat', 'Vadodara', 'Rajkot', 'Nagpur', 'Nashik', 'Thane',
+      'Navi Mumbai', 'Kanpur', 'Varanasi', 'Prayagraj', 'Agra', 'Meerut', 'Ghaziabad', 'Faridabad',
+      'Dehradun', 'Amritsar', 'Ludhiana', 'Shimla', 'Srinagar', 'Jammu', 'Coimbatore', 'Madurai',
+      'Mysuru', 'Mangaluru', 'Hubballi', 'Kozhikode', 'Jamshedpur', 'Dhanbad', 'Cuttack', 'Puri',
+      'Rourkela', 'Raipur', 'Jabalpur', 'Gwalior', 'Ujjain', 'Jodhpur', 'Udaipur', 'Kota',
+      'Ajmer', 'Gaya', 'Muzaffarpur', 'Imphal', 'Aizawl', 'Kohima', 'Itanagar', 'Gangtok',
+      'Dibrugarh', 'Jorhat', 'Tezpur'
     ];
 
     let authCurrentStage = 'email';
@@ -3684,26 +3689,27 @@
     function setupCityDropdown() {
       const cityInput = document.getElementById('profile-city-input');
       const dropdown = document.getElementById('profile-city-dropdown');
-      const chev = document.getElementById('profile-city-chevron');
       if (!cityInput || !dropdown) return;
-
-      function showDropdown() {
-        renderCities(cityInput.value);
-        dropdown.classList.remove('hidden');
-        if (chev) chev.classList.add('rotate-180');
-      }
 
       function hideDropdown() {
         dropdown.classList.add('hidden');
-        if (chev) chev.classList.remove('rotate-180');
       }
 
       function renderCities(filter) {
         dropdown.innerHTML = '';
         const q = (filter || '').trim().toLowerCase();
-        const matches = POPULAR_INDIAN_CITIES.filter(c => !q || c.toLowerCase().includes(q));
-        const list = matches.length > 0 ? matches : POPULAR_INDIAN_CITIES;
-        list.forEach(city => {
+        if (!q) {
+          hideDropdown();
+          return;
+        }
+
+        const matches = POPULAR_INDIAN_CITIES.filter(c => c.toLowerCase().includes(q));
+        if (matches.length === 0) {
+          hideDropdown();
+          return;
+        }
+
+        matches.forEach(city => {
           const item = document.createElement('div');
           const isSelected = cityInput.value.toLowerCase() === city.toLowerCase();
           item.className = `px-3.5 py-2.5 text-xs cursor-pointer flex items-center justify-between transition ${
@@ -3717,11 +3723,19 @@
           };
           dropdown.appendChild(item);
         });
+
+        dropdown.classList.remove('hidden');
       }
 
-      cityInput.onfocus = () => showDropdown();
-      cityInput.onclick = () => showDropdown();
-      cityInput.oninput = () => showDropdown();
+      cityInput.oninput = () => {
+        renderCities(cityInput.value);
+      };
+
+      cityInput.onfocus = () => {
+        if (cityInput.value.trim().length > 0) {
+          renderCities(cityInput.value);
+        }
+      };
 
       document.addEventListener('click', (e) => {
         const container = document.getElementById('profile-city-container');

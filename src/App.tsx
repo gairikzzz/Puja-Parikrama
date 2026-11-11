@@ -37,9 +37,17 @@ export interface AuthUser {
 }
 
 export const POPULAR_INDIAN_CITIES = [
-  'Agartala',
-  'Kolkata',
-  'Bengaluru',
+  'Agartala', 'Kolkata', 'Bengaluru', 'Delhi', 'Mumbai', 'Hyderabad', 'Chennai', 'Pune',
+  'Ahmedabad', 'Jaipur', 'Lucknow', 'Patna', 'Bhubaneswar', 'Ranchi', 'Guwahati', 'Silchar',
+  'Dharmanagar', 'Udaipur (Tripura)', 'Shillong', 'Siliguri', 'Durgapur', 'Asansol', 'Howrah',
+  'Noida', 'Gurugram', 'Chandigarh', 'Indore', 'Bhopal', 'Kochi', 'Thiruvananthapuram',
+  'Visakhapatnam', 'Vijayawada', 'Surat', 'Vadodara', 'Rajkot', 'Nagpur', 'Nashik', 'Thane',
+  'Navi Mumbai', 'Kanpur', 'Varanasi', 'Prayagraj', 'Agra', 'Meerut', 'Ghaziabad', 'Faridabad',
+  'Dehradun', 'Amritsar', 'Ludhiana', 'Shimla', 'Srinagar', 'Jammu', 'Coimbatore', 'Madurai',
+  'Mysuru', 'Mangaluru', 'Hubballi', 'Kozhikode', 'Jamshedpur', 'Dhanbad', 'Cuttack', 'Puri',
+  'Rourkela', 'Raipur', 'Jabalpur', 'Gwalior', 'Ujjain', 'Jodhpur', 'Udaipur', 'Kota',
+  'Ajmer', 'Gaya', 'Muzaffarpur', 'Imphal', 'Aizawl', 'Kohima', 'Itanagar', 'Gangtok',
+  'Dibrugarh', 'Jorhat', 'Tezpur'
 ]
 
 export interface SnapPost {
@@ -1977,7 +1985,7 @@ export default function App() {
 
   const filteredCities = useMemo(() => {
     const q = (citySearchQuery || '').trim().toLowerCase()
-    if (!q) return POPULAR_INDIAN_CITIES
+    if (!q) return []
     return POPULAR_INDIAN_CITIES.filter(c => c.toLowerCase().includes(q))
   }, [citySearchQuery])
 
@@ -3723,34 +3731,29 @@ export default function App() {
                   <label className="block text-[#F5E5B7] font-semibold text-xs sm:text-[13px] mb-1">
                     City
                   </label>
-                  <div
-                    className="relative flex items-center cursor-pointer"
-                    onClick={() => setIsCityDropdownOpen(o => !o)}
-                  >
+                  <div className="relative flex items-center">
                     <input
                       type="text"
                       required
-                      value={isCityDropdownOpen ? citySearchQuery : profileCity}
+                      value={profileCity}
                       onChange={(e) => {
-                        setCitySearchQuery(e.target.value)
-                        setProfileCity(e.target.value)
-                        setIsCityDropdownOpen(true)
+                        const val = e.target.value
+                        setProfileCity(val)
+                        setCitySearchQuery(val)
+                        setIsCityDropdownOpen(val.trim().length > 0)
                       }}
                       onFocus={() => {
-                        setCitySearchQuery(profileCity)
-                        setIsCityDropdownOpen(true)
+                        if (profileCity.trim().length > 0) {
+                          setCitySearchQuery(profileCity)
+                          setIsCityDropdownOpen(true)
+                        }
                       }}
-                      placeholder="Select or enter your city"
-                      className="w-full px-3.5 pr-8 py-2.5 sm:py-3 rounded-xl bg-[#121224]/80 border border-[#E9B83E]/35 focus:border-[#E9B83E] text-[#F5E5B7] placeholder-[#F5E5B7]/40 text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-[#E9B83E]/50 transition"
+                      placeholder="Enter your city"
+                      className="w-full px-3.5 py-2.5 sm:py-3 rounded-xl bg-[#121224]/80 border border-[#E9B83E]/35 focus:border-[#E9B83E] text-[#F5E5B7] placeholder-[#F5E5B7]/40 text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-[#E9B83E]/50 transition"
                     />
-                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                      <svg className={`w-3.5 h-3.5 text-[#E9B83E] transition-transform duration-200 ${isCityDropdownOpen ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                      </svg>
-                    </div>
                   </div>
 
-                  {isCityDropdownOpen && (
+                  {isCityDropdownOpen && filteredCities.length > 0 && (
                     <div className="absolute z-50 left-0 right-0 mt-1 max-h-44 overflow-y-auto bg-[#1b1022] border border-[#E9B83E]/40 rounded-xl shadow-2xl backdrop-blur-xl divide-y divide-[#E9B83E]/10">
                       {filteredCities.map(city => (
                         <div
