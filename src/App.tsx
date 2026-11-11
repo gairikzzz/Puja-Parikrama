@@ -37,17 +37,27 @@ export interface AuthUser {
 }
 
 export const POPULAR_INDIAN_CITIES = [
-  'Agartala', 'Kolkata', 'Bengaluru', 'Delhi', 'Mumbai', 'Hyderabad', 'Chennai', 'Pune',
-  'Ahmedabad', 'Jaipur', 'Lucknow', 'Patna', 'Bhubaneswar', 'Ranchi', 'Guwahati', 'Silchar',
-  'Dharmanagar', 'Udaipur (Tripura)', 'Shillong', 'Siliguri', 'Durgapur', 'Asansol', 'Howrah',
-  'Noida', 'Gurugram', 'Chandigarh', 'Indore', 'Bhopal', 'Kochi', 'Thiruvananthapuram',
-  'Visakhapatnam', 'Vijayawada', 'Surat', 'Vadodara', 'Rajkot', 'Nagpur', 'Nashik', 'Thane',
-  'Navi Mumbai', 'Kanpur', 'Varanasi', 'Prayagraj', 'Agra', 'Meerut', 'Ghaziabad', 'Faridabad',
-  'Dehradun', 'Amritsar', 'Ludhiana', 'Shimla', 'Srinagar', 'Jammu', 'Coimbatore', 'Madurai',
-  'Mysuru', 'Mangaluru', 'Hubballi', 'Kozhikode', 'Jamshedpur', 'Dhanbad', 'Cuttack', 'Puri',
-  'Rourkela', 'Raipur', 'Jabalpur', 'Gwalior', 'Ujjain', 'Jodhpur', 'Udaipur', 'Kota',
-  'Ajmer', 'Gaya', 'Muzaffarpur', 'Imphal', 'Aizawl', 'Kohima', 'Itanagar', 'Gangtok',
-  'Dibrugarh', 'Jorhat', 'Tezpur'
+  // Tripura
+  'Agartala', 'Dharmanagar', 'Udaipur (Tripura)', 'Kailashahar', 'Belonia', 'Khowai', 'Teliamura',
+  'Ambassa', 'Melaghar', 'Bishalgarh', 'Santirbazar', 'Sabroom', 'Kumarghat', 'Amarpur', 'Kamalpur',
+
+  // Karnataka
+  'Bengaluru', 'Mysuru', 'Mangaluru', 'Hubballi', 'Belagavi', 'Davanagere', 'Ballari', 'Kalaburagi',
+  'Shivamogga', 'Tumakuru', 'Udupi', 'Hassan', 'Bidar', 'Hosapete', 'Raichur', 'Chikkamagaluru',
+  'Mandya', 'Gadag', 'Kolar', 'Chitradurga', 'Bagalkot', 'Vijayapura', 'Ramanagara', 'Karwar', 'Sirsi',
+
+  // Assam
+  'Guwahati', 'Silchar', 'Dibrugarh', 'Jorhat', 'Nagaon', 'Tinsukia', 'Tezpur', 'Bongaigaon',
+  'Karimganj', 'Sivasagar', 'Dhubri', 'Goalpara', 'North Lakhimpur', 'Diphu', 'Golaghat',
+  'Hailakandi', 'Barpeta', 'Lumding', 'Mangaldai', 'Haflong', 'Kokrajhar',
+
+  // West Bengal
+  'Kolkata', 'Howrah', 'Siliguri', 'Durgapur', 'Asansol', 'Bardhaman', 'Malda', 'Baharampur',
+  'Kharagpur', 'Habra', 'Shantipur', 'Dankuni', 'Dhulian', 'Ranaghat', 'Haldia', 'Darjeeling',
+  'Jalpaiguri', 'Cooch Behar', 'Midnapore', 'Krishnanagar', 'Raiganj', 'Balurghat', 'Barasat',
+  'Barrackpore', 'Kalyani', 'Alipurduar', 'Bankura', 'Purulia', 'Bolpur', 'Shantiniketan',
+  'Tamluk', 'Basirhat', 'Bongaon', 'Serampore', 'Chandannagar', 'Rishra', 'Uttarpara',
+  'Naihati', 'Kanchrapara'
 ]
 
 export interface SnapPost {
@@ -150,13 +160,69 @@ export interface SearchLocationResult {
   type: 'pandal' | 'location'
 }
 
+export const SCOPED_REGIONS = ['tripura', 'karnataka', 'assam', 'west bengal', 'paschim banga', 'paschim bango', 'bengal']
+
+export const NON_SCOPED_REGIONS = [
+  'maharashtra', 'mumbai', 'pune', 'delhi', 'new delhi', 'tamil nadu', 'chennai',
+  'uttar pradesh', 'gujarat', 'rajasthan', 'kerala', 'punjab', 'haryana', 'bihar',
+  'odisha', 'orissa', 'madhya pradesh', 'andhra pradesh', 'telangana', 'hyderabad',
+  'jharkhand', 'chhattisgarh', 'uttarakhand', 'himachal pradesh', 'goa',
+  'jammu', 'kashmir', 'ladakh', 'sikkim', 'meghalaya', 'manipur', 'mizoram',
+  'nagaland', 'arunachal pradesh', 'chandigarh', 'puducherry', 'pondicherry'
+]
+
+export function isScopedLocation(text: string, stateName?: string, lat?: number, lng?: number, addressComponents?: any[]): boolean {
+  const normText = (text || '').toLowerCase()
+  const normState = (stateName || '').toLowerCase()
+  const combined = `${normText} ${normState}`
+
+  // Check Google Geocoder address_components if present
+  if (Array.isArray(addressComponents) && addressComponents.length > 0) {
+    let hasScopedComponent = false
+    for (const c of addressComponents) {
+      const longN = (c.long_name || '').toLowerCase()
+      const shortN = (c.short_name || '').toUpperCase()
+      if (['TR', 'KA', 'AS', 'WB'].includes(shortN)) hasScopedComponent = true
+      if (SCOPED_REGIONS.some(s => longN.includes(s))) hasScopedComponent = true
+
+      // If it contains any non-scoped state, strictly reject
+      if (NON_SCOPED_REGIONS.some(ns => longN.includes(ns))) return false
+    }
+    if (hasScopedComponent) return true
+  }
+
+  // Explicit rejection if non-scoped region is detected
+  for (const ns of NON_SCOPED_REGIONS) {
+    const regex = new RegExp(`(^|[^a-z])${ns}([^a-z]|$)`, 'i')
+    if (regex.test(normState)) return false
+    if (regex.test(normText) && !SCOPED_REGIONS.some(s => normText.includes(s))) return false
+  }
+
+  // Explicit acceptance if scoped region is detected
+  if (SCOPED_REGIONS.some(s => combined.includes(s))) return true
+
+  // Fallback coordinate check (strictly inside Tripura, Karnataka, Assam, or West Bengal bounds)
+  if (typeof lat === 'number' && typeof lng === 'number' && lat !== 0 && lng !== 0) {
+    const inTripura = (lat >= 22.85 && lat <= 24.60 && lng >= 91.15 && lng <= 92.45)
+    const inKarnataka = (lat >= 11.50 && lat <= 18.50 && lng >= 74.05 && lng <= 78.60)
+    const inAssam = (lat >= 24.10 && lat <= 28.05 && lng >= 89.70 && lng <= 96.05)
+    const inWestBengal = (lat >= 21.50 && lat <= 27.25 && lng >= 85.80 && lng <= 89.90)
+
+    if (inTripura || inKarnataka || inAssam || inWestBengal) {
+      return true
+    }
+  }
+
+  return false
+}
+
 export async function searchLocationsAndPandals(query: string): Promise<SearchLocationResult[]> {
   const q = (query || '').trim()
   if (!q) return []
   const qLower = q.toLowerCase()
   const tokens = qLower.split(/\s+/).filter(Boolean)
 
-  // 1. Local Pandals
+  // 1. Local Pandals (Agartala & Kolkata - both strictly within Tripura & West Bengal)
   const pandalMatches: SearchLocationResult[] = AGARTALA_MASTER_PANDALS.filter(p => {
     const text = `${p.name} ${p.neighborhood || ''} ${p.city || ''} ${(p.keywords || []).join(' ')}`.toLowerCase()
     return tokens.every(t => text.includes(t))
@@ -169,7 +235,7 @@ export async function searchLocationsAndPandals(query: string): Promise<SearchLo
     type: 'pandal'
   }))
 
-  // 2. Google Maps Places / Geocoding Locations (Exclusively restricted to India)
+  // 2. Google Maps Places / Geocoding Locations (Restricted to Tripura, Karnataka, Assam, and West Bengal)
   let locationMatches: SearchLocationResult[] = []
 
   // Try Google Geocoder if available with strict India country restriction
@@ -186,19 +252,15 @@ export async function searchLocationsAndPandals(query: string): Promise<SearchLo
         })
       })
       if (geoRes && geoRes.length > 0) {
-        // Strictly filter to India by coordinates and address components
-        const indianGeoRes = geoRes.filter(r => {
+        // Strictly filter to Tripura, Karnataka, Assam, and West Bengal
+        const scopedGeoRes = geoRes.filter(r => {
           const lat = r.geometry?.location?.lat?.() ?? 0
           const lng = r.geometry?.location?.lng?.() ?? 0
-          const inBounds = lat >= 6.0 && lat <= 38.0 && lng >= 68.0 && lng <= 98.0
-          const isIndiaComponent = (r.address_components || []).some((c: any) =>
-            c.short_name === 'IN' || c.long_name?.toLowerCase() === 'india'
-          )
-          const formattedLower = (r.formatted_address || '').toLowerCase()
-          return (inBounds && isIndiaComponent) || formattedLower.includes('india')
+          const formatted = r.formatted_address || ''
+          return isScopedLocation(formatted, '', lat, lng, r.address_components)
         }).slice(0, 4)
 
-        locationMatches = indianGeoRes.map((r, idx) => ({
+        locationMatches = scopedGeoRes.map((r, idx) => ({
           id: `geo_${r.place_id || idx}`,
           name: r.formatted_address.split(',')[0],
           subtitle: r.formatted_address.split(',').slice(1).join(',').trim(),
@@ -210,11 +272,11 @@ export async function searchLocationsAndPandals(query: string): Promise<SearchLo
     } catch (_) {}
   }
 
-  // Supplement with Photon Geocoding API (strictly restricted to India)
+  // Supplement with Photon Geocoding API (strictly restricted to Tripura, Karnataka, Assam, and West Bengal)
   if (locationMatches.length < 3) {
     try {
       const photonQuery = qLower.includes('india') ? q : `${q}, India`
-      const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(photonQuery)}&lat=20.5937&lon=78.9629&limit=10`)
+      const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(photonQuery)}&lat=20.5937&lon=78.9629&limit=25`)
       if (res.ok) {
         const data = await res.json()
         if (data && data.features) {
@@ -228,16 +290,19 @@ export async function searchLocationsAndPandals(query: string): Promise<SearchLo
 
             const countryCode = (props.countrycode || '').toUpperCase()
             const countryName = (props.country || '').toLowerCase()
-            const inIndiaBounds = lat >= 6.0 && lat <= 38.0 && lng >= 68.0 && lng <= 98.0
+            const stateName = props.state || ''
 
             // Strictly reject non-Indian locations
             if (countryCode && countryCode !== 'IN') continue
-            if (!inIndiaBounds && countryCode !== 'IN' && !countryName.includes('india')) continue
             if (countryName && !countryName.includes('india') && countryCode !== 'IN') continue
 
             const name = props.name || props.street || props.city || q
             const subtitleParts = [props.district, props.city, props.state, props.country || 'India'].filter(Boolean)
             const cleanSubtitle = Array.from(new Set(subtitleParts.filter((part: string) => part.toLowerCase() !== name.toLowerCase()))).join(', ')
+
+            // Strict 4-State Filter: Tripura, Karnataka, Assam, West Bengal
+            const combinedText = `${name}, ${cleanSubtitle}`
+            if (!isScopedLocation(combinedText, stateName, lat, lng)) continue
 
             photonItems.push({
               id: `photon_${props.osm_id || Math.random()}`,
