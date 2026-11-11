@@ -3463,7 +3463,7 @@ export default function App() {
                     {authStage === 'welcome'
                       ? 'Your journey begins here.'
                       : authStage === 'profile'
-                      ? "Let's get to know you!"
+                      ? 'Personalise your Puja Porikroma experience.'
                       : (pendingUploadAfterAuth && authStage === 'email'
                         ? 'Sign up with your email to share pandal snaps'
                         : 'Discover pandals. Capture memories.')}
@@ -3708,7 +3708,7 @@ export default function App() {
                       onClick={() => profilePhotoInputRef.current?.click()}
                       className="px-3 py-1 rounded-full border border-[#E9B83E] bg-[#E9B83E]/15 hover:bg-[#E9B83E]/25 text-[#F5E5B7] text-[11px] sm:text-xs font-bold transition active:scale-95 cursor-pointer shadow-[0_0_8px_rgba(233,184,62,0.20)]"
                     >
-                      {hasCustomPhoto ? 'Change Photo' : 'Add Photo'}
+                      Change Photo
                     </button>
                     <button
                       type="button"

@@ -959,7 +959,7 @@
 
           <div class="flex items-center gap-2">
             <button id="btn-add-profile-photo" type="button" onclick="document.getElementById('profile-photo-file-input')?.click()" class="px-3 py-1 rounded-full border border-[#E9B83E] bg-[#E9B83E]/15 hover:bg-[#E9B83E]/25 text-[#F5E5B7] text-[11px] sm:text-xs font-bold transition active:scale-95 cursor-pointer shadow-[0_0_8px_rgba(233,184,62,0.20)]">
-              Add Photo
+              Change Photo
             </button>
             <button type="button" onclick="shuffleProfileAvatar()" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/15 text-[#F5E5B7] text-[11px] sm:text-xs font-semibold border border-white/15 transition active:scale-95 cursor-pointer" title="Shuffle Avatar">
               🎲 Shuffle
@@ -3186,7 +3186,7 @@
       } else if (stage === 'profile') {
         if (stage3) stage3.classList.remove('hidden');
         if (titleEl) titleEl.textContent = 'Complete Your Profile';
-        if (subEl) subEl.textContent = "Let's get to know you!";
+        if (subEl) subEl.textContent = 'Personalise your Puja Porikroma experience.';
         const emailDisp = document.getElementById('profile-email-display');
         if (emailDisp) emailDisp.textContent = authCurrentEmail;
         const nameInput = document.getElementById('profile-name-input');
@@ -3687,7 +3687,7 @@
       const nudgeControls = document.getElementById('avatar-nudge-controls');
       if (nudgeControls) nudgeControls.classList.add('hidden');
       const btnAddPhoto = document.getElementById('btn-add-profile-photo');
-      if (btnAddPhoto) btnAddPhoto.textContent = 'Add Photo';
+      if (btnAddPhoto) btnAddPhoto.textContent = 'Change Photo';
       const container = document.getElementById('avatar-frame-container');
       if (container) container.classList.remove('cursor-grab', 'cursor-grabbing');
     }
