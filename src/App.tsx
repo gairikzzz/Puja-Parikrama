@@ -105,7 +105,24 @@ export const AGARTALA_MASTER_PANDALS = [
   { name: 'Deshabandhu Chittaranjan Club', neighborhood: 'Dhaleswar', city: 'Agartala', lat: 23.8285, lng: 91.2985, emoji: '🎺', keywords: ['dhaleswar', 'college tilla', 'agartala', 'tripura'] },
   { name: 'Aikatan Sangha', neighborhood: 'Kunjaban', city: 'Agartala', lat: 23.8480, lng: 91.2890, emoji: '🪕', keywords: ['kunjaban', 'gb bazar', 'gb hospital', 'circuit house', 'secretariat', 'agartala', 'tripura'] },
   { name: 'Badharghat Sporting Club', neighborhood: 'Badharghat', city: 'Agartala', lat: 23.8120, lng: 91.2740, emoji: '🥁', keywords: ['badharghat', 'amtali', 'railway station', 'south agartala', 'agartala', 'tripura'] },
-  { name: 'Pratapgarh Youth Federation', neighborhood: 'Pratapgarh', city: 'Agartala', lat: 23.8210, lng: 91.2895, emoji: '🔥', keywords: ['pratapgarh', 'arundhutinagar', 'agartala', 'tripura'] }
+  { name: 'Pratapgarh Youth Federation', neighborhood: 'Pratapgarh', city: 'Agartala', lat: 23.8210, lng: 91.2895, emoji: '🔥', keywords: ['pratapgarh', 'arundhutinagar', 'agartala', 'tripura'] },
+  // Kolkata Famous Pandals
+  { name: 'Sreebhumi Sporting Club', neighborhood: 'Lake Town', city: 'Kolkata', lat: 22.5985, lng: 88.4030, emoji: '👑', keywords: ['sreebhumi', 'lake town', 'vip road', 'kolkata', 'calcutta', 'north kolkata'] },
+  { name: 'Bagbazar Sarbojanin', neighborhood: 'Bagbazar', city: 'Kolkata', lat: 22.6030, lng: 88.3660, emoji: '🪔', keywords: ['bagbazar', 'shyambazar', 'circular canal', 'kolkata', 'calcutta', 'north kolkata'] },
+  { name: 'College Square', neighborhood: 'College Street', city: 'Kolkata', lat: 22.5744, lng: 88.3639, emoji: '✨', keywords: ['college square', 'college street', 'calcutta university', 'kolkata', 'central kolkata'] },
+  { name: 'Santosh Mitra Square', neighborhood: 'Lebutala', city: 'Kolkata', lat: 22.5695, lng: 88.3665, emoji: '🌟', keywords: ['santosh mitra square', 'lebutala', 'sealdah', 'kolkata', 'central kolkata'] },
+  { name: 'Mohammad Ali Park', neighborhood: 'Central', city: 'Kolkata', lat: 22.5780, lng: 88.3605, emoji: '🌺', keywords: ['mohammad ali park', 'mg road', 'cr avenue', 'kolkata', 'central kolkata'] },
+  { name: 'Kumartuli Park', neighborhood: 'Kumartuli', city: 'Kolkata', lat: 22.5995, lng: 88.3650, emoji: '🎨', keywords: ['kumartuli park', 'kumortuli', 'idol makers', 'kolkata', 'north kolkata'] },
+  { name: 'Ekdalia Evergreen Club', neighborhood: 'Gariahat', city: 'Kolkata', lat: 22.5185, lng: 88.3670, emoji: '🌿', keywords: ['ekdalia evergreen', 'gariahat', 'ballygunge', 'kolkata', 'south kolkata'] },
+  { name: 'Singhi Park Sarbojanin', neighborhood: 'Dover Lane', city: 'Kolkata', lat: 22.5195, lng: 88.3645, emoji: '🕊️', keywords: ['singhi park', 'dover lane', 'gariahat', 'kolkata', 'south kolkata'] },
+  { name: 'Maddox Square', neighborhood: 'Ballygunge', city: 'Kolkata', lat: 22.5310, lng: 88.3585, emoji: '🥁', keywords: ['maddox square', 'ritchie road', 'ballygunge', 'kolkata', 'south kolkata'] },
+  { name: 'Suruchi Sangha', neighborhood: 'New Alipore', city: 'Kolkata', lat: 22.5085, lng: 88.3325, emoji: '🎺', keywords: ['suruchi sangha', 'new alipore', 'alipore', 'kolkata', 'south kolkata'] },
+  { name: 'Chetla Agrani Club', neighborhood: 'Chetla', city: 'Kolkata', lat: 22.5180, lng: 88.3410, emoji: '🔥', keywords: ['chetla agrani', 'chetla', 'kalighat', 'kolkata', 'south kolkata'] },
+  { name: 'Mudiali Club', neighborhood: 'Kalighat', city: 'Kolkata', lat: 22.5125, lng: 88.3475, emoji: '⚡', keywords: ['mudiali club', 'southern avenue', 'kalighat', 'kolkata', 'south kolkata'] },
+  { name: 'Tridhara Sammilani', neighborhood: 'Deshapriya Park', city: 'Kolkata', lat: 22.5175, lng: 88.3555, emoji: '🎊', keywords: ['tridhara sammilani', 'deshapriya park', 'rashbehari', 'kolkata', 'south kolkata'] },
+  { name: 'Badamtala Ashar Sangha', neighborhood: 'Kalighat', city: 'Kolkata', lat: 22.5190, lng: 88.3485, emoji: '🌸', keywords: ['badamtala ashar sangha', 'nepal bhattacharya lane', 'kalighat', 'kolkata', 'south kolkata'] },
+  { name: 'Bosepukur Sitala Mandir', neighborhood: 'Kasba', city: 'Kolkata', lat: 22.5140, lng: 88.3850, emoji: '🪔', keywords: ['bosepukur', 'sitala mandir', 'kasba', 'kolkata', 'south kolkata'] },
+  { name: 'Sovabazar Rajbari', neighborhood: 'Sovabazar', city: 'Kolkata', lat: 22.5975, lng: 88.3685, emoji: '👑', keywords: ['sovabazar rajbari', 'nabakrishna deb', 'traditional', 'kolkata', 'north kolkata'] }
 ]
 
 function calcHaversineMeters(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -734,14 +751,15 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
 
   const filteredPandals = useMemo(() => {
     const q = searchFilter.trim().toLowerCase()
-    if (!q) return pandalsWithProximity
+    if (!q) return []
     return pandalsWithProximity.filter(p => 
       p.name.toLowerCase().includes(q) ||
       (p.neighborhood && p.neighborhood.toLowerCase().includes(q)) ||
       (p.city && p.city.toLowerCase().includes(q)) ||
       'agartala'.includes(q) || q.includes('agartala') ||
+      'kolkata'.includes(q) || q.includes('kolkata') ||
       'tripura'.includes(q) || q.includes('tripura') ||
-      (p.keywords && p.keywords.some(k => k.includes(q) || q.includes(k)))
+      (p.keywords && p.keywords.some(k => k.toLowerCase().includes(q)))
     )
   }, [pandalsWithProximity, searchFilter])
 
@@ -897,41 +915,27 @@ function UploadModal({ visible, currentUser, initialPandal, onRequireAuth, onClo
                 type="text"
                 value={pandalName}
                 onFocus={() => {
-                  setShowDropdown(true)
-                  setSearchFilter('')
-                }}
-                onClick={() => {
-                  setShowDropdown(true)
+                  if (pandalName.trim().length > 0) {
+                    setSearchFilter(pandalName)
+                    setShowDropdown(true)
+                  }
                 }}
                 onChange={e => {
-                  setPandalName(e.target.value)
-                  setSearchFilter(e.target.value)
-                  setShowDropdown(true)
+                  const val = e.target.value
+                  setPandalName(val)
+                  setSearchFilter(val)
+                  setShowDropdown(val.trim().length > 0)
                 }}
                 placeholder="Select or enter pandal name..."
-                className="w-full bg-transparent pl-2.5 pr-9 py-2 text-[#F5E5B7] font-normal placeholder:font-normal text-xs sm:text-[13px] placeholder-[#F5E5B7]/45 focus:placeholder-transparent focus:outline-none"
+                className="w-full bg-transparent pl-2.5 pr-3.5 py-2 text-[#F5E5B7] font-normal placeholder:font-normal text-xs sm:text-[13px] placeholder-[#F5E5B7]/45 focus:placeholder-transparent focus:outline-none"
               />
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  setShowDropdown(!showDropdown)
-                  setSearchFilter('')
-                }}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-[#E9B83E] hover:text-[#F5E5B7] flex items-center justify-center transition cursor-pointer"
-                title="Select pandal"
-              >
-                <svg className={`w-3.5 h-3.5 text-[#E9B83E] transition-transform duration-200 ${showDropdown ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                </svg>
-              </button>
             </div>
 
             {/* Proximity Dropdown (Styled like Year dropdown) */}
-            {showDropdown && (
+            {showDropdown && filteredPandals.length > 0 && (
               <div className="absolute left-0 right-0 top-full mt-1.5 z-50 bg-[#211329]/95 border border-[#E9B83E]/35 rounded-2xl shadow-[0_12px_32px_rgba(13,12,27,0.85),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_12px_rgba(233,184,62,0.15)] backdrop-blur-2xl max-h-48 overflow-y-auto no-scrollbar p-1">
                 <div className="px-3 py-1.5 text-[9px] font-bold text-[#E9B83E] uppercase tracking-wider flex items-center justify-between border-b border-[#E9B83E]/20 mb-0.5">
-                  <span>Known Agartala Pandals</span>
+                  <span>Known Pandals</span>
                   <span>Distance</span>
                 </div>
                 <div>
