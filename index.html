@@ -1492,6 +1492,7 @@
         <button
           id="btn-edit-profile"
           type="button"
+          onclick="window.openEditProfileModal()"
           class="w-full p-2.5 sm:p-3 rounded-xl bg-white/[0.03] hover:bg-white/[0.07] border border-[#E9B83E]/25 hover:border-[#E9B83E]/45 flex items-center justify-between transition cursor-pointer active:scale-[0.99] group text-left"
         >
           <div class="flex items-center gap-3">
@@ -3161,6 +3162,31 @@
     }
     window.openGoogleAuthModal = openGoogleAuthModal;
 
+    function openEditProfileModal() {
+      if (typeof window.closeProfileModal === 'function') {
+        window.closeProfileModal();
+      }
+      if (currentUser) {
+        authVerifiedUid = currentUser.uid;
+        authCurrentEmail = currentUser.email || '';
+        authProfileAvatarUrl = currentUser.photoURL || '';
+        hasCustomProfilePhoto = !!currentUser.photoURL;
+        const nameInput = document.getElementById('profile-name-input');
+        if (nameInput) nameInput.value = currentUser.displayName || '';
+        const cityInput = document.getElementById('profile-city-input');
+        if (cityInput) cityInput.value = currentUser.city || 'Agartala';
+        const preview = document.getElementById('profile-photo-preview');
+        if (preview && authProfileAvatarUrl) preview.src = authProfileAvatarUrl;
+      }
+      switchAuthStage('profile');
+      const modal = document.getElementById('google-auth-modal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => modal.classList.add('active'));
+      }
+    }
+    window.openEditProfileModal = openEditProfileModal;
+
     function handleSkipAuth() {
       if (authCurrentStage === 'welcome') {
         handleFinishWelcomeAndExplore();
@@ -3638,17 +3664,18 @@
       }
 
       const userDoc = {
-        uid: authVerifiedUid || 'uid_' + Math.random().toString(36).substring(2, 10),
+        uid: (currentUser && currentUser.uid) || authVerifiedUid || 'uid_' + Math.random().toString(36).substring(2, 10),
         displayName: name,
-        email: authCurrentEmail.trim(),
+        email: (currentUser && currentUser.email) || authCurrentEmail.trim(),
         city: city,
-        photoURL: authProfileAvatarUrl || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(name)}&backgroundColor=ffdfbf`,
+        photoURL: authProfileAvatarUrl || (currentUser && currentUser.photoURL) || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(name)}&backgroundColor=ffdfbf`,
         emailVerified: true,
         profileCompleted: true,
-        createdAt: new Date().toISOString(),
+        createdAt: (currentUser && currentUser.createdAt) || new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        totalPhotosShared: 0,
-        totalPandalsCovered: 0
+        totalPhotosShared: (currentUser && currentUser.totalPhotosShared) || 0,
+        totalPandalsCovered: (currentUser && currentUser.totalPandalsCovered) || 0,
+        leaderboardRank: (currentUser && currentUser.leaderboardRank) || undefined
       };
 
       if (firestoreDb) {
@@ -4260,7 +4287,7 @@
       if (e.target === profileModal) window.closeProfileModal();
     });
     document.getElementById('btn-edit-profile')?.addEventListener('click', () => {
-      openGoogleAuthModal('Update your devotee profile and sync your pandal memories');
+      openEditProfileModal();
     });
     document.getElementById('btn-profile-logout')?.addEventListener('click', () => {
       handleSignOut();

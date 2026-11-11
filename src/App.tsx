@@ -33,6 +33,7 @@ export interface AuthUser {
   updatedAt?: string
   totalPhotosShared?: number
   totalPandalsCovered?: number
+  leaderboardRank?: number | string
 }
 
 export const POPULAR_INDIAN_CITIES = [
@@ -2369,30 +2370,44 @@ export default function App() {
     }
   }
 
+  const handleOpenEditProfile = () => {
+    setProfileModalVisible(false)
+    if (user) {
+      setVerifiedUid(user.uid)
+      setAuthEmail(user.email || '')
+      setProfileName(user.displayName || '')
+      setProfileCity(user.city || 'Agartala')
+      setProfilePhoto(user.photoURL || '')
+      setHasCustomPhoto(!!user.photoURL)
+    }
+    setAuthStage('profile')
+    setAuthModalVisible(true)
+  }
+
   const handleSaveProfile = (e?: React.FormEvent) => {
     if (e) e.preventDefault()
     if (!profileName.trim() || !profileCity.trim()) return
 
     const trimmedEmail = authEmail.trim()
     const userDoc: AuthUser = {
-      uid: verifiedUid || 'uid_' + Math.random().toString(36).substring(2, 10),
+      uid: user?.uid || verifiedUid || 'uid_' + Math.random().toString(36).substring(2, 10),
       displayName: profileName.trim(),
-      email: trimmedEmail,
+      email: trimmedEmail || user?.email || '',
       city: profileCity.trim(),
-      photoURL: profilePhoto || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(profileName.trim())}&backgroundColor=ffdfbf`,
+      photoURL: profilePhoto || user?.photoURL || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(profileName.trim())}&backgroundColor=ffdfbf`,
       emailVerified: true,
       profileCompleted: true,
-      createdAt: new Date().toISOString(),
+      createdAt: user?.createdAt || new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      totalPhotosShared: 0,
-      totalPandalsCovered: 0
+      totalPhotosShared: user?.totalPhotosShared || 0,
+      totalPandalsCovered: user?.totalPandalsCovered || 0,
+      leaderboardRank: (user as any)?.leaderboardRank
     }
 
     // Save to Firestore
     try {
       setDoc(doc(db, 'users', userDoc.uid), {
         ...userDoc,
-        createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       }, { merge: true }).catch(err => console.warn('Firestore setDoc notice:', err))
     } catch (e) {}
@@ -4370,10 +4385,7 @@ export default function App() {
               <button
                 type="button"
                 id="btn-edit-profile"
-                onClick={() => {
-                  setProfileModalVisible(false)
-                  setAuthModalVisible(true)
-                }}
+                onClick={handleOpenEditProfile}
                 className="w-full p-2.5 sm:p-3 rounded-xl bg-white/[0.03] hover:bg-white/[0.07] border border-[#E9B83E]/25 hover:border-[#E9B83E]/45 flex items-center justify-between transition cursor-pointer active:scale-[0.99] group text-left"
               >
                 <div className="flex items-center gap-3">
