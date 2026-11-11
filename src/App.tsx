@@ -2803,6 +2803,11 @@ export default function App() {
   }
 
   const handleZoomIn = () => {
+    const btn = document.getElementById('btn-zoom-in')
+    if (btn) {
+      btn.classList.add('bg-[#E9B83E]/25')
+      setTimeout(() => btn.classList.remove('bg-[#E9B83E]/25'), 220)
+    }
     if (googleMapRef.current && typeof googleMapRef.current.getZoom === 'function') {
       const currentZoom = googleMapRef.current.getZoom() || 14
       googleMapRef.current.setZoom(Math.min(currentZoom + 1, 21))
@@ -2812,6 +2817,11 @@ export default function App() {
   }
 
   const handleZoomOut = () => {
+    const btn = document.getElementById('btn-zoom-out')
+    if (btn) {
+      btn.classList.add('bg-[#E9B83E]/25')
+      setTimeout(() => btn.classList.remove('bg-[#E9B83E]/25'), 220)
+    }
     if (googleMapRef.current && typeof googleMapRef.current.getZoom === 'function') {
       const currentZoom = googleMapRef.current.getZoom() || 14
       googleMapRef.current.setZoom(Math.max(currentZoom - 1, 3))
@@ -3353,7 +3363,7 @@ export default function App() {
               title="Magnify Map (Zoom In)"
               aria-label="Magnify Map"
               style={{ touchAction: 'manipulation' }}
-              className="w-full h-[37px] sm:h-[41px] flex items-center justify-center text-[#E9B83E] hover:text-[#F5E5B7] active:scale-90 transition-all cursor-pointer group/in"
+              className="w-full h-[37px] sm:h-[41px] flex items-center justify-center text-[#E9B83E] hover:text-[#F5E5B7] hover:bg-[#E9B83E]/15 active:bg-[#E9B83E]/30 active:scale-95 transition-all cursor-pointer group/in"
             >
               <svg className="pointer-events-none w-4 h-4 sm:w-4.5 sm:h-4.5 group-hover/in:scale-110 group-hover/in:text-[#F5E5B7] transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -3371,7 +3381,7 @@ export default function App() {
               title="Demagnify Map (Zoom Out)"
               aria-label="Demagnify Map"
               style={{ touchAction: 'manipulation' }}
-              className="w-full h-[37px] sm:h-[41px] flex items-center justify-center text-[#E9B83E] hover:text-[#F5E5B7] active:scale-90 transition-all cursor-pointer group/out"
+              className="w-full h-[37px] sm:h-[41px] flex items-center justify-center text-[#E9B83E] hover:text-[#F5E5B7] hover:bg-[#E9B83E]/15 active:bg-[#E9B83E]/30 active:scale-95 transition-all cursor-pointer group/out"
             >
               <svg className="pointer-events-none w-4 h-4 sm:w-4.5 sm:h-4.5 group-hover/out:scale-110 group-hover/out:text-[#F5E5B7] transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="5" y1="12" x2="19" y2="12"></line>
