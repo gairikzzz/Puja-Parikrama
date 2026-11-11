@@ -3601,10 +3601,7 @@ export default function App() {
                   </p>
 
                   <p className="text-[#F5E5B7]/50 text-[10px] sm:text-[11px] text-center mt-1.5 leading-relaxed">
-                    By continuing, you agree to our{' '}
-                    <span className="underline hover:text-[#F5E5B7] cursor-pointer">Terms of Service</span>
-                    {' '}and{' '}
-                    <span className="underline hover:text-[#F5E5B7] cursor-pointer">Privacy Policy</span>.
+                    By continuing, you agree to our Terms of Service and Privacy Policy.
                   </p>
                 </form>
               </div>
